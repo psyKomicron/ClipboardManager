@@ -6,8 +6,11 @@
 
 #include "App.xaml.h"
 #include "MainPage.h"
+#include "src/utils/helpers.hpp"
 
 #include <Microsoft.UI.Dispatching.Interop.h> // For ContentPreTranslateMessage
+
+#include <memory>
 
 #define MAX_LOADSTRING 100
 
@@ -18,10 +21,10 @@ namespace winrt
     using namespace winrt::Microsoft::UI::Xaml;
     using namespace winrt::Microsoft::UI::Xaml::Hosting;
     using namespace winrt::Microsoft::UI::Xaml::Markup;
+    using namespace winrt::Microsoft::UI::Windowing;
 }
 
 // Global Variables:
-/*HINSTANCE hInst;*/// current instance
 WCHAR szTitle[MAX_LOADSTRING];// The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];// the main window class name
 
@@ -53,11 +56,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     try
     {
-        auto dispatcherQueueController = initIslandApp();
-
+        auto dispatcherQueueController = clipmgr::utils::managed_dispatcher_queue_controller(initIslandApp());
+        
         // Perform application initialization:
         auto topLevelWindow = InitInstance(hInstance, nCmdShow);
-
         HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIPBOARDMANAGER));
 
         MSG msg;
@@ -74,12 +76,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-
-        dispatcherQueueController.ShutdownQueueAsync();
     }
     catch (const winrt::hresult_error& error)
     {
         return error.code().value;
+    }
+    catch (...)
+    {
+        return -1;
     }
 
     return 0;
@@ -324,6 +328,32 @@ void createWinUIWindow(WindowInfo* windowInfo, const HWND& windowHandle)
 
     // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
     windowInfo->desktopWinXamlSrc.Content(winrt::make<winrt::ClipboardManager::implementation::MainPage>());
+
+    auto appWindow = clipmgr::utils::getCurrentAppWindow(windowHandle);
+    if (appWindow.TitleBar().IsCustomizationSupported())
+    {
+        auto&& titleBar = appWindow.TitleBar();
+        titleBar.ExtendsContentIntoTitleBar(true);
+        titleBar.IconShowOptions(winrt::IconShowOptions::HideIconAndSystemMenu);
+
+        auto&& presenter = appWindow.Presenter().as<winrt::OverlappedPresenter>();
+        presenter.IsMaximizable(false);
+        presenter.IsMinimizable(false);
+
+        //titleBar.PreferredHeightOption(winrt::TitleBarHeightOption::Collapsed);
+
+        appWindow.TitleBar().ButtonBackgroundColor(winrt::Colors::Transparent());
+        appWindow.TitleBar().ButtonInactiveBackgroundColor(winrt::Colors::Transparent());
+        appWindow.TitleBar().ButtonInactiveForegroundColor(
+            winrt::Application::Current().Resources().TryLookup(winrt::box_value(L"AppTitleBarHoverColor")).as<winrt::Windows::UI::Color>());
+        appWindow.TitleBar().ButtonHoverBackgroundColor(
+            winrt::Application::Current().Resources().TryLookup(winrt::box_value(L"ButtonHoverBackgroundColor")).as<winrt::Windows::UI::Color>());
+        appWindow.TitleBar().ButtonPressedBackgroundColor(winrt::Colors::Transparent());
+
+        appWindow.TitleBar().ButtonForegroundColor(winrt::Colors::White());
+        appWindow.TitleBar().ButtonHoverForegroundColor(winrt::Colors::White());
+        appWindow.TitleBar().ButtonPressedForegroundColor(winrt::Colors::White());
+    }
 
     /*windowInfo->takeFocusRequestedToken = windowInfo->desktopWinXamlSrc.TakeFocusRequested(
         [windowHandle](const winrt::DesktopWindowXamlSource&, const winrt::DesktopWindowXamlSourceTakeFocusRequestedEventArgs& args)

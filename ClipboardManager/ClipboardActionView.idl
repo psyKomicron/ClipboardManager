@@ -1,0 +1,13 @@
+namespace ClipboardManager
+{
+    [default_interface]
+    runtimeclass ClipboardActionView : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        ClipboardActionView();
+        ClipboardActionView(String text);
+
+        String Text;
+
+        void AddAction(String format, String label, String regex);
+    }
+}
