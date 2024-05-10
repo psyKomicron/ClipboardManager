@@ -7,32 +7,46 @@
 #include "src/Settings.hpp"
 
 #include <winrt/Windows.Storage.h>
+#include <winrt/Windows.Foundation.Collections.h>
 
-using namespace winrt::ClipboardManager::implementation;
+namespace impl = winrt::ClipboardManager::implementation;
 
-ClipboardActionView::ClipboardActionView(const winrt::hstring& text)
+namespace winrt
+{
+    using namespace winrt::Microsoft::UI::Xaml;
+    using namespace winrt::Microsoft::UI::Xaml::Controls;
+}
+
+impl::ClipboardActionView::ClipboardActionView(const winrt::hstring& text)
 {
     _text = text;
 }
 
-winrt::hstring ClipboardActionView::Text() const
+winrt::hstring impl::ClipboardActionView::Text() const
 {
     return _text;
 }
 
-void ClipboardActionView::Text(const winrt::hstring& value)
+void impl::ClipboardActionView::Text(const winrt::hstring& value)
 {
     _text = value;
 }
 
-void ClipboardActionView::AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex)
+void impl::ClipboardActionView::AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex)
 {
     actions.push_back(clipmgr::ClipboardAction(std::wstring(label), std::wstring(format), std::wstring(regex)));
 }
 
 
-void ClipboardActionView::UserControl_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const&, winrt::Windows::Foundation::IInspectable const&)
+void impl::ClipboardActionView::UserControl_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const&, winrt::Windows::Foundation::IInspectable const&)
 {
     clipmgr::Settings settings{};
     settings.open();
+
+    // Create buttons for actions:
+    for (auto&& action : actions)
+    {
+        ActionsGridView().Items().InsertAt(0, box_value(action.label()));
+        //ActionsGridView().Items().Append(box_value(action.label()));
+    }
 }

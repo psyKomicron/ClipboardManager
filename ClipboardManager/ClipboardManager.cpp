@@ -14,6 +14,9 @@
 
 #define MAX_LOADSTRING 100
 
+constexpr uint32_t InitialWindowWidth = 440;
+constexpr uint32_t InitialWindowHeight = 700;
+
 namespace winrt
 {
     using namespace winrt::Microsoft::UI;
@@ -134,7 +137,7 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
    MyRegisterClass(hInstance);
 
    HWND hWnd = CreateWindowExW(0, szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, 400, 700, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, InitialWindowWidth, InitialWindowHeight, nullptr, nullptr, hInstance, nullptr);
    winrt::check_pointer(hWnd);
 
    ShowWindow(hWnd, nCmdShow);

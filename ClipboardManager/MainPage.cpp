@@ -10,33 +10,67 @@
 
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include <winrt/Windows.Foundation.Collections.h>
+#include <winrt/Windows.System.h>
 
-using namespace winrt::ClipboardManager::implementation;
+#include <iostream>
 
-winrt::Windows::Foundation::IAsyncAction MainPage::Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const&, winrt::Windows::Foundation::IInspectable const&)
+namespace impl = winrt::ClipboardManager::implementation;
+
+namespace winrt
 {
-    clipmgr::Settings settings{};
-    settings.open();
-    auto actions = settings.getClipboardActions();
+    using namespace winrt::Windows::ApplicationModel::DataTransfer;
+    using namespace winrt::Windows::System;
+    using namespace winrt::Windows::Foundation;
+}
 
-    auto&& clipboardHistory = co_await winrt::Windows::ApplicationModel::DataTransfer::Clipboard::GetHistoryItemsAsync();
+winrt::Windows::Foundation::IAsyncAction impl::MainPage::Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const&, winrt::Windows::Foundation::IInspectable const&)
+{
+    //TODO: Implement settings "page".
+    try
+    {
+        clipmgr::Settings settings{};
+        settings.open();
+        actions = settings.getClipboardActions();
+    }
+    catch (std::runtime_error)
+    {
+    }
+
+    auto&& clipboardHistory = co_await winrt::Clipboard::GetHistoryItemsAsync();
     for (auto&& item : clipboardHistory.Items())
     {
         auto&& itemText = co_await item.Content().GetTextAsync();
         ClipboardHistoryListView().Items().Append(box_value(itemText));
-        
-        /*auto view = winrt::make<winrt::ClipboardManager::implementation::ClipboardActionView>(itemText);
-        for (auto&& action : actions)
-        {
-            view.AddAction(action.format(), action.label(), action.regex().str());
-        }*/
     }
 
-    auto view = winrt::make<winrt::ClipboardManager::implementation::ClipboardActionView>(L"This is a test");
-    ListView().Items().Append(view);
-    
-    view = winrt::make<winrt::ClipboardManager::implementation::ClipboardActionView>(L"This is another test");
-    ListView().Items().Append(view);
+    winrt::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
+}
+
+winrt::async impl::MainPage::ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args)
+{
+    OutputDebugStringW(L"[MainPage]  Clipboard content changed.\n");
+
+    auto clipboardContent = winrt::Clipboard::GetContent();
+    if (clipboardContent.Contains(winrt::StandardDataFormats::Text()))
+    {
+        auto&& text = co_await clipboardContent.GetTextAsync();
+        auto actionView = winrt::make<::impl::ClipboardActionView>(text);
+
+        bool hasMatch = false;
+        for (auto&& action : actions)
+        {
+            if (action.match(std::wstring(text)))
+            {
+                actionView.AddAction(action.format(), action.label(), L"");
+                hasMatch = true;
+            }
+        }
+
+        if (hasMatch)
+        {
+            ListView().Items().InsertAt(0, actionView);
+        }
+    }
 }
 
 

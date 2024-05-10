@@ -113,6 +113,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,6 +143,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -151,6 +153,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="HostControl.h">
+      <DependentUpon>HostControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="src\utils\Console.hpp" />
     <ClInclude Include="src\ClipboardAction.hpp" />
     <ClInclude Include="ClipboardActionView.h">
       <DependentUpon>ClipboardActionView.xaml</DependentUpon>
@@ -173,6 +180,11 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="HostControl.cpp">
+      <DependentUpon>HostControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="src\utils\Console.cpp" />
     <ClCompile Include="src\ClipboardAction.cpp" />
     <ClCompile Include="ClipboardActionView.cpp">
       <DependentUpon>ClipboardActionView.xaml</DependentUpon>
@@ -219,6 +231,10 @@
       <DependentUpon>ClipboardActionView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="HostControl.idl">
+      <DependentUpon>HostControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="MainPage.idl">
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -226,6 +242,9 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="ClipboardActionView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="HostControl.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainPage.xaml">

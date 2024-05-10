@@ -39,6 +39,9 @@
     <ClInclude Include="src\ClipboardAction.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\utils\Console.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipboardManager.cpp">
@@ -62,6 +65,9 @@
     <ClCompile Include="src\ClipboardAction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\Console.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ClipboardManager.rc">
@@ -82,6 +88,7 @@
   <ItemGroup>
     <Page Include="MainPage.xaml" />
     <Page Include="ClipboardActionView.xaml" />
+    <Page Include="HostControl.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

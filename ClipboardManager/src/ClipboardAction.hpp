@@ -12,6 +12,8 @@ namespace clipmgr
         std::wstring format() const;
         boost::wregex regex() const;
 
+        bool match(const std::wstring& string);
+
     private:
         std::wstring _label{};
         std::wstring _format{};
