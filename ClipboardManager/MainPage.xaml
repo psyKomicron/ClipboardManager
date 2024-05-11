@@ -34,13 +34,13 @@
                     <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Application"/>
                     <local:HostControl Header="Automatic start">
                         <local:HostControl.HostContent>
-                            <ToggleSwitch/>
+                            <ToggleSwitch Style="{StaticResource FlippedToggleSwitchStyle}"/>
                         </local:HostControl.HostContent>
                     </local:HostControl>
 
                     <local:HostControl Header="Save matching results">
                         <local:HostControl.HostContent>
-                            <ToggleSwitch/>
+                            <ToggleSwitch Style="{StaticResource FlippedToggleSwitchStyle}"/>
                         </local:HostControl.HostContent>
                     </local:HostControl>
 
@@ -57,13 +57,17 @@
 
                     <local:HostControl Header="Use default browser">
                         <local:HostControl.HostContent>
-                            <ToggleSwitch/>
+                            <ToggleSwitch Style="{StaticResource FlippedToggleSwitchStyle}"/>
                         </local:HostControl.HostContent>
                     </local:HostControl>
 
                     <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Window" Margin="0,12,0,0"/>
-                    <Expander Header="Window position" HorizontalAlignment="Stretch" MinHeight="60">
-                        
+                    <Expander Header="Window position" HorizontalAlignment="Stretch" MinHeight="60" HorizontalContentAlignment="Stretch" Padding="0">
+                        <local:HostControl Header="Override default window positioning" CornerRadius="0,0,5,5">
+                            <local:HostControl.HostContent>
+                                <ToggleSwitch Style="{StaticResource FlippedToggleSwitchStyle}"/>
+                            </local:HostControl.HostContent>
+                        </local:HostControl>
                     </Expander>
                 </StackPanel>
             </PivotItem>

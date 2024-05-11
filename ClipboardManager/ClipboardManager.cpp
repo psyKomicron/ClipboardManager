@@ -289,7 +289,7 @@ bool processMessageForTabNav(const HWND& window, MSG& msg)
             return false;
         }
 
-        const bool isShiftKeyDown = (GetKeyState(VK_SHIFT) & (1 << 15)) != 0; //TODO: Test.
+        const bool isShiftKeyDown = (GetKeyState(VK_SHIFT) & (1 << 15)) != 0;
         const HWND nextFocusedWindow = ::GetNextDlgTabItem(window, focusedWindow, isShiftKeyDown);
 
         WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(window, GWLP_USERDATA));

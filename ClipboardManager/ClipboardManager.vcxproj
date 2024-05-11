@@ -178,6 +178,7 @@
     <ClInclude Include="src\Settings.hpp" />
     <ClInclude Include="src\utils\helpers.hpp" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="src\ui\VisualStateManager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HostControl.cpp">
@@ -207,6 +208,7 @@
     <ClCompile Include="ClipboardManager.cpp" />
     <ClCompile Include="src\Settings.cpp" />
     <ClCompile Include="src\utils\helpers.cpp" />
+    <ClCompile Include="src\ui\VisualStateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ClipboardManager.rc" />
