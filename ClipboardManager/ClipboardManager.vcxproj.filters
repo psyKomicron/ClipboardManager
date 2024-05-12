@@ -45,6 +45,9 @@
     <ClInclude Include="src\ui\VisualStateManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\HotKey.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipboardManager.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ui\VisualStateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HotKey.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

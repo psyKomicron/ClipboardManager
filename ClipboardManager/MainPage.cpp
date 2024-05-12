@@ -22,7 +22,7 @@ namespace winrt
 }
 
 impl::MainPage::MainPage()
-{    
+{
 }
 
 winrt::Windows::Foundation::IAsyncAction impl::MainPage::Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const&, winrt::Windows::Foundation::IInspectable const&)
@@ -34,8 +34,9 @@ winrt::Windows::Foundation::IAsyncAction impl::MainPage::Page_Loading(winrt::Mic
         settings.open();
         actions = settings.getClipboardActions();
     }
-    catch (std::runtime_error)
+    catch (std::runtime_error err)
     {
+        std::cout << "[MainPage]  Error while opening settings: " << err.what() << std::endl;
     }
 
     auto&& clipboardHistory = co_await winrt::Clipboard::GetHistoryItemsAsync();
@@ -50,8 +51,6 @@ winrt::Windows::Foundation::IAsyncAction impl::MainPage::Page_Loading(winrt::Mic
 
 winrt::async impl::MainPage::ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args)
 {
-    OutputDebugStringW(L"[MainPage]  Clipboard content changed.\n");
-
     auto clipboardContent = winrt::Clipboard::GetContent();
     if (clipboardContent.Contains(winrt::StandardDataFormats::Text()))
     {

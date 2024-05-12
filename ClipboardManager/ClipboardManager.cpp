@@ -1,16 +1,17 @@
 // ClipboardManager.cpp : Defines the entry point for the application.
-//
-
 #include "pch.h"
 #include "ClipboardManager.h"
 
+#include "src/utils/helpers.hpp"
+#include "src/utils/Console.hpp"
+
 #include "App.xaml.h"
 #include "MainPage.h"
-#include "src/utils/helpers.hpp"
 
 #include <Microsoft.UI.Dispatching.Interop.h> // For ContentPreTranslateMessage
 
 #include <memory>
+#include <iostream>
 
 #define MAX_LOADSTRING 100
 
@@ -59,6 +60,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
     try
     {
+        clipmgr::utils::Console console{};
+        console.test();
+
         auto dispatcherQueueController = clipmgr::utils::managed_dispatcher_queue_controller(initIslandApp());
         
         // Perform application initialization:

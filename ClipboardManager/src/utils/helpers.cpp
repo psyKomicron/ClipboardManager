@@ -24,10 +24,10 @@ bool clipmgr::utils::pathExists(const std::filesystem::path& path)
 
 clipmgr::utils::managed_file_handle clipmgr::utils::createFile(const std::filesystem::path& path)
 {
-    if (!pathExists(path))
+    /*if (!pathExists(path.parent_path()))
     {
-        throw std::runtime_error(std::format("'{}' Path doesn't exist", path.string()));
-    }
+        throw std::runtime_error(std::format("'{}' Path doesn't exist", path.parent_path().string()));
+    }*/
 
     auto handle = CreateFileW(path.wstring().c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW, 0, nullptr);
 

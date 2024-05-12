@@ -14,16 +14,29 @@ const wchar_t* ClassName{ L"[Settings]  " };
 void clipmgr::Settings::open()
 {
     auto path = getDefaultUserFileFolder();
-    
     std::filesystem::path userFilePath = path / DEFAULT_USER_FILE_NAME;
     if (!clipmgr::utils::pathExists(userFilePath))
     {
         std::ignore = clipmgr::utils::createFile(userFilePath);
+        firstTimeInitialization(userFilePath);
         std::wcout << ClassName << std::quoted(userFilePath.wstring()) << L" User file created." << std::endl;
     }
 
-    boost::property_tree::read_xml(userFilePath.string(), tree);
-    empty = false;
+    try
+    {
+        std::wcout << ClassName << L" Reading xml file '" << userFilePath.wstring() << L"'" << std::endl;
+        boost::property_tree::read_xml(userFilePath.string(), tree);
+        empty = false;
+    }
+    catch (const boost::property_tree::xml_parser_error& parserError)
+    {
+        std::wcout << ClassName << L" Xml parser error '" << userFilePath.wstring() << L"': " << std::endl;
+
+        if (parserError.line() == 0) // This should mean that the error is at the beginning of the file, thus it's empty.
+        {
+            firstTimeInitialization(userFilePath);
+        }
+    }
 }
 
 std::vector<clipmgr::ClipboardAction> clipmgr::Settings::getClipboardActions()
@@ -72,4 +85,17 @@ std::filesystem::path clipmgr::Settings::getDefaultUserFileFolder() const
 
         return folderPath;
     }
+}
+
+void clipmgr::Settings::firstTimeInitialization(const std::filesystem::path& userFilePath)
+{
+    std::wcout << ClassName << "Performing first time initialization of user file.\n";
+    auto&& actions = tree.put(L"settings.actions", L"");
+    actions.add(L"action.re", L"[A-Z]{,3}");
+    actions.add(L"action.format", L"https://example-namespace.com/search?={}");
+    actions.add(L"action.label", L"Search example-namespace");
+
+    tree.put(L"settings.preferences", L"");
+
+    boost::property_tree::write_xml(userFilePath.string(), tree);
 }

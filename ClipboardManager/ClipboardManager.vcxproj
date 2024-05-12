@@ -157,6 +157,7 @@
       <DependentUpon>HostControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="src\HotKey.hpp" />
     <ClInclude Include="src\utils\Console.hpp" />
     <ClInclude Include="src\ClipboardAction.hpp" />
     <ClInclude Include="ClipboardActionView.h">
@@ -185,6 +186,7 @@
       <DependentUpon>HostControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="src\HotKey.cpp" />
     <ClCompile Include="src\utils\Console.cpp" />
     <ClCompile Include="src\ClipboardAction.cpp" />
     <ClCompile Include="ClipboardActionView.cpp">

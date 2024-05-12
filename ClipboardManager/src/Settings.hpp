@@ -27,6 +27,7 @@ namespace clipmgr
         bool empty = true;
 
         std::filesystem::path getDefaultUserFileFolder() const;
+        void firstTimeInitialization(const std::filesystem::path& userFilePath);
     };
 }
 

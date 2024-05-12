@@ -11,9 +11,10 @@
         Padding="16,3,16,3" 
         Background="{ThemeResource SubtleFillColorSecondaryBrush}"
         CornerRadius="{StaticResource ControlCornerRadius}"
+        BorderThickness="1"
         ColumnSpacing="4"
         MaxHeight="80"
-        MinHeight="60">
+        MinHeight="65">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>

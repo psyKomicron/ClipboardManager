@@ -44,6 +44,7 @@
                         </local:HostControl.HostContent>
                     </local:HostControl>
 
+                    
                     <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Formatting" Margin="0,12,0,0"/>
                     <local:HostControl Header="Default url formatting protocol">
                         <local:HostControl.HostContent>
@@ -61,6 +62,7 @@
                         </local:HostControl.HostContent>
                     </local:HostControl>
 
+                    
                     <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Window" Margin="0,12,0,0"/>
                     <Expander Header="Window position" HorizontalAlignment="Stretch" MinHeight="60" HorizontalContentAlignment="Stretch" Padding="0">
                         <local:HostControl Header="Override default window positioning" CornerRadius="0,0,5,5">
@@ -69,6 +71,22 @@
                             </local:HostControl.HostContent>
                         </local:HostControl>
                     </Expander>
+
+                    <local:HostControl>
+                        <local:HostControl.Header>
+                            <Grid ToolTipService.ToolTip="This only applies when the application auto-starts." RowSpacing="3" VerticalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="Start minimized"/>
+                                <TextBlock Grid.Row="1" Style="{StaticResource SettingSubheaderTextBlockStyle}" Text="Control the application window state when it's auto-started."/>
+                            </Grid>
+                        </local:HostControl.Header>
+                        <local:HostControl.HostContent>
+                            <ToggleSwitch Style="{StaticResource FlippedToggleSwitchStyle}"/>
+                        </local:HostControl.HostContent>
+                    </local:HostControl>
                 </StackPanel>
             </PivotItem>
             
