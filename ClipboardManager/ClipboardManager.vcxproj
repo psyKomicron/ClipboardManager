@@ -178,6 +178,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="src\Settings.hpp" />
     <ClInclude Include="src\utils\helpers.hpp" />
+    <ClInclude Include="src\utils\StartupTask.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="src\ui\VisualStateManager.hpp" />
   </ItemGroup>
@@ -211,6 +212,7 @@
     <ClCompile Include="src\Settings.cpp" />
     <ClCompile Include="src\utils\helpers.cpp" />
     <ClCompile Include="src\ui\VisualStateManager.cpp" />
+    <ClCompile Include="src\utils\StartupTask.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ClipboardManager.rc" />

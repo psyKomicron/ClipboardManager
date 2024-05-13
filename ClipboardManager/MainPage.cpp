@@ -10,6 +10,7 @@
 
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include <winrt/Windows.Foundation.Collections.h>
+#include <winrt/Windows.ApplicationModel.h>
 
 #include <iostream>
 
@@ -19,6 +20,7 @@ namespace winrt
 {
     using namespace winrt::Windows::ApplicationModel::DataTransfer;
     using namespace winrt::Windows::Foundation;
+    using namespace winrt::Windows::ApplicationModel;
 }
 
 impl::MainPage::MainPage()

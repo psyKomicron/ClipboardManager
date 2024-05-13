@@ -16,6 +16,8 @@ clipmgr::utils::Console::Console()
 
     resizeConsole(1024);
     redirectConsole();
+
+    MoveWindow(GetConsoleWindow(), 100, 100, 1000, 600, TRUE);
 }
 
 clipmgr::utils::Console::~Console()

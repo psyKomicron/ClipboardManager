@@ -12,6 +12,7 @@
 
 #include <memory>
 #include <iostream>
+#include <src/utils/StartupTask.hpp>
 
 #define MAX_LOADSTRING 100
 
@@ -55,13 +56,30 @@ struct WindowInfo
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
+    clipmgr::utils::Console console{};
+    
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     try
     {
-        clipmgr::utils::Console console{};
-        console.test();
+        clipmgr::utils::StartupTask startupTask{};
+        if (startupTask.isTaskRegistered())
+        {
+            startupTask.remove();
+        }
+        else
+        {
+            startupTask.set();
+        }
+    }
+    catch (...)
+    {
+        std::wcerr << L"[wWinMain]  Startup task failed.\n";
+    }
+
+    try
+    {
 
         auto dispatcherQueueController = clipmgr::utils::managed_dispatcher_queue_controller(initIslandApp());
         
