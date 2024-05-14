@@ -1,12 +1,17 @@
 #pragma once
 #include <boost/regex.hpp>
 
+#include <vector>
+#include <filesystem>
+
 namespace clipmgr
 {
     class ClipboardAction
     {
     public:
         ClipboardAction(const std::wstring& label, const std::wstring& format, const std::wstring& regexString);
+
+        static std::vector<ClipboardAction> loadClipboardActions(const std::filesystem::path& userFilePath);
 
         std::wstring label() const;
         std::wstring format() const;

@@ -11,12 +11,16 @@
 
 namespace clipmgr
 {
+    enum class SettingsConstants;
+
     class Settings
     {
     public:
         Settings() = default;
 
         void open();
+
+        std::wstring getString();
 
         std::vector<ClipboardAction> getClipboardActions();
 
@@ -28,6 +32,13 @@ namespace clipmgr
 
         std::filesystem::path getDefaultUserFileFolder() const;
         void firstTimeInitialization(const std::filesystem::path& userFilePath);
+    };
+
+    enum class SettingsConstants
+    {
+        UserFilePath,
+        WindowPosition,
+
     };
 }
 

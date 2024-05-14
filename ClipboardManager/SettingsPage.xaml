@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="ClipboardManager.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ClipboardManager"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Loaded="Page_Loaded"
+    Loading="Page_Loading">
+    <Page.Resources>
+        <Style TargetType="ToggleSwitch" BasedOn="{StaticResource FlippedToggleSwitchStyle}"/>
+    </Page.Resources>
+
+    <StackPanel VerticalAlignment="Top" Orientation="Vertical" Spacing="5">
+        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Application"/>
+        <local:HostControl Header="Automatic start">
+            <local:HostControl.HostContent>
+                <ToggleSwitch x:Name="AutoStartToggleSwitch" Toggled="AutoStartToggleSwitch_Toggled"/>
+            </local:HostControl.HostContent>
+        </local:HostControl>
+
+        <local:HostControl Header="Save matching results">
+            <local:HostControl.HostContent>
+                <ToggleSwitch/>
+            </local:HostControl.HostContent>
+        </local:HostControl>
+
+
+        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Formatting" Margin="0,12,0,0"/>
+        <local:HostControl Header="Default url formatting protocol">
+            <local:HostControl.HostContent>
+                <ComboBox MinWidth="100" SelectedIndex="0">
+                    <ComboBoxItem>https</ComboBoxItem>
+                    <ComboBoxItem>http</ComboBoxItem>
+                    <ComboBoxItem>None</ComboBoxItem>
+                </ComboBox>
+            </local:HostControl.HostContent>
+        </local:HostControl>
+
+        <local:HostControl Header="Use default browser">
+            <local:HostControl.HostContent>
+                <ToggleSwitch/>
+            </local:HostControl.HostContent>
+        </local:HostControl>
+
+
+        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Window" Margin="0,12,0,0"/>
+        <Expander Header="Window position" HorizontalAlignment="Stretch" MinHeight="60" HorizontalContentAlignment="Stretch" Padding="0">
+            <local:HostControl Header="Override default window positioning" CornerRadius="0,0,5,5">
+                <local:HostControl.HostContent>
+                    <ToggleSwitch />
+                </local:HostControl.HostContent>
+            </local:HostControl>
+        </Expander>
+
+        <local:HostControl>
+            <local:HostControl.Header>
+                <Grid ToolTipService.ToolTip="This only applies when the application auto-starts." RowSpacing="3" VerticalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="Start minimized"/>
+                    <TextBlock Grid.Row="1" Style="{StaticResource SettingSubheaderTextBlockStyle}" Text="Control the application window state when it's auto-started."/>
+                </Grid>
+            </local:HostControl.Header>
+            <local:HostControl.HostContent>
+                <ToggleSwitch />
+            </local:HostControl.HostContent>
+        </local:HostControl>
+    </StackPanel>
+</Page>

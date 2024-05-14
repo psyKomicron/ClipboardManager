@@ -9,6 +9,12 @@ clipmgr::ClipboardAction::ClipboardAction(const std::wstring& label, const std::
 
 }
 
+std::vector<clipmgr::ClipboardAction> clipmgr::ClipboardAction::loadClipboardActions(const std::filesystem::path& userFilePath)
+{
+    //TODO: implement.
+    return {};
+}
+
 std::wstring clipmgr::ClipboardAction::label() const
 {
     return _label;

@@ -107,6 +107,7 @@
     <Page Include="MainPage.xaml" />
     <Page Include="ClipboardActionView.xaml" />
     <Page Include="HostControl.xaml" />
+    <Page Include="SettingsPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

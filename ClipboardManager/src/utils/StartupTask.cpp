@@ -19,11 +19,6 @@ bool clipmgr::utils::StartupTask::isTaskRegistered()
         nullptr, 
         nullptr);
 
-    if (lresult != ERROR_SUCCESS)
-    {
-        std::wcerr << L"[StartupTask]   Startup task for 'ClipboardManagerV2AutoLaunch' is not registered: " << lresult << std::endl;
-    }
-
     return lresult == ERROR_SUCCESS;
 }
 
