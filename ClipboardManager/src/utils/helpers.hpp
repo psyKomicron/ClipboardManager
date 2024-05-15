@@ -34,18 +34,38 @@ namespace clipmgr::utils
     class managed_resource
     {
     public:
+        managed_resource() = default;
+
         managed_resource(const T& value, const DeleterT& closer):
             value{value},
-            closer{closer}
+            closer{closer},
+            hasValue{true}
         {
         }
+
+        managed_resource(managed_resource&) = delete;
 
         ~managed_resource()
         {
-            closer(value);
+            if (hasValue)
+            {
+                closer(value);
+            }
+        }
+
+        T& get()
+        {
+            return value;
+        }
+
+        T release()
+        {
+            hasValue = false;
+            return value;
         }
 
     private:
+        bool hasValue = false;
         T value{};
         DeleterT closer{};
     };
@@ -60,4 +80,5 @@ namespace clipmgr::utils
 
     void createDirectory(const std::filesystem::path& path);
 
+    std::optional<std::filesystem::path> tryGetKnownFolderPath(const GUID& knownFolderId);
 }

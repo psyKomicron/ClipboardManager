@@ -2,6 +2,7 @@
 #include "helpers.hpp"
 
 #include <Shlwapi.h>
+#include <ShlObj.h>
 
 #include <format>
 #include <string>
@@ -24,11 +25,6 @@ bool clipmgr::utils::pathExists(const std::filesystem::path& path)
 
 clipmgr::utils::managed_file_handle clipmgr::utils::createFile(const std::filesystem::path& path)
 {
-    /*if (!pathExists(path.parent_path()))
-    {
-        throw std::runtime_error(std::format("'{}' Path doesn't exist", path.parent_path().string()));
-    }*/
-
     auto handle = CreateFileW(path.wstring().c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW, 0, nullptr);
 
     if (handle == INVALID_HANDLE_VALUE)
@@ -44,6 +40,21 @@ void clipmgr::utils::createDirectory(const std::filesystem::path& path)
     if (!CreateDirectoryW(path.wstring().c_str(), nullptr))
     {
         throw std::runtime_error(std::format("Failed to create directory (CreateDirectoryW returned false): '{}'", path.string()));
+    }
+}
+
+std::optional<std::filesystem::path> clipmgr::utils::tryGetKnownFolderPath(const GUID& knownFolderId)
+{
+    wchar_t* pWstr = nullptr;
+    if (SHGetKnownFolderPath(FOLDERID_Documents, KF_FLAG_DEFAULT, nullptr, &pWstr) == S_OK && pWstr != nullptr)
+    {
+        // RAII pWstr.
+        std::unique_ptr<wchar_t, std::function<void(void*)>> ptr{ pWstr, CoTaskMemFree };
+        return std::filesystem::path(pWstr);
+    }
+    else
+    {
+        return std::optional<std::filesystem::path>();
     }
 }
 

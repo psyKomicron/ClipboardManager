@@ -12,6 +12,8 @@
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.ApplicationModel.h>
 
+#include <boost/property_tree/xml_parser.hpp>
+
 #include <iostream>
 
 namespace impl = winrt::ClipboardManager::implementation;
@@ -27,20 +29,18 @@ impl::MainPage::MainPage()
 {
 }
 
+winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> winrt::ClipboardManager::implementation::MainPage::Actions()
+{
+    return clipboardActionViews;
+}
+
+void winrt::ClipboardManager::implementation::MainPage::Actions(const winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView>& value)
+{
+    clipboardActionViews = value;
+}
+
 winrt::Windows::Foundation::IAsyncAction impl::MainPage::Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const&, winrt::Windows::Foundation::IInspectable const&)
 {
-    //TODO: Implement settings "page".
-    try
-    {
-        clipmgr::Settings settings{};
-        settings.open();
-        actions = settings.getClipboardActions();
-    }
-    catch (std::runtime_error err)
-    {
-        std::cout << "[MainPage]  Error while opening settings: " << err.what() << std::endl;
-    }
-
     auto&& clipboardHistory = co_await winrt::Clipboard::GetHistoryItemsAsync();
     for (auto&& item : clipboardHistory.Items())
     {
@@ -49,16 +49,32 @@ winrt::Windows::Foundation::IAsyncAction impl::MainPage::Page_Loading(winrt::Mic
     }
 
     clipboardContentChangedrevoker = winrt::Clipboard::ContentChanged(winrt::auto_revoke, { this, &MainPage::ClipboardContent_Changed });
+
+    //TODO: Get user file path from settings and ask user to create user file if it doesn't exist (in known locations).
+    clipmgr::Settings settings{};
+    std::wstring userFilePath = settings.get<std::wstring>(L"UserFilePath").value_or(L"c:\\users\\julie\\documents\\clipboard manager\\user_file.xml");
+    actions = clipmgr::ClipboardAction::loadClipboardActions(userFilePath);
+
+    std::wstring actionMessage = L"[MainPage]   ";
+    size_t headerSize = actionMessage.size();
+    actionMessage += L"Available actions: ";
+    for (auto&& action : actions)
+    {
+        actionMessage += L"\n" + std::wstring(headerSize, L' ') + L"- " + action.label() + L": " + action.regex().str();
+    }
+    std::wcout << actionMessage << std::endl;
 }
 
-winrt::async impl::MainPage::ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args)
+winrt::async impl::MainPage::ClipboardContent_Changed(const winrt::IInspectable&, const winrt::IInspectable&)
 {
     auto clipboardContent = winrt::Clipboard::GetContent();
     if (clipboardContent.Contains(winrt::StandardDataFormats::Text()))
     {
+        std::wcout << L"[MainPage]   Clipboard text changed." << std::endl;
+
         auto&& text = co_await clipboardContent.GetTextAsync();
         if (ListView().Items().Size() == 0
-            || text != ListView().Items().GetAt(0).as<ClipboardManager::ClipboardActionView>().Text())
+            || text != clipboardActionViews.GetAt(0).Text())
         {
             auto actionView = winrt::make<::impl::ClipboardActionView>(text);
 
@@ -74,10 +90,43 @@ winrt::async impl::MainPage::ClipboardContent_Changed(const winrt::Windows::Foun
 
             if (hasMatch)
             {
-                ListView().Items().InsertAt(0, actionView);
+                clipboardActionViews.InsertAt(0, actionView);
+            }
+            else
+            {
+                std::wcout << L"[MainPage]   No matching actions found for '" << std::wstring(text) << L"'. Actions " << (actions.empty() ? L"not loaded" : L"loaded") << std::endl;
             }
         }
+        else
+        {
+            std::wcout << L"[MainPage]   Clipboard action is already added (" << std::wstring(text) << L")." << std::endl;
+        }
     }
+}
+
+void impl::MainPage::App_Closing(const winrt::Windows::Foundation::IInspectable&, const winrt::Windows::Foundation::IInspectable&)
+{
+    clipmgr::Settings settings{};
+    auto userFileOptional = settings.get<std::wstring>(L"UserFilePath");
+
+    /*if (userFileOptional.has_value())
+    {
+        
+    }*/
+
+    std::filesystem::path path{ userFileOptional.value_or(L"c:\\users\\julie\\documents\\clipboardmanager\\user_file.xml") };
+
+    boost::property_tree::wptree tree{};
+    boost::property_tree::read_xml(path.string(), tree);
+
+    tree.erase(L"settings.history");
+
+    for (auto&& view : clipboardActionViews)
+    {
+        tree.add(L"history.item", std::wstring(view.Text()));
+    }
+
+    boost::property_tree::write_xml(path.string(), tree);
 }
 
 

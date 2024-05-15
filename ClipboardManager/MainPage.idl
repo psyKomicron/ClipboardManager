@@ -1,8 +1,11 @@
+import "ClipboardActionView.idl";
+
 namespace ClipboardManager
 {
     [default_interface]
     runtimeclass MainPage : Microsoft.UI.Xaml.Controls.Page
     {
         MainPage();
+        IObservableVector<ClipboardActionView> Actions;
     }
 }

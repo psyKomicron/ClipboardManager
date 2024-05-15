@@ -4,6 +4,7 @@
 
 #include "src/utils/helpers.hpp"
 #include "src/utils/Console.hpp"
+#include "src/Settings.hpp"
 
 #include "App.xaml.h"
 #include "MainPage.h"
@@ -12,10 +13,11 @@
 
 #include <memory>
 #include <iostream>
-#include <src/utils/StartupTask.hpp>
+#include <chrono>
 
 #define MAX_LOADSTRING 100
 
+#pragma region Header
 constexpr uint32_t InitialWindowWidth = 440;
 constexpr uint32_t InitialWindowHeight = 700;
 
@@ -52,11 +54,43 @@ struct WindowInfo
     winrt::event_token takeFocusRequestedToken{};
     HWND lastFocusedWindow{ nullptr };
 };
-
+#pragma endregion
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int nCmdShow)
 {
     clipmgr::utils::Console console{};
+
+    try
+    {
+        clipmgr::Settings settings{};
+
+        for (auto&& entry : settings.getAll())
+        {
+            switch (static_cast<clipmgr::RegTypes>(entry.second.index()))
+            {
+                case clipmgr::RegTypes::String:
+                    std::wcout << entry.first << L" : " << std::get<std::wstring>(entry.second) << std::endl;
+                    break;
+
+                case clipmgr::RegTypes::Uint32:
+                    std::wcout << entry.first << L" : " << std::get<uint32_t>(entry.second) << std::endl;
+                    break;
+                case clipmgr::RegTypes::Uint64:
+                    std::wcout << entry.first << L" : " << std::get<uint64_t>(entry.second) << std::endl;
+                    break;
+            }
+        }
+
+        settings.insert(L"LastStart", std::format(L"{:%Y/%m/%d %H:%M}", std::chrono::system_clock::now()));
+    }
+    catch (wil::ResultException ex)
+    {
+        std::cout << "wil::ResultException   " << ex.what() << std::endl;
+    }
+    catch (std::exception ex)
+    {
+        std::cout << ex.what() << std::endl;
+    }
 
     try
     {

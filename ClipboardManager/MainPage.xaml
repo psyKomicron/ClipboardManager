@@ -79,8 +79,52 @@
                 <PivotItem.Header>
                     <FontIcon Glyph="&#xf6fa;" FontSize="16"/>
                 </PivotItem.Header>
-                
-                <ListView x:Name="ListView" SelectionMode="None"/>
+
+                <Grid>
+                    <Grid x:Name="CreateActionsGrid" Padding="5,0,5,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <InfoBar 
+                            Severity="Warning" 
+                            Grid.Row="0" 
+                            Title="No clipboard actions have been created, please create at least one action to use clipboard actions."
+                            IsOpen="True"
+                            IsClosable="False"/>
+                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Create action" Margin="0,12,0,0" Grid.Row="1"/>
+                        <StackPanel Grid.Row="2" Spacing="15" Background="{ThemeResource SubtleFillColorTertiaryBrush}" Padding="16" CornerRadius="{StaticResource ControlCornerRadius}">
+                            <Grid RowSpacing="3">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="Label"/>
+                                <TextBox Grid.Row="1"/>
+                            </Grid>
+                            <Grid RowSpacing="3">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="Format"/>
+                                <TextBox Grid.Row="1"/>
+                            </Grid>
+                            <Grid RowSpacing="3">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="Regex"/>
+                                <TextBox Grid.Row="1"/>
+                            </Grid>
+                            <Button Style="{StaticResource AccentButtonStyle}" Content="Add" HorizontalAlignment="Right" Padding="16,5,16,7"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <ListView x:Name="ListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Visibility="Collapsed"/>
+                </Grid>
             </PivotItem>
         </Pivot>
     </Grid>

@@ -5,6 +5,7 @@
 #endif
 
 #include "src/utils/StartupTask.hpp"
+#include "src/Settings.hpp"
 
 namespace impl = winrt::ClipboardManager::implementation;
 namespace winrt
@@ -20,6 +21,10 @@ void impl::SettingsPage::Page_Loading(winrt::FrameworkElement const&, winrt::IIn
 {
     clipmgr::utils::StartupTask startupTask{};
     AutoStartToggleSwitch().IsOn(startupTask.isTaskRegistered());
+
+    clipmgr::Settings settings{};
+    SaveMatchingResultsToggleSwitch().IsOn(settings.get<bool>(L"SaveMatchingResults").value_or(false));
+    StartMinimizedToggleSwitch().IsOn(settings.get<bool>(L"StartWindowMinimized").value_or(false));
 }
 
 void impl::SettingsPage::Page_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
@@ -30,8 +35,8 @@ void impl::SettingsPage::Page_Loaded(winrt::IInspectable const&, winrt::RoutedEv
 void impl::SettingsPage::AutoStartToggleSwitch_Toggled(winrt::IInspectable const& s, winrt::RoutedEventArgs const&)
 {
     check_loaded(loaded);
-
     auto sender = s.as<winrt::ToggleSwitch>();
+
     clipmgr::utils::StartupTask startupTask{};
     if (!startupTask.isTaskRegistered() && sender.IsOn())
     {
@@ -43,3 +48,22 @@ void impl::SettingsPage::AutoStartToggleSwitch_Toggled(winrt::IInspectable const
     }
 }
 
+void impl::SettingsPage::StartMinimizedToggleSwitch_Toggled(winrt::IInspectable const& s, winrt::RoutedEventArgs const&)
+{
+    check_loaded(loaded);
+    updateSetting(s, L"StartWindowMinimized");
+}
+
+void impl::SettingsPage::SaveMatchingResultsToggleSwitch_Toggled(winrt::IInspectable const& s, winrt::RoutedEventArgs const&)
+{
+    check_loaded(loaded);
+    updateSetting(s, L"SaveMatchingResults");
+}
+
+
+void winrt::ClipboardManager::implementation::SettingsPage::updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key)
+{
+    auto sender = s.as<winrt::ToggleSwitch>();
+    clipmgr::Settings settings{};
+    settings.insert(key, sender.IsOn());
+}

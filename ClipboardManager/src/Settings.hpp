@@ -1,44 +1,79 @@
 #pragma once
 #include "ClipboardAction.hpp"
 
-#include <winrt/Windows.Storage.h>
-
-#include <boost/property_tree/ptree.hpp>
+#include <wil/registry.h>
 
 #include <string>
 #include <vector>
-#include <filesystem>
+#include <variant>
+#include <map>
 
 namespace clipmgr
 {
-    enum class SettingsConstants;
+    using reg_types = std::variant<std::wstring, std::vector<std::wstring>, uint32_t, uint64_t>;
+
+    enum class RegTypes
+    {
+        String = 0,
+        StringVector = 1,
+        Uint32 = 2,
+        Uint64 = 3
+    };
 
     class Settings
     {
     public:
-        Settings() = default;
+        Settings();
 
-        void open();
+        std::optional<std::wstring> getString(const std::wstring& key);
 
-        std::wstring getString();
+        template<typename T>
+        std::optional<T> get(const std::wstring& key)
+        {
+            return getValue<T>(key);
+        }
 
-        std::vector<ClipboardAction> getClipboardActions();
+        void insert(const std::wstring& key, const std::wstring& value);
+        void insert(const std::wstring& key, const bool& value);
+
+        std::vector<std::pair<std::wstring, clipmgr::reg_types>> getAll();
 
     private:
-        const std::wstring APPLICATION_NAME = L"Clipboard Manager";
-        const std::wstring DEFAULT_USER_FILE_NAME = L"user_file.xml";
-        boost::property_tree::wptree tree{};
-        bool empty = true;
+        const std::wstring applicationName = L"ClipboardManagerV2";
+        wil::unique_hkey hKey{ nullptr };
 
-        std::filesystem::path getDefaultUserFileFolder() const;
-        void firstTimeInitialization(const std::filesystem::path& userFilePath);
-    };
+        template<typename T>
+        std::optional<T> getValue(const std::wstring& key)
+        {
+            return std::optional<T>();
+        }
 
-    enum class SettingsConstants
-    {
-        UserFilePath,
-        WindowPosition,
+        template<>
+        std::optional<std::wstring> getValue(const std::wstring& key)
+        {
+            return wil::reg::try_get_value_string(hKey.get(), key.c_str());
+        }
 
+        template<>
+        std::optional<uint32_t> getValue(const std::wstring& key)
+        {
+            return wil::reg::try_get_value_dword(hKey.get(), key.c_str());
+        }
+
+        template<>
+        std::optional<bool> getValue(const std::wstring& key)
+        {
+            std::optional<uint32_t> dword = wil::reg::try_get_value_dword(hKey.get(), key.c_str());
+
+            if (dword.has_value())
+            {
+                return dword.value() == 1;
+            }
+            else
+            {
+                return std::optional<bool>();
+            }
+        }
     };
 }
 

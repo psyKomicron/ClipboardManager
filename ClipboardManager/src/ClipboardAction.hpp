@@ -1,5 +1,6 @@
 #pragma once
 #include <boost/regex.hpp>
+#include <boost/property_tree/ptree.hpp>
 
 #include <vector>
 #include <filesystem>
@@ -12,6 +13,7 @@ namespace clipmgr
         ClipboardAction(const std::wstring& label, const std::wstring& format, const std::wstring& regexString);
 
         static std::vector<ClipboardAction> loadClipboardActions(const std::filesystem::path& userFilePath);
+        static void createSaveFile(const std::filesystem::path& userFilePath);
 
         std::wstring label() const;
         std::wstring format() const;
@@ -24,6 +26,7 @@ namespace clipmgr
         std::wstring _format{};
         boost::wregex _regex{};
 
+        static void firstTimeInitialization(const std::filesystem::path& path, boost::property_tree::wptree tree);
         boost::wregex createRegex(const std::wstring& string);
     };
 }

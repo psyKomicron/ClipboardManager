@@ -23,27 +23,12 @@
 
         <local:HostControl Header="Save matching results">
             <local:HostControl.HostContent>
-                <ToggleSwitch/>
+                <ToggleSwitch x:Name="SaveMatchingResultsToggleSwitch" Toggled="SaveMatchingResultsToggleSwitch_Toggled"/>
             </local:HostControl.HostContent>
         </local:HostControl>
 
 
         <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Formatting" Margin="0,12,0,0"/>
-        <local:HostControl Header="Default url formatting protocol">
-            <local:HostControl.HostContent>
-                <ComboBox MinWidth="100" SelectedIndex="0">
-                    <ComboBoxItem>https</ComboBoxItem>
-                    <ComboBoxItem>http</ComboBoxItem>
-                    <ComboBoxItem>None</ComboBoxItem>
-                </ComboBox>
-            </local:HostControl.HostContent>
-        </local:HostControl>
-
-        <local:HostControl Header="Use default browser">
-            <local:HostControl.HostContent>
-                <ToggleSwitch/>
-            </local:HostControl.HostContent>
-        </local:HostControl>
 
 
         <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Window" Margin="0,12,0,0"/>
@@ -67,7 +52,7 @@
                 </Grid>
             </local:HostControl.Header>
             <local:HostControl.HostContent>
-                <ToggleSwitch />
+                <ToggleSwitch x:Name="StartMinimizedToggleSwitch" Toggled="StartMinimizedToggleSwitch_Toggled"/>
             </local:HostControl.HostContent>
         </local:HostControl>
     </StackPanel>

@@ -54,9 +54,6 @@ void impl::ClipboardActionView::AddAction(const winrt::hstring& format, const wi
 
 void impl::ClipboardActionView::UserControl_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const&, winrt::Windows::Foundation::IInspectable const&)
 {
-    clipmgr::Settings settings{};
-    settings.open();
-
     // Create buttons for actions:
     for (auto&& action : actions)
     {
