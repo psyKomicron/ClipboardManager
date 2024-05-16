@@ -9,6 +9,7 @@
 #include <winrt/Windows.Storage.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.System.h>
+#include <winrt/Windows.ApplicationModel.DataTransfer.h>
 
 #include <vector>
 
@@ -20,6 +21,7 @@ namespace winrt
     using namespace winrt::Microsoft::UI::Xaml::Controls;
     using namespace winrt::Windows::Foundation;
     using namespace winrt::Windows::System;
+    using namespace winrt::Windows::ApplicationModel::DataTransfer;
 }
 
 impl::ClipboardActionView::ClipboardActionView()
@@ -44,6 +46,16 @@ winrt::hstring impl::ClipboardActionView::Text() const
 void impl::ClipboardActionView::Text(const winrt::hstring& value)
 {
     _text = value;
+}
+
+winrt::event_token impl::ClipboardActionView::Removed(const event_removed_t& handler)
+{
+    return e_removed.add(handler);
+}
+
+void impl::ClipboardActionView::Removed(const winrt::event_token& token)
+{
+    e_removed.remove(token);
 }
 
 void impl::ClipboardActionView::AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex)
@@ -82,4 +94,16 @@ void impl::ClipboardActionView::HyperlinkButton_Click(winrt::Windows::Foundation
             }
         }
     }
+}
+
+void impl::ClipboardActionView::FormatLinkButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    /*winrt::DataPackage dataPackage{};
+    dataPackage.SetText(std::vformat(action.format(), std::make_wformat_args(std::wstring(_text))));
+    winrt::Clipboard::SetContent()*/
+}
+
+void impl::ClipboardActionView::RemoveActionButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    e_removed(*this, nullptr);
 }

@@ -1,4 +1,6 @@
 #pragma once
+#include <atomic>
+
 namespace clipmgr::utils
 {
     class Console
@@ -9,9 +11,13 @@ namespace clipmgr::utils
 
         void test();
 
+        static bool initialized();
+
     private:
-        using file_t = FILE*;
+        static std::atomic_bool consoleInitialized;
         bool consoleAllocated = false;
+
+        using file_t = FILE*;
 
         void redirectConsole();
         void releaseConsole();

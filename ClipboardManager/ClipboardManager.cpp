@@ -35,8 +35,6 @@ namespace winrt
 WCHAR szTitle[MAX_LOADSTRING];// The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];// the main window class name
 
-struct WindowInfo;
-
 // Forward declarations of functions included in this code module:
 ATOM MyRegisterClass(HINSTANCE hInstance);
 HWND InitInstance(HINSTANCE, int);
@@ -45,15 +43,8 @@ INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
 winrt::DispatcherQueueController initIslandApp();
 bool processMessageForTabNav(const HWND& window, MSG& msg);
-void createWinUIWindow(WindowInfo* windowInfo, const HWND& windowHandle);
-void handleWindowActivation(WindowInfo* windowInfo, const bool& inactive);
-
-struct WindowInfo
-{
-    winrt::DesktopWindowXamlSource desktopWinXamlSrc{ nullptr };
-    winrt::event_token takeFocusRequestedToken{};
-    HWND lastFocusedWindow{ nullptr };
-};
+void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windowHandle);
+void handleWindowActivation(clipmgr::utils::WindowInfo* windowInfo, const bool& inactive);
 #pragma endregion
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int nCmdShow)
@@ -193,7 +184,7 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(hWnd, GWLP_USERDATA));
+    clipmgr::utils::WindowInfo* windowInfo = clipmgr::utils::getWindowInfo(hWnd);
 
     switch (message)
     {
@@ -327,7 +318,7 @@ bool processMessageForTabNav(const HWND& window, MSG& msg)
         const bool isShiftKeyDown = (GetKeyState(VK_SHIFT) & (1 << 15)) != 0;
         const HWND nextFocusedWindow = ::GetNextDlgTabItem(window, focusedWindow, isShiftKeyDown);
 
-        WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(window, GWLP_USERDATA));
+        clipmgr::utils::WindowInfo* windowInfo = clipmgr::utils::getWindowInfo(window);
         const HWND dwxsWindow = winrt::GetWindowFromWindowId(windowInfo->desktopWinXamlSrc.SiteBridge().WindowId());
 
         if (dwxsWindow == nextFocusedWindow)
@@ -349,20 +340,18 @@ bool processMessageForTabNav(const HWND& window, MSG& msg)
     return false;
 }
 
-void createWinUIWindow(WindowInfo* windowInfo, const HWND& windowHandle)
+void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windowHandle)
 {
     assert(windowInfo == nullptr);
 
-    windowInfo = new WindowInfo();
+    windowInfo = new clipmgr::utils::WindowInfo();
     SetWindowLongPtrW(windowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(windowInfo));
 
     windowInfo->desktopWinXamlSrc = winrt::DesktopWindowXamlSource();
     windowInfo->desktopWinXamlSrc.Initialize(winrt::GetWindowIdFromWindow(windowHandle));
 
     // Enable the DesktopWindowXamlSource to be a tab stop.
-    SetWindowLong(winrt::GetWindowFromWindowId(windowInfo->desktopWinXamlSrc.SiteBridge().WindowId()),
-        GWL_STYLE,
-        WS_TABSTOP | WS_CHILD | WS_VISIBLE);
+    SetWindowLong(winrt::GetWindowFromWindowId(windowInfo->desktopWinXamlSrc.SiteBridge().WindowId()), GWL_STYLE, WS_TABSTOP | WS_CHILD | WS_VISIBLE);
 
     // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
     windowInfo->desktopWinXamlSrc.Content(winrt::make<winrt::ClipboardManager::implementation::MainPage>());
@@ -402,7 +391,7 @@ void createWinUIWindow(WindowInfo* windowInfo, const HWND& windowHandle)
     });*/
 }
 
-void handleWindowActivation(WindowInfo * windowInfo, const bool & inactive)
+void handleWindowActivation(clipmgr::utils::WindowInfo * windowInfo, const bool & inactive)
 {
     if (inactive)
     {

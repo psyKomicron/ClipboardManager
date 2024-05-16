@@ -125,11 +125,11 @@
                 </Style>
             </Grid.Resources>
 
-            <Button Grid.Column="0">
+            <Button Grid.Column="0" Click="FormatLinkButton_Click" x:Uid="FormatLinkButton">
                 <FontIcon Glyph="&#xe71b;" FontSize="16"/>
             </Button>
 
-            <Button Grid.Column="1">
+            <Button Grid.Column="1" Click="RemoveActionButton_Click" x:Uid="RemoveActionButton">
                 <FontIcon Glyph="&#xe74d;" FontSize="16"/>
             </Button>
         </Grid>

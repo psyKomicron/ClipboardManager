@@ -5,8 +5,12 @@
 
 #include <iostream>
 
+std::atomic_bool clipmgr::utils::Console::consoleInitialized = false;
+
 clipmgr::utils::Console::Console()
 {
+    if (consoleInitialized) return;
+
     releaseConsole();
 
     if (!AllocConsole())
@@ -18,6 +22,8 @@ clipmgr::utils::Console::Console()
     redirectConsole();
 
     MoveWindow(GetConsoleWindow(), 100, 100, 1000, 600, TRUE);
+
+    consoleInitialized = true;
 }
 
 clipmgr::utils::Console::~Console()
@@ -31,6 +37,11 @@ clipmgr::utils::Console::~Console()
 void clipmgr::utils::Console::test()
 {
     std::wcout << L"Console test" << std::endl;
+}
+
+bool clipmgr::utils::Console::initialized()
+{
+    return consoleInitialized;
 }
 
 void clipmgr::utils::Console::redirectConsole()

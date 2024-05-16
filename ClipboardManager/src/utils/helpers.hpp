@@ -4,6 +4,16 @@
 #include <filesystem>
 #include <functional>
 
+namespace winrt
+{
+    using namespace winrt::Microsoft::UI;
+    using namespace winrt::Microsoft::UI::Dispatching;
+    using namespace winrt::Microsoft::UI::Xaml;
+    using namespace winrt::Microsoft::UI::Xaml::Hosting;
+    using namespace winrt::Microsoft::UI::Xaml::Markup;
+    using namespace winrt::Microsoft::UI::Windowing;
+}
+
 namespace clipmgr::utils
 {
     class managed_dispatcher_queue_controller
@@ -70,9 +80,16 @@ namespace clipmgr::utils
         DeleterT closer{};
     };
 
-    winrt::Microsoft::UI::Windowing::AppWindow getCurrentAppWindow();
+    struct WindowInfo
+    {
+        winrt::DesktopWindowXamlSource desktopWinXamlSrc{ nullptr };
+        winrt::event_token takeFocusRequestedToken{};
+        HWND lastFocusedWindow{ nullptr };
+    };
+
+    winrt::AppWindow getCurrentAppWindow();
     
-    winrt::Microsoft::UI::Windowing::AppWindow getCurrentAppWindow(const HWND& hwnd);
+    winrt::AppWindow getCurrentAppWindow(const HWND& hwnd);
     
     bool pathExists(const std::filesystem::path& path);
     
@@ -81,4 +98,6 @@ namespace clipmgr::utils
     void createDirectory(const std::filesystem::path& path);
 
     std::optional<std::filesystem::path> tryGetKnownFolderPath(const GUID& knownFolderId);
+
+    WindowInfo* getWindowInfo(const HWND& windowHandle);
 }

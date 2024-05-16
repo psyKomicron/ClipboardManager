@@ -19,11 +19,11 @@ std::vector<clipmgr::ClipboardAction> clipmgr::ClipboardAction::loadClipboardAct
 {
     if (utils::pathExists(userFilePath))
     {
-        boost::property_tree::wptree tree{};
         std::vector<clipmgr::ClipboardAction> urls{};
+        boost::property_tree::wptree tree{};
+
         try
         {
-
             std::wcout << L"[ClipboardAction]   Reading user clipboard actions file '" << userFilePath.wstring() << L"'" << std::endl;
             boost::property_tree::read_xml(userFilePath.string(), tree);
 
@@ -44,6 +44,7 @@ std::vector<clipmgr::ClipboardAction> clipmgr::ClipboardAction::loadClipboardAct
                 firstTimeInitialization(userFilePath, tree);
             }
         }
+        
         return urls;
     }
     else
@@ -52,15 +53,12 @@ std::vector<clipmgr::ClipboardAction> clipmgr::ClipboardAction::loadClipboardAct
     }
 }
 
-void clipmgr::ClipboardAction::createSaveFile(const std::filesystem::path& userFilePath)
+void clipmgr::ClipboardAction::initializeSaveFile(const std::filesystem::path& userFilePath)
 {
-    boost::property_tree::wptree tree{};
-
-    if (!clipmgr::utils::pathExists(userFilePath) && clipmgr::utils::pathExists(userFilePath.parent_path()))
+    if (clipmgr::utils::pathExists(userFilePath) && clipmgr::utils::pathExists(userFilePath.parent_path()))
     {
-        std::ignore = clipmgr::utils::createFile(userFilePath);
+        boost::property_tree::wptree tree{};
         firstTimeInitialization(userFilePath, tree);
-        std::wcout << L"[ClipboardAction]   " << std::quoted(userFilePath.wstring()) << L" User file created." << std::endl;
     }
     else
     {

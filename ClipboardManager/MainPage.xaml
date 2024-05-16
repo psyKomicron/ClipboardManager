@@ -15,6 +15,26 @@
             <RowDefinition Height="33"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="NormalActions"/>
+                <VisualState x:Name="NoClipboardActions">
+                    <VisualState.Setters>
+                        <Setter Target="ListView.Visibility" Value="Collapsed"/>
+                        <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="OpenSaveFile">
+                    <VisualState.Setters>
+                        <Setter Target="ListView.Visibility" Value="Collapsed"/>
+                        <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="False"/>
+                        <Setter Target="OpenSaveFileInfoBar.IsOpen" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
         <Border 
             CornerRadius="2" 
             Height="2"
@@ -35,7 +55,7 @@
                 </Frame>
             </PivotItem>
             
-            <PivotItem Margin="0">
+            <PivotItem Margin="0" Padding="0">
                 <PivotItem.Header>
                     <FontIcon Glyph="&#xf0e3;" FontSize="16"/>
                 </PivotItem.Header>
@@ -77,53 +97,85 @@
 
             <PivotItem Padding="0" Margin="0">
                 <PivotItem.Header>
+                    <FontIcon Glyph="&#xe8fd;" FontSize="16"/>
+                </PivotItem.Header>
+
+                <ListView x:Name="ClipboardActionsListView" Margin="0" Padding="0" SelectionMode="None">
+                    <ListView.Resources>
+                        <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                            <Setter Property="Padding" Value="7,3,7,7" />
+                        </Style>
+                    </ListView.Resources>
+                    <Grid
+                        Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                        Padding="16,10,16,16"
+                        CornerRadius="{StaticResource ControlCornerRadius}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Style="{StaticResource BodyStrongTextBlockStyle}" FontSize="22" VerticalAlignment="Center" Text="Youtube"/>
+                        <TextBlock Grid.Row="1" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,10,0,3" Text="Format"/>
+                        <TextBlock Grid.Row="2" Margin="7,0,0,0" VerticalAlignment="Center" Text="https://example-namespace.com/search?={}"/>
+                        <TextBlock Grid.Row="3" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,7,0,3" Text="Regex"/>
+                        <TextBlock Grid.Row="4" Margin="7,0,0,0" VerticalAlignment="Center" Text="(?! )([0-9]{,3})"/>
+
+                        <Border Width="2" VerticalAlignment="Stretch" Margin="0,4" Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}" Grid.Column="1"/>
+
+                        <Button Grid.Column="2">
+                            <FontIcon FontSize="18" Glyph="&#xe74e;"/>
+                        </Button>
+                    </Grid>
+                </ListView>
+            </PivotItem>
+
+            <PivotItem Padding="0" Margin="0">
+                <PivotItem.Header>
                     <FontIcon Glyph="&#xf6fa;" FontSize="16"/>
                 </PivotItem.Header>
 
-                <Grid>
-                    <Grid x:Name="CreateActionsGrid" Padding="5,0,5,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <InfoBar 
-                            Severity="Warning" 
-                            Grid.Row="0" 
-                            Title="No clipboard actions have been created, please create at least one action to use clipboard actions."
-                            IsOpen="True"
-                            IsClosable="False"/>
-                        <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Create action" Margin="0,12,0,0" Grid.Row="1"/>
-                        <StackPanel Grid.Row="2" Spacing="15" Background="{ThemeResource SubtleFillColorTertiaryBrush}" Padding="16" CornerRadius="{StaticResource ControlCornerRadius}">
-                            <Grid RowSpacing="3">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="Label"/>
-                                <TextBox Grid.Row="1"/>
+                <Grid Padding="5,3,5,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <InfoBar 
+                        x:Name="NoClipboardActionsInfoBar"
+                        x:Uid="NoClipboardActionsInfoBar"
+                        Severity="Warning" 
+                        Grid.Row="0"
+                        IsClosable="False">
+                        <InfoBar.Content>
+                            <Grid Padding="0,0,0,5" ColumnSpacing="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <HyperlinkButton Grid.Column="0" x:Uid="LocateButton" HorizontalAlignment="Stretch" Click="LocateUserFileButton_Click"/>
+                                <HyperlinkButton Grid.Column="1" x:Uid="CreateButton" HorizontalAlignment="Stretch" Click="CreateUserFileButton_Click"/>
                             </Grid>
-                            <Grid RowSpacing="3">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="Format"/>
-                                <TextBox Grid.Row="1"/>
-                            </Grid>
-                            <Grid RowSpacing="3">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="Regex"/>
-                                <TextBox Grid.Row="1"/>
-                            </Grid>
-                            <Button Style="{StaticResource AccentButtonStyle}" Content="Add" HorizontalAlignment="Right" Padding="16,5,16,7"/>
-                        </StackPanel>
-                    </Grid>
+                        </InfoBar.Content>
+                    </InfoBar>
+                    
+                    <InfoBar 
+                        x:Name="OpenSaveFileInfoBar"
+                        x:Uid="OpenSaveFileInfoBar"
+                        Severity="Success" 
+                        Grid.Row="0">
+                        <InfoBar.Content>
+                            <HyperlinkButton x:Uid="OpenSaveFileButton" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5"/>
+                        </InfoBar.Content>
+                    </InfoBar>
 
-                    <ListView x:Name="ListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Visibility="Collapsed"/>
+                    <ListView x:Name="ListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Visibility="Collapsed" Padding="0" Margin="0" Grid.Row="1"/>
                 </Grid>
             </PivotItem>
         </Pivot>

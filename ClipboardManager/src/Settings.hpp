@@ -1,6 +1,8 @@
 #pragma once
 #include "ClipboardAction.hpp"
 
+#include "utils/Logger.hpp"
+
 #include <wil/registry.h>
 
 #include <string>
@@ -37,10 +39,12 @@ namespace clipmgr
         void insert(const std::wstring& key, const bool& value);
 
         std::vector<std::pair<std::wstring, clipmgr::reg_types>> getAll();
+        void clear();
 
     private:
         const std::wstring applicationName = L"ClipboardManagerV2";
         wil::unique_hkey hKey{ nullptr };
+        utils::Logger logger{ L"Settings" };
 
         template<typename T>
         std::optional<T> getValue(const std::wstring& key)
@@ -74,6 +78,8 @@ namespace clipmgr
                 return std::optional<bool>();
             }
         }
+
+        void clearKey(HKEY hkey);
     };
 }
 

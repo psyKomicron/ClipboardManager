@@ -51,6 +51,9 @@
     <ClInclude Include="src\utils\StartupTask.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\utils\Logger.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipboardManager.cpp">
@@ -86,6 +89,9 @@
     <ClCompile Include="src\utils\StartupTask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ClipboardManager.rc">
@@ -117,5 +123,8 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\..\..\..\..\Documents\Clipboard Manager\user_file.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Resources.lang-en-us.resw" />
   </ItemGroup>
 </Project>

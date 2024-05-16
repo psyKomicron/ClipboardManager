@@ -13,7 +13,7 @@ namespace clipmgr
         ClipboardAction(const std::wstring& label, const std::wstring& format, const std::wstring& regexString);
 
         static std::vector<ClipboardAction> loadClipboardActions(const std::filesystem::path& userFilePath);
-        static void createSaveFile(const std::filesystem::path& userFilePath);
+        static void initializeSaveFile(const std::filesystem::path& userFilePath);
 
         std::wstring label() const;
         std::wstring format() const;

@@ -58,6 +58,11 @@ std::optional<std::filesystem::path> clipmgr::utils::tryGetKnownFolderPath(const
     }
 }
 
+clipmgr::utils::WindowInfo* clipmgr::utils::getWindowInfo(const HWND& windowHandle)
+{
+    return reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(windowHandle, GWLP_USERDATA));
+}
+
 
 clipmgr::utils::managed_dispatcher_queue_controller::managed_dispatcher_queue_controller(const winrt::Microsoft::UI::Dispatching::DispatcherQueueController& controller)
 {

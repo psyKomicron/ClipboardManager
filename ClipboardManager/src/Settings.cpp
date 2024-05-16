@@ -1,11 +1,14 @@
 #include "pch.h"
 #include "Settings.hpp"
 
+#include <wil/registry_helpers.h>
+
 #include <iostream>
 
 clipmgr::Settings::Settings()
 {
-    hKey = wil::reg::create_unique_key(HKEY_CURRENT_USER, applicationName.c_str(), wil::reg::key_access::readwrite);
+    hKey = wil::reg::create_unique_key(HKEY_CURRENT_USER, (L"SOFTWARE\\" + applicationName).c_str(), wil::reg::key_access::readwrite);
+    logger.debug(L"Opened registry node for application settings.");
 }
 
 std::optional<std::wstring> clipmgr::Settings::getString(const std::wstring& key)
@@ -27,8 +30,9 @@ std::vector<std::pair<std::wstring, clipmgr::reg_types>> clipmgr::Settings::getA
 {
     std::vector<std::pair<std::wstring, clipmgr::reg_types>> entries{};
 
-    std::wcout << L"[Settings]   Retreiving all settings. " << wil::reg::get_child_value_count(hKey.get())
-        << L" values, " << wil::reg::get_child_key_count(hKey.get()) << L" subkeys." << std::endl;
+    logger.info(std::format(L"Retreiving all settings. {} values, {} subkeys.", 
+        wil::reg::get_child_value_count(hKey.get()),
+        wil::reg::get_child_key_count(hKey.get())));
 
     // Iterate sub keys.
     {
@@ -65,4 +69,27 @@ std::vector<std::pair<std::wstring, clipmgr::reg_types>> clipmgr::Settings::getA
     }
 
     return entries;
+}
+
+void clipmgr::Settings::clear()
+{
+    clearKey(hKey.get());
+}
+
+
+void clipmgr::Settings::clearKey(HKEY hkey)
+{
+    auto subKeys = wil::make_range(wil::reg::key_iterator(hKey.get()), wil::reg::key_iterator());
+    auto keyValues = wil::make_range(wil::reg::value_iterator(hKey.get()), wil::reg::value_iterator());
+
+    for (auto&& value : keyValues)
+    {
+        RegDeleteValueW(hKey.get(), value.name.c_str());
+    }
+
+    for (auto&& subKey : subKeys)
+    {
+        auto uniqueKey = wil::reg::create_unique_key(hKey.get(), subKey.name.c_str(), wil::reg::key_access::readwrite);
+        clearKey(uniqueKey.get());
+    }
 }
