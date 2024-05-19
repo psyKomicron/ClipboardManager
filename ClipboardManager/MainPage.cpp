@@ -61,17 +61,26 @@ winrt::Windows::Foundation::IAsyncAction impl::MainPage::Page_Loading(winrt::Mic
     auto userFilePath = settings.get<std::wstring>(L"UserFilePath");
     if (userFilePath.has_value())
     {
-        actions = clipmgr::ClipboardAction::loadClipboardActions(userFilePath.value());
-
-        // Print actions to debug console.
-        std::wstring actionMessage = L"[MainPage]   ";
-        size_t headerSize = actionMessage.size();
-        actionMessage += L"Available actions: ";
-        for (auto&& action : actions)
+        if (clipmgr::utils::pathExists(userFilePath.value()))
         {
-            actionMessage += L"\n" + std::wstring(headerSize, L' ') + L"- " + action.label() + L": " + action.regex().str();
+            actions = clipmgr::ClipboardAction::loadClipboardActions(userFilePath.value());
+
+            // Print actions to debug console.
+            std::wstring actionMessage = L"[MainPage]   ";
+            size_t headerSize = actionMessage.size();
+            actionMessage += L"Available actions: ";
+            for (auto&& action : actions)
+            {
+                actionMessage += L"\n" + std::wstring(headerSize, L' ') + L"- " + action.label() + L": " + action.regex().str();
+            }
+            std::wcout << actionMessage << std::endl;
         }
-        std::wcout << actionMessage << std::endl;
+        else
+        {
+            // Remove UserFilePath setting because the value stored points to a path that doesn't exist.
+            settings.remove(L"UserFilePath");
+            visualStateManager.goToState(ClipboardActionsFileMovedState);
+        }
     }
     else
     {
@@ -89,12 +98,12 @@ winrt::async impl::MainPage::LocateUserFileButton_Click(winrt::IInspectable cons
     auto&& storageFile = co_await picker.PickSingleFileAsync();
     if (storageFile)
     {
-        visualStateManager.goToState(NormalActionsState);
-
         std::filesystem::path userFilePath{ storageFile.Path().c_str() };
 
         clipmgr::Settings settings{};
         settings.insert(L"UserFilePath", userFilePath.wstring());
+
+        visualStateManager.goToState(NormalActionsState);
     }
 }
 
@@ -102,7 +111,7 @@ winrt::async impl::MainPage::CreateUserFileButton_Click(winrt::IInspectable cons
 {
     winrt::FileSavePicker picker{};
     picker.as<IInitializeWithWindow>()->Initialize(GetActiveWindow());
-    picker.SuggestedStartLocation(winrt::PickerLocationId::ComputerFolder);
+    picker.SuggestedStartLocation(winrt::PickerLocationId::Unspecified);
     picker.FileTypeChoices().Insert(
         L"XML File", single_threaded_vector<winrt::hstring>({ L".xml" })
     );

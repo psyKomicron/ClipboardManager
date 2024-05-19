@@ -3,6 +3,7 @@
 
 #include "src/ClipboardAction.hpp"
 #include "src/ui/VisualStateManager.hpp"
+#include "src/utils/Logger.hpp"
 
 #include <winrt/Windows.Foundation.Collections.h>
 
@@ -31,6 +32,8 @@ namespace winrt::ClipboardManager::implementation
         const clipmgr::ui::VisualState<MainPage> NormalActionsState{ L"NormalActions", 0, true };
         const clipmgr::ui::VisualState<MainPage> NoClipboardActionsState{ L"NoClipboardActions", 0, false };
         const clipmgr::ui::VisualState<MainPage> OpenSaveFileState{ L"OpenSaveFile", 0, false };
+        const clipmgr::ui::VisualState<MainPage> ClipboardActionsFileMovedState{ L"ClipboardActionsFileMoved", 0, false };
+        //clipmgr::utils::Logger logger{ L"MainPage" };
 
         winrt::async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
         void App_Closing(const winrt::Windows::Foundation::IInspectable&, const winrt::Windows::Foundation::IInspectable&);

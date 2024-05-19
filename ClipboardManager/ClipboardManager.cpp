@@ -53,38 +53,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR,
 
     try
     {
-        clipmgr::Settings settings{};
-
-        for (auto&& entry : settings.getAll())
-        {
-            switch (static_cast<clipmgr::RegTypes>(entry.second.index()))
-            {
-                case clipmgr::RegTypes::String:
-                    std::wcout << entry.first << L" : " << std::get<std::wstring>(entry.second) << std::endl;
-                    break;
-
-                case clipmgr::RegTypes::Uint32:
-                    std::wcout << entry.first << L" : " << std::get<uint32_t>(entry.second) << std::endl;
-                    break;
-                case clipmgr::RegTypes::Uint64:
-                    std::wcout << entry.first << L" : " << std::get<uint64_t>(entry.second) << std::endl;
-                    break;
-            }
-        }
-
-        settings.insert(L"LastStart", std::format(L"{:%Y/%m/%d %H:%M}", std::chrono::system_clock::now()));
-    }
-    catch (wil::ResultException ex)
-    {
-        std::cout << "wil::ResultException   " << ex.what() << std::endl;
-    }
-    catch (std::exception ex)
-    {
-        std::cout << ex.what() << std::endl;
-    }
-
-    try
-    {
         auto dispatcherQueueController = clipmgr::utils::managed_dispatcher_queue_controller(initIslandApp());
         
         // Perform application initialization:
@@ -255,6 +223,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         case WM_NCDESTROY:
         {
+            RECT rect{};
+            GetWindowRect(hWnd, &rect);
+            clipmgr::Settings settings{};
+            settings.insert(L"WindowPosX", static_cast<int32_t>(rect.top));
+            settings.insert(L"WindowPosY", static_cast<int32_t>(rect.left));
+
             if (windowInfo->desktopWinXamlSrc != nullptr && windowInfo->takeFocusRequestedToken.value != 0)
             {
                 windowInfo->desktopWinXamlSrc.TakeFocusRequested(windowInfo->takeFocusRequestedToken);
@@ -349,14 +323,18 @@ void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windo
 
     windowInfo->desktopWinXamlSrc = winrt::DesktopWindowXamlSource();
     windowInfo->desktopWinXamlSrc.Initialize(winrt::GetWindowIdFromWindow(windowHandle));
-
     // Enable the DesktopWindowXamlSource to be a tab stop.
     SetWindowLong(winrt::GetWindowFromWindowId(windowInfo->desktopWinXamlSrc.SiteBridge().WindowId()), GWL_STYLE, WS_TABSTOP | WS_CHILD | WS_VISIBLE);
 
     // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
     windowInfo->desktopWinXamlSrc.Content(winrt::make<winrt::ClipboardManager::implementation::MainPage>());
 
+    clipmgr::Settings settings{};
     auto appWindow = clipmgr::utils::getCurrentAppWindow(windowHandle);
+    int32_t x = settings.get<int32_t>(L"WindowPosX").value_or(10);
+    int32_t y = settings.get<int32_t>(L"WindowPosY").value_or(10);
+    appWindow.Move({ x, y });
+
     if (appWindow.TitleBar().IsCustomizationSupported())
     {
         auto&& titleBar = appWindow.TitleBar();
@@ -368,18 +346,28 @@ void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windo
         presenter.IsMinimizable(false);
 
         //titleBar.PreferredHeightOption(winrt::TitleBarHeightOption::Collapsed);
-
+        auto&& resources = winrt::Application::Current().Resources();
+        
         appWindow.TitleBar().ButtonBackgroundColor(winrt::Colors::Transparent());
         appWindow.TitleBar().ButtonInactiveBackgroundColor(winrt::Colors::Transparent());
+        
         appWindow.TitleBar().ButtonInactiveForegroundColor(
-            winrt::Application::Current().Resources().TryLookup(winrt::box_value(L"AppTitleBarHoverColor")).as<winrt::Windows::UI::Color>());
+            resources.TryLookup(winrt::box_value(L"AppTitleBarHoverColor")).as<winrt::Windows::UI::Color>());
+
         appWindow.TitleBar().ButtonHoverBackgroundColor(
-            winrt::Application::Current().Resources().TryLookup(winrt::box_value(L"ButtonHoverBackgroundColor")).as<winrt::Windows::UI::Color>());
+            resources.TryLookup(winrt::box_value(L"ButtonHoverBackgroundColor")).as<winrt::Windows::UI::Color>());
+
         appWindow.TitleBar().ButtonPressedBackgroundColor(winrt::Colors::Transparent());
 
-        appWindow.TitleBar().ButtonForegroundColor(winrt::Colors::White());
-        appWindow.TitleBar().ButtonHoverForegroundColor(winrt::Colors::White());
-        appWindow.TitleBar().ButtonPressedForegroundColor(winrt::Colors::White());
+        appWindow.TitleBar().ButtonForegroundColor(
+            resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>()
+        );
+        appWindow.TitleBar().ButtonHoverForegroundColor(
+            resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>()
+        );
+        appWindow.TitleBar().ButtonPressedForegroundColor(
+            resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>()
+        );
     }
 
     /*windowInfo->takeFocusRequestedToken = windowInfo->desktopWinXamlSrc.TakeFocusRequested(

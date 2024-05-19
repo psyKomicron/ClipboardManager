@@ -22,14 +22,22 @@
                 <VisualState x:Name="NoClipboardActions">
                     <VisualState.Setters>
                         <Setter Target="ListView.Visibility" Value="Collapsed"/>
+                        <Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>
                         <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="OpenSaveFile">
                     <VisualState.Setters>
                         <Setter Target="ListView.Visibility" Value="Collapsed"/>
-                        <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="False"/>
+                        <Setter Target="OpenSaveFileInfoBar.Visibility" Value="Visible"/>
                         <Setter Target="OpenSaveFileInfoBar.IsOpen" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ClipboardActionsFileMoved">
+                    <VisualState.Setters>
+                        <Setter Target="ListView.Visibility" Value="Collapsed"/>
+                        <Setter Target="ClipboardActionsSaveFileMovedInfoBar.Visibility" Value="Visible"/>
+                        <Setter Target="ClipboardActionsSaveFileMovedInfoBar.IsOpen" Value="True"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -37,8 +45,8 @@
         
         <Border 
             CornerRadius="2" 
-            Height="2"
-            Background="White"
+            Height="3"
+            Background="{ThemeResource TextFillColorPrimaryBrush}"
             MaxWidth="100"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
@@ -107,7 +115,7 @@
                         </Style>
                     </ListView.Resources>
                     <Grid
-                        Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                        Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
                         Padding="16,10,16,16"
                         CornerRadius="{StaticResource ControlCornerRadius}">
                         <Grid.ColumnDefinitions>
@@ -150,6 +158,8 @@
                     <InfoBar 
                         x:Name="NoClipboardActionsInfoBar"
                         x:Uid="NoClipboardActionsInfoBar"
+                        x:Load="False"
+                        Visibility="Collapsed"
                         Severity="Warning" 
                         Grid.Row="0"
                         IsClosable="False">
@@ -168,6 +178,8 @@
                     <InfoBar 
                         x:Name="OpenSaveFileInfoBar"
                         x:Uid="OpenSaveFileInfoBar"
+                        x:Load="False"
+                        Visibility="Collapsed"
                         Severity="Success" 
                         Grid.Row="0">
                         <InfoBar.Content>
@@ -175,7 +187,33 @@
                         </InfoBar.Content>
                     </InfoBar>
 
-                    <ListView x:Name="ListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Visibility="Collapsed" Padding="0" Margin="0" Grid.Row="1"/>
+                    <InfoBar 
+                        x:Name="ClipboardActionsSaveFileMovedInfoBar"
+                        x:Uid="ClipboardActionsSaveFileMovedInfoBar"
+                        x:Load="False"
+                        Visibility="Collapsed"
+                        Severity="Error" 
+                        Grid.Row="0"
+                        IsClosable="False">
+                        <InfoBar.Content>
+                            <Grid Padding="0,0,0,5" ColumnSpacing="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <HyperlinkButton Grid.Column="0" x:Uid="LocateButton" HorizontalAlignment="Stretch" Click="LocateUserFileButton_Click"/>
+                                <HyperlinkButton Grid.Column="1" x:Uid="CreateButton" HorizontalAlignment="Stretch" Click="CreateUserFileButton_Click"/>
+                            </Grid>
+                        </InfoBar.Content>
+                    </InfoBar>
+
+                    <ListView x:Name="ListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="1">
+                        <ListView.Resources>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                                <Setter Property="Padding" Value="0" />
+                            </Style>
+                        </ListView.Resources>
+                    </ListView>
                 </Grid>
             </PivotItem>
         </Pivot>

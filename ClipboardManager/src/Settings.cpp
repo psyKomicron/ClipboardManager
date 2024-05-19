@@ -11,21 +11,6 @@ clipmgr::Settings::Settings()
     logger.debug(L"Opened registry node for application settings.");
 }
 
-std::optional<std::wstring> clipmgr::Settings::getString(const std::wstring& key)
-{
-    return wil::reg::try_get_value_string(hKey.get(), key.c_str());
-}
-
-void clipmgr::Settings::insert(const std::wstring& key, const std::wstring& value)
-{
-    wil::reg::set_value(hKey.get(), key.c_str(), value.c_str());
-}
-
-void clipmgr::Settings::insert(const std::wstring& key, const bool& value)
-{
-    wil::reg::set_value_dword(hKey.get(), key.c_str(), value ? 1 : 0);
-}
-
 std::vector<std::pair<std::wstring, clipmgr::reg_types>> clipmgr::Settings::getAll()
 {
     std::vector<std::pair<std::wstring, clipmgr::reg_types>> entries{};
@@ -52,16 +37,16 @@ std::vector<std::pair<std::wstring, clipmgr::reg_types>> clipmgr::Settings::getA
         switch (key.type)
         {
             case REG_SZ:
-                variant.emplace<0>(getValue<std::wstring>(key.name).value());
+                variant.emplace<0>(get<std::wstring>(key.name).value());
                 break;
             case REG_MULTI_SZ:
                 variant.emplace<1>(std::vector<std::wstring>());
                 break;
             case REG_DWORD:
-                variant.emplace<2>(getValue<uint32_t>(key.name).value());
+                variant.emplace<2>(get<uint32_t>(key.name).value());
                 break;
             case REG_QWORD:
-                variant.emplace<3>(getValue<uint64_t>(key.name).value());
+                variant.emplace<3>(get<uint64_t>(key.name).value());
                 break;
         }
 
@@ -74,6 +59,11 @@ std::vector<std::pair<std::wstring, clipmgr::reg_types>> clipmgr::Settings::getA
 void clipmgr::Settings::clear()
 {
     clearKey(hKey.get());
+}
+
+void clipmgr::Settings::remove(const key_t& key)
+{
+    RegDeleteValueW(hKey.get(), key.c_str());
 }
 
 
@@ -91,5 +81,11 @@ void clipmgr::Settings::clearKey(HKEY hkey)
     {
         auto uniqueKey = wil::reg::create_unique_key(hKey.get(), subKey.name.c_str(), wil::reg::key_access::readwrite);
         clearKey(uniqueKey.get());
+        RegDeleteKeyW(uniqueKey.get(), L"");
     }
+}
+
+wil::shared_hkey clipmgr::Settings::createSubKey(const key_t& key)
+{
+    return wil::reg::create_shared_key(hKey.get(), key.c_str(), wil::reg::key_access::readwrite);
 }

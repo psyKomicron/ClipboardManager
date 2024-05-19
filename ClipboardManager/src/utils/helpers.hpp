@@ -86,13 +86,16 @@ namespace clipmgr::utils
         winrt::event_token takeFocusRequestedToken{};
         HWND lastFocusedWindow{ nullptr };
     };
+}
 
+namespace clipmgr::utils
+{
     winrt::AppWindow getCurrentAppWindow();
-    
+
     winrt::AppWindow getCurrentAppWindow(const HWND& hwnd);
-    
+
     bool pathExists(const std::filesystem::path& path);
-    
+
     managed_file_handle createFile(const std::filesystem::path& path);
 
     void createDirectory(const std::filesystem::path& path);

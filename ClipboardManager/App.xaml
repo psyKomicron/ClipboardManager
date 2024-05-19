@@ -482,6 +482,15 @@
                 </Setter>
             </Style>
 
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <Color x:Key="ButtonForegroundColor">White</Color>
+                </ResourceDictionary>
+
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="ButtonForegroundColor">Black</Color>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -117,6 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ClipboardActionsSaveFileMovedInfoBar.Message" xml:space="preserve">
+    <value>Choose to create or locate the missing file.</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="ClipboardActionsSaveFileMovedInfoBar.Title" xml:space="preserve">
+    <value>Clipboard action file is missing, it was either moved or deleted.</value>
+    <comment>MainPage</comment>
+  </data>
   <data name="CreateButton.Content" xml:space="preserve">
     <value>Create</value>
     <comment>MainPage</comment>
@@ -135,12 +143,15 @@
   </data>
   <data name="OpenSaveFileButton.Content" xml:space="preserve">
     <value>Open &amp; edit</value>
+    <comment>MainPage</comment>
   </data>
   <data name="OpenSaveFileInfoBar.Message" xml:space="preserve">
     <value>One default action has been added as a template, do you want to edit it ?</value>
+    <comment>MainPage</comment>
   </data>
   <data name="OpenSaveFileInfoBar.Title" xml:space="preserve">
     <value>Save file successfully created !</value>
+    <comment>MainPage</comment>
   </data>
   <data name="RemoveActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Remove action from the list</value>
