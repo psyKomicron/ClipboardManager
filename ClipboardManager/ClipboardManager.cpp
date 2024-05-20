@@ -226,8 +226,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             RECT rect{};
             GetWindowRect(hWnd, &rect);
             clipmgr::Settings settings{};
-            settings.insert(L"WindowPosX", static_cast<int32_t>(rect.top));
-            settings.insert(L"WindowPosY", static_cast<int32_t>(rect.left));
+            settings.insert(L"WindowPosY", static_cast<int32_t>(rect.top));
+            settings.insert(L"WindowPosX", static_cast<int32_t>(rect.left));
 
             if (windowInfo->desktopWinXamlSrc != nullptr && windowInfo->takeFocusRequestedToken.value != 0)
             {

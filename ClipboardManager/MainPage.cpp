@@ -8,6 +8,7 @@
 #include "src/utils/helpers.hpp"
 
 #include "ClipboardActionView.h"
+#include "ClipboardActionEditor.h"
 
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include <winrt/Windows.Foundation.Collections.h>
@@ -57,36 +58,28 @@ winrt::Windows::Foundation::IAsyncAction impl::MainPage::Page_Loading(winrt::Mic
     clipboardContentChangedrevoker = winrt::Clipboard::ContentChanged(winrt::auto_revoke, { this, &MainPage::ClipboardContent_Changed });
 
     //TODO: Get user file path from settings and ask user to create user file if it doesn't exist (in known locations).
-    clipmgr::Settings settings{};
-    auto userFilePath = settings.get<std::wstring>(L"UserFilePath");
-    if (userFilePath.has_value())
+    auto userFilePath = localSettings.get<std::wstring>(L"UserFilePath");
+    if (userFilePath.has_value() && clipmgr::utils::pathExists(userFilePath.value()))
     {
-        if (clipmgr::utils::pathExists(userFilePath.value()))
-        {
-            actions = clipmgr::ClipboardAction::loadClipboardActions(userFilePath.value());
+        actions = clipmgr::ClipboardAction::loadClipboardActions(userFilePath.value());
 
-            // Print actions to debug console.
-            std::wstring actionMessage = L"[MainPage]   ";
-            size_t headerSize = actionMessage.size();
-            actionMessage += L"Available actions: ";
-            for (auto&& action : actions)
-            {
-                actionMessage += L"\n" + std::wstring(headerSize, L' ') + L"- " + action.label() + L": " + action.regex().str();
-            }
-            std::wcout << actionMessage << std::endl;
-        }
-        else
+        // Print actions to debug console.
+        std::wstring actionMessage = L"\nAvailable actions: ";
+        for (auto&& action : actions)
         {
-            // Remove UserFilePath setting because the value stored points to a path that doesn't exist.
-            settings.remove(L"UserFilePath");
-            visualStateManager.goToState(ClipboardActionsFileMovedState);
+            actionMessage += L"\n\t- " + action.label() + L": " + action.regex().str();
+        }
+        logger.info(actionMessage);
+
+        if (!actions.empty())
+        {
+            co_return;
         }
     }
-    else
-    {
-        // Show info bar to create or locate user file.
-        visualStateManager.goToState(NoClipboardActionsState);
-    }
+
+    logger.info(L"'UserFilePath' doesn't exist or the path of 'UserFilePath' doesn't exist.");
+    // Show info bar to create or locate user file.
+    visualStateManager.goToState(NoClipboardActionsState);
 }
 
 winrt::async impl::MainPage::LocateUserFileButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
@@ -103,7 +96,7 @@ winrt::async impl::MainPage::LocateUserFileButton_Click(winrt::IInspectable cons
         clipmgr::Settings settings{};
         settings.insert(L"UserFilePath", userFilePath.wstring());
 
-        visualStateManager.goToState(NormalActionsState);
+        visualStateManager.goToState(ViewActionsState);
     }
 }
 
@@ -113,7 +106,7 @@ winrt::async impl::MainPage::CreateUserFileButton_Click(winrt::IInspectable cons
     picker.as<IInitializeWithWindow>()->Initialize(GetActiveWindow());
     picker.SuggestedStartLocation(winrt::PickerLocationId::Unspecified);
     picker.FileTypeChoices().Insert(
-        L"XML File", single_threaded_vector<winrt::hstring>({ L".xml" })
+        L"XML Files", single_threaded_vector<winrt::hstring>({ L".xml" })
     );
     picker.SuggestedFileName(L"user_file.xml");
 
@@ -127,16 +120,46 @@ winrt::async impl::MainPage::CreateUserFileButton_Click(winrt::IInspectable cons
     }
 }
 
+void impl::MainPage::ViewActionsButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    Pivot().SelectedIndex(2);
+}
+
+void impl::MainPage::ClipboadActionsListPivot_Loading(winrt::IInspectable const&, winrt::IInspectable const&)
+{
+    if (actions.empty())
+    {
+        visualStateManager.goToState(NoClipboardActionsToDisplayState);
+        logger.debug(L"ClipboadActionsListPivot_Loading > No clipboard actions to load.");
+    }
+    else
+    {
+        logger.debug(std::format(L"ClipboadActionsListPivot_Loading > Loading {} clipboard actions.", actions.size()));
+        
+        for (auto&& action : actions)
+        {
+            auto viewModel = make<ClipboardManager::implementation::ClipboardActionEditor>();
+            viewModel.ActionFormat(action.format());
+            viewModel.ActionLabel(action.label());
+            viewModel.ActionRegex(action.regex().str());
+            //auto flags = static_cast<uint32_t>(action.regex().flags());
+
+            ClipboardActionsListView().Items().Append(viewModel);
+        }
+    }
+}
+
 
 winrt::async impl::MainPage::ClipboardContent_Changed(const winrt::IInspectable&, const winrt::IInspectable&)
 {
     auto clipboardContent = winrt::Clipboard::GetContent();
-
     if (clipboardContent.Contains(winrt::StandardDataFormats::Text()))
     {
         auto&& text = co_await clipboardContent.GetTextAsync();
 
-        if (clipboardActionViews.Size() == 0
+        bool addExisting = localSettings.get<bool>(L"AddDuplicatedActions").value_or(false);
+        if (addExisting 
+            || clipboardActionViews.Size() == 0
             || text != clipboardActionViews.GetAt(0).Text())
         {
             auto actionView = winrt::make<::impl::ClipboardActionView>(text);
@@ -168,37 +191,36 @@ winrt::async impl::MainPage::ClipboardContent_Changed(const winrt::IInspectable&
             }
             else
             {
-                std::wcout << L"[MainPage]   No matching actions found for '" << std::wstring(text) << L"'. Actions " << (actions.empty() ? L"not loaded" : L"loaded") << std::endl;
+                logger.info(L"No matching actions found for '" + std::wstring(text) + L"'. Actions " + (actions.empty() ? L"not loaded" : L"loaded"));
             }
         }
         else
         {
-            std::wcout << L"[MainPage]   Clipboard action is already added (" << std::wstring(text) << L")." << std::endl;
+            logger.info(L"Clipboard action is already added (" + std::wstring(text) + L").");
         }
     }
 }
 
 void impl::MainPage::App_Closing(const winrt::Windows::Foundation::IInspectable&, const winrt::Windows::Foundation::IInspectable&)
 {
-    clipmgr::Settings settings{};
-    auto userFileOptional = settings.get<std::wstring>(L"UserFilePath");
+    auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
 
-    /*if (userFileOptional.has_value())
+    if (userFilePath.has_value())
     {
-        
-    }*/
+        boost::property_tree::wptree tree{};
+        boost::property_tree::read_xml(userFilePath.value().string(), tree);
 
-    std::filesystem::path path{ userFileOptional.value_or(L"c:\\users\\julie\\documents\\clipboardmanager\\user_file.xml") };
+        tree.erase(L"settings.history");
 
-    boost::property_tree::wptree tree{};
-    boost::property_tree::read_xml(path.string(), tree);
+        for (auto&& view : clipboardActionViews)
+        {
+            tree.add(L"history.item", std::wstring(view.Text()));
+        }
 
-    tree.erase(L"settings.history");
-
-    for (auto&& view : clipboardActionViews)
-    {
-        tree.add(L"history.item", std::wstring(view.Text()));
+        boost::property_tree::write_xml(userFilePath.value().string(), tree);
     }
-
-    boost::property_tree::write_xml(path.string(), tree);
+    else
+    {
+        logger.debug(L"User file path not saved in settings, impossible to save history.");
+    }
 }

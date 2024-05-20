@@ -1,5 +1,4 @@
 #pragma once
-
 #include "App.xaml.g.h"
 
 #include <winrt/Microsoft.UI.Xaml.Hosting.h>

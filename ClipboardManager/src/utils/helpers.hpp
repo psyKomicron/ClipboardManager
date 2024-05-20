@@ -4,6 +4,8 @@
 #include <filesystem>
 #include <functional>
 
+#define check_loaded(b) if (!b) return;
+
 namespace winrt
 {
     using namespace winrt::Microsoft::UI;

@@ -6,6 +6,7 @@
 
 #include "src/utils/StartupTask.hpp"
 #include "src/Settings.hpp"
+#include "src/utils/helpers.hpp"
 
 namespace impl = winrt::ClipboardManager::implementation;
 namespace winrt
@@ -14,8 +15,6 @@ namespace winrt
     using namespace winrt::Microsoft::UI::Xaml::Controls;
     using namespace winrt::Windows::Foundation;
 }
-
-#define check_loaded(b) if (!b) return;
 
 void impl::SettingsPage::Page_Loading(winrt::FrameworkElement const&, winrt::IInspectable const&)
 {
