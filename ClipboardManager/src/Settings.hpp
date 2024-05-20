@@ -43,7 +43,7 @@ namespace clipmgr
     concept BooleanInsertable = std::same_as<T, bool>;
 
     template<typename T>
-    concept StringInsertable = std::convertible_to<T, std::wstring>;
+    concept StringInsertable = std::convertible_to<T, std::wstring> || std::constructible_from<T, std::wstring>;
 
     template<class T>
     concept Mappable = requires(T t)
@@ -85,6 +85,7 @@ namespace clipmgr
             }
             else
             {
+                logger.debug(L"'" + key + L"' not in registry.");
                 return std::optional<bool>();
             }
         }
