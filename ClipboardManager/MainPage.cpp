@@ -6,14 +6,19 @@
 
 #include "src/Settings.hpp"
 #include "src/utils/helpers.hpp"
+#include "src/notifs/ToastNotification.hpp"
+#include "src/notifs/win_toasts.hpp"
 
 #include "ClipboardActionView.h"
 #include "ClipboardActionEditor.h"
 
-#include <winrt/Windows.ApplicationModel.DataTransfer.h>
-#include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.ApplicationModel.h>
+#include <winrt/Windows.ApplicationModel.DataTransfer.h>
+#include <winrt/Windows.ApplicationModel.Resources.h>
+#include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Storage.Pickers.h>
+#include <winrt/Microsoft.Windows.AppNotifications.h>
+#include <winrt/Microsoft.Windows.AppNotifications.Builder.h>
 
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -22,18 +27,40 @@
 #include <iostream>
 
 namespace impl = winrt::ClipboardManager::implementation;
-
 namespace winrt
 {
     using namespace winrt::Windows::ApplicationModel::DataTransfer;
     using namespace winrt::Windows::Foundation;
     using namespace winrt::Windows::ApplicationModel;
+    using namespace winrt::Windows::ApplicationModel::Resources;
     using namespace winrt::Microsoft::UI::Xaml;
     using namespace winrt::Windows::Storage::Pickers;
+    using namespace winrt::Microsoft::Windows::AppNotifications;
+    using namespace winrt::Microsoft::Windows::AppNotifications::Builder;
 }
 
 impl::MainPage::MainPage()
 {
+    auto userFilePath = localSettings.get<std::wstring>(L"UserFilePath");
+    if (userFilePath.has_value() && clipmgr::utils::pathExists(userFilePath.value()))
+    {
+        actions = clipmgr::ClipboardAction::loadClipboardActions(userFilePath.value());
+
+        // Print actions to debug console.
+        std::wstring actionMessage = L"\nAvailable actions: ";
+        for (auto&& action : actions)
+        {
+            actionMessage += L"\n\t- " + action.label() + L": " + action.regex().str();
+        }
+        logger.info(actionMessage);
+    }
+
+    if (actions.empty())
+    {
+        logger.info(L"'UserFilePath' doesn't exist or the path of 'UserFilePath' doesn't exist.");
+        // Show info bar to create or locate user file.
+        visualStateManager.goToState(NoClipboardActionsState);
+    }
 }
 
 winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> winrt::ClipboardManager::implementation::MainPage::Actions()
@@ -56,30 +83,6 @@ winrt::Windows::Foundation::IAsyncAction impl::MainPage::Page_Loading(winrt::Mic
     }
 
     clipboardContentChangedrevoker = winrt::Clipboard::ContentChanged(winrt::auto_revoke, { this, &MainPage::ClipboardContent_Changed });
-
-    //TODO: Get user file path from settings and ask user to create user file if it doesn't exist (in known locations).
-    auto userFilePath = localSettings.get<std::wstring>(L"UserFilePath");
-    if (userFilePath.has_value() && clipmgr::utils::pathExists(userFilePath.value()))
-    {
-        actions = clipmgr::ClipboardAction::loadClipboardActions(userFilePath.value());
-
-        // Print actions to debug console.
-        std::wstring actionMessage = L"\nAvailable actions: ";
-        for (auto&& action : actions)
-        {
-            actionMessage += L"\n\t- " + action.label() + L": " + action.regex().str();
-        }
-        logger.info(actionMessage);
-
-        if (!actions.empty())
-        {
-            co_return;
-        }
-    }
-
-    logger.info(L"'UserFilePath' doesn't exist or the path of 'UserFilePath' doesn't exist.");
-    // Show info bar to create or locate user file.
-    visualStateManager.goToState(NoClipboardActionsState);
 }
 
 winrt::async impl::MainPage::LocateUserFileButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
@@ -142,6 +145,7 @@ void impl::MainPage::ClipboadActionsListPivot_Loading(winrt::IInspectable const&
             viewModel.ActionFormat(action.format());
             viewModel.ActionLabel(action.label());
             viewModel.ActionRegex(action.regex().str());
+            viewModel.ActionEnabled(action.enabled());
             //auto flags = static_cast<uint32_t>(action.regex().flags());
 
             ClipboardActionsListView().Items().Append(viewModel);
@@ -153,50 +157,74 @@ void impl::MainPage::ClipboadActionsListPivot_Loading(winrt::IInspectable const&
 winrt::async impl::MainPage::ClipboardContent_Changed(const winrt::IInspectable&, const winrt::IInspectable&)
 {
     auto clipboardContent = winrt::Clipboard::GetContent();
-    if (clipboardContent.Contains(winrt::StandardDataFormats::Text()))
+    auto&& text = std::wstring(co_await clipboardContent.GetTextAsync());
+    if (!clipboardContent.Contains(winrt::StandardDataFormats::Text()))
     {
-        auto&& text = co_await clipboardContent.GetTextAsync();
+        logger.info(L"Clipboard action is already added (" + text + L").");
+        co_return;
+    }
 
-        bool addExisting = localSettings.get<bool>(L"AddDuplicatedActions").value_or(false);
-        if (addExisting 
-            || clipboardActionViews.Size() == 0
-            || text != clipboardActionViews.GetAt(0).Text())
+    bool addExisting = localSettings.get<bool>(L"AddDuplicatedActions").value_or(false);
+    if (addExisting 
+        || clipboardActionViews.Size() == 0
+        || text != clipboardActionViews.GetAt(0).Text())
+    {
+        auto actionView = winrt::make<::impl::ClipboardActionView>(text.c_str());
+
+        clipmgr::ToastNotification notif{};
+        std::vector<std::pair<std::wstring, std::wstring>> buttons{};
+
+        bool hasMatch = false;
+        for (auto&& action : actions)
         {
-            auto actionView = winrt::make<::impl::ClipboardActionView>(text);
-
-            bool hasMatch = false;
-            for (auto&& action : actions)
+            if (action.enabled() && action.match(text))
             {
-                if (action.match(std::wstring(text)))
+                hasMatch = true;
+
+                actionView.AddAction(action.format(), action.label(), L"");
+
+                auto url = std::vformat(action.format(), std::make_wformat_args(text));
+                buttons.push_back({ action.label(), std::format(L"open&url={}", url) });
+            }
+        }
+
+        if (!hasMatch)
+        {
+            logger.info(L"No matching actions found for '" + std::wstring(text) + L"'. Actions " + (actions.empty() ? L"not loaded" : L"loaded"));
+            co_return;
+        }
+
+        clipboardActionViews.InsertAt(0, actionView);
+        actionView.Removed([this](auto&& sender, auto&&)
+        {
+            for (uint32_t i = 0; i < clipboardActionViews.Size(); i++)
+            {
+                if (sender == clipboardActionViews.GetAt(i))
                 {
-                    actionView.AddAction(action.format(), action.label(), L"");
-                    hasMatch = true;
+                    clipboardActionViews.RemoveAt(i);
                 }
             }
+        });
 
-            if (hasMatch)
+        try
+        {
+            winrt::ResourceLoader resLoader{};
+            if (!notif.tryAddButtons(buttons))
             {
-                clipboardActionViews.InsertAt(0, actionView);
-                actionView.Removed([this](auto&& sender, auto&&)
-                {
-                    for (uint32_t i = 0; i < clipboardActionViews.Size(); i++)
-                    {
-                        auto&& action = clipboardActionViews.GetAt(i);
-                        if (sender == action)
-                        {
-                            clipboardActionViews.RemoveAt(i);
-                        }
-                    }
-                });
+                notif.addText(std::wstring(resLoader.GetString(L"ToastNotification_TooManyButtons")));
+                notif.addButton(std::wstring(resLoader.GetString(L"ToastNotification_OpenApp")), L"action=focus");
             }
             else
             {
-                logger.info(L"No matching actions found for '" + std::wstring(text) + L"'. Actions " + (actions.empty() ? L"not loaded" : L"loaded"));
+                notif.addText(std::wstring(resLoader.GetString(L"ToastNotification_ClickAction")));
             }
+
+            notif.send();
+            logger.debug(L"Sent notification");
         }
-        else
+        catch (winrt::hresult_error err)
         {
-            logger.info(L"Clipboard action is already added (" + std::wstring(text) + L").");
+            logger.error(L"ToastNotification::send() failed : " + std::wstring(err.message()));
         }
     }
 }

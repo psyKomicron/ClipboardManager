@@ -60,7 +60,7 @@ void impl::ClipboardActionView::Removed(const winrt::event_token& token)
 
 void impl::ClipboardActionView::AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex)
 {
-    actions.push_back(clipmgr::ClipboardAction(std::wstring(label), std::wstring(format), std::wstring(regex)));
+    actions.push_back(clipmgr::ClipboardAction(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), true));
 }
 
 

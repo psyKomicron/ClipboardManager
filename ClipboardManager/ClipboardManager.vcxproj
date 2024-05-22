@@ -188,8 +188,11 @@
     <ClInclude Include="src\Settings.hpp" />
     <ClInclude Include="src\utils\helpers.hpp" />
     <ClInclude Include="src\utils\StartupTask.hpp" />
+    <ClInclude Include="src\notifs\win_toasts.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="src\ui\VisualStateManager.hpp" />
+    <ClInclude Include="src\notifs\ToastNotification.hpp" />
+    <ClInclude Include="src\notifs\ToastNotificationHandler.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipboardActionEditor.cpp">
@@ -231,6 +234,9 @@
     <ClCompile Include="src\utils\helpers.cpp" />
     <ClCompile Include="src\ui\VisualStateManager.cpp" />
     <ClCompile Include="src\utils\StartupTask.cpp" />
+    <ClCompile Include="src\notifs\win_toasts.cpp" />
+    <ClCompile Include="src\notifs\ToastNotification.cpp" />
+    <ClCompile Include="src\notifs\ToastNotificationHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ClipboardManager.rc" />

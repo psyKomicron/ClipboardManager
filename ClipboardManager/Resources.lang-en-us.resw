@@ -173,6 +173,18 @@
     <value>Remove action from the list</value>
     <comment>ClipboardActionView</comment>
   </data>
+  <data name="ToastNotification_ClickAction" xml:space="preserve">
+    <value>Click action</value>
+    <comment>ToastNotifications</comment>
+  </data>
+  <data name="ToastNotification_OpenApp" xml:space="preserve">
+    <value>Open app</value>
+    <comment>ToastNotifications</comment>
+  </data>
+  <data name="ToastNotification_TooManyButtons" xml:space="preserve">
+    <value>Too many buttons</value>
+    <comment>ToastNotifications</comment>
+  </data>
   <data name="ViewActionsButton.Content" xml:space="preserve">
     <value>View</value>
     <comment>MainPage</comment>

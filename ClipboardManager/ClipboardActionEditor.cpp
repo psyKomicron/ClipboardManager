@@ -55,6 +55,16 @@ void impl::ClipboardActionEditor::ActionRegex(const winrt::hstring& value)
     NotifyPropertyChanged();
 }
 
+bool winrt::ClipboardManager::implementation::ClipboardActionEditor::ActionEnabled() const
+{
+    return _actionEnabled;
+}
+
+void winrt::ClipboardManager::implementation::ClipboardActionEditor::ActionEnabled(const bool& value)
+{
+    _actionEnabled = value;
+}
+
 void impl::ClipboardActionEditor::RemoveButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
     // TODO: Add event to notify parent control that this editor need to be removed.

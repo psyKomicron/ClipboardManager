@@ -16,22 +16,24 @@ clipmgr::utils::Logger::Logger(const std::wstring& className) :
     }
 }
 
-void clipmgr::utils::Logger::debug(const std::wstring& message)
+void clipmgr::utils::Logger::debug(const std::wstring& message) const
 {
+#ifdef _DEBUG
     print(message, ConsoleColors::Yellow);
+#endif // _DEBUG
 }
 
-void clipmgr::utils::Logger::info(const std::wstring& message)
+void clipmgr::utils::Logger::info(const std::wstring& message) const
 {
     print(message, ConsoleColors::Green);
 }
 
-void clipmgr::utils::Logger::error(const std::wstring& message)
+void clipmgr::utils::Logger::error(const std::wstring& message) const
 {
     print(message, ConsoleColors::Red);
 }
 
-void clipmgr::utils::Logger::print(const std::wstring& message, const clipmgr::utils::ConsoleColors& color)
+void clipmgr::utils::Logger::print(const std::wstring& message, const clipmgr::utils::ConsoleColors& color) const
 {
     const wchar_t* colorEnd = L"\033[0m";
 
@@ -61,11 +63,11 @@ void clipmgr::utils::Logger::print(const std::wstring& message, const clipmgr::u
             if constexpr (useColors)
             {
                 const wchar_t* colorBegin = L"\x1B[32m";
-                std::wcout << colorBegin << L"[INFO]    " << className << L"   " << message << colorEnd << std::endl;
+                std::wcout << colorBegin << L" [INFO]    " << className << L"   " << message << colorEnd << std::endl;
             }
             else
             {
-                std::wcout << L"[INFO]    " << className << L"   " << message << std::endl;
+                std::wcout << L" [INFO]    " << className << L"   " << message << std::endl;
             }
             break;
         }
@@ -102,7 +104,7 @@ std::wstring clipmgr::utils::Logger::formatClassName(const std::wstring& classNa
 
     const size_t padding = maxClassNameLength - className.size();
 
-    auto&& formattedName = std::vformat(L"[{}{}{}]", std::make_wformat_args(
+    auto&& formattedName = std::vformat(L"{}{}{}", std::make_wformat_args(
         std::wstring(padding / 2, L' '),
         className,
         std::wstring(padding / 2, L' ')

@@ -16,6 +16,8 @@ namespace winrt::ClipboardManager::implementation
         void ActionFormat(const winrt::hstring& value);
         winrt::hstring ActionRegex() const;
         void ActionRegex(const winrt::hstring& value);
+        bool ActionEnabled() const;
+        void ActionEnabled(const bool& value);
 
         void RemoveButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::async EditButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -27,6 +29,7 @@ namespace winrt::ClipboardManager::implementation
         winrt::hstring _actionLabel;
         winrt::hstring _actionFormat;
         winrt::hstring _actionRegex;
+        bool _actionEnabled;
         clipmgr::ui::VisualStateManager<ClipboardActionEditor> visualStateManager{ *this };
         const clipmgr::ui::VisualState<ClipboardActionEditor> EnabledState{ L"Enabled", 0, true };
         const clipmgr::ui::VisualState<ClipboardActionEditor> DisabledState{ L"Disabled", 0, false };

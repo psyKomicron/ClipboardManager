@@ -119,8 +119,17 @@
                 </PivotItem.Header>
 
                 <Grid>
-                    <TextBlock x:Name="NoClipboardActionsTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8"/>
-                    <ListView x:Name="ClipboardActionsListView" Margin="0" Padding="0" SelectionMode="None">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <CommandBar Grid.Row="0">
+                        <AppBarButton Icon="Save"/>
+                    </CommandBar>
+                    
+                    <TextBlock x:Name="NoClipboardActionsTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8" Grid.Row="1"/>
+                    <ListView x:Name="ClipboardActionsListView" Margin="0" Padding="0" SelectionMode="None" Grid.Row="1">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="Padding" Value="7,3,7,7" />

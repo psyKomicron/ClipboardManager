@@ -4,6 +4,7 @@
 #include "src/Settings.hpp"
 #include "src/ClipboardAction.hpp"
 #include "src/ui/VisualStateManager.hpp"
+#include "src/notifs/ToastNotificationHandler.hpp"
 
 #include <winrt/Windows.Foundation.Collections.h>
 
@@ -33,6 +34,7 @@ namespace winrt::ClipboardManager::implementation
         clipmgr::ui::VisualStateManager<MainPage> visualStateManager{ *this };
         clipmgr::utils::Logger logger{ L"MainPage" };
         clipmgr::Settings localSettings{};
+        clipmgr::notifs::ToastNotificationHandler manager = clipmgr::notifs::ToastNotificationHandler::getDefault();
         // Visual states.
         const clipmgr::ui::VisualState<MainPage> NormalActionsState{ L"NormalActions", 0, true };
         const clipmgr::ui::VisualState<MainPage> NoClipboardActionsState{ L"NoClipboardActions", 0, false };

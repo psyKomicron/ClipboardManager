@@ -17,10 +17,10 @@ namespace clipmgr::utils
     public:
         Logger(const std::wstring& className);
 
-        void debug(const std::wstring& message);
-        void info(const std::wstring& message);
-        void error(const std::wstring& message);
-        void print(const std::wstring& message, const clipmgr::utils::ConsoleColors& color = ConsoleColors::White);
+        void debug(const std::wstring& message) const;
+        void info(const std::wstring& message) const;
+        void error(const std::wstring& message) const;
+        void print(const std::wstring& message, const clipmgr::utils::ConsoleColors& color = ConsoleColors::White) const;
 
     private:
         static const bool useColors = false;

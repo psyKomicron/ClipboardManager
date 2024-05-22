@@ -7,5 +7,6 @@ namespace ClipboardManager
         String ActionLabel;
         String ActionFormat;
         String ActionRegex;
+        Boolean ActionEnabled;
     }
 }
