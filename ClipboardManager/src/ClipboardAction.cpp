@@ -117,9 +117,19 @@ std::wstring clipmgr::ClipboardAction::label() const
     return _label;
 }
 
+void clipmgr::ClipboardAction::label(const std::wstring& value)
+{
+    _label = value;
+}
+
 std::wstring clipmgr::ClipboardAction::format() const
 {
     return _format;
+}
+
+void clipmgr::ClipboardAction::format(const std::wstring& value)
+{
+    _format = value;
 }
 
 boost::wregex clipmgr::ClipboardAction::regex() const
@@ -127,13 +137,31 @@ boost::wregex clipmgr::ClipboardAction::regex() const
     return _regex;
 }
 
+void clipmgr::ClipboardAction::regex(const boost::wregex& regex)
+{
+    _regex = regex;
+}
+
 bool clipmgr::ClipboardAction::enabled() const
 {
     return _enabled;
+}
+
+void clipmgr::ClipboardAction::enabled(const bool& value)
+{
+    _enabled = value;
 }
 
 bool clipmgr::ClipboardAction::match(const std::wstring& string) const
 {
     bool res = boost::regex_search(string, _regex);
     return res;
+}
+
+bool clipmgr::ClipboardAction::operator==(ClipboardAction& other)
+{
+    return _enabled == other.enabled()
+        &&_label == other.label()
+        && _format == other.format()
+        && _regex == other.regex();
 }

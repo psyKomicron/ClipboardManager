@@ -1,6 +1,10 @@
 #include <pch.h>
 #include "helpers.hpp"
 
+#include <winrt/Microsoft.UI.Xaml.Data.h>
+
+#include <boost/regex.hpp>
+
 #include <Shlwapi.h>
 #include <ShlObj.h>
 
@@ -63,6 +67,20 @@ clipmgr::utils::WindowInfo* clipmgr::utils::getWindowInfo(const HWND& windowHand
     return reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(windowHandle, GWLP_USERDATA));
 }
 
+std::wstring clipmgr::utils::convert(const std::string& string)
+{
+    std::wstring wstring{};
+    wstring.resize(string.size(), L'\0');
+    if (MultiByteToWideChar(CP_UTF8, 0, string.c_str(), string.size(), &wstring[0], string.size()) > 0)
+    {
+        return wstring;
+    }
+    else
+    {
+        return std::wstring();
+    }
+}
+
 
 clipmgr::utils::managed_dispatcher_queue_controller::managed_dispatcher_queue_controller(const winrt::Microsoft::UI::Dispatching::DispatcherQueueController& controller)
 {
@@ -99,3 +117,13 @@ bool clipmgr::utils::managed_file_handle::invalid() const
     return handle == INVALID_HANDLE_VALUE || handle == nullptr;
 }
 
+
+winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs clipmgr::utils::PropChangedEventArgs::create(std::source_location sourceLocation)
+{
+    const boost::regex functionExtractor{ R"(void __cdecl ([A-z]*::)*([A-z]*)\(.*\))" };
+    boost::cmatch match{};
+    std::ignore = boost::regex_match(sourceLocation.function_name(), match, functionExtractor);
+    std::wstring functionName = clipmgr::utils::convert(match[2]);
+
+    return winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(functionName);
+}

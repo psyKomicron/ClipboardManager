@@ -15,9 +15,13 @@
 #include <iostream>
 #include <chrono>
 
+#pragma region Header
 #define MAX_LOADSTRING 100
 
-#pragma region Header
+// Global Variables:
+WCHAR szTitle[MAX_LOADSTRING];// The title bar text
+WCHAR szWindowClass[MAX_LOADSTRING];// the main window class name
+
 constexpr uint32_t InitialWindowWidth = 440;
 constexpr uint32_t InitialWindowHeight = 700;
 
@@ -30,10 +34,6 @@ namespace winrt
     using namespace winrt::Microsoft::UI::Xaml::Markup;
     using namespace winrt::Microsoft::UI::Windowing;
 }
-
-// Global Variables:
-WCHAR szTitle[MAX_LOADSTRING];// The title bar text
-WCHAR szWindowClass[MAX_LOADSTRING];// the main window class name
 
 // Forward declarations of functions included in this code module:
 ATOM MyRegisterClass(HINSTANCE hInstance);
@@ -168,7 +168,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             const int width = LOWORD(lParam);
             const int height = HIWORD(lParam);
-
             if (windowInfo->desktopWinXamlSrc)
             {
                 windowInfo->desktopWinXamlSrc.SiteBridge().MoveAndResize(
@@ -179,12 +178,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         height
                     });
             }
+
             break;
         }
 
         case WM_ACTIVATE:
         {
             assert(windowInfo != nullptr);
+
             handleWindowActivation(windowInfo, LOWORD(wParam) == WA_INACTIVE);
             break;
         }
@@ -195,9 +196,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // Parse the menu selections:
             switch (wmId)
             {
-                case IDM_ABOUT:
-                    DialogBox(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                    break;
                 case IDM_EXIT:
                     DestroyWindow(hWnd);
                     break;
@@ -212,6 +210,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
+
+            RECT clientRect;
+            GetClientRect(hWnd, &clientRect);
+            HRGN bgRgn = CreateRectRgnIndirect(&clientRect);
+            HBRUSH hBrush = CreateSolidBrush(RGB(31, 31, 31));
+            FillRgn(hdc, bgRgn, hBrush);
+
+            DeleteObject(bgRgn);
+            DeleteObject(hBrush);
+
             EndPaint(hWnd, &ps);
             
             break;
@@ -225,6 +233,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         case WM_NCDESTROY:
         {
+            auto&& mainPage = windowInfo->desktopWinXamlSrc.Content().try_as<winrt::ClipboardManager::MainPage>();
+            if (mainPage)
+            {
+                mainPage.AppClosing();
+            }
+
             RECT rect{};
             GetWindowRect(hWnd, &rect);
             clipmgr::Settings settings{};
@@ -249,26 +263,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return 0;
 }
-
-// Message handler for about box.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    UNREFERENCED_PARAMETER(lParam);
-    switch (message)
-    {
-        case WM_INITDIALOG:
-            return (INT_PTR)TRUE;
-
-        case WM_COMMAND:
-            if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-            {
-                EndDialog(hDlg, LOWORD(wParam));
-                return (INT_PTR)TRUE;
-            }
-            break;
-    }
-    return (INT_PTR)FALSE;
-}
 #pragma endregion
 
 winrt::DispatcherQueueController initIslandApp()
@@ -276,7 +270,6 @@ winrt::DispatcherQueueController initIslandApp()
     winrt::init_apartment(winrt::apartment_type::single_threaded);
     auto dispatcherQueueController{ winrt::DispatcherQueueController::CreateOnCurrentThread() };
     auto islandApp{ winrt::make<winrt::ClipboardManager::implementation::App>() };
-
     return dispatcherQueueController;
 }
 
@@ -345,7 +338,7 @@ void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windo
 
         auto&& presenter = appWindow.Presenter().as<winrt::OverlappedPresenter>();
         presenter.IsMaximizable(false);
-        presenter.IsMinimizable(false);
+        //presenter.IsMinimizable(false);
 
         //titleBar.PreferredHeightOption(winrt::TitleBarHeightOption::Collapsed);
         auto&& resources = winrt::Application::Current().Resources();
@@ -371,14 +364,6 @@ void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windo
             resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>()
         );
     }
-
-    /*windowInfo->takeFocusRequestedToken = windowInfo->desktopWinXamlSrc.TakeFocusRequested(
-        [windowHandle](const winrt::DesktopWindowXamlSource&, const winrt::DesktopWindowXamlSourceTakeFocusRequestedEventArgs& args)
-    {
-        SetFocus(
-            GetDlgItem(windowHandle, args.Request().Reason() == winrt::XamlSourceFocusNavigationReason::First ? 502 : 501)
-        );
-    });*/
 }
 
 void handleWindowActivation(clipmgr::utils::WindowInfo * windowInfo, const bool & inactive)
@@ -391,4 +376,9 @@ void handleWindowActivation(clipmgr::utils::WindowInfo * windowInfo, const bool 
     {
         SetFocus(windowInfo->lastFocusedWindow);
     }
+}
+
+wchar_t* getWindowClass()
+{
+    return szWindowClass;
 }

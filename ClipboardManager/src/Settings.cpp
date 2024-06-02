@@ -66,6 +66,21 @@ void clipmgr::Settings::remove(const key_t& key)
     RegDeleteValueW(hKey.get(), key.c_str());
 }
 
+bool clipmgr::Settings::contains(const key_t& key)
+{
+    bool contains = false;
+    auto subKeys = wil::make_range(wil::reg::key_iterator(hKey.get()), wil::reg::key_iterator());
+    for (auto&& subKey : subKeys)
+    {
+        if (subKey.name == key)
+        {
+            contains = true;
+            break;
+        }
+    }
+    return contains;
+}
+
 
 void clipmgr::Settings::clearKey(HKEY hkey)
 {
@@ -88,4 +103,18 @@ void clipmgr::Settings::clearKey(HKEY hkey)
 wil::shared_hkey clipmgr::Settings::createSubKey(const key_t& key)
 {
     return wil::reg::create_shared_key(hKey.get(), key.c_str(), wil::reg::key_access::readwrite);
+}
+
+clipmgr::RegTypes clipmgr::Settings::getValueType(const key_t& name)
+{
+    auto range = wil::make_range(
+        wil::reg::value_iterator(wil::reg::open_unique_key(hKey.get(), name.c_str(), wil::reg::key_access::readwrite).get()), 
+        wil::reg::value_iterator());
+
+    for (auto&& key : range)
+    {
+        return static_cast<clipmgr::RegTypes>(key.type);
+    }
+
+    return clipmgr::RegTypes::None;
 }

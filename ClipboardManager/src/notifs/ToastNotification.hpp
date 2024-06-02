@@ -27,6 +27,7 @@ namespace clipmgr
         std::vector<std::wstring> textElements{};
         std::vector<std::pair<std::wstring, std::wstring>> buttonElements{};
         const size_t buttonElementsTextMaxLength = (12 * 2);
+        const size_t maxButtonCount = 5;
         size_t buttonElementsTextLength = 0;
 
         void ensureToastManagerRegistered();

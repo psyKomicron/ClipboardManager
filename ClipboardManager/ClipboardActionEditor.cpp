@@ -6,11 +6,16 @@
 
 #include <src/utils/helpers.hpp>
 
+#include <boost/regex.hpp>
+
+#include <iostream>
+
 namespace impl = winrt::ClipboardManager::implementation;
 namespace winrt
 {
     using namespace winrt::Windows::Foundation;
     using namespace winrt::Microsoft::UI::Xaml;
+    using namespace winrt::Microsoft::UI::Xaml::Controls;
 }
 
 impl::ClipboardActionEditor::ClipboardActionEditor()
@@ -65,6 +70,36 @@ void winrt::ClipboardManager::implementation::ClipboardActionEditor::ActionEnabl
     _actionEnabled = value;
 }
 
+winrt::event_token winrt::ClipboardManager::implementation::ClipboardActionEditor::IsOn(const event_is_on_t& handler)
+{
+    return e_isOn.add(handler);
+}
+
+void winrt::ClipboardManager::implementation::ClipboardActionEditor::IsOn(const winrt::event_token& token)
+{
+    e_isOn.remove(token);
+}
+
+winrt::event_token winrt::ClipboardManager::implementation::ClipboardActionEditor::LabelChanged(const event_changed_t& handler)
+{
+    return e_labelChanged.add(handler);
+}
+
+void winrt::ClipboardManager::implementation::ClipboardActionEditor::LabelChanged(const winrt::event_token& token)
+{
+    e_labelChanged.remove(token);
+}
+
+winrt::event_token winrt::ClipboardManager::implementation::ClipboardActionEditor::FormatChanged(const event_changed_t& handler)
+{
+    return e_formatChanged.add(handler);
+}
+
+void winrt::ClipboardManager::implementation::ClipboardActionEditor::FormatChanged(const winrt::event_token& token)
+{
+    e_formatChanged.remove(token);
+}
+
 void impl::ClipboardActionEditor::RemoveButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
     // TODO: Add event to notify parent control that this editor need to be removed.
@@ -72,8 +107,34 @@ void impl::ClipboardActionEditor::RemoveButton_Click(winrt::IInspectable const&,
 
 winrt::async impl::ClipboardActionEditor::EditButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
-    co_await EditDialog().ShowAsync();
-    // TODO: Add event if the user has edited (with new changes) this action.
+    if ((co_await EditDialog().ShowAsync()) == winrt::ContentDialogResult::Primary)
+    {
+        // TODO: Add event if the user has edited (with new changes) this action.
+        auto newFormat = FormatTextBox().Text();
+        auto newRegex = RegexTextBox().Text();
+        auto newLabel = LabelTextBox().Text();
+
+        if (newFormat != _actionFormat)
+        {
+            auto oldFormat = _actionFormat;
+            ActionFormat(newFormat);
+            e_formatChanged(*this, oldFormat);
+        }
+
+        if (newRegex != _actionRegex)
+        {
+            auto oldRegex = _actionRegex;
+            ActionRegex(newRegex);
+            // TODO: Update parent.
+        }
+
+        if (newLabel != _actionLabel)
+        {
+            auto oldLabel = _actionLabel;
+            ActionLabel(newLabel);
+            e_labelChanged(*this, oldLabel);
+        }
+    }
 }
 
 void impl::ClipboardActionEditor::ActionEnabledToggleSwitch_Toggled(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
@@ -89,8 +150,8 @@ void impl::ClipboardActionEditor::UserControl_Loaded(winrt::IInspectable const&,
 }
 
 
-void impl::ClipboardActionEditor::NotifyPropertyChanged()
+void impl::ClipboardActionEditor::NotifyPropertyChanged(std::source_location sourceLocation)
 {
-    /* TODO: As this control needs to implement INotifyPropertyChanged(text blocks will have their content changed), make this function auto raise the event.*/
+    e_propertyChanged(*this, clipmgr::utils::PropChangedEventArgs::create(sourceLocation));
 }
 

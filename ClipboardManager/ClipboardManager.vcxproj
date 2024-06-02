@@ -88,7 +88,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>user32.lib;Shlwapi.lib;Shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>user32.lib;Shlwapi.lib;Shell32.lib;Gdi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>Microsoft.UI.Windowing.Core.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>

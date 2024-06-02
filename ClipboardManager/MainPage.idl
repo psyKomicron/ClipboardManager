@@ -7,5 +7,6 @@ namespace ClipboardManager
     {
         MainPage();
         IObservableVector<ClipboardActionView> Actions;
+        void AppClosing();
     }
 }

@@ -5,7 +5,6 @@
 #endif
 
 #include "src/utils/StartupTask.hpp"
-#include "src/Settings.hpp"
 #include "src/utils/helpers.hpp"
 
 namespace impl = winrt::ClipboardManager::implementation;
@@ -24,6 +23,7 @@ void impl::SettingsPage::Page_Loading(winrt::FrameworkElement const&, winrt::IIn
     clipmgr::Settings settings{};
     SaveMatchingResultsToggleSwitch().IsOn(settings.get<bool>(L"SaveMatchingResults").value_or(false));
     StartMinimizedToggleSwitch().IsOn(settings.get<bool>(L"StartWindowMinimized").value_or(false));
+    NotificationsToggleSwitch().IsOn(settings.get<bool>(L"NotificationsEnabled").value_or(false));
 }
 
 void impl::SettingsPage::Page_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
@@ -59,10 +59,18 @@ void impl::SettingsPage::SaveMatchingResultsToggleSwitch_Toggled(winrt::IInspect
     updateSetting(s, L"SaveMatchingResults");
 }
 
+void impl::SettingsPage::EnableListeningToggleSwitch_Toggled(winrt::IInspectable const& s, winrt::RoutedEventArgs const&)
+{
+    NotificationsExpander().IsEnabled(NotificationsToggleSwitch().IsOn());
+    
+    check_loaded(loaded);
+    updateSetting(s, L"NotificationsEnabled");
+}
 
-void winrt::ClipboardManager::implementation::SettingsPage::updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key)
+
+void impl::SettingsPage::updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key)
 {
     auto sender = s.as<winrt::ToggleSwitch>();
-    clipmgr::Settings settings{};
-    settings.insert(key, sender.IsOn());
+    auto isOn = sender.IsOn();
+    settings.insert(key, isOn);
 }

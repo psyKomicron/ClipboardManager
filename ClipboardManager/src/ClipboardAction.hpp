@@ -16,11 +16,18 @@ namespace clipmgr
         static void initializeSaveFile(const std::filesystem::path& userFilePath);
 
         std::wstring label() const;
+        void label(const std::wstring& value);
         std::wstring format() const;
+        void format(const std::wstring& value);
         boost::wregex regex() const;
+        void regex(const boost::wregex& regex);
         bool enabled() const;
+        void enabled(const bool& value);
 
         bool match(const std::wstring& string) const;
+
+        bool operator==(ClipboardAction& other);
+        //bool operator==(ClipboardAction& other);
 
     private:
         std::wstring _label{};

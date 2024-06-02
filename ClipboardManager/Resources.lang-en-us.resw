@@ -153,6 +153,10 @@
     <value>No clipboard actions have been created, please create at least one action to use clipboard actions.</value>
     <comment>MainPage</comment>
   </data>
+  <data name="NoClipboardActionsTextBlock.Text" xml:space="preserve">
+    <value>No clipboard actions</value>
+    <comment>MainPage</comment>
+  </data>
   <data name="OpenSaveFileButton.Content" xml:space="preserve">
     <value>Open &amp; edit</value>
     <comment>MainPage</comment>

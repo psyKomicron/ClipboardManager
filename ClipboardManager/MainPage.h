@@ -3,6 +3,7 @@
 
 #include "src/Settings.hpp"
 #include "src/ClipboardAction.hpp"
+#include "src/HotKey.hpp"
 #include "src/ui/VisualStateManager.hpp"
 #include "src/notifs/ToastNotificationHandler.hpp"
 
@@ -20,30 +21,42 @@ namespace winrt::ClipboardManager::implementation
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> Actions();
         void Actions(const winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView>& value);
 
+        void AppClosing();
+
         winrt::async Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
         winrt::async LocateUserFileButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::async CreateUserFileButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void ViewActionsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void ClipboadActionsListPivot_Loading(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
+        void ClipboadActionsListPivot_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
+        void PivotItem_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void Page_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
     private:
-        std::vector<clipmgr::ClipboardAction> actions{};
-        winrt::Windows::ApplicationModel::DataTransfer::Clipboard::ContentChanged_revoker clipboardContentChangedrevoker{};
-        winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews
-            = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
-        clipmgr::ui::VisualStateManager<MainPage> visualStateManager{ *this };
-        clipmgr::utils::Logger logger{ L"MainPage" };
-        clipmgr::Settings localSettings{};
-        clipmgr::notifs::ToastNotificationHandler manager = clipmgr::notifs::ToastNotificationHandler::getDefault();
-        // Visual states.
+        const clipmgr::utils::Logger logger{ L"MainPage" };
         const clipmgr::ui::VisualState<MainPage> NormalActionsState{ L"NormalActions", 0, true };
         const clipmgr::ui::VisualState<MainPage> NoClipboardActionsState{ L"NoClipboardActions", 0, false };
         const clipmgr::ui::VisualState<MainPage> OpenSaveFileState{ L"CreateNewActions", 0, false };
         const clipmgr::ui::VisualState<MainPage> ViewActionsState{ L"ViewActions", 0, false };
         const clipmgr::ui::VisualState<MainPage> NoClipboardActionsToDisplayState{ L"NoClipboardActionsToDisplay", 1, 0 };
+        winrt::Microsoft::UI::Windowing::OverlappedPresenter presenter{ nullptr };
+        bool loaded = false;
+        clipmgr::ui::VisualStateManager<MainPage> visualStateManager{ *this };
+        clipmgr::Settings localSettings{};
+        clipmgr::notifs::ToastNotificationHandler& manager = clipmgr::notifs::ToastNotificationHandler::getDefault();
+        clipmgr::HotKey activationHotKey{ MOD_ALT, L' ' };
+        std::vector<clipmgr::ClipboardAction> actions{};
+        winrt::Windows::ApplicationModel::DataTransfer::Clipboard::ContentChanged_revoker clipboardContentChangedrevoker{};
+        winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews
+            = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
 
         winrt::async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
-        void App_Closing(const winrt::Windows::Foundation::IInspectable&, const winrt::Windows::Foundation::IInspectable&);
+        void Editor_FormatChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldFormat);
+        void Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel);
+        void Editor_Toggled(const winrt::ClipboardManager::ClipboardActionEditor& sender, const bool& isOn);
+        void Restore();
+        bool FindActions(const winrt::ClipboardManager::ClipboardActionView& actionView, std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text);
+        void SendNotification(const std::vector<std::pair<std::wstring, std::wstring>>& buttons);
+        void AddAction(const std::wstring& text);
     };
 }
 

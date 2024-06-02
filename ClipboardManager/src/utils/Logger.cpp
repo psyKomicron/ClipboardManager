@@ -4,12 +4,18 @@
 #include "Console.hpp"
 
 #include <iostream>
+#include <format>
 
 std::atomic_size_t clipmgr::utils::Logger::maxClassNameLength = 10;
 
 clipmgr::utils::Logger::Logger(const std::wstring& className) :
-    className{ formatClassName(className) }
+    className{ className }
 {
+    if (maxClassNameLength < className.size())
+    {
+        maxClassNameLength = className.size();
+    }
+
     if (!Console::initialized())
     {
         static Console console{};
@@ -37,10 +43,7 @@ void clipmgr::utils::Logger::print(const std::wstring& message, const clipmgr::u
 {
     const wchar_t* colorEnd = L"\033[0m";
 
-    /*if (instanceMaxClassNameLength != maxClassNameLength)
-    {
-        className = formatClassName(className);
-    }*/
+    auto&& formattedName = formatClassName(className);
 
     switch (color)
     {
@@ -49,39 +52,39 @@ void clipmgr::utils::Logger::print(const std::wstring& message, const clipmgr::u
             if constexpr (useColors)
             {
                 const wchar_t* colorBegin = L"\x1B[33m";
-                std::wcout << colorBegin << L"[DEBUG]   " << className << L"   " << message << colorEnd << std::endl;
+                std::wcout << colorBegin << L"[DEBUG]   " << formattedName << L"   " << message << colorEnd << std::endl;
             }
             else
             {
-                std::wcout << L"[DEBUG]   " << className << L"   " << message << std::endl;
+                std::wcout << L"[DEBUG]   " << formattedName << L"   " << message << std::endl;
             }
             break;
         }
-        
+
         case ConsoleColors::Green:
         {
             if constexpr (useColors)
             {
                 const wchar_t* colorBegin = L"\x1B[32m";
-                std::wcout << colorBegin << L" [INFO]    " << className << L"   " << message << colorEnd << std::endl;
+                std::wcout << colorBegin << L" [INFO]    " << formattedName << L"   " << message << colorEnd << std::endl;
             }
             else
             {
-                std::wcout << L" [INFO]    " << className << L"   " << message << std::endl;
+                std::wcout << L" [INFO]   " << formattedName << L"   " << message << std::endl;
             }
             break;
         }
-        
+
         case ConsoleColors::Red:
         {
             if constexpr (useColors)
             {
                 const wchar_t* colorBegin = L"\x1B[31m";
-                std::wcout << colorBegin << L"[ERROR]   " << className << L"   " << message << colorEnd << std::endl;
+                std::wcout << colorBegin << L"[ERROR]   " << formattedName << L"   " << message << colorEnd << std::endl;
             }
             else
             {
-                std::wcout << L"[ERROR]   " << className << L"   " << message << std::endl;
+                std::wcout << L"[ERROR]   " << formattedName << L"   " << message << std::endl;
             }
             break;
         }
@@ -89,25 +92,19 @@ void clipmgr::utils::Logger::print(const std::wstring& message, const clipmgr::u
         case ConsoleColors::White:
         default:
         {
-            std::wcout << L"[LOG]     " << className << L"   " << message << std::endl;
+            std::wcout << L"[LOG]     " << formattedName << L"   " << message << std::endl;
             break;
         }
     }
 }
 
-std::wstring clipmgr::utils::Logger::formatClassName(const std::wstring& className)
+std::wstring clipmgr::utils::Logger::formatClassName(const std::wstring& className) const
 {
-    if (maxClassNameLength < className.size())
-    {
-        maxClassNameLength = className.size();
-    }
-
-    const size_t padding = maxClassNameLength - className.size();
-
+    const std::wstring padding = std::wstring((maxClassNameLength - className.size()) / 2, L' ');
     auto&& formattedName = std::vformat(L"{}{}{}", std::make_wformat_args(
-        std::wstring(padding / 2, L' '),
+        padding,
         className,
-        std::wstring(padding / 2, L' ')
+        padding
     ));
 
     return formattedName;

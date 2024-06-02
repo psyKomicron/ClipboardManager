@@ -1,12 +1,16 @@
 namespace ClipboardManager
 {
     [default_interface]
-    runtimeclass ClipboardActionEditor : Microsoft.UI.Xaml.Controls.UserControl
+    runtimeclass ClipboardActionEditor : Microsoft.UI.Xaml.Controls.UserControl, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         ClipboardActionEditor();
         String ActionLabel;
         String ActionFormat;
         String ActionRegex;
         Boolean ActionEnabled;
+
+        event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, Boolean> IsOn;
+        event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, String> LabelChanged;
+        event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, String> FormatChanged;
     }
 }

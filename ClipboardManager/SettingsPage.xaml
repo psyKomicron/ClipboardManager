@@ -8,7 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
-    Loading="Page_Loading">
+    Loading="Page_Loading"
+    ScrollViewer.CanContentRenderOutsideBounds="False">
     <Page.Resources>
         <Style TargetType="ToggleSwitch" BasedOn="{StaticResource FlippedToggleSwitchStyle}"/>
     </Page.Resources>
@@ -26,13 +27,73 @@
                 <ToggleSwitch x:Name="SaveMatchingResultsToggleSwitch" Toggled="SaveMatchingResultsToggleSwitch_Toggled"/>
             </local:HostControl.HostContent>
         </local:HostControl>
+        
+
+        <Expander Style="{StaticResource ExpanderStyle}" Padding="0">
+            <Expander.Header>
+                <local:HostControl Header="Allow notifications" Background="Transparent" BorderThickness="0" Padding="0">
+                    <local:HostControl.HostContent>
+                        <ToggleSwitch x:Name="NotificationsToggleSwitch" Toggled="EnableListeningToggleSwitch_Toggled"/>
+                    </local:HostControl.HostContent>
+                </local:HostControl>
+            </Expander.Header>
+
+            <ListView SelectionMode="None" x:Name="NotificationsExpander" Margin="0" Padding="0">
+                <ListView.Resources>
+                    <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Margin" Value="0" />
+                    </Style>
+                </ListView.Resources>
+                <local:HostControl Header="Sound" CornerRadius="0" Background="Transparent">
+                    <local:HostControl.HostContent>
+                        <ComboBox Grid.Column="1" SelectedIndex="0" MinWidth="150">
+                            <ComboBoxItem>Default</ComboBoxItem>
+                            <ComboBoxItem>Instant message</ComboBoxItem>
+                            <ComboBoxItem>Mail</ComboBoxItem>
+                            <ComboBoxItem>Reminder</ComboBoxItem>
+                            <ComboBoxItem>SMS</ComboBoxItem>
+                            <ComboBoxItem>Silent</ComboBoxItem>
+                        </ComboBox>
+                    </local:HostControl.HostContent>
+                </local:HostControl>
+                <local:HostControl Header="Scenario" CornerRadius="0" Background="Transparent">
+                    <local:HostControl.HostContent>
+                        <ComboBox Grid.Column="1" SelectedIndex="0" MinWidth="150">
+                            <ComboBoxItem>Default</ComboBoxItem>
+                            <ComboBoxItem>Reminder</ComboBoxItem>
+                            <ComboBoxItem>Alarm</ComboBoxItem>
+                            <ComboBoxItem>Incoming call</ComboBoxItem>
+                            <ComboBoxItem>Urgent</ComboBoxItem>
+                        </ComboBox>
+                    </local:HostControl.HostContent>
+                </local:HostControl>
+                <local:HostControl Header="Duration" CornerRadius="0" Background="Transparent">
+                    <local:HostControl.HostContent>
+                        <StackPanel Orientation="Horizontal">
+                            <ToggleButton Content="Long" CornerRadius="5,0,0,5" MinWidth="75"/>
+                            <ToggleButton Content="Short" CornerRadius="0,5,5,0" MinWidth="75"/>
+                        </StackPanel>
+                    </local:HostControl.HostContent>
+                </local:HostControl>
+            </ListView>
+        </Expander>
 
 
         <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Formatting" Margin="0,12,0,0"/>
+        <Expander Style="{StaticResource ExpanderStyle}" Header="Default regex options">
+            <GridView SelectionMode="None">
+                <CheckBox Content="Ignore case"/>
+                <CheckBox Content="Collate"/>
+                <CheckBox Content="New line alt"/>
+            </GridView>
+        </Expander>
 
 
         <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Window" Margin="0,12,0,0"/>
-        <Expander Header="Window position" HorizontalAlignment="Stretch" MinHeight="60" HorizontalContentAlignment="Stretch" Padding="0">
+        <Expander Style="{StaticResource ExpanderStyle}" Header="Window position">
             <local:HostControl Header="Override default window positioning" CornerRadius="0,0,5,5">
                 <local:HostControl.HostContent>
                     <ToggleSwitch />

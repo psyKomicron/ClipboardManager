@@ -8,7 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
-    Loading="Page_Loading">
+    Loading="Page_Loading"
+    Loaded="Page_Loaded">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -113,7 +114,7 @@
                 </ListView>
             </PivotItem>
 
-            <PivotItem Padding="0" Margin="0" Loaded="ClipboadActionsListPivot_Loading">
+            <PivotItem Padding="0" Margin="0" Loaded="ClipboadActionsListPivot_Loaded">
                 <PivotItem.Header>
                     <FontIcon Glyph="&#xe8fd;" FontSize="16"/>
                 </PivotItem.Header>
@@ -128,7 +129,7 @@
                         <AppBarButton Icon="Save"/>
                     </CommandBar>
                     
-                    <TextBlock x:Name="NoClipboardActionsTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8" Grid.Row="1"/>
+                    <TextBlock x:Name="NoClipboardActionsTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8" Grid.Row="1" x:Load="False" Visibility="Collapsed"/>
                     <ListView x:Name="ClipboardActionsListView" Margin="0" Padding="0" SelectionMode="None" Grid.Row="1">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
@@ -139,13 +140,14 @@
                 </Grid>
             </PivotItem>
 
-            <PivotItem Padding="0" Margin="0">
+            <PivotItem Padding="0" Margin="0" Loaded="PivotItem_Loaded">
                 <PivotItem.Header>
                     <FontIcon Glyph="&#xf6fa;" FontSize="16"/>
                 </PivotItem.Header>
 
                 <Grid Padding="5,3,5,0">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
@@ -194,7 +196,30 @@
                         </InfoBar.Content>
                     </InfoBar>
 
-                    <ListView x:Name="ListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="1">
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Button Style="{StaticResource IconButtonStyle}" Grid.Column="0" HorizontalAlignment="Right">
+                            <FontIcon FontSize="14" Glyph="&#xe76c;"/>
+                        </Button>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" Margin="10,0,0,0" VerticalAlignment="Stretch" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="{StaticResource OverlayCornerRadius}" Padding="5,4">
+                            <Button>
+                                <FontIcon FontSize="16" Glyph="&#xe72c;"/>
+                            </Button>
+                            <ToggleButton>
+                                <FontIcon FontSize="16" Glyph="&#xe7ed;"/>
+                            </ToggleButton>
+                            <ToggleButton>
+                                <FontIcon FontSize="16" Glyph="&#xe823;"/>
+                            </ToggleButton>
+                        </StackPanel>
+                    </Grid>
+
+                    <ListView x:Name="ListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="Padding" Value="0" />

@@ -50,6 +50,11 @@ void clipmgr::ToastNotification::addButton(const std::wstring& content, const st
 
 bool clipmgr::ToastNotification::tryAddButtons(const std::vector<std::pair<std::wstring, std::wstring>>& buttons)
 {
+    if (buttons.size() > 5)
+    {
+        return false;
+    }
+
     for (auto&& pair : buttons)
     {
         auto& content = pair.first;
@@ -84,7 +89,15 @@ void clipmgr::ToastNotification::send()
 #endif // _DEBUG
 
     winrt::XmlDocument doc{};
-    doc.LoadXml(LR"(<toast><visual><binding template="ToastGeneric">{}</binding></visual><actions></actions></toast>)");
+    doc.LoadXml(LR"(
+    <toast scenario="urgent">
+        <visual>
+            <binding template="ToastGeneric">{}</binding>
+        </visual>
+        <actions>
+        </actions>
+        <audio src="ms-winsoundevent:Notification.SMS"/>
+    </toast>)");
     auto&& binding = doc.SelectSingleNode(L"/toast/visual/binding");
 
     auto text = doc.CreateElement(L"text");
@@ -98,13 +111,23 @@ void clipmgr::ToastNotification::send()
         binding.AppendChild(text);
     }
 
-    auto&& actions = doc.SelectSingleNode(L"/toast/actions");
-    for (auto&& buttonElement : buttonElements)
+    if (!buttonElements.empty())
     {
-        auto action = doc.CreateElement(L"action");
-        action.SetAttribute(L"content", buttonElement.first);
-        action.SetAttribute(L"arguments", std::format(L"action={}", buttonElement.second));
-        actions.AppendChild(action);
+        auto&& actions = doc.SelectSingleNode(L"/toast/actions");
+        for (auto&& buttonElement : buttonElements)
+        {
+            auto action = doc.CreateElement(L"action");
+            action.SetAttribute(L"content", buttonElement.first);
+            action.SetAttribute(L"arguments", std::format(L"action={}", buttonElement.second));
+            actions.AppendChild(action);
+        }
+    }
+    else
+    {
+        // TODO: Dont forget to change the text (inner text) of the launch node.
+        auto&& toast = doc.SelectSingleNode(L"/toast");
+        auto launch = doc.CreateElement(L"launch");
+        launch.InnerText(L"asldknfslkdnfsldknfsdf");
     }
 
     winrt::ToastNotification notification{ doc };

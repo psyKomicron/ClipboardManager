@@ -1,6 +1,7 @@
 #pragma once
-
 #include "SettingsPage.g.h"
+
+#include "src/Settings.hpp"
 
 namespace winrt::ClipboardManager::implementation
 {
@@ -14,8 +15,10 @@ namespace winrt::ClipboardManager::implementation
         void Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
         void StartMinimizedToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void SaveMatchingResultsToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void EnableListeningToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
     private:
+        clipmgr::Settings settings{};
         bool loaded = false;
 
         void updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key);

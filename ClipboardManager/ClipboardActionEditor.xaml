@@ -39,10 +39,10 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <TextBlock Grid.Row="0" Style="{StaticResource BodyStrongTextBlockStyle}" FontSize="20" VerticalAlignment="Center" Text="{x:Bind ActionLabel}"/>
+        <TextBlock Grid.Row="0" Style="{StaticResource BodyStrongTextBlockStyle}" FontSize="20" VerticalAlignment="Center" Text="{x:Bind ActionLabel, Mode=OneWay}"/>
 
-        <TextBlock VerticalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind ActionFormat}"/>
-        <TextBlock VerticalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="2" Text="{x:Bind ActionRegex}"/>
+        <TextBlock VerticalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind ActionFormat, Mode=OneWay}"/>
+        <TextBlock VerticalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="2" Text="{x:Bind ActionRegex, Mode=OneWay}"/>
 
         <StackPanel Orientation="Horizontal" Spacing="3" Grid.Column="1">
             <ToggleSwitch Grid.Column="1" Grid.Row="1" Toggled="ActionEnabledToggleSwitch_Toggled" Style="{StaticResource FlippedToggleSwitchStyle}" OnContent="{x:Null}" OffContent="{x:Null}" IsOn="{x:Bind ActionEnabled, Mode=TwoWay}"/>
@@ -69,17 +69,18 @@
 
                 <StackPanel Spacing="7" Grid.Row="0">
                     <TextBlock x:Uid="LabelTextBlock" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,10,0,3"/>
-                    <TextBox VerticalAlignment="Center" Text="{x:Bind ActionLabel}"/>
+                    <TextBox x:Name="LabelTextBox" VerticalAlignment="Center" Text="{x:Bind ActionLabel, Mode=OneWay}"/>
                 </StackPanel>
 
                 <StackPanel Spacing="7" Grid.Row="1">
                     <TextBlock x:Uid="FormatTextBlock" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,10,0,3"/>
-                    <TextBox VerticalAlignment="Center" Text="{x:Bind ActionFormat}"/>
+                    <TextBox x:Name="FormatTextBox" VerticalAlignment="Center" Text="{x:Bind ActionFormat, Mode=OneWay}"/>
                 </StackPanel>
 
                 <StackPanel Spacing="7" Grid.Row="2">
                     <TextBlock x:Uid="RegexTextBlock" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,7,0,3"/>
-                    <TextBox VerticalAlignment="Center" Text="{x:Bind ActionRegex}"/>
+                    <TextBox x:Name="RegexTextBox" VerticalAlignment="Center" Text="{x:Bind ActionRegex, Mode=OneWay}"/>
+                    
                     <StackPanel Spacing="3" Orientation="Horizontal">
                         <StackPanel.Resources>
                             <Style TargetType="TextBlock" BasedOn="{StaticResource TitleTextBlockStyle}">

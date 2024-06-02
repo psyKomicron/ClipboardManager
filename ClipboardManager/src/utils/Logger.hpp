@@ -28,7 +28,7 @@ namespace clipmgr::utils
         size_t instanceMaxClassNameLength{};
         std::wstring className{};
 
-        std::wstring formatClassName(const std::wstring& className);
+        std::wstring formatClassName(const std::wstring& className) const;
     };
 }
 
