@@ -13,7 +13,9 @@
     <Grid  
         RowSpacing="4"
         Margin="0,3,0,3"
-        Background="{ThemeResource SubtleFillColorTertiaryBrush}"
+        Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
+        BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}" 
+        BorderThickness="1"
         CornerRadius="{x:Bind CornerRadius}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="ContentColumn" Width="*"/>
@@ -37,10 +39,8 @@
         <Grid 
             Grid.Column="0" 
             Padding="5,5,5,0"
-            Background="{ThemeResource SubtleFillColorSecondaryBrush}" 
-            CornerRadius="{StaticResource OverlayCornerRadius}" 
-            BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}" 
-            BorderThickness="1">
+            Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
+            CornerRadius="{StaticResource OverlayCornerRadius}" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -106,7 +106,7 @@
             Margin="4,0,0,0" 
             ColumnSpacing="5"
             BorderThickness="1"
-            Background="{ThemeResource SolidBackgroundFillColorTransparent}"
+            Background="{ThemeResource SubtleFillColorTransparentBrush}"
             CornerRadius="{StaticResource OverlayCornerRadius}"
             HorizontalAlignment="Stretch">
             <Grid.ScaleTransition>
@@ -125,11 +125,11 @@
                 </Style>
             </Grid.Resources>
 
-            <Button Grid.Column="0">
+            <Button Grid.Column="0" Click="FormatLinkButton_Click" x:Uid="FormatLinkButton">
                 <FontIcon Glyph="&#xe71b;" FontSize="16"/>
             </Button>
 
-            <Button Grid.Column="1">
+            <Button Grid.Column="1" Click="RemoveActionButton_Click" x:Uid="RemoveActionButton">
                 <FontIcon Glyph="&#xe74d;" FontSize="16"/>
             </Button>
         </Grid>

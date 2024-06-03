@@ -8,89 +8,73 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
-    Loading="Page_Loading">
+    Loading="Page_Loading"
+    Loaded="Page_Loaded">
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="33"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="NormalActions"/>
+                <VisualState x:Name="NoClipboardActions">
+                    <VisualState.Setters>
+                        <Setter Target="ListView.Visibility" Value="Collapsed"/>
+                        <Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>
+                        <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="CreateNewActions">
+                    <VisualState.Setters>
+                        <Setter Target="ListView.Visibility" Value="Collapsed"/>
+                        <Setter Target="CreateActionsInfoBar.Visibility" Value="Visible"/>
+                        <Setter Target="CreateActionsInfoBar.IsOpen" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ViewActions">
+                    <VisualState.Setters>
+                        <Setter Target="ListView.Visibility" Value="Collapsed"/>
+                        <Setter Target="ViewActionsInfoBar.Visibility" Value="Visible"/>
+                        <Setter Target="ViewActionsInfoBar.IsOpen" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup>
+                <VisualState x:Name="DisplayClipboardActions"/>
+                <VisualState x:Name="NoClipboardActionsToDisplay">
+                    <VisualState.Setters>
+                        <Setter Target="ClipboardActionsListView.Visibility" Value="Collapsed"/>
+                        <Setter Target="NoClipboardActionsTextBlock.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
         <Border 
             CornerRadius="2" 
-            Height="2"
-            Background="White"
+            Height="3"
+            Background="{ThemeResource TextFillColorPrimaryBrush}"
             MaxWidth="100"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
             Opacity="0.7"/>
 
-        <Pivot SelectedIndex="2" Grid.Row="1">
+        <Pivot x:Name="Pivot" SelectedIndex="0" Grid.Row="1">
             <PivotItem Margin="0" Padding="5,3,5,0">
                 <PivotItem.Header>
                     <FontIcon Glyph="&#xe713;" FontSize="16"/>
                 </PivotItem.Header>
 
-                <StackPanel VerticalAlignment="Top" Orientation="Vertical" Spacing="5">
-                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Application"/>
-                    <local:HostControl Header="Automatic start">
-                        <local:HostControl.HostContent>
-                            <ToggleSwitch Style="{StaticResource FlippedToggleSwitchStyle}"/>
-                        </local:HostControl.HostContent>
-                    </local:HostControl>
-
-                    <local:HostControl Header="Save matching results">
-                        <local:HostControl.HostContent>
-                            <ToggleSwitch Style="{StaticResource FlippedToggleSwitchStyle}"/>
-                        </local:HostControl.HostContent>
-                    </local:HostControl>
-
-                    
-                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Formatting" Margin="0,12,0,0"/>
-                    <local:HostControl Header="Default url formatting protocol">
-                        <local:HostControl.HostContent>
-                            <ComboBox MinWidth="100" SelectedIndex="0">
-                                <ComboBoxItem>https</ComboBoxItem>
-                                <ComboBoxItem>http</ComboBoxItem>
-                                <ComboBoxItem>None</ComboBoxItem>
-                            </ComboBox>
-                        </local:HostControl.HostContent>
-                    </local:HostControl>
-
-                    <local:HostControl Header="Use default browser">
-                        <local:HostControl.HostContent>
-                            <ToggleSwitch Style="{StaticResource FlippedToggleSwitchStyle}"/>
-                        </local:HostControl.HostContent>
-                    </local:HostControl>
-
-                    
-                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Text="Window" Margin="0,12,0,0"/>
-                    <Expander Header="Window position" HorizontalAlignment="Stretch" MinHeight="60" HorizontalContentAlignment="Stretch" Padding="0">
-                        <local:HostControl Header="Override default window positioning" CornerRadius="0,0,5,5">
-                            <local:HostControl.HostContent>
-                                <ToggleSwitch Style="{StaticResource FlippedToggleSwitchStyle}"/>
-                            </local:HostControl.HostContent>
-                        </local:HostControl>
-                    </Expander>
-
-                    <local:HostControl>
-                        <local:HostControl.Header>
-                            <Grid ToolTipService.ToolTip="This only applies when the application auto-starts." RowSpacing="3" VerticalAlignment="Center">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="Start minimized"/>
-                                <TextBlock Grid.Row="1" Style="{StaticResource SettingSubheaderTextBlockStyle}" Text="Control the application window state when it's auto-started."/>
-                            </Grid>
-                        </local:HostControl.Header>
-                        <local:HostControl.HostContent>
-                            <ToggleSwitch Style="{StaticResource FlippedToggleSwitchStyle}"/>
-                        </local:HostControl.HostContent>
-                    </local:HostControl>
-                </StackPanel>
+                <Frame>
+                    <local:SettingsPage/>
+                </Frame>
             </PivotItem>
             
-            <PivotItem Margin="0">
+            <PivotItem Margin="0" Padding="0">
                 <PivotItem.Header>
                     <FontIcon Glyph="&#xf0e3;" FontSize="16"/>
                 </PivotItem.Header>
@@ -130,12 +114,119 @@
                 </ListView>
             </PivotItem>
 
-            <PivotItem Padding="0" Margin="0">
+            <PivotItem Padding="0" Margin="0" Loaded="ClipboadActionsListPivot_Loaded">
+                <PivotItem.Header>
+                    <FontIcon Glyph="&#xe8fd;" FontSize="16"/>
+                </PivotItem.Header>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <CommandBar Grid.Row="0">
+                        <AppBarButton Icon="Save"/>
+                    </CommandBar>
+                    
+                    <TextBlock x:Name="NoClipboardActionsTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8" Grid.Row="1" x:Load="False" Visibility="Collapsed"/>
+                    <ListView x:Name="ClipboardActionsListView" Margin="0" Padding="0" SelectionMode="None" Grid.Row="1">
+                        <ListView.Resources>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                                <Setter Property="Padding" Value="7,3,7,7" />
+                            </Style>
+                        </ListView.Resources>
+                    </ListView>
+                </Grid>
+            </PivotItem>
+
+            <PivotItem Padding="0" Margin="0" Loaded="PivotItem_Loaded">
                 <PivotItem.Header>
                     <FontIcon Glyph="&#xf6fa;" FontSize="16"/>
                 </PivotItem.Header>
-                
-                <ListView x:Name="ListView" SelectionMode="None"/>
+
+                <Grid Padding="5,3,5,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <InfoBar 
+                        x:Name="NoClipboardActionsInfoBar"
+                        x:Uid="NoClipboardActionsInfoBar"
+                        x:Load="False"
+                        Visibility="Collapsed"
+                        Severity="Error" 
+                        Grid.Row="0"
+                        IsClosable="False">
+                        <InfoBar.Content>
+                            <Grid Padding="0,0,5,5" ColumnSpacing="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <HyperlinkButton Grid.Column="0" x:Uid="LocateButton" HorizontalAlignment="Stretch" Click="LocateUserFileButton_Click"/>
+                                <HyperlinkButton Grid.Column="1" x:Uid="CreateButton" HorizontalAlignment="Stretch" Click="CreateUserFileButton_Click"/>
+                            </Grid>
+                        </InfoBar.Content>
+                    </InfoBar>
+
+                    <InfoBar 
+                        x:Name="CreateActionsInfoBar"
+                        x:Uid="OpenSaveFileInfoBar"
+                        x:Load="False"
+                        Visibility="Collapsed"
+                        Severity="Success" 
+                        Grid.Row="0">
+                        <InfoBar.Content>
+                            <HyperlinkButton x:Uid="CreateActionsButton" IsEnabled="False" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5"/>
+                        </InfoBar.Content>
+                    </InfoBar>
+                    
+                    <InfoBar 
+                        x:Name="ViewActionsInfoBar"
+                        x:Uid="ViewActionsInfoBar"
+                        x:Load="False"
+                        Visibility="Collapsed"
+                        Severity="Success" 
+                        Grid.Row="0">
+                        <InfoBar.Content>
+                            <HyperlinkButton x:Uid="ViewActionsButton" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5" Click="ViewActionsButton_Click"/>
+                        </InfoBar.Content>
+                    </InfoBar>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Button Style="{StaticResource IconButtonStyle}" Grid.Column="0" HorizontalAlignment="Right">
+                            <FontIcon FontSize="14" Glyph="&#xe76c;"/>
+                        </Button>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" Margin="10,0,0,0" VerticalAlignment="Stretch" Background="{ThemeResource SubtleFillColorSecondaryBrush}" CornerRadius="{StaticResource OverlayCornerRadius}" Padding="5,4">
+                            <Button>
+                                <FontIcon FontSize="16" Glyph="&#xe72c;"/>
+                            </Button>
+                            <ToggleButton>
+                                <FontIcon FontSize="16" Glyph="&#xe7ed;"/>
+                            </ToggleButton>
+                            <ToggleButton>
+                                <FontIcon FontSize="16" Glyph="&#xe823;"/>
+                            </ToggleButton>
+                        </StackPanel>
+                    </Grid>
+
+                    <ListView x:Name="ListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2">
+                        <ListView.Resources>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                                <Setter Property="Padding" Value="0" />
+                            </Style>
+                        </ListView.Resources>
+                    </ListView>
+                </Grid>
             </PivotItem>
         </Pivot>
     </Grid>

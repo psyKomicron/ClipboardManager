@@ -8,6 +8,10 @@ namespace ClipboardManager
 
         String Text;
 
-        void AddAction(String format, String label, String regex);
+        event Windows.Foundation.TypedEventHandler<ClipboardActionView, IInspectable> Removed;
+
+        void AddAction(String format, String label, String regex, Boolean enabled);
+        void AddActions(IInspectable actions);
+
     }
 }

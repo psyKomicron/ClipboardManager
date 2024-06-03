@@ -1,4 +1,6 @@
 #pragma once
+#include "src/utils/Logger.hpp"
+
 #include <vector>
 #include <map>
 
@@ -111,11 +113,11 @@ namespace clipmgr::ui
                         visualState.active(true);
                     }
                 }
-                //OutputDebug(std::format(L"[VisualStateManager] Activated state '{}'", std::wstring(state.name())));
+                logger.debug(std::format(L"[VisualStateManager] Activated state '{}'", std::wstring(state.name())));
             }
             catch (winrt::hresult_wrong_thread)
             {
-                //OutputDebug(std::format(L"[VisualStateManager] Failed to activate '{}', caller called from the wrong thread.", std::wstring(state.name())));
+                logger.debug(std::format(L"[VisualStateManager] Failed to activate '{}', caller called from the wrong thread.", std::wstring(state.name())));
                 throw;
             }
         }
@@ -138,6 +140,7 @@ namespace clipmgr::ui
     private:
         xaml::Controls::Control control{ nullptr };
         std::map<int32_t, std::vector<VisualState<T>>> _visualStates;
+        clipmgr::utils::Logger logger{ L"VisualStateManager" };
     };
 }
 

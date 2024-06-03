@@ -4,6 +4,7 @@
 
 #include "src/utils/helpers.hpp"
 #include "src/utils/Console.hpp"
+#include "src/Settings.hpp"
 
 #include "App.xaml.h"
 #include "MainPage.h"
@@ -12,8 +13,14 @@
 
 #include <memory>
 #include <iostream>
+#include <chrono>
 
+#pragma region Header
 #define MAX_LOADSTRING 100
+
+// Global Variables:
+WCHAR szTitle[MAX_LOADSTRING];// The title bar text
+WCHAR szWindowClass[MAX_LOADSTRING];// the main window class name
 
 constexpr uint32_t InitialWindowWidth = 440;
 constexpr uint32_t InitialWindowHeight = 700;
@@ -28,12 +35,6 @@ namespace winrt
     using namespace winrt::Microsoft::UI::Windowing;
 }
 
-// Global Variables:
-WCHAR szTitle[MAX_LOADSTRING];// The title bar text
-WCHAR szWindowClass[MAX_LOADSTRING];// the main window class name
-
-struct WindowInfo;
-
 // Forward declarations of functions included in this code module:
 ATOM MyRegisterClass(HINSTANCE hInstance);
 HWND InitInstance(HINSTANCE, int);
@@ -42,27 +43,18 @@ INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
 winrt::DispatcherQueueController initIslandApp();
 bool processMessageForTabNav(const HWND& window, MSG& msg);
-void createWinUIWindow(WindowInfo* windowInfo, const HWND& windowHandle);
-void handleWindowActivation(WindowInfo* windowInfo, const bool& inactive);
+void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windowHandle);
+void handleWindowActivation(clipmgr::utils::WindowInfo* windowInfo, const bool& inactive);
+#pragma endregion
 
-struct WindowInfo
+int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int nCmdShow)
 {
-    winrt::DesktopWindowXamlSource desktopWinXamlSrc{ nullptr };
-    winrt::event_token takeFocusRequestedToken{};
-    HWND lastFocusedWindow{ nullptr };
-};
-
-
-int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
-{
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
+#ifdef _DEBUG
+    clipmgr::utils::Console console{};
+#endif
 
     try
     {
-        clipmgr::utils::Console console{};
-        console.test();
-
         auto dispatcherQueueController = clipmgr::utils::managed_dispatcher_queue_controller(initIslandApp());
         
         // Perform application initialization:
@@ -162,7 +154,7 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(hWnd, GWLP_USERDATA));
+    clipmgr::utils::WindowInfo* windowInfo = clipmgr::utils::getWindowInfo(hWnd);
 
     switch (message)
     {
@@ -176,7 +168,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             const int width = LOWORD(lParam);
             const int height = HIWORD(lParam);
-
             if (windowInfo->desktopWinXamlSrc)
             {
                 windowInfo->desktopWinXamlSrc.SiteBridge().MoveAndResize(
@@ -187,12 +178,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                         height
                     });
             }
+
             break;
         }
 
         case WM_ACTIVATE:
         {
             assert(windowInfo != nullptr);
+
             handleWindowActivation(windowInfo, LOWORD(wParam) == WA_INACTIVE);
             break;
         }
@@ -203,9 +196,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // Parse the menu selections:
             switch (wmId)
             {
-                case IDM_ABOUT:
-                    DialogBox(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                    break;
                 case IDM_EXIT:
                     DestroyWindow(hWnd);
                     break;
@@ -220,6 +210,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
+
+            RECT clientRect;
+            GetClientRect(hWnd, &clientRect);
+            HRGN bgRgn = CreateRectRgnIndirect(&clientRect);
+            HBRUSH hBrush = CreateSolidBrush(RGB(31, 31, 31));
+            FillRgn(hdc, bgRgn, hBrush);
+
+            DeleteObject(bgRgn);
+            DeleteObject(hBrush);
+
             EndPaint(hWnd, &ps);
             
             break;
@@ -233,6 +233,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         case WM_NCDESTROY:
         {
+            auto&& mainPage = windowInfo->desktopWinXamlSrc.Content().try_as<winrt::ClipboardManager::MainPage>();
+            if (mainPage)
+            {
+                mainPage.AppClosing();
+            }
+
+            RECT rect{};
+            GetWindowRect(hWnd, &rect);
+            clipmgr::Settings settings{};
+            settings.insert(L"WindowPosY", static_cast<int32_t>(rect.top));
+            settings.insert(L"WindowPosX", static_cast<int32_t>(rect.left));
+
             if (windowInfo->desktopWinXamlSrc != nullptr && windowInfo->takeFocusRequestedToken.value != 0)
             {
                 windowInfo->desktopWinXamlSrc.TakeFocusRequested(windowInfo->takeFocusRequestedToken);
@@ -251,26 +263,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return 0;
 }
-
-// Message handler for about box.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    UNREFERENCED_PARAMETER(lParam);
-    switch (message)
-    {
-        case WM_INITDIALOG:
-            return (INT_PTR)TRUE;
-
-        case WM_COMMAND:
-            if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-            {
-                EndDialog(hDlg, LOWORD(wParam));
-                return (INT_PTR)TRUE;
-            }
-            break;
-    }
-    return (INT_PTR)FALSE;
-}
 #pragma endregion
 
 winrt::DispatcherQueueController initIslandApp()
@@ -278,7 +270,6 @@ winrt::DispatcherQueueController initIslandApp()
     winrt::init_apartment(winrt::apartment_type::single_threaded);
     auto dispatcherQueueController{ winrt::DispatcherQueueController::CreateOnCurrentThread() };
     auto islandApp{ winrt::make<winrt::ClipboardManager::implementation::App>() };
-
     return dispatcherQueueController;
 }
 
@@ -296,7 +287,7 @@ bool processMessageForTabNav(const HWND& window, MSG& msg)
         const bool isShiftKeyDown = (GetKeyState(VK_SHIFT) & (1 << 15)) != 0;
         const HWND nextFocusedWindow = ::GetNextDlgTabItem(window, focusedWindow, isShiftKeyDown);
 
-        WindowInfo* windowInfo = reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(window, GWLP_USERDATA));
+        clipmgr::utils::WindowInfo* windowInfo = clipmgr::utils::getWindowInfo(window);
         const HWND dwxsWindow = winrt::GetWindowFromWindowId(windowInfo->desktopWinXamlSrc.SiteBridge().WindowId());
 
         if (dwxsWindow == nextFocusedWindow)
@@ -318,25 +309,27 @@ bool processMessageForTabNav(const HWND& window, MSG& msg)
     return false;
 }
 
-void createWinUIWindow(WindowInfo* windowInfo, const HWND& windowHandle)
+void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windowHandle)
 {
     assert(windowInfo == nullptr);
 
-    windowInfo = new WindowInfo();
+    windowInfo = new clipmgr::utils::WindowInfo();
     SetWindowLongPtrW(windowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(windowInfo));
 
     windowInfo->desktopWinXamlSrc = winrt::DesktopWindowXamlSource();
     windowInfo->desktopWinXamlSrc.Initialize(winrt::GetWindowIdFromWindow(windowHandle));
-
     // Enable the DesktopWindowXamlSource to be a tab stop.
-    SetWindowLong(winrt::GetWindowFromWindowId(windowInfo->desktopWinXamlSrc.SiteBridge().WindowId()),
-        GWL_STYLE,
-        WS_TABSTOP | WS_CHILD | WS_VISIBLE);
+    SetWindowLong(winrt::GetWindowFromWindowId(windowInfo->desktopWinXamlSrc.SiteBridge().WindowId()), GWL_STYLE, WS_TABSTOP | WS_CHILD | WS_VISIBLE);
 
     // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
     windowInfo->desktopWinXamlSrc.Content(winrt::make<winrt::ClipboardManager::implementation::MainPage>());
 
+    clipmgr::Settings settings{};
     auto appWindow = clipmgr::utils::getCurrentAppWindow(windowHandle);
+    int32_t x = settings.get<int32_t>(L"WindowPosX").value_or(10);
+    int32_t y = settings.get<int32_t>(L"WindowPosY").value_or(10);
+    appWindow.Move({ x, y });
+
     if (appWindow.TitleBar().IsCustomizationSupported())
     {
         auto&& titleBar = appWindow.TitleBar();
@@ -345,33 +338,35 @@ void createWinUIWindow(WindowInfo* windowInfo, const HWND& windowHandle)
 
         auto&& presenter = appWindow.Presenter().as<winrt::OverlappedPresenter>();
         presenter.IsMaximizable(false);
-        presenter.IsMinimizable(false);
+        //presenter.IsMinimizable(false);
 
         //titleBar.PreferredHeightOption(winrt::TitleBarHeightOption::Collapsed);
-
+        auto&& resources = winrt::Application::Current().Resources();
+        
         appWindow.TitleBar().ButtonBackgroundColor(winrt::Colors::Transparent());
         appWindow.TitleBar().ButtonInactiveBackgroundColor(winrt::Colors::Transparent());
+        
         appWindow.TitleBar().ButtonInactiveForegroundColor(
-            winrt::Application::Current().Resources().TryLookup(winrt::box_value(L"AppTitleBarHoverColor")).as<winrt::Windows::UI::Color>());
+            resources.TryLookup(winrt::box_value(L"AppTitleBarHoverColor")).as<winrt::Windows::UI::Color>());
+
         appWindow.TitleBar().ButtonHoverBackgroundColor(
-            winrt::Application::Current().Resources().TryLookup(winrt::box_value(L"ButtonHoverBackgroundColor")).as<winrt::Windows::UI::Color>());
+            resources.TryLookup(winrt::box_value(L"ButtonHoverBackgroundColor")).as<winrt::Windows::UI::Color>());
+
         appWindow.TitleBar().ButtonPressedBackgroundColor(winrt::Colors::Transparent());
 
-        appWindow.TitleBar().ButtonForegroundColor(winrt::Colors::White());
-        appWindow.TitleBar().ButtonHoverForegroundColor(winrt::Colors::White());
-        appWindow.TitleBar().ButtonPressedForegroundColor(winrt::Colors::White());
-    }
-
-    /*windowInfo->takeFocusRequestedToken = windowInfo->desktopWinXamlSrc.TakeFocusRequested(
-        [windowHandle](const winrt::DesktopWindowXamlSource&, const winrt::DesktopWindowXamlSourceTakeFocusRequestedEventArgs& args)
-    {
-        SetFocus(
-            GetDlgItem(windowHandle, args.Request().Reason() == winrt::XamlSourceFocusNavigationReason::First ? 502 : 501)
+        appWindow.TitleBar().ButtonForegroundColor(
+            resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>()
         );
-    });*/
+        appWindow.TitleBar().ButtonHoverForegroundColor(
+            resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>()
+        );
+        appWindow.TitleBar().ButtonPressedForegroundColor(
+            resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>()
+        );
+    }
 }
 
-void handleWindowActivation(WindowInfo * windowInfo, const bool & inactive)
+void handleWindowActivation(clipmgr::utils::WindowInfo * windowInfo, const bool & inactive)
 {
     if (inactive)
     {
@@ -381,4 +376,9 @@ void handleWindowActivation(WindowInfo * windowInfo, const bool & inactive)
     {
         SetFocus(windowInfo->lastFocusedWindow);
     }
+}
+
+wchar_t* getWindowClass()
+{
+    return szWindowClass;
 }
