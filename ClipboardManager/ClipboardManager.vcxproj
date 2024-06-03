@@ -161,6 +161,7 @@
       <DependentUpon>HostControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="src\notifs\NotificationTypes.hpp" />
     <ClInclude Include="src\utils\Logger.hpp" />
     <ClInclude Include="SettingsPage.h">
       <DependentUpon>SettingsPage.xaml</DependentUpon>

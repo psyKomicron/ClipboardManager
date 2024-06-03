@@ -16,9 +16,9 @@ namespace winrt
     using namespace winrt::Windows::Data::Xml::Dom;
 }
 
-bool clipmgr::ToastNotification::registered = false;
+bool clipmgr::notifs::ToastNotification::registered = false;
 
-clipmgr::ToastNotification::ToastNotification()
+clipmgr::notifs::ToastNotification::ToastNotification()
 {
     static std::once_flag once_flag{};
     std::call_once(once_flag, [this]()
@@ -27,28 +27,22 @@ clipmgr::ToastNotification::ToastNotification()
     });
 }
 
-bool clipmgr::ToastNotification::notificationsAllowed()
-{
-    clipmgr::Settings settings{};
-    return settings.get<bool>(L"NotificationsAllowed").value_or(false);;
-}
-
-void clipmgr::ToastNotification::addText(const std::wstring& text)
+void clipmgr::notifs::ToastNotification::addText(const std::wstring& text)
 {
     textElements.push_back(text);
 }
 
-void clipmgr::ToastNotification::setTitle(const std::wstring& title)
+void clipmgr::notifs::ToastNotification::setTitle(const std::wstring& title)
 {
     this->title = title;
 }
 
-void clipmgr::ToastNotification::addButton(const std::wstring& content, const std::wstring& tag)
+void clipmgr::notifs::ToastNotification::addButton(const std::wstring& content, const std::wstring& tag)
 {
     buttonElements.push_back({ content, tag });
 }
 
-bool clipmgr::ToastNotification::tryAddButtons(const std::vector<std::pair<std::wstring, std::wstring>>& buttons)
+bool clipmgr::notifs::ToastNotification::tryAddButtons(const std::vector<std::pair<std::wstring, std::wstring>>& buttons)
 {
     if (buttons.size() > 5)
     {
@@ -73,37 +67,99 @@ bool clipmgr::ToastNotification::tryAddButtons(const std::vector<std::pair<std::
     return true;
 }
 
-void clipmgr::ToastNotification::send()
+void clipmgr::notifs::ToastNotification::send()
+{
+    // TODO: Call send(...) with default enums.
+}
+
+void clipmgr::notifs::ToastNotification::send(const NotificationDuration& durationType, const NotificationScenario& scenarioType, const NotificationSound& soundType)
 {
     if (!registered)
     {
         throw winrt::hresult_access_denied(L"Application isn't registered to send toast notifications.");
     }
-#ifdef _DEBUG
-#else
-    if (!notificationsAllowed())
-    {
-        logger.info(L"Notifications are not allowed, send() will do nothing.");
-        return;
-    }
-#endif // _DEBUG
 
     winrt::XmlDocument doc{};
     doc.LoadXml(LR"(
-    <toast scenario="urgent">
+    <toast>
         <visual>
             <binding template="ToastGeneric">{}</binding>
         </visual>
         <actions>
         </actions>
-        <audio src="ms-winsoundevent:Notification.SMS"/>
     </toast>)");
-    auto&& binding = doc.SelectSingleNode(L"/toast/visual/binding");
 
+    auto&& toast = doc.SelectSingleNode(L"/toast");
+    if (durationType != NotificationDuration::Default)
+    {
+        auto attribute = doc.CreateAttribute(L"duration");
+        attribute.Value(durationType == NotificationDuration::Short ? L"short" : L"long");
+        toast.Attributes().SetNamedItem(attribute);
+    }
+
+    if (scenarioType != NotificationScenario::Default)
+    {
+        auto attribute = doc.CreateAttribute(L"scenario");
+        switch (scenarioType)
+        {
+            case NotificationScenario::Reminder:
+                attribute.Value(L"reminder");
+                break;
+            case NotificationScenario::Alarm:
+                attribute.Value(L"alarm");
+                break;
+            case NotificationScenario::IncomingCall:
+                attribute.Value(L"incomingCall");
+                break;
+            case NotificationScenario::Urgent:
+                attribute.Value(L"urgent");
+                break;
+        }
+
+        toast.Attributes().SetNamedItem(attribute);
+    }
+
+    if (soundType != NotificationSound::Default)
+    {
+        auto audio = doc.CreateElement(L"audio");
+
+        if (soundType != NotificationSound::Silent)
+        {
+            std::wstring winSound = L"ms-winsoundevent:Notification.";
+            auto src = doc.CreateAttribute(L"src");
+            switch (soundType)
+            {
+                case NotificationSound::InstantMessage:
+                    winSound += L"IM";
+                    break;
+                case NotificationSound::Mail:
+                    winSound += L"Mail";
+                    break;
+                case NotificationSound::Reminder:
+                    winSound += L"Reminder";
+                    break;
+                case NotificationSound::SMS:
+                    winSound += L"SMS";
+                    break;
+            }
+            src.Value(winSound);
+            audio.Attributes().SetNamedItem(src);
+        }
+        else
+        {
+            auto silent = doc.CreateAttribute(L"silent");
+            silent.Value(L"true");
+            audio.Attributes().SetNamedItem(silent);
+        }
+
+        toast.AppendChild(audio);
+    }
+
+    auto&& binding = doc.SelectSingleNode(L"/toast/visual/binding");
     auto text = doc.CreateElement(L"text");
     text.InnerText(title);
     binding.AppendChild(text);
-    
+
     for (auto&& textElement : textElements)
     {
         auto text = doc.CreateElement(L"text");
@@ -124,10 +180,11 @@ void clipmgr::ToastNotification::send()
     }
     else
     {
+
         // TODO: Dont forget to change the text (inner text) of the launch node.
-        auto&& toast = doc.SelectSingleNode(L"/toast");
+        /*auto&& toast = doc.SelectSingleNode(L"/toast");
         auto launch = doc.CreateElement(L"launch");
-        launch.InnerText(L"asldknfslkdnfsldknfsdf");
+        launch.InnerText(L"asldknfslkdnfsldknfsdf");*/
     }
 
     winrt::ToastNotification notification{ doc };
@@ -136,7 +193,7 @@ void clipmgr::ToastNotification::send()
 }
 
 
-void clipmgr::ToastNotification::ensureToastManagerRegistered()
+void clipmgr::notifs::ToastNotification::ensureToastManagerRegistered()
 {
     logger.info(L"Ensuring that DesktopNotificationManagerCompat has been registered.");
     try

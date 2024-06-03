@@ -63,7 +63,7 @@
             VerticalAlignment="Center"
             Opacity="0.7"/>
 
-        <Pivot x:Name="Pivot" SelectedIndex="2" Grid.Row="1">
+        <Pivot x:Name="Pivot" SelectedIndex="0" Grid.Row="1">
             <PivotItem Margin="0" Padding="5,3,5,0">
                 <PivotItem.Header>
                     <FontIcon Glyph="&#xe713;" FontSize="16"/>

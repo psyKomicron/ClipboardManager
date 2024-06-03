@@ -22,6 +22,10 @@ namespace winrt::ClipboardManager::implementation
         bool loaded = false;
 
         void updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key);
+    public:
+        void DurationToggleButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void NotificationScenariosComboBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
+        void NotificationSoundComboBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
     };
 }
 

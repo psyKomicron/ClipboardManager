@@ -9,6 +9,7 @@
 #include "src/utils/helpers.hpp"
 #include "src/notifs/ToastNotification.hpp"
 #include "src/notifs/win_toasts.hpp"
+#include "src/notifs/NotificationTypes.hpp"
 
 #include "ClipboardActionView.h"
 #include "ClipboardActionEditor.h"
@@ -50,6 +51,11 @@ impl::MainPage::MainPage()
         auto&& action = toastNotificationAction.action<std::wstring>();
         auto&& url = params[L"url"];
         logger.debug(std::vformat(L"Action has been clicked: \n\t- {}\n\t- {}", std::make_wformat_args(action, url)));
+    });
+
+    manager.registerAction(L"", [this](clipmgr::notifs::ToastNotificationAction)
+    {
+        clipmgr::utils::getCurrentAppWindow().Show();
     });
 }
 
@@ -330,10 +336,15 @@ void impl::MainPage::SendNotification(const std::vector<std::pair<std::wstring, 
 {
     if (!loaded || !localSettings.get<bool>(L"NotificationsEnabled").value_or(false))
     {
+        logger.info(L"Not sending notification, page is either not loaded or notifications are not enabled.");
         return;
     }
 
-    clipmgr::ToastNotification notif{};
+    auto durationType = localSettings.get<clipmgr::notifs::NotificationDuration>(L"NotificationDurationType").value_or(clipmgr::notifs::NotificationDuration::Default);
+    auto scenarioType = localSettings.get<clipmgr::notifs::NotificationScenario>(L"NotificationScenarioType").value_or(clipmgr::notifs::NotificationScenario::Default);
+    auto soundType = localSettings.get<clipmgr::notifs::NotificationSound>(L"NotificationSoundType").value_or(clipmgr::notifs::NotificationSound::Default);
+
+    clipmgr::notifs::ToastNotification notif{};
     try
     {
         winrt::ResourceLoader resLoader{};
@@ -347,14 +358,14 @@ void impl::MainPage::SendNotification(const std::vector<std::pair<std::wstring, 
             notif.addText(std::wstring(resLoader.GetString(L"ToastNotification_ClickAction")));
         }
 
-        notif.send();
-        logger.debug(L"Sent notification");
+        notif.send(durationType, scenarioType, soundType);
     }
     catch (winrt::hresult_error err)
     {
         if (err.code() == 0x80070002)
         {
             // Don't forget to rename "ClipboardManager.pri" to "resources.pri".
+            logger.error(L"Failed to load translation file (resources.pri), sending notification without translating the string.");
             if (!notif.tryAddButtons(buttons))
             {
                 notif.addText(L"Open app");
@@ -366,11 +377,12 @@ void impl::MainPage::SendNotification(const std::vector<std::pair<std::wstring, 
             }
 
             notif.addText(L"Text isn't translated due to app error.");
-
-            notif.send();
+            notif.send(durationType, scenarioType, soundType);
         }
-        
-        logger.error(L"Failed to send toast notification. " + std::wstring(err.message()) + L" -- " + std::to_wstring(err.code().value));
+        else
+        {
+            logger.error(L"Failed to send toast notification. " + std::wstring(err.message()));
+        }
     }
 }
 

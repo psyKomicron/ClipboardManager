@@ -162,9 +162,13 @@ void impl::ClipboardActionView::HyperlinkButton_Click(winrt::Windows::Foundation
 
 void impl::ClipboardActionView::FormatLinkButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
-    /*winrt::DataPackage dataPackage{};
-    dataPackage.SetText(std::vformat(action.format(), std::make_wformat_args(std::wstring(_text))));
-    winrt::Clipboard::SetContent()*/
+    if (actions.size() == 1)
+    {
+        winrt::DataPackage dataPackage{};
+        auto text = std::wstring(_text);
+        dataPackage.SetText(std::vformat(actions[0].format(), std::make_wformat_args(text)));
+        winrt::Clipboard::SetContent(dataPackage);
+    }
 }
 
 void impl::ClipboardActionView::RemoveActionButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)

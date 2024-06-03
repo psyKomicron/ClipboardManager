@@ -1,10 +1,11 @@
 #pragma once
 #include "src/utils/Logger.hpp"
+#include "src/notifs/NotificationTypes.hpp"
 
 #include <vector>
 #include <string>
 
-namespace clipmgr
+namespace clipmgr::notifs
 {
     class ToastNotification
     {
@@ -19,6 +20,7 @@ namespace clipmgr
         bool tryAddButtons(const std::vector<std::pair<std::wstring, std::wstring>>& buttons);
 
         void send();
+        void send(const NotificationDuration& durationType, const NotificationScenario& scenarioType, const NotificationSound& soundType);
 
     private:
         static bool registered;

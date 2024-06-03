@@ -35,6 +35,13 @@ namespace clipmgr
         || std::same_as<T, char>;
 
     template<typename T>
+    concept EnumInsertable = std::is_enum_v<T> && requires(T t)
+    {
+        static_cast<uint32_t>(t);
+    };
+    //not IntegralInsertable<T> && std::constructible_from<T, uint32_t>
+
+    template<typename T>
     concept LongIntegralInsertable = 
         std::same_as<T, uint64_t>
         || std::same_as<T, int64_t>
@@ -105,6 +112,18 @@ namespace clipmgr
             return wil::reg::try_get_value_qword(hKey.get(), key.c_str());
         }
 
+        template<EnumInsertable T> 
+        std::optional<T> get(const key_t& key)
+        {
+            auto optional = get<uint32_t>(key);
+            if (optional.has_value())
+            {
+                return static_cast<T>(optional.value());
+            }
+
+            return std::optional<T>();
+        }
+
         template<Insertable T>
         T get(const key_t& key)
         {
@@ -168,6 +187,12 @@ namespace clipmgr
         {
             uint32_t insertable = static_cast<uint32_t>(value);
             wil::reg::set_value_dword(hKey.get(), key.c_str(), value);
+        }
+
+        template<EnumInsertable T>
+        void insert(const key_t& key, const T& value)
+        {
+            insert<uint32_t>(key, static_cast<uint32_t>(value));
         }
 
         template<Insertable T>

@@ -154,7 +154,7 @@ void clipmgr::ClipboardAction::enabled(const bool& value)
 
 bool clipmgr::ClipboardAction::match(const std::wstring& string) const
 {
-    bool res = boost::regex_search(string, _regex);
+    bool res = boost::regex_match(string, _regex);
     return res;
 }
 
