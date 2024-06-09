@@ -13,5 +13,6 @@ namespace ClipboardManager
         void AddAction(String format, String label, String regex, Boolean enabled);
         void AddActions(IInspectable actions);
 
+        Windows.Foundation.IAsyncAction StartTour();
     }
 }

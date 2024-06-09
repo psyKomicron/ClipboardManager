@@ -108,10 +108,7 @@ namespace clipmgr::ui
                 xaml::VisualStateManager::GoToState(control, state, useTransitions);
                 for (VisualState<T>& visualState : _visualStates[state.group()])
                 {
-                    if (visualState == state)
-                    {
-                        visualState.active(true);
-                    }
+                    visualState.active(visualState == state);
                 }
                 logger.debug(std::format(L"[VisualStateManager] Activated state '{}'", std::wstring(state.name())));
             }

@@ -11,6 +11,9 @@
 #include <winrt/Windows.System.h>
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 
+#include <ppltasks.h>
+#include <pplawait.h>
+
 #include <vector>
 #include <format>
 
@@ -127,6 +130,22 @@ bool impl::ClipboardActionView::IndexOf(uint32_t& pos, const winrt::hstring& for
     return false;
 }
 
+winrt::async impl::ClipboardActionView::StartTour()
+{
+    visualStateManager.goToState(OptionsOpenState);
+
+    RootGridTeachingTip().IsOpen(true);
+ 
+    auto ptr = &teachingTipsWaitFlag;
+    auto func = [ptr]() -> void
+    {
+        ptr->wait(false);
+        ptr->clear();
+    };
+
+    co_await concurrency::create_task(std::move(func));
+}
+
 
 void impl::ClipboardActionView::UserControl_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const&, winrt::Windows::Foundation::IInspectable const&)
 {
@@ -167,6 +186,7 @@ void impl::ClipboardActionView::FormatLinkButton_Click(winrt::IInspectable const
         winrt::DataPackage dataPackage{};
         auto text = std::wstring(_text);
         dataPackage.SetText(std::vformat(actions[0].format(), std::make_wformat_args(text)));
+        dataPackage.Properties().ApplicationName(L"ClipboardManager");
         winrt::Clipboard::SetContent(dataPackage);
     }
 }
@@ -174,4 +194,31 @@ void impl::ClipboardActionView::FormatLinkButton_Click(winrt::IInspectable const
 void impl::ClipboardActionView::RemoveActionButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
     e_removed(*this, nullptr);
+}
+
+void impl::ClipboardActionView::TeachingTip_ButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args)
+{
+    static size_t teachingTipIndex = 0;
+    static std::vector<winrt::TeachingTip> teachingTips
+    {
+        RootGridTeachingTip(),
+        LabelTextBlockTeachingTip(),
+        ActionsGridViewTeachingTip(),
+        OpenOptionsButtonTeachingTip(),
+        FormatLinkButtonTeachingTip(),
+        RemoveActionButtonTeachingTip()
+    };
+
+    if (teachingTipIndex < teachingTips.size())
+    {
+        teachingTips[teachingTipIndex - 1].IsOpen(false);
+        teachingTips[teachingTipIndex++].IsOpen(true);
+    }
+    else
+    {
+        teachingTips[teachingTipIndex - 1].IsOpen(false);
+
+        teachingTipsWaitFlag.test_and_set();
+        teachingTipsWaitFlag.notify_all();
+    }
 }

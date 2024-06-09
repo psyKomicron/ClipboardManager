@@ -39,13 +39,13 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <TextBlock Grid.Row="0" Style="{StaticResource BodyStrongTextBlockStyle}" FontSize="20" VerticalAlignment="Center" Text="{x:Bind ActionLabel, Mode=OneWay}"/>
+        <TextBlock x:Name="ActionLabelTextBlock" Grid.Row="0" Style="{StaticResource BodyStrongTextBlockStyle}" FontSize="20" VerticalAlignment="Center" Text="{x:Bind ActionLabel, Mode=OneWay}"/>
 
-        <TextBlock VerticalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind ActionFormat, Mode=OneWay}"/>
-        <TextBlock VerticalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="2" Text="{x:Bind ActionRegex, Mode=OneWay}"/>
+        <TextBlock x:Name="ActionFormatTextBlock" VerticalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind ActionFormat, Mode=OneWay}"/>
+        <TextBlock x:Name="ActionRegexTextBlock" VerticalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="2" Text="{x:Bind ActionRegex, Mode=OneWay}"/>
 
         <StackPanel Orientation="Horizontal" Spacing="3" Grid.Column="1">
-            <ToggleSwitch Grid.Column="1" Grid.Row="1" Toggled="ActionEnabledToggleSwitch_Toggled" Style="{StaticResource FlippedToggleSwitchStyle}" OnContent="{x:Null}" OffContent="{x:Null}" IsOn="{x:Bind ActionEnabled, Mode=TwoWay}"/>
+            <ToggleSwitch x:Name="ActionEnabledToggleSwitch" Grid.Column="1" Grid.Row="1" Toggled="ActionEnabledToggleSwitch_Toggled" Style="{StaticResource FlippedToggleSwitchStyle}" OnContent="{x:Null}" OffContent="{x:Null}" IsOn="{x:Bind ActionEnabled, Mode=TwoWay}"/>
 
             <Border Background="{ThemeResource MenuFlyoutSeparatorThemeBrush}" Width="2" VerticalAlignment="Stretch" CornerRadius="1" Margin="6,0,3,0" MaxHeight="30"/>
 
@@ -57,6 +57,72 @@
                 <FontIcon FontSize="15" Glyph="&#xe70f;"/>
             </Button>
         </StackPanel>
+
+        <TeachingTip x:Name="ClipboardActionRootGridTeachingTip"
+             x:Uid="ClipboardActionRootGridTeachingTip"
+             Target="{x:Bind RootGrid}"
+             ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip x:Name="ActionLabelTextBlockTeachingTip"
+                     x:Uid="ActionLabelTextBlockTeachingTip"
+                     Target="{x:Bind ActionLabelTextBlock}"
+                     ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip x:Name="ActionFormatTextBlockTeachingTip"
+                     x:Uid="ActionFormatTextBlockTeachingTip"
+                     Target="{x:Bind ActionFormatTextBlock}"
+                     ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip x:Name="ActionRegexTextBlockTeachingTip"
+                     x:Uid="ActionRegexTextBlockTeachingTip"
+                     Target="{x:Bind ActionRegexTextBlock}"
+                     ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip x:Name="ActionEnabledToggleSwitchTeachingTip"
+                     x:Uid="ActionEnabledToggleSwitchTeachingTip"
+                     Target="{x:Bind ActionEnabledToggleSwitch}"
+                     ShouldConstrainToRootBounds="False"
+                     ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip x:Name="RemoveButtonTeachingTip"
+                     x:Uid="RemoveButtonTeachingTip"
+                     Target="{x:Bind RemoveButton}"
+                     ShouldConstrainToRootBounds="False"
+                     ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip x:Name="EditButtonTeachingTip"
+                     x:Uid="EditButtonTeachingTip"
+                     Target="{x:Bind EditButton}"
+                     ShouldConstrainToRootBounds="False"
+                     ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
 
 
         <ContentDialog x:Name="EditDialog" x:Uid="EditDialog" DefaultButton="Primary" HorizontalAlignment="Stretch">

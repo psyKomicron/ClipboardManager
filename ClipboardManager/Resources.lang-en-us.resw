@@ -117,6 +117,66 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ActionEnabledToggleSwitchTeachingTip.Subtitle" xml:space="preserve">
+    <value>Enable or disable the trigger. A disabled trigger will not be used in any action</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ActionEnabledToggleSwitchTeachingTip.Title" xml:space="preserve">
+    <value>Trigger status</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ActionFormatTextBlockTeachingTip.Subtitle" xml:space="preserve">
+    <value>String that will be formatted with the content of the clipboard</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ActionFormatTextBlockTeachingTip.Title" xml:space="preserve">
+    <value>Trigger format</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ActionLabelTextBlockTeachingTip.Subtitle" xml:space="preserve">
+    <value>Label of the trigger, this name will be displayed for one of the button of a clipboard action</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ActionLabelTextBlockTeachingTip.Title" xml:space="preserve">
+    <value>Trigger label</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ActionRegexTextBlockTeachingTip.Subtitle" xml:space="preserve">
+    <value>Regex that the clipboard content needs to match</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ActionRegexTextBlockTeachingTip.Title" xml:space="preserve">
+    <value>Trigger regex</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ActionsGridViewTeachingTip.Subtitle" xml:space="preserve">
+    <value>Action buttons will be displayed here, click one to open the link created by the trigger format</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ActionsGridViewTeachingTip.Title" xml:space="preserve">
+    <value>Action trigger buttons</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ClipboardActionRootGridTeachingTip.Subtitle" xml:space="preserve">
+    <value>This is a clipboard trigger</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ClipboardActionsListViewTeachingTip.Subtitle" xml:space="preserve">
+    <value>Triggers list</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ClipboardActionsListViewTeachingTip.Title" xml:space="preserve">
+    <value>Clipboard triggers</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ClipboardActionsPivotTeachingTip.Subtitle" xml:space="preserve">
+    <value>View clipboard entries that triggered your custom clipboard triggers and start actions.</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ClipboardActionsPivotTeachingTip.Title" xml:space="preserve">
+    <value>Clipboard actions</value>
+    <comment>Teaching tips</comment>
+  </data>
   <data name="ClipboardActionsSaveFileMovedInfoBar.Message" xml:space="preserve">
     <value>Choose to create or locate the missing file.</value>
     <comment>MainPage</comment>
@@ -125,9 +185,37 @@
     <value>Clipboard action file is missing, it was either moved or deleted.</value>
     <comment>MainPage</comment>
   </data>
+  <data name="ClipboardHistoryPivotTeachingTip.Subtitle" xml:space="preserve">
+    <value>Same as Super + V</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ClipboardHistoryPivotTeachingTip.Title" xml:space="preserve">
+    <value>Clipboard history</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ClipboardTriggersPivotTeachingTip.Subtitle" xml:space="preserve">
+    <value>View and edit clipboard triggers</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ClipboardTriggersPivotTeachingTip.Title" xml:space="preserve">
+    <value>Clipboard triggers</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="CommandBarSaveButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Click to save the modifications made to any clipboard trigger</value>
+    <comment>Teaching tips</comment>
+  </data>
   <data name="CreateButton.Content" xml:space="preserve">
     <value>Create</value>
     <comment>MainPage</comment>
+  </data>
+  <data name="EditButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Open a dialog to edit this trigger</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="EditButtonTeachingTip.Title" xml:space="preserve">
+    <value>Edit</value>
+    <comment>Teaching tips</comment>
   </data>
   <data name="EditDialog.PrimaryButtonText" xml:space="preserve">
     <value>Save</value>
@@ -141,9 +229,33 @@
     <value>Copy formatted link to the clipboard</value>
     <comment>ClipboardActionView</comment>
   </data>
+  <data name="FormatLinkButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Formats the action text with the default trigger format and adds it to the clipboard</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="FormatLinkButtonTeachingTip.Title" xml:space="preserve">
+    <value>Format link</value>
+    <comment>Teaching tips</comment>
+  </data>
   <data name="FormatTextBlock.Text" xml:space="preserve">
     <value>Format</value>
     <comment>ClipboardActionEditor</comment>
+  </data>
+  <data name="HistoryToggleButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Quickly enable or disable actions history</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="LabelTextBlockTeachingTip.Subtitle" xml:space="preserve">
+    <value>Clipboard text</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ListViewTeachingTip.Subtitle" xml:space="preserve">
+    <value>You will find here the clipboard entries that match your clipboard triggers</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ListViewTeachingTip.Title" xml:space="preserve">
+    <value>Clipboard action</value>
+    <comment>Teaching tips</comment>
   </data>
   <data name="LocateButton.Content" xml:space="preserve">
     <value>Locate</value>
@@ -156,6 +268,14 @@
   <data name="NoClipboardActionsTextBlock.Text" xml:space="preserve">
     <value>No clipboard actions</value>
     <comment>MainPage</comment>
+  </data>
+  <data name="OpenOptionsButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Click here to show additional options</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="OpenQuickSettingsButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Open or close quick settings</value>
+    <comment>Teaching tips</comment>
   </data>
   <data name="OpenSaveFileButton.Content" xml:space="preserve">
     <value>Open &amp; edit</value>
@@ -173,9 +293,57 @@
     <value>Regex</value>
     <comment>ClipboardActionEditor</comment>
   </data>
+  <data name="ReloadActionsButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Manually reload clipboard triggers</value>
+    <comment>Teaching tips</comment>
+  </data>
   <data name="RemoveActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Remove action from the list</value>
     <comment>ClipboardActionView</comment>
+  </data>
+  <data name="RemoveActionButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Remove the action from the list</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="RemoveActionButtonTeachingTip.Title" xml:space="preserve">
+    <value>Remove</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="RemoveButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Remove and delete trigger</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="RemoveButtonTeachingTip.Title" xml:space="preserve">
+    <value>Remove</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="RootGridTeachingTip.Subtitle" xml:space="preserve">
+    <value>This is a clipboard action</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="SettingsPivotTeachingTip.Subtitle" xml:space="preserve">
+    <value>Change application settings here (auto startup, notifications)</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="SettingsPivotTeachingTip.Title" xml:space="preserve">
+    <value>Settings</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="SilenceNotificationsToggleButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Quickly enable or disable notifications</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="StartTourButton.Content" xml:space="preserve">
+    <value>Start tour</value>
+    <comment>MainPage Startup tour</comment>
+  </data>
+  <data name="StartTourInfoBar.Message" xml:space="preserve">
+    <value>Start a short guided tour of the application</value>
+    <comment>MainPage Startup tour</comment>
+  </data>
+  <data name="StartTourInfoBar.Title" xml:space="preserve">
+    <value>Is this your first time ?</value>
+    <comment>MainPage Startup tour</comment>
   </data>
   <data name="ToastNotification_ClickAction" xml:space="preserve">
     <value>Click action</value>

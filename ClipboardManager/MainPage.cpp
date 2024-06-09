@@ -33,6 +33,7 @@ namespace impl = winrt::ClipboardManager::implementation;
 namespace winrt
 {
     using namespace winrt::Microsoft::UI::Xaml;
+    using namespace winrt::Microsoft::UI::Xaml::Controls;
     using namespace winrt::Microsoft::UI::Windowing;
     using namespace winrt::Microsoft::Windows::AppNotifications;
     using namespace winrt::Microsoft::Windows::AppNotifications::Builder;
@@ -45,6 +46,19 @@ namespace winrt
 
 impl::MainPage::MainPage()
 {
+    visualStateManager.initializeStates(
+    {
+        NormalActionsState,
+        NoClipboardActionsState,
+        OpenSaveFileState,
+        ViewActionsState,
+        NoClipboardActionsToDisplayState,
+        FirstStartupState,
+        NormalStartupState,
+        QuickSettingsClosedState,
+        QuickSettingsOpenState
+    });
+
     manager.registerAction(L"action", [this](clipmgr::notifs::ToastNotificationAction toastNotificationAction)
     {
         auto params = toastNotificationAction.parameters();
@@ -112,6 +126,7 @@ winrt::Windows::Foundation::IAsyncAction impl::MainPage::Page_Loading(winrt::Mic
         auto&& itemText = co_await item.Content().GetTextAsync();
         ClipboardHistoryListView().Items().Append(box_value(itemText));
     }
+
     clipboardContentChangedrevoker = winrt::Clipboard::ContentChanged(winrt::auto_revoke, { this, &MainPage::ClipboardContent_Changed });
 }
 
@@ -133,7 +148,7 @@ void impl::MainPage::ClipboadActionsListPivot_Loaded(winrt::IInspectable const&,
             editor.ActionLabel(action.label());
             editor.ActionRegex(action.regex().str());
             editor.ActionEnabled(action.enabled());
-            //auto flags = static_cast<uint32_t>(action.regex().flags());
+
             editor.FormatChanged({ this, &MainPage::Editor_FormatChanged });
             editor.LabelChanged({ this, &MainPage::Editor_LabelChanged });
             editor.IsOn({ this, &MainPage::Editor_Toggled });
@@ -155,9 +170,16 @@ void impl::MainPage::PivotItem_Loaded(winrt::IInspectable const&, winrt::RoutedE
 
 void impl::MainPage::Page_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
+    loaded = true;
+
     /*presenter = clipmgr::utils::getCurrentAppWindow().Presenter().as<winrt::OverlappedPresenter>();
     presenter.Minimize();*/
-    loaded = true;
+
+    if (!localSettings.get<bool>(L"FirstStartup").has_value())
+    {
+        localSettings.insert(L"FirstStartup", false);
+        visualStateManager.goToState(FirstStartupState);
+    }
 }
 
 winrt::async impl::MainPage::LocateUserFileButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
@@ -203,18 +225,174 @@ void impl::MainPage::ViewActionsButton_Click(winrt::IInspectable const&, winrt::
     Pivot().SelectedIndex(2);
 }
 
+void impl::MainPage::StartTourButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    visualStateManager.goToState(NormalStartupState);
+    visualStateManager.goToState(QuickSettingsOpenState);
+    ListViewTeachingTip().IsOpen(true);
+    teachingTipIndex = 1;
+}
+
+winrt::async impl::MainPage::TeachingTip_CloseButtonClick(winrt::TeachingTip const& sender, winrt::IInspectable const& args)
+{
+    static std::vector<winrt::TeachingTip> teachingTips
+    {
+        ListViewTeachingTip(),
+        SettingsPivotTeachingTip(),
+        ClipboardHistoryPivotTeachingTip(),
+        ClipboardTriggersPivotTeachingTip(),
+        ClipboardActionsPivotTeachingTip(),
+        OpenQuickSettingsButtonTeachingTip(),
+        ReloadActionsButtonTeachingTip(),
+        SilenceNotificationsToggleButtonTeachingTip(),
+        HistoryToggleButtonTeachingTip()
+    };
+
+    if (teachingTipIndex < teachingTips.size())
+    {
+        teachingTips[teachingTipIndex - 1].IsOpen(false);
+        teachingTips[teachingTipIndex++].IsOpen(true);
+    }
+    else
+    {
+        teachingTips[teachingTipIndex - 1].IsOpen(false);
+
+        // Start tour of actions:
+        bool manuallyAddedAction = false;
+        if (clipboardActionViews.Size() == 0)
+        {
+            manuallyAddedAction = true;
+
+            auto actionView = winrt::make<::impl::ClipboardActionView>(L"Clipboard content that matches a trigger");
+            actionView.AddAction(L"{}", L"Trigger", L"", true);
+            actionView.Removed([this](auto&& sender, auto&&)
+            {
+                for (uint32_t i = 0; i < clipboardActionViews.Size(); i++)
+                {
+                    if (sender == clipboardActionViews.GetAt(i))
+                    {
+                        clipboardActionViews.RemoveAt(i);
+                    }
+                }
+            });
+
+            clipboardActionViews.InsertAt(0, actionView);
+        }
+
+        co_await clipboardActionViews.GetAt(0).StartTour();
+
+        if (manuallyAddedAction)
+        {
+            clipboardActionViews.RemoveAt(0);
+        }
+        
+        Pivot().SelectedIndex(2);
+
+        manuallyAddedAction = false;
+        if (ClipboardActionsListView().Items().Size() == 0)
+        {
+            // TODO: Manually add action.
+        }
+
+        ClipboardActionsListViewTeachingTip().IsOpen(true);
+
+        if (manuallyAddedAction)
+        {
+            ClipboardActionsListView().Items().RemoveAt(0);
+        }
+    }
+}
+
+winrt::async impl::MainPage::TeachingTip2_CloseButtonClick(winrt::TeachingTip const& sender, winrt::IInspectable const&)
+{
+    static size_t index = 1;
+    static std::vector<winrt::TeachingTip> teachingTips
+    {
+        HistoryToggleButtonTeachingTip(),
+        CommandBarSaveButtonTeachingTip()
+    };
+
+    if (index < teachingTips.size())
+    {
+        teachingTips[index - 1].IsOpen(false);
+        teachingTips[index++].IsOpen(true);
+    }
+    else
+    {
+        co_await ClipboardActionsListView().Items().GetAt(0).as<winrt::ClipboardManager::ClipboardActionEditor>().StartTour();
+        Pivot().SelectedIndex(3);
+    }
+}
+
+void impl::MainPage::OpenQuickSettingsButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    visualStateManager.switchState(QuickSettingsClosedState.group());
+}
+
+void impl::MainPage::ReloadActionsButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
+    if (userFilePath.has_value() && clipmgr::utils::pathExists(userFilePath.value()))
+    {
+        actions = clipmgr::ClipboardAction::loadClipboardActions(userFilePath.value());
+
+        auto vector = winrt::single_threaded_observable_vector<winrt::hstring>();
+        for (auto&& view : clipboardActionViews)
+        {
+            vector.Append(view.Text());
+        }
+
+        clipboardActionViews.Clear();
+
+        for (auto&& view : vector)
+        {
+            AddAction(view.data(), false);
+        }
+
+        ClipboardActionsListView().Items().Clear();
+        ClipboadActionsListPivot_Loaded(nullptr, nullptr);
+    }
+    else
+    {
+        winrt::InfoBar infoBar{};
+
+        winrt::hstring title = L"Failed to reload actions";
+        winrt::hstring message = L"Actions user file has either been moved/deleted or application settings have been cleared.";
+        try
+        {
+            winrt::ResourceLoader resLoader{};
+            title = resLoader.GetString(L"ReloadActionsUserFileNotFoundTitle");
+            message = resLoader.GetString(L"ReloadActionsUserFileNotFoundMessage");
+        }
+        catch (winrt::hresult_error err)
+        {
+            logger.error(L"Failed to load resources file (resources.pri).");
+        }
+
+        infoBar.Title(title);
+        infoBar.Message(message);
+    }
+}
+
+void impl::MainPage::CommandBarSaveButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+
+}
+
 
 winrt::async impl::MainPage::ClipboardContent_Changed(const winrt::IInspectable&, const winrt::IInspectable&)
 {
     // TODO: There is a better way to add content to a usercontrol instead of creating it to potentially discard it.
     auto clipboardContent = winrt::Clipboard::GetContent();
     auto&& text = std::wstring(co_await clipboardContent.GetTextAsync());
-
-    if (!clipboardContent.Contains(winrt::StandardDataFormats::Text()))
+    auto appName = clipboardContent.Properties().ApplicationName();
+    if (!clipboardContent.Contains(winrt::StandardDataFormats::Text()) || appName == L"ClipboardManager")
     {
-        logger.info(L"Clipboard action is already added (" + text + L").");
+        logger.info(L"Clipboard content changed, but the available format is not text or the application that changed the clipboard content is me.");
         co_return;
     }
+
+    logger.debug(L"Clipboard content changed, application name: " + std::wstring(appName));
 
     AddAction(text);
 }
@@ -275,6 +453,7 @@ void impl::MainPage::Restore()
         {
             boost::property_tree::wptree tree{};
             boost::property_tree::read_xml(userFilePath.value().string(), tree);
+
             for (auto&& historyItem : tree.get_child(L"settings.history"))
             {
                 AddAction(historyItem.second.data());
@@ -311,8 +490,43 @@ void impl::MainPage::Restore()
     });
 }
 
-bool impl::MainPage::FindActions(
-    const winrt::ClipboardManager::ClipboardActionView& actionView, std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text)
+void impl::MainPage::AddAction(const std::wstring& text, const bool& notify)
+{
+    bool addExisting = localSettings.get<bool>(L"AddDuplicatedActions").value_or(false);
+    if (addExisting 
+        || clipboardActionViews.Size() == 0
+        || text != clipboardActionViews.GetAt(0).Text())
+    {
+        auto actionView = winrt::make<::impl::ClipboardActionView>(text.c_str());
+
+        std::vector<std::pair<std::wstring, std::wstring>> buttons{};
+        if (!FindActions(actionView, buttons, text))
+        {
+            logger.info(L"No matching actions found for '" + std::wstring(text) + L"'. Actions " + (actions.empty() ? L"not loaded" : L"loaded"));
+            return;
+        }
+
+        clipboardActionViews.InsertAt(0, actionView);
+        actionView.Removed([this](auto&& sender, auto&&)
+        {
+            for (uint32_t i = 0; i < clipboardActionViews.Size(); i++)
+            {
+                if (sender == clipboardActionViews.GetAt(i))
+                {
+                    clipboardActionViews.RemoveAt(i);
+                }
+            }
+        });
+
+        if (notify)
+        {
+            SendNotification(buttons);
+        }
+    }
+}
+
+bool impl::MainPage::FindActions(const winrt::ClipboardManager::ClipboardActionView& actionView, 
+    std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text)
 {
     bool hasMatch = false;
     for (auto&& action : actions)
@@ -334,9 +548,9 @@ bool impl::MainPage::FindActions(
 
 void impl::MainPage::SendNotification(const std::vector<std::pair<std::wstring, std::wstring>>& buttons)
 {
-    if (!loaded || !localSettings.get<bool>(L"NotificationsEnabled").value_or(false))
+    if (!localSettings.get<bool>(L"NotificationsEnabled").value_or(false))
     {
-        logger.info(L"Not sending notification, page is either not loaded or notifications are not enabled.");
+        logger.info(L"Not sending notification, notifications are not enabled.");
         return;
     }
 
@@ -385,35 +599,3 @@ void impl::MainPage::SendNotification(const std::vector<std::pair<std::wstring, 
         }
     }
 }
-
-void impl::MainPage::AddAction(const std::wstring& text)
-{
-    bool addExisting = localSettings.get<bool>(L"AddDuplicatedActions").value_or(false);
-    if (addExisting 
-        || clipboardActionViews.Size() == 0
-        || text != clipboardActionViews.GetAt(0).Text())
-    {
-        auto actionView = winrt::make<::impl::ClipboardActionView>(text.c_str());
-        std::vector<std::pair<std::wstring, std::wstring>> buttons{};
-        if (!FindActions(actionView, buttons, text))
-        {
-            logger.info(L"No matching actions found for '" + std::wstring(text) + L"'. Actions " + (actions.empty() ? L"not loaded" : L"loaded"));
-            return;
-        }
-
-        clipboardActionViews.InsertAt(0, actionView);
-        actionView.Removed([this](auto&& sender, auto&&)
-        {
-            for (uint32_t i = 0; i < clipboardActionViews.Size(); i++)
-            {
-                if (sender == clipboardActionViews.GetAt(i))
-                {
-                    clipboardActionViews.RemoveAt(i);
-                }
-            }
-        });
-
-        SendNotification(buttons);
-    }
-}
-

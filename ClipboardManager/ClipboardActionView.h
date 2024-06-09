@@ -4,6 +4,8 @@
 #include "src/ClipboardAction.hpp"
 #include "src/ui/VisualStateManager.hpp"
 
+#include <atomic>
+
 namespace winrt::ClipboardManager::implementation
 {
     using event_removed_t = winrt::Windows::Foundation::TypedEventHandler<winrt::ClipboardManager::ClipboardActionView, winrt::Windows::Foundation::IInspectable>;
@@ -27,13 +29,14 @@ namespace winrt::ClipboardManager::implementation
         actions_t GetActions();
         void EditAction(const uint32_t& pos, const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled);
         bool IndexOf(uint32_t& pos, const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled);
-
+        winrt::async StartTour();
 
         void UserControl_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
         void OpenOptionsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void HyperlinkButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void FormatLinkButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void RemoveActionButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void TeachingTip_ButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
 
     private:
         const clipmgr::ui::VisualState<ClipboardActionView> OptionsClosedState{ L"OptionsClosed", 0, true };
@@ -42,6 +45,7 @@ namespace winrt::ClipboardManager::implementation
         winrt::hstring _text{};
         clipmgr::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
         winrt::event<event_removed_t> e_removed{};
+        std::atomic_flag teachingTipsWaitFlag{};
     };
 }
 

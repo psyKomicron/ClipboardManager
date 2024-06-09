@@ -22,7 +22,7 @@
 WCHAR szTitle[MAX_LOADSTRING];// The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];// the main window class name
 
-constexpr uint32_t InitialWindowWidth = 440;
+constexpr uint32_t InitialWindowWidth = 470;
 constexpr uint32_t InitialWindowHeight = 700;
 
 namespace winrt
@@ -84,6 +84,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR,
     {
         return -1;
     }
+    std::wstring end = L"";
+    std::wcin >> end;
 
     return 0;
 }

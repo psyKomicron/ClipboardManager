@@ -4,6 +4,8 @@
 #include "src/ui/VisualStateManager.hpp"
 #include "src/utils/Logger.hpp"
 
+#include <atomic>
+
 namespace winrt::ClipboardManager::implementation
 {
     using event_changed_t = winrt::Windows::Foundation::TypedEventHandler<winrt::ClipboardManager::ClipboardActionEditor, winrt::hstring>;
@@ -38,10 +40,13 @@ namespace winrt::ClipboardManager::implementation
             e_propertyChanged.remove(token);
         };
 
+        winrt::async StartTour();
+
         void RemoveButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::async EditButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void ActionEnabledToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void UserControl_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void TeachingTip_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
 
     private:
         const clipmgr::ui::VisualState<ClipboardActionEditor> EnabledState{ L"Enabled", 0, true };
@@ -57,6 +62,7 @@ namespace winrt::ClipboardManager::implementation
         winrt::event<event_changed_t> e_labelChanged{};
         winrt::event<event_changed_t> e_formatChanged{};
         winrt::event<winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> e_propertyChanged{};
+        std::atomic_flag waitFlag{};
 
         void NotifyPropertyChanged(std::source_location sourceLocation = std::source_location::current());
     };

@@ -88,7 +88,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>user32.lib;Shlwapi.lib;Shell32.lib;Gdi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>user32.lib;Shlwapi.lib;Shell32.lib;Gdi32.lib;Kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>Microsoft.UI.Windowing.Core.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
@@ -247,6 +247,7 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="CHANGELOG.md" />
     <None Include="packages.config" />
     <PRIResource Include="Resources.lang-en-us.resw" />
   </ItemGroup>
@@ -301,6 +302,8 @@
     <Xml Include="..\..\..\..\..\Documents\Clipboard Manager\user_file.xml">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DeploymentContent>
     </Xml>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
