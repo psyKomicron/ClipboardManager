@@ -7,7 +7,7 @@ void clipmgr::DirectoryWatcher::startWatching()
 {
     std::atomic_flag waitFlag{};
     int retValue = 0;
-    backgroundThread = std::jthread(&DirectoryWatcher::watchDirectoryChanges, this, &waitFlag, retValue);
+    backgroundThread = std::jthread(&DirectoryWatcher::watchDirectoryChanges, this, &waitFlag, &retValue);
 
     waitFlag.wait(false);
     waitFlag.clear();
@@ -35,6 +35,6 @@ void clipmgr::DirectoryWatcher::watchDirectoryChanges(std::atomic_flag* waitFlag
     {
         logger.info(L"Waiting for directory changes (path: '" + path.wstring() + L"')");
 
-
+        auto status = WaitForSingleObjectEx(handle, INFINITE, true);
     }
 }

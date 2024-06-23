@@ -118,12 +118,22 @@ bool clipmgr::utils::managed_file_handle::invalid() const
 }
 
 
+clipmgr::utils::PropChangedEventArgs::PropChangedEventArgs(const std::source_location& sourceLocation) :
+    winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(getCallerName(sourceLocation))
+{
+}
+
 winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs clipmgr::utils::PropChangedEventArgs::create(std::source_location sourceLocation)
+{
+    return winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(getCallerName(sourceLocation));
+}
+
+std::wstring clipmgr::utils::PropChangedEventArgs::getCallerName(const std::source_location& sourceLocation)
 {
     const boost::regex functionExtractor{ R"(void __cdecl ([A-z]*::)*([A-z]*)\(.*\))" };
     boost::cmatch match{};
     std::ignore = boost::regex_match(sourceLocation.function_name(), match, functionExtractor);
     std::wstring functionName = clipmgr::utils::convert(match[2]);
 
-    return winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(functionName);
+    return functionName;
 }

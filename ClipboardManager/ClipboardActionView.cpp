@@ -65,7 +65,7 @@ void impl::ClipboardActionView::Removed(const winrt::event_token& token)
 
 void impl::ClipboardActionView::AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled)
 {
-    actions.push_back(clipmgr::ClipboardAction(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), enabled));
+    actions.push_back(clipmgr::ClipboardTrigger(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), enabled));
 }
 
 void winrt::ClipboardManager::implementation::ClipboardActionView::AddActions(const winrt::Windows::Foundation::IInspectable& inspectable)
@@ -82,24 +82,9 @@ void impl::ClipboardActionView::AddActions(const actions_t actions)
         auto regex = action.GetAt(2);
 
         this->actions.push_back(
-            clipmgr::ClipboardAction(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), true)
+            clipmgr::ClipboardTrigger(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), true)
         );
     }
-}
-
-impl::actions_t impl::ClipboardActionView::GetActions()
-{
-    actions_t loadedActions = single_threaded_vector<winrt::IVector<winrt::hstring>>();
-    for (auto&& action : actions)
-    {
-        auto loadedAction = single_threaded_vector<winrt::hstring>();
-        loadedAction.Append(action.label());
-        loadedAction.Append(action.format());
-        loadedAction.Append(action.regex().str());
-        loadedActions.Append(loadedAction);
-    }
-
-    return loadedActions;
 }
 
 void impl::ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hstring& _format, const winrt::hstring& _label, const winrt::hstring& _regex, const bool& enabled)
@@ -107,18 +92,29 @@ void impl::ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hst
     auto format = std::wstring(_format);
     auto label = std::wstring(_label);
     auto regex = std::wstring(_regex);
+
     auto& action = actions[pos];
+    auto oldLabel = action.label();
+
     action.format(format);
     action.label(label);
     action.regex(boost::wregex(regex));
 
-    ActionsGridView().Items().Clear();
-    UserControl_Loading(nullptr, nullptr);
+    // Reload actions:
+    for (uint32_t i = 0; i < ActionsGridView().Items().Size(); i++)
+    {
+        auto&& item = ActionsGridView().Items().GetAt(i);
+        if (auto content = item.try_as<hstring>())
+        {
+            ActionsGridView().Items().SetAt(i, box_value(_label));
+            break;
+        }
+    }
 }
 
 bool impl::ClipboardActionView::IndexOf(uint32_t& pos, const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled)
 {
-    clipmgr::ClipboardAction action{ std::wstring(label), std::wstring(label), boost::wregex(std::wstring(regex)), enabled };
+    clipmgr::ClipboardTrigger action{ std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), enabled };
     for (size_t i = 0; i < actions.size(); i++)
     {
         if (actions[i] == action)

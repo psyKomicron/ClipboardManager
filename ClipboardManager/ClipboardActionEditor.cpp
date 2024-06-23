@@ -6,6 +6,8 @@
 
 #include <src/utils/helpers.hpp>
 
+#include <winrt/Windows.Foundation.Collections.h>
+
 #include <boost/regex.hpp>
 
 #include <pplawait.h>
@@ -103,6 +105,26 @@ void impl::ClipboardActionEditor::FormatChanged(const winrt::event_token& token)
     e_formatChanged.remove(token);
 }
 
+winrt::event_token winrt::ClipboardManager::implementation::ClipboardActionEditor::RegexChanged(const event_re_changed_t& handler)
+{
+    return e_regexChanged.add(handler);
+}
+
+void winrt::ClipboardManager::implementation::ClipboardActionEditor::RegexChanged(const winrt::event_token& token)
+{
+    e_regexChanged.remove(token);
+}
+
+winrt::event_token impl::ClipboardActionEditor::Removed(const event_removed_t& handler)
+{
+    return e_removed.add(handler);
+}
+
+void impl::ClipboardActionEditor::Removed(const winrt::event_token& token)
+{
+    e_removed.remove(token);
+}
+
 
 winrt::async impl::ClipboardActionEditor::StartTour()
 {
@@ -116,6 +138,11 @@ winrt::async impl::ClipboardActionEditor::StartTour()
 }
 
 
+void impl::ClipboardActionEditor::UserControl_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    loaded = true;
+}
+
 void impl::ClipboardActionEditor::RemoveButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
     // TODO: Add event to notify parent control that this editor need to be removed.
@@ -125,10 +152,11 @@ winrt::async impl::ClipboardActionEditor::EditButton_Click(winrt::IInspectable c
 {
     if ((co_await EditDialog().ShowAsync()) == winrt::ContentDialogResult::Primary)
     {
-        // TODO: Add event if the user has edited (with new changes) this action.
-        auto newFormat = FormatTextBox().Text();
-        auto newRegex = RegexTextBox().Text();
-        auto newLabel = LabelTextBox().Text();
+        winrt::hstring newFormat = FormatTextBox().Text();
+        winrt::hstring newLabel = LabelTextBox().Text();
+        winrt::hstring newRegex = RegexTextBox().Text();
+        bool ignoreCase = RegexIgnoreCaseToggleButton().IsChecked().GetBoolean();
+        bool search = RegexUseSearchToggleButton().IsChecked().GetBoolean();
 
         if (newFormat != _actionFormat)
         {
@@ -156,13 +184,8 @@ winrt::async impl::ClipboardActionEditor::EditButton_Click(winrt::IInspectable c
 void impl::ClipboardActionEditor::ActionEnabledToggleSwitch_Toggled(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
     check_loaded(loaded);
-    // TODO: Add event to notify parent control that this action has been disabled.
     visualStateManager.switchState(EnabledState.group());
-}
-
-void impl::ClipboardActionEditor::UserControl_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
-{
-    loaded = true;
+    e_isOn(*this, visualStateManager.getCurrentState(EnabledState.group()) == EnabledState);
 }
 
 void impl::ClipboardActionEditor::TeachingTip_CloseButtonClick(winrt::TeachingTip const& sender, winrt::IInspectable const& args)
@@ -195,5 +218,5 @@ void impl::ClipboardActionEditor::TeachingTip_CloseButtonClick(winrt::TeachingTi
 
 void impl::ClipboardActionEditor::NotifyPropertyChanged(std::source_location sourceLocation)
 {
-    e_propertyChanged(*this, clipmgr::utils::PropChangedEventArgs::create(sourceLocation));
+    e_propertyChanged(*this, clipmgr::utils::PropChangedEventArgs(sourceLocation));
 }

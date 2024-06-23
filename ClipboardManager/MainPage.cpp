@@ -153,6 +153,28 @@ void impl::MainPage::ClipboadActionsListPivot_Loaded(winrt::IInspectable const&,
             editor.LabelChanged({ this, &MainPage::Editor_LabelChanged });
             editor.IsOn({ this, &MainPage::Editor_Toggled });
 
+            editor.Removed([=](auto&& sender, auto&& b)
+            {
+                auto&& label = editor.ActionLabel();
+                for (size_t i = 0; i < actions.size(); i++)
+                {
+                    if (action.label() == label)
+                    {
+                        // TODO: Remove action buttons on any ClipboardActionView added.
+                        /*for (auto&& view : clipboardActionViews)
+                        {
+                            uint32_t index = 0;
+                            if (view.IndexOf(index, action.format(), action.label(), action.regex().str(), action.enabled()))
+                            {
+                            }
+                        }*/
+
+                        actions.erase(actions.begin() + i);
+                        break;
+                    }
+                }
+            });
+
             ClipboardActionsListView().Items().Append(editor);
         }
     }
@@ -205,16 +227,16 @@ winrt::async impl::MainPage::CreateUserFileButton_Click(winrt::IInspectable cons
     winrt::FileSavePicker picker{};
     picker.as<IInitializeWithWindow>()->Initialize(GetActiveWindow());
     picker.SuggestedStartLocation(winrt::PickerLocationId::Unspecified);
+    picker.SuggestedFileName(L"user_file.xml");
     picker.FileTypeChoices().Insert(
         L"XML Files", single_threaded_vector<winrt::hstring>({ L".xml" })
     );
-    picker.SuggestedFileName(L"user_file.xml");
 
     auto&& storageFile = co_await picker.PickSaveFileAsync();
     if (storageFile)
     {
         std::filesystem::path userFilePath{ storageFile.Path().c_str() };
-        clipmgr::ClipboardAction::initializeSaveFile(userFilePath);
+        clipmgr::ClipboardTrigger::initializeSaveFile(userFilePath);
 
         visualStateManager.goToState(OpenSaveFileState);
     }
@@ -229,7 +251,9 @@ void impl::MainPage::StartTourButton_Click(winrt::IInspectable const&, winrt::Ro
 {
     visualStateManager.goToState(NormalStartupState);
     visualStateManager.goToState(QuickSettingsOpenState);
+
     ListViewTeachingTip().IsOpen(true);
+    
     teachingTipIndex = 1;
 }
 
@@ -291,7 +315,7 @@ winrt::async impl::MainPage::TeachingTip_CloseButtonClick(winrt::TeachingTip con
         manuallyAddedAction = false;
         if (ClipboardActionsListView().Items().Size() == 0)
         {
-            // TODO: Manually add action.
+            // TODO: Manually add example action.
         }
 
         ClipboardActionsListViewTeachingTip().IsOpen(true);
@@ -334,7 +358,7 @@ void impl::MainPage::ReloadActionsButton_Click(winrt::IInspectable const&, winrt
     auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
     if (userFilePath.has_value() && clipmgr::utils::pathExists(userFilePath.value()))
     {
-        actions = clipmgr::ClipboardAction::loadClipboardActions(userFilePath.value());
+        actions = clipmgr::ClipboardTrigger::loadClipboardActions(userFilePath.value());
 
         auto vector = winrt::single_threaded_observable_vector<winrt::hstring>();
         for (auto&& view : clipboardActionViews)
@@ -358,6 +382,7 @@ void impl::MainPage::ReloadActionsButton_Click(winrt::IInspectable const&, winrt
 
         winrt::hstring title = L"Failed to reload actions";
         winrt::hstring message = L"Actions user file has either been moved/deleted or application settings have been cleared.";
+
         try
         {
             winrt::ResourceLoader resLoader{};
@@ -376,7 +401,7 @@ void impl::MainPage::ReloadActionsButton_Click(winrt::IInspectable const&, winrt
 
 void impl::MainPage::CommandBarSaveButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
-
+    // TODO: Not implemented.
 }
 
 
@@ -420,13 +445,17 @@ void impl::MainPage::Editor_LabelChanged(const winrt::ClipboardManager::Clipboar
         {
             logger.debug(std::format(L"Action label modified, old label : {} - new label : {}", label, newLabel));
             action.label(newLabel);
+
+            for (auto&& clipboardItem : clipboardActionViews)
+            {
+                uint32_t pos = 0;
+                if (clipboardItem.IndexOf(pos, action.format(), label, action.regex().str(), action.enabled()))
+                {
+                    clipboardItem.EditAction(pos, action.format(), action.label(), action.regex().str(), action.enabled());
+                }
+            }
         }
     }
-
-    /*for (auto&& clipboardItem : Actions())
-    {
-        if (clipboardItem.Action)
-    }*/
 }
 
 void impl::MainPage::Editor_Toggled(const winrt::ClipboardManager::ClipboardActionEditor& sender, const bool& isOn)
@@ -436,6 +465,15 @@ void impl::MainPage::Editor_Toggled(const winrt::ClipboardManager::ClipboardActi
     {
         if (action.label() == actionLabel)
         {
+            for (auto&& view : clipboardActionViews)
+            {
+                uint32_t index = 0;
+                if (view.IndexOf(index, action.format(), action.label(), action.regex().str(), action.enabled()))
+                {
+                    view.IsEnabled(action.enabled());
+                }
+            }
+
             action.enabled(isOn);
         }
     }
@@ -447,7 +485,7 @@ void impl::MainPage::Restore()
     auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
     if (userFilePath.has_value() && clipmgr::utils::pathExists(userFilePath.value()))
     {
-        actions = clipmgr::ClipboardAction::loadClipboardActions(userFilePath.value());
+        actions = clipmgr::ClipboardTrigger::loadClipboardActions(userFilePath.value());
 
         try
         {
@@ -525,8 +563,7 @@ void impl::MainPage::AddAction(const std::wstring& text, const bool& notify)
     }
 }
 
-bool impl::MainPage::FindActions(const winrt::ClipboardManager::ClipboardActionView& actionView, 
-    std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text)
+bool impl::MainPage::FindActions(const winrt::ClipboardManager::ClipboardActionView& actionView, std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text)
 {
     bool hasMatch = false;
     for (auto&& action : actions)
@@ -536,7 +573,7 @@ bool impl::MainPage::FindActions(const winrt::ClipboardManager::ClipboardActionV
             hasMatch = true;
 
             // TODO: When i add actions, only enabled actions will be added yet they can be enabled or disabled later.
-            actionView.AddAction(action.format(), action.label(), L"", true);
+            actionView.AddAction(action.format(), action.label(), action.regex().str(), true);
 
             auto url = std::vformat(action.format(), std::make_wformat_args(text));
             buttons.push_back({ action.label(), std::format(L"open&url={}", url) });

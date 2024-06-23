@@ -1,6 +1,4 @@
 #pragma once
-#include "ClipboardAction.hpp"
-
 #include "utils/Logger.hpp"
 
 #include <wil/registry.h>

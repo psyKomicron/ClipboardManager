@@ -96,6 +96,7 @@
                 <GridView.ItemContainerTransitions>
                     <TransitionCollection>
                         <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                        <ReorderThemeTransition />
                     </TransitionCollection>
                 </GridView.ItemContainerTransitions>
                 <GridView.Resources>

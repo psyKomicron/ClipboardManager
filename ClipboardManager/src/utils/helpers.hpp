@@ -93,10 +93,17 @@ namespace clipmgr::utils
     };
 
 
-    class PropChangedEventArgs
+    class PropChangedEventArgs : public winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs
     {
     public:
+        PropChangedEventArgs(const std::source_location& sourceLocation);
+
         static winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs create(std::source_location sourceLocation = std::source_location::current());
+
+    private:
+        std::wstring propName;
+
+        static std::wstring getCallerName(const std::source_location& sourceLocation);
     };
 }
 

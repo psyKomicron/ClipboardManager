@@ -36,7 +36,7 @@
     <ClInclude Include="src\DirectoryWatcher.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ClipboardAction.hpp">
+    <ClInclude Include="src\ClipboardTrigger.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\Console.hpp">
@@ -86,7 +86,7 @@
     <ClCompile Include="src\DirectoryWatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ClipboardAction.cpp">
+    <ClCompile Include="src\ClipboardTrigger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\Console.cpp">

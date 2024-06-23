@@ -125,14 +125,8 @@
         </TeachingTip>
 
 
-        <ContentDialog x:Name="EditDialog" x:Uid="EditDialog" DefaultButton="Primary" HorizontalAlignment="Stretch">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-
+        <ContentDialog x:Name="EditDialog" x:Uid="EditDialog" DefaultButton="Primary">
+            <Grid RowDefinitions="1*,1*,1*">
                 <StackPanel Spacing="7" Grid.Row="0">
                     <TextBlock x:Uid="LabelTextBlock" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,10,0,3"/>
                     <TextBox x:Name="LabelTextBox" VerticalAlignment="Center" Text="{x:Bind ActionLabel, Mode=OneWay}"/>
@@ -144,29 +138,16 @@
                 </StackPanel>
 
                 <StackPanel Spacing="7" Grid.Row="2">
-                    <TextBlock x:Uid="RegexTextBlock" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,7,0,3"/>
-                    <TextBox x:Name="RegexTextBox" VerticalAlignment="Center" Text="{x:Bind ActionRegex, Mode=OneWay}"/>
-                    
-                    <StackPanel Spacing="3" Orientation="Horizontal">
-                        <StackPanel.Resources>
-                            <Style TargetType="TextBlock" BasedOn="{StaticResource TitleTextBlockStyle}">
-                                <Setter Property="FontFamily" Value="Cascadia Code" />
-                                <Setter Property="FontStyle" Value="Italic" />
-                                <Setter Property="FontSize" Value="18"/>
-                            </Style>
-                        </StackPanel.Resources>
-                        <ToggleButton>
-                            <TextBlock Text="e"/>
+                    <TextBlock x:Uid="RegexTextBlock" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,7,0,7"/>
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="4">
+                        <TextBox x:Name="RegexTextBox" Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind ActionRegex, Mode=OneWay}"/>
+                        <ToggleButton x:Name="RegexIgnoreCaseToggleButton" x:Uid="RegexIgnoreCaseToggleButton" Grid.Column="1">
+                            Aa
                         </ToggleButton>
-                        
-                        <ToggleButton>
-                            <TextBlock Text="i"/>
+                        <ToggleButton x:Name="RegexUseSearchToggleButton" x:Uid="RegexUseSearchToggleButton" Grid.Column="2" VerticalAlignment="Stretch">
+                            <FontIcon Glyph="&#xf78b;" FontSize="16"/>
                         </ToggleButton>
-                        
-                        <ToggleButton>
-                            <TextBlock Text="g"/>
-                        </ToggleButton>
-                    </StackPanel>
+                    </Grid>
                 </StackPanel>
             </Grid>
         </ContentDialog>

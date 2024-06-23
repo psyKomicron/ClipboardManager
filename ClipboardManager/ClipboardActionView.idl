@@ -12,6 +12,8 @@ namespace ClipboardManager
 
         void AddAction(String format, String label, String regex, Boolean enabled);
         void AddActions(IInspectable actions);
+        void EditAction(UInt32 pos, String format, String label, String regex, Boolean enabled);
+        Boolean IndexOf(out UInt32 pos, String format, String label, String regex, Boolean enabled);
 
         Windows.Foundation.IAsyncAction StartTour();
     }

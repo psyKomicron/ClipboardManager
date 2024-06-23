@@ -146,9 +146,14 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <CommandBar Grid.Row="0">
-                        <AppBarButton x:Name="CommandBarSaveButton" Icon="Save" Click="CommandBarSaveButton_Click"/>
-                    </CommandBar>
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="7" Margin="0,0,7,5">
+                        <Button x:Name="CommandBarSaveButton" Click="CommandBarSaveButton_Click">
+                            <FontIcon Glyph="&#xe74e;" FontSize="16"/>
+                        </Button>
+                        <Button Click="CommandBarSaveButton_Click">
+                            <FontIcon Glyph="&#xe72c;" FontSize="16"/>
+                        </Button>
+                    </StackPanel>
 
                     <TextBlock x:Name="NoClipboardActionsTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8" Grid.Row="1" x:Load="False" Visibility="Collapsed"/>
                     

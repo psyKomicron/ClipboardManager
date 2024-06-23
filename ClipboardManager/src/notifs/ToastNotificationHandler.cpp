@@ -58,6 +58,7 @@ namespace clipmgr
                 {
                     logger.debug(L"User input: " + std::wstring(item.Key() + item.Value()));
                 }
+
                 findAction(args.Argument());
             });
             registered = true;
