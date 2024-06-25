@@ -190,7 +190,7 @@ void impl::ClipboardActionEditor::ActionEnabledToggleSwitch_Toggled(winrt::IInsp
 
 void impl::ClipboardActionEditor::TeachingTip_CloseButtonClick(winrt::TeachingTip const& sender, winrt::IInspectable const& args)
 {
-    static size_t index = 0;
+    static size_t index = 1;
     static std::vector<winrt::TeachingTip> teachingTips
     {
         ClipboardActionRootGridTeachingTip(),

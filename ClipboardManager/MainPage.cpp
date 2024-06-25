@@ -27,7 +27,6 @@
 #include <Shobjidl.h>
 
 #include <iostream>
-#include <filesystem>
 
 namespace impl = winrt::ClipboardManager::implementation;
 namespace winrt
@@ -48,11 +47,9 @@ impl::MainPage::MainPage()
 {
     visualStateManager.initializeStates(
     {
-        NormalActionsState,
-        NoClipboardActionsState,
         OpenSaveFileState,
         ViewActionsState,
-        NoClipboardActionsToDisplayState,
+        NoClipboardTriggersToDisplayState,
         FirstStartupState,
         NormalStartupState,
         QuickSettingsClosedState,
@@ -118,7 +115,6 @@ void winrt::ClipboardManager::implementation::MainPage::AppClosing()
 winrt::Windows::Foundation::IAsyncAction impl::MainPage::Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const&, winrt::Windows::Foundation::IInspectable const&)
 {
     loaded = false;
-    Restore();
 
     auto&& clipboardHistory = co_await winrt::Clipboard::GetHistoryItemsAsync();
     for (auto&& item : clipboardHistory.Items())
@@ -130,16 +126,32 @@ winrt::Windows::Foundation::IAsyncAction impl::MainPage::Page_Loading(winrt::Mic
     clipboardContentChangedrevoker = winrt::Clipboard::ContentChanged(winrt::auto_revoke, { this, &MainPage::ClipboardContent_Changed });
 }
 
-void impl::MainPage::ClipboadActionsListPivot_Loaded(winrt::IInspectable const&, winrt::IInspectable const&)
+void impl::MainPage::Page_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    Restore();
+
+    loaded = true;
+
+    /*presenter = clipmgr::utils::getCurrentAppWindow().Presenter().as<winrt::OverlappedPresenter>();
+    presenter.Minimize();*/
+
+    if (!localSettings.get<bool>(L"FirstStartup").has_value())
+    {
+        localSettings.insert(L"FirstStartup", false);
+        visualStateManager.goToState(FirstStartupState);
+    }
+}
+
+void impl::MainPage::ClipboadTriggersListPivot_Loaded(winrt::IInspectable const&, winrt::IInspectable const&)
 {
     if (actions.empty())
     {
-        visualStateManager.goToState(NoClipboardActionsToDisplayState);
-        logger.debug(L"ClipboadActionsListPivot_Loaded > No clipboard actions to load.");
+        visualStateManager.goToState(NoClipboardTriggersToDisplayState);
+        logger.debug(L"No clipboard actions to load.");
     }
     else
     {
-        logger.debug(std::format(L"ClipboadActionsListPivot_Loaded > Loading {} clipboard actions.", actions.size()));
+        logger.debug(std::format(L"Loading {} clipboard actions.", actions.size()));
 
         for (auto&& action : actions)
         {
@@ -175,33 +187,13 @@ void impl::MainPage::ClipboadActionsListPivot_Loaded(winrt::IInspectable const&,
                 }
             });
 
-            ClipboardActionsListView().Items().Append(editor);
+            ClipboardTriggersListView().Items().Append(editor);
         }
     }
 }
 
-void impl::MainPage::PivotItem_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+void impl::MainPage::ClipboardActionsPivotItem_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
-    if (actions.empty())
-    {
-        logger.info(L"'UserFilePath' doesn't exist or the path of 'UserFilePath' doesn't exist.");
-        // Show info bar to create or locate user file.
-        visualStateManager.goToState(NoClipboardActionsState);
-    }
-}
-
-void impl::MainPage::Page_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
-{
-    loaded = true;
-
-    /*presenter = clipmgr::utils::getCurrentAppWindow().Presenter().as<winrt::OverlappedPresenter>();
-    presenter.Minimize();*/
-
-    if (!localSettings.get<bool>(L"FirstStartup").has_value())
-    {
-        localSettings.insert(L"FirstStartup", false);
-        visualStateManager.goToState(FirstStartupState);
-    }
 }
 
 winrt::async impl::MainPage::LocateUserFileButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
@@ -214,9 +206,9 @@ winrt::async impl::MainPage::LocateUserFileButton_Click(winrt::IInspectable cons
     if (storageFile)
     {
         std::filesystem::path userFilePath{ storageFile.Path().c_str() };
+        localSettings.insert(L"UserFilePath", userFilePath);
 
-        clipmgr::Settings settings{};
-        settings.insert(L"UserFilePath", userFilePath.wstring());
+        ReloadTriggers();
 
         visualStateManager.goToState(ViewActionsState);
     }
@@ -226,7 +218,7 @@ winrt::async impl::MainPage::CreateUserFileButton_Click(winrt::IInspectable cons
 {
     winrt::FileSavePicker picker{};
     picker.as<IInitializeWithWindow>()->Initialize(GetActiveWindow());
-    picker.SuggestedStartLocation(winrt::PickerLocationId::Unspecified);
+    picker.SuggestedStartLocation(winrt::PickerLocationId::ComputerFolder);
     picker.SuggestedFileName(L"user_file.xml");
     picker.FileTypeChoices().Insert(
         L"XML Files", single_threaded_vector<winrt::hstring>({ L".xml" })
@@ -239,12 +231,8 @@ winrt::async impl::MainPage::CreateUserFileButton_Click(winrt::IInspectable cons
         clipmgr::ClipboardTrigger::initializeSaveFile(userFilePath);
 
         visualStateManager.goToState(OpenSaveFileState);
+        // TODO: Reload clipboard triggers and display them on clipboard triggers page.
     }
-}
-
-void impl::MainPage::ViewActionsButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
-{
-    Pivot().SelectedIndex(2);
 }
 
 void impl::MainPage::StartTourButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
@@ -252,7 +240,7 @@ void impl::MainPage::StartTourButton_Click(winrt::IInspectable const&, winrt::Ro
     visualStateManager.goToState(NormalStartupState);
     visualStateManager.goToState(QuickSettingsOpenState);
 
-    ListViewTeachingTip().IsOpen(true);
+    SettingsPivotTeachingTip().IsOpen(true);
     
     teachingTipIndex = 1;
 }
@@ -261,7 +249,6 @@ winrt::async impl::MainPage::TeachingTip_CloseButtonClick(winrt::TeachingTip con
 {
     static std::vector<winrt::TeachingTip> teachingTips
     {
-        ListViewTeachingTip(),
         SettingsPivotTeachingTip(),
         ClipboardHistoryPivotTeachingTip(),
         ClipboardTriggersPivotTeachingTip(),
@@ -269,7 +256,8 @@ winrt::async impl::MainPage::TeachingTip_CloseButtonClick(winrt::TeachingTip con
         OpenQuickSettingsButtonTeachingTip(),
         ReloadActionsButtonTeachingTip(),
         SilenceNotificationsToggleButtonTeachingTip(),
-        HistoryToggleButtonTeachingTip()
+        HistoryToggleButtonTeachingTip(),
+        ListViewTeachingTip()
     };
 
     if (teachingTipIndex < teachingTips.size())
@@ -289,16 +277,6 @@ winrt::async impl::MainPage::TeachingTip_CloseButtonClick(winrt::TeachingTip con
 
             auto actionView = winrt::make<::impl::ClipboardActionView>(L"Clipboard content that matches a trigger");
             actionView.AddAction(L"{}", L"Trigger", L"", true);
-            actionView.Removed([this](auto&& sender, auto&&)
-            {
-                for (uint32_t i = 0; i < clipboardActionViews.Size(); i++)
-                {
-                    if (sender == clipboardActionViews.GetAt(i))
-                    {
-                        clipboardActionViews.RemoveAt(i);
-                    }
-                }
-            });
 
             clipboardActionViews.InsertAt(0, actionView);
         }
@@ -311,19 +289,7 @@ winrt::async impl::MainPage::TeachingTip_CloseButtonClick(winrt::TeachingTip con
         }
         
         Pivot().SelectedIndex(2);
-
-        manuallyAddedAction = false;
-        if (ClipboardActionsListView().Items().Size() == 0)
-        {
-            // TODO: Manually add example action.
-        }
-
-        ClipboardActionsListViewTeachingTip().IsOpen(true);
-
-        if (manuallyAddedAction)
-        {
-            ClipboardActionsListView().Items().RemoveAt(0);
-        }
+        CommandBarSaveButtonTeachingTip().IsOpen(true);
     }
 }
 
@@ -333,7 +299,7 @@ winrt::async impl::MainPage::TeachingTip2_CloseButtonClick(winrt::TeachingTip co
     static std::vector<winrt::TeachingTip> teachingTips
     {
         HistoryToggleButtonTeachingTip(),
-        CommandBarSaveButtonTeachingTip()
+        ClipboardTriggersListViewTeachingTip()
     };
 
     if (index < teachingTips.size())
@@ -343,7 +309,30 @@ winrt::async impl::MainPage::TeachingTip2_CloseButtonClick(winrt::TeachingTip co
     }
     else
     {
-        co_await ClipboardActionsListView().Items().GetAt(0).as<winrt::ClipboardManager::ClipboardActionEditor>().StartTour();
+        bool manuallyAddedAction = false;
+        if (ClipboardTriggersListView().Items().Size() == 0)
+        {
+            visualStateManager.goToState(DisplayClipboardTriggersState);
+
+            // TODO: Manually add example trigger.
+            auto triggerView = make<::impl::ClipboardActionEditor>();
+            triggerView.ActionLabel(L"Test trigger");
+            triggerView.ActionFormat(L"https://duckduckgo.com/?q={}");
+            triggerView.ActionRegex(L".+");
+            triggerView.ActionEnabled(true);
+
+            ClipboardTriggersListView().Items().InsertAt(0, triggerView);
+            manuallyAddedAction = true;
+        }
+
+        co_await ClipboardTriggersListView().Items().GetAt(0).as<winrt::ClipboardManager::ClipboardActionEditor>().StartTour();
+
+        if (manuallyAddedAction)
+        {
+            ClipboardTriggersListView().Items().RemoveAt(0);
+            visualStateManager.goToState(NoClipboardTriggersToDisplayState);
+        }
+
         Pivot().SelectedIndex(3);
     }
 }
@@ -353,55 +342,44 @@ void impl::MainPage::OpenQuickSettingsButton_Click(winrt::IInspectable const&, w
     visualStateManager.switchState(QuickSettingsClosedState.group());
 }
 
-void impl::MainPage::ReloadActionsButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+void impl::MainPage::ReloadTriggersButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
-    auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
-    if (userFilePath.has_value() && clipmgr::utils::pathExists(userFilePath.value()))
-    {
-        actions = clipmgr::ClipboardTrigger::loadClipboardActions(userFilePath.value());
-
-        auto vector = winrt::single_threaded_observable_vector<winrt::hstring>();
-        for (auto&& view : clipboardActionViews)
-        {
-            vector.Append(view.Text());
-        }
-
-        clipboardActionViews.Clear();
-
-        for (auto&& view : vector)
-        {
-            AddAction(view.data(), false);
-        }
-
-        ClipboardActionsListView().Items().Clear();
-        ClipboadActionsListPivot_Loaded(nullptr, nullptr);
-    }
-    else
-    {
-        winrt::InfoBar infoBar{};
-
-        winrt::hstring title = L"Failed to reload actions";
-        winrt::hstring message = L"Actions user file has either been moved/deleted or application settings have been cleared.";
-
-        try
-        {
-            winrt::ResourceLoader resLoader{};
-            title = resLoader.GetString(L"ReloadActionsUserFileNotFoundTitle");
-            message = resLoader.GetString(L"ReloadActionsUserFileNotFoundMessage");
-        }
-        catch (winrt::hresult_error err)
-        {
-            logger.error(L"Failed to load resources file (resources.pri).");
-        }
-
-        infoBar.Title(title);
-        infoBar.Message(message);
-    }
+    ReloadTriggers();
 }
 
 void impl::MainPage::CommandBarSaveButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
-    // TODO: Not implemented.
+    auto optPath = localSettings.get<std::filesystem::path>(L"UserFilePath");
+    if (optPath.has_value())
+    {
+        try
+        {
+            clipmgr::ClipboardTrigger::saveClipboardTriggers(actions, optPath.value());
+        }
+        catch (std::invalid_argument invalidArgument)
+        {
+            auto message = clipmgr::utils::getNamedResource(L"ErrorMessage_CannotSaveTriggersFileNotFound")
+                .value_or(L"Cannot save triggers, the specified user file cannot be found.");
+            
+            GenericErrorInfoBar().Message(message);
+            GenericErrorInfoBar().IsOpen(true);
+        }
+        catch (boost::property_tree::xml_parser_error xmlParserError)
+        {
+            auto message = clipmgr::utils::getNamedResource(L"ErrorMessage_CannotSaveTriggersXmlError")
+                .value_or(L"Cannot save triggers, XML parsing error occured.");
+
+            GenericErrorInfoBar().Message(message);
+            GenericErrorInfoBar().IsOpen(true);
+        }
+    }
+    else
+    {
+        auto message = clipmgr::utils::getNamedResource(L"ErrorMessage_CannotSaveTriggersNoUserFile")
+            .value_or(L"Cannot save triggers, no user file has been specified for this application.");
+        GenericErrorInfoBar().Message(message);
+        GenericErrorInfoBar().IsOpen(true);
+    }
 }
 
 
@@ -419,7 +397,7 @@ winrt::async impl::MainPage::ClipboardContent_Changed(const winrt::IInspectable&
 
     logger.debug(L"Clipboard content changed, application name: " + std::wstring(appName));
 
-    AddAction(text);
+    AddAction(text, true);
 }
 
 void impl::MainPage::Editor_FormatChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldFormat)
@@ -479,22 +457,74 @@ void impl::MainPage::Editor_Toggled(const winrt::ClipboardManager::ClipboardActi
     }
 }
 
+
 void impl::MainPage::Restore()
 {
     // Load actions:
     auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
     if (userFilePath.has_value() && clipmgr::utils::pathExists(userFilePath.value()))
     {
-        actions = clipmgr::ClipboardTrigger::loadClipboardActions(userFilePath.value());
+        try
+        {
+            actions = clipmgr::ClipboardTrigger::loadClipboardTriggers(userFilePath.value());
+            if (actions.empty()) // Show info bar to create or locate user file.
+            {
+                visualStateManager.goToState(NoClipboardTriggersToDisplayState);
+            }
+        }
+        catch (std::invalid_argument invalidArgument)
+        {
+            GenericErrorInfoBar().Message(
+                clipmgr::utils::getNamedResource(L"ErrorMessage_TriggersFileNotFound").value_or(L"Triggers file not found/available"));
+            GenericErrorInfoBar().IsOpen(true);
+        }
+        catch (boost::property_tree::xml_parser_error xmlParserError)
+        {
+            GenericErrorInfoBar().Message(
+                clipmgr::utils::getNamedResource(L"ErrorMessage_XmlParserError").value_or(L"Triggers file has invalid markup data."));
+            GenericErrorInfoBar().IsOpen(true);
+        }
+        catch (boost::property_tree::ptree_bad_path badPath)
+        {
+            hstring message = clipmgr::utils::getNamedResource(L"ErrorMessage_InvalidTriggersFile").value_or(L"Triggers file has invalid markup data.");
+            hstring content = L"";
+
+            auto wpath = badPath.path<boost::property_tree::wpath>();
+            auto path = clipmgr::utils::convert(wpath.dump());
+
+            if (path == L"settings.triggers")
+            {
+                // Missing <settings><triggers> node.
+                content = clipmgr::utils::getNamedResource(L"ErrorMessage_MissingTriggersNode")
+                    .value_or(L"XML declaration is missing '<triggers>' node.\nCheck settings for an example of a valid XML declaration.");
+            }
+            else if (path == L"settings.actions")
+            {
+                // Old version of triggers file.
+                content = clipmgr::utils::getNamedResource(L"ErrorMessage_XmlOldVersion")
+                    .value_or(L"<actions> node has been renamed <triggers> and <action> <actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.");
+            }
+            else
+            {
+                content = L"\n'" + hstring(path) + L"'";
+            }
+
+            winrt::TextBlock textBlock{};
+            textBlock.Text(content);
+            textBlock.Margin(winrt::Thickness(0, 0, 0, 15));
+
+            GenericErrorInfoBar().Message(message);
+            GenericErrorInfoBar().Content(textBlock);
+            GenericErrorInfoBar().IsOpen(true);
+        }
 
         try
         {
             boost::property_tree::wptree tree{};
             boost::property_tree::read_xml(userFilePath.value().string(), tree);
-
             for (auto&& historyItem : tree.get_child(L"settings.history"))
             {
-                AddAction(historyItem.second.data());
+                AddAction(historyItem.second.data(), false);
             }
         }
         catch (const boost::property_tree::ptree_bad_path badPath)
@@ -509,7 +539,6 @@ void impl::MainPage::Restore()
     {
         auto key = std::get<std::wstring>(map[L"Key"])[0];
         auto mod = std::get<uint32_t>(map[L"Mod"]);
-        //activationHotKey.~HotKey();
         activationHotKey = clipmgr::HotKey(mod, key);
     }
 
@@ -635,4 +664,54 @@ void impl::MainPage::SendNotification(const std::vector<std::pair<std::wstring, 
             logger.error(L"Failed to send toast notification. " + std::wstring(err.message()));
         }
     }
+}
+
+void impl::MainPage::ReloadTriggers()
+{
+    auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
+    if (userFilePath.has_value() && clipmgr::utils::pathExists(userFilePath.value()))
+    {
+        actions = clipmgr::ClipboardTrigger::loadClipboardTriggers(userFilePath.value());
+
+        auto vector = winrt::single_threaded_observable_vector<winrt::hstring>();
+        for (auto&& view : clipboardActionViews)
+        {
+            vector.Append(view.Text());
+        }
+
+        clipboardActionViews.Clear();
+
+        for (auto&& view : vector)
+        {
+            AddAction(view.data(), false);
+        }
+
+        ClipboardTriggersListView().Items().Clear();
+        ClipboadTriggersListPivot_Loaded(nullptr, nullptr);
+    }
+    else
+    {
+        winrt::InfoBar infoBar{};
+
+        winrt::hstring title = L"Failed to reload actions";
+        winrt::hstring message = L"Actions user file has either been moved/deleted or application settings have been cleared.";
+
+        try
+        {
+            winrt::ResourceLoader resLoader{};
+            title = resLoader.GetString(L"ReloadActionsUserFileNotFoundTitle");
+            message = resLoader.GetString(L"ReloadActionsUserFileNotFoundMessage");
+        }
+        catch (winrt::hresult_error err)
+        {
+            logger.error(L"Failed to load resources file (resources.pri).");
+        }
+
+        infoBar.Title(title);
+        infoBar.Message(message);
+    }
+}
+
+void impl::MainPage::LoadTriggers(std::filesystem::path& path)
+{
 }

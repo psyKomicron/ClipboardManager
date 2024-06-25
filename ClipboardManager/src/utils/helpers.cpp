@@ -2,6 +2,7 @@
 #include "helpers.hpp"
 
 #include <winrt/Microsoft.UI.Xaml.Data.h>
+#include <winrt/Windows.ApplicationModel.Resources.h>
 
 #include <boost/regex.hpp>
 
@@ -59,6 +60,19 @@ std::optional<std::filesystem::path> clipmgr::utils::tryGetKnownFolderPath(const
     else
     {
         return std::optional<std::filesystem::path>();
+    }
+}
+
+std::optional<winrt::hstring> clipmgr::utils::getNamedResource(const winrt::hstring& name)
+{
+    try
+    {
+        winrt::Windows::ApplicationModel::Resources::ResourceLoader resLoader{};
+        return resLoader.GetString(name);
+    }
+    catch (winrt::hresult_error)
+    {
+        return {};
     }
 }
 

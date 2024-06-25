@@ -15,7 +15,7 @@ clipmgr::ClipboardTrigger::ClipboardTrigger(const std::wstring& label, const std
 {
 }
 
-std::vector<clipmgr::ClipboardTrigger> clipmgr::ClipboardTrigger::loadClipboardActions(const std::filesystem::path& userFilePath)
+std::vector<clipmgr::ClipboardTrigger> clipmgr::ClipboardTrigger::loadClipboardTriggers(const std::filesystem::path& userFilePath)
 {
     if (utils::pathExists(userFilePath))
     {
@@ -24,10 +24,9 @@ std::vector<clipmgr::ClipboardTrigger> clipmgr::ClipboardTrigger::loadClipboardA
 
         try
         {
-            std::wcout << L"[ClipboardTrigger]   Reading user clipboard actions file '" << userFilePath.wstring() << L"'" << std::endl;
             boost::property_tree::read_xml(userFilePath.string(), tree);
-
-            for (auto&& child : tree.get_child(L"settings.actions"))
+            
+            for (auto&& child : tree.get_child(L"settings.triggers"))
             {
                 auto&& node = child.second;
                 auto&& url = node.get_child(L"format").data();
@@ -56,10 +55,13 @@ std::vector<clipmgr::ClipboardTrigger> clipmgr::ClipboardTrigger::loadClipboardA
         }
         catch (const boost::property_tree::xml_parser_error& parserError)
         {
-            std::wcout << L"[ClipboardTrigger]   Xml parser error '" << userFilePath.wstring() << L"': " << std::endl;
             if (parserError.line() == 0) // This should mean that the error is at the beginning of the file, thus it's empty.
             {
                 firstTimeInitialization(userFilePath, tree);
+            }
+            else
+            {
+                throw;
             }
         }
         
@@ -71,17 +73,41 @@ std::vector<clipmgr::ClipboardTrigger> clipmgr::ClipboardTrigger::loadClipboardA
     }
 }
 
+void clipmgr::ClipboardTrigger::saveClipboardTriggers(const std::vector<ClipboardTrigger>& triggers, const std::filesystem::path& userFilePath)
+{
+    if (utils::pathExists(userFilePath))
+    {
+        boost::property_tree::wptree tree{};
+        boost::property_tree::read_xml(userFilePath.string(), tree);
+
+        // Erase the tree so I dont induce conflicts.
+        tree.erase(L"settings.triggers");
+
+        auto&& actions = tree.put(L"settings.triggers", L"");
+        for (auto&& trigger : triggers)
+        {
+            actions.add(L"trigger.re", trigger.regex().str());
+            actions.add(L"trigger.format", trigger.format());
+            actions.add(L"trigger.label", trigger.label());
+            actions.add(L"trigger.enabled", trigger.enabled());
+        }
+
+        boost::property_tree::write_xml(userFilePath.string(), tree);
+    }
+    else
+    {
+        throw std::runtime_error("File path doesn't exist.");
+    }
+}
+
 
 void clipmgr::ClipboardTrigger::firstTimeInitialization(const std::filesystem::path& path, boost::property_tree::wptree tree)
 {
-    std::wcout << L"[ClipboardTrigger]   First time initialization of user file.\n";
-    auto&& actions = tree.put(L"settings.actions", L"");
-    actions.add(L"action.re", L"[A-Z]{,3}");
-    actions.add(L"action.format", L"https://example-namespace.com/search?={}");
-    actions.add(L"action.label", L"Search example-namespace");
-    actions.add(L"action.enabled", L"true");
-
-    tree.put(L"settings.preferences", L"");
+    auto&& actions = tree.put(L"settings.triggers", L"");
+    actions.add(L"trigger.re", L"[A-Z]{,3}");
+    actions.add(L"trigger.format", L"https://example-namespace.com/search?={}");
+    actions.add(L"trigger.label", L"Search example-namespace");
+    actions.add(L"trigger.enabled", L"true");
 
     boost::property_tree::write_xml(path.string(), tree);
 }

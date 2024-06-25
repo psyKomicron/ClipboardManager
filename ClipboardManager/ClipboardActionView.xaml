@@ -47,7 +47,6 @@
         <TeachingTip x:Name="RootGridTeachingTip"
                      x:Uid="RootGridTeachingTip"
                      Target="{x:Bind RootGrid}"
-                     ShouldConstrainToRootBounds="False"
                      ActionButtonClick="TeachingTip_ButtonClick">
             <TeachingTip.ActionButtonContent>
                 <FontIcon Glyph="&#xe72a;" FontSize="14"/>

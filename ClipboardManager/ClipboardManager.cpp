@@ -47,11 +47,15 @@ void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windo
 void handleWindowActivation(clipmgr::utils::WindowInfo* windowInfo, const bool& inactive);
 #pragma endregion
 
+#ifdef _DEBUG
+#define ENABLE_CONSOLE
+#endif
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int nCmdShow)
 {
-#ifdef _DEBUG
+#ifdef ENABLE_CONSOLE
     clipmgr::utils::Console console{};
-#endif
+#endif // ENABLE_CONSOLE
 
     try
     {

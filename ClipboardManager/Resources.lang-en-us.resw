@@ -241,9 +241,21 @@
     <value>Format</value>
     <comment>ClipboardActionEditor</comment>
   </data>
+  <data name="HeaderApplicationTextBlock.Text" xml:space="preserve">
+    <value>Application</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="HeaderFormattingTextBlock.Text" xml:space="preserve">
+    <value>Formatting &amp; matching</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="HistoryToggleButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Quickly enable or disable actions history</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="IgnoreCaseHostControl.Header" xml:space="preserve">
+    <value>Ignore case</value>
+    <comment>SettingsPage</comment>
   </data>
   <data name="LabelTextBlockTeachingTip.Subtitle" xml:space="preserve">
     <value>Clipboard text</value>
@@ -288,6 +300,22 @@
   <data name="OpenSaveFileInfoBar.Title" xml:space="preserve">
     <value>Save file successfully created !</value>
     <comment>MainPage</comment>
+  </data>
+  <data name="RegexModeComboBox_Match.Content" xml:space="preserve">
+    <value>Match</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="RegexModeComboBox_Match_ToolTip.Text" xml:space="preserve">
+    <value>String must match the full regex.</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="RegexModeComboBox_Search.Content" xml:space="preserve">
+    <value>Search</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="RegexModeComboBox_Search_ToolTip.Text" xml:space="preserve">
+    <value>Search for any subsequence in the string that matches the regex.</value>
+    <comment>SettingsPage</comment>
   </data>
   <data name="RegexTextBlock.Text" xml:space="preserve">
     <value>Regex</value>
@@ -357,16 +385,12 @@
     <value>Too many buttons</value>
     <comment>ToastNotifications</comment>
   </data>
-  <data name="ViewActionsButton.Content" xml:space="preserve">
-    <value>View</value>
-    <comment>MainPage</comment>
-  </data>
   <data name="ViewActionsInfoBar.Message" xml:space="preserve">
-    <value>View loaded actions ?</value>
+    <value>You can view your triggers in the clipboard triggers page.</value>
     <comment>MainPage</comment>
   </data>
   <data name="ViewActionsInfoBar.Title" xml:space="preserve">
-    <value>Clipboard actions successfully loaded.</value>
+    <value>Clipboard actions successfully loaded</value>
     <comment>MainPage ViewActionsInfoBar</comment>
   </data>
 </root>

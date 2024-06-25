@@ -104,16 +104,26 @@ void impl::SettingsPage::DurationToggleButton_Click(winrt::IInspectable const& s
 
 void impl::SettingsPage::NotificationScenariosComboBox_SelectionChanged(winrt::IInspectable const&, winrt::SelectionChangedEventArgs const& e)
 {
-    // TODO: Not sure using directly the index from the combo box but at the same time using an enum will be the same.
-    // TODO: We can use the tag of the combo box item to store the integral value thus allowing to change the indexing and not break the code.
     check_loaded(loaded);
-    settings.insert(L"NotificationScenarioType", NotificationScenariosComboBox().SelectedIndex());
+    settings.insert(L"NotificationScenarioType", NotificationScenariosComboBox().SelectedItem().as<winrt::FrameworkElement>().Tag().as<int32_t>());
 }
 
 void impl::SettingsPage::NotificationSoundComboBox_SelectionChanged(winrt::IInspectable const&, winrt::SelectionChangedEventArgs const& e)
 {
     check_loaded(loaded);
-    settings.insert(L"NotificationSoundType", NotificationSoundComboBox().SelectedIndex());
+    settings.insert(L"NotificationSoundType", NotificationSoundComboBox().SelectedItem().as<winrt::FrameworkElement>().Tag().as<int32_t>());
+}
+
+void impl::SettingsPage::IgnoreCaseToggleSwitch_Toggled(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    check_loaded(loaded);
+    settings.insert(L"RegexIgnoreCase", IgnoreCaseToggleSwitch().IsOn());
+}
+
+void impl::SettingsPage::RegexModeComboBox_SelectionChanged(winrt::IInspectable const&, winrt::SelectionChangedEventArgs const&)
+{
+    check_loaded(loaded);
+    settings.insert(L"RegexMode", RegexModeComboBox().SelectedItem().as<winrt::FrameworkElement>().Tag().as<int32_t>());
 }
 
 

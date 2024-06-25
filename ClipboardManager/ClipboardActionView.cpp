@@ -194,7 +194,7 @@ void impl::ClipboardActionView::RemoveActionButton_Click(winrt::IInspectable con
 
 void impl::ClipboardActionView::TeachingTip_ButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args)
 {
-    static size_t teachingTipIndex = 0;
+    static size_t teachingTipIndex = 1;
     static std::vector<winrt::TeachingTip> teachingTips
     {
         RootGridTeachingTip(),

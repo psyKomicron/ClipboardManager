@@ -1,5 +1,6 @@
 #pragma once
 #include <winrt/Microsoft.UI.Windowing.h>
+#include <Windows.h>
 
 #include <filesystem>
 #include <functional>
@@ -116,6 +117,7 @@ namespace clipmgr::utils
     managed_file_handle createFile(const std::filesystem::path& path);
     void createDirectory(const std::filesystem::path& path);
     std::optional<std::filesystem::path> tryGetKnownFolderPath(const GUID& knownFolderId);
+    std::optional<winrt::hstring> getNamedResource(const winrt::hstring& name);
 
     WindowInfo* getWindowInfo(const HWND& windowHandle);
 

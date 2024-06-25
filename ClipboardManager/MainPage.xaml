@@ -14,19 +14,12 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="33"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
-                <VisualState x:Name="NormalActions"/>
-                <VisualState x:Name="NoClipboardActions">
-                    <VisualState.Setters>
-                        <Setter Target="ListView.Visibility" Value="Collapsed"/>
-                        <Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>
-                        <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>
-                    </VisualState.Setters>
-                </VisualState>
                 <VisualState x:Name="CreateNewActions">
                     <VisualState.Setters>
                         <Setter Target="ListView.Visibility" Value="Collapsed"/>
@@ -49,16 +42,20 @@
                     <VisualState.Setters>
                         <Setter Target="StartTourInfoBar.Visibility" Value="Visible"/>
                         <Setter Target="StartTourInfoBar.IsOpen" Value="True"/>
+                        <Setter Target="ListView.Visibility" Value="Visible"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
 
             <VisualStateGroup>
-                <VisualState x:Name="DisplayClipboardActions"/>
-                <VisualState x:Name="NoClipboardActionsToDisplay">
+                <VisualState x:Name="DisplayClipboardTriggers"/>
+                <VisualState x:Name="NoClipboardTriggersToDisplay">
                     <VisualState.Setters>
-                        <Setter Target="ClipboardActionsListView.Visibility" Value="Collapsed"/>
-                        <Setter Target="NoClipboardActionsTextBlock.Visibility" Value="Visible"/>
+                        <Setter Target="ClipboardTriggersListView.Visibility" Value="Collapsed"/>
+                        <Setter Target="NoClipboardTriggersTextBlock.Visibility" Value="Visible"/>
+                        <Setter Target="ListView.Visibility" Value="Collapsed"/>
+                        <Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>
+                        <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -84,7 +81,13 @@
             VerticalAlignment="Center"
             Opacity="0.7"/>
 
-        <Pivot x:Name="Pivot" SelectedIndex="3" Grid.Row="1">
+        <InfoBar x:Name="GenericErrorInfoBar"
+                 x:Uid="GenericErrorInfoBar"
+                 Grid.Row="1"
+                 Title="Error occured"
+                 Severity="Error"/>
+        
+        <Pivot x:Name="Pivot" SelectedIndex="3" Grid.Row="2">
             <PivotItem Margin="0" Padding="5,3,5,0">
                 <PivotItem.Header>
                     <FontIcon x:Name="SettingsPivot" Glyph="&#xe713;" FontSize="16"/>
@@ -135,7 +138,7 @@
                 </ListView>
             </PivotItem>
 
-            <PivotItem Padding="0" Margin="0" Loaded="ClipboadActionsListPivot_Loaded">
+            <PivotItem Padding="0" Margin="0" Loaded="ClipboadTriggersListPivot_Loaded">
                 <PivotItem.Header>
                     <FontIcon x:Name="ClipboardTriggersPivot" Glyph="&#xe8fd;" FontSize="16"/>
                 </PivotItem.Header>
@@ -150,14 +153,14 @@
                         <Button x:Name="CommandBarSaveButton" Click="CommandBarSaveButton_Click">
                             <FontIcon Glyph="&#xe74e;" FontSize="16"/>
                         </Button>
-                        <Button Click="CommandBarSaveButton_Click">
+                        <Button Click="ReloadTriggersButton_Click">
                             <FontIcon Glyph="&#xe72c;" FontSize="16"/>
                         </Button>
                     </StackPanel>
 
-                    <TextBlock x:Name="NoClipboardActionsTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8" Grid.Row="1" x:Load="False" Visibility="Collapsed"/>
+                    <TextBlock x:Name="NoClipboardTriggersTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8" Grid.Row="1" x:Load="False" Visibility="Collapsed"/>
                     
-                    <ListView x:Name="ClipboardActionsListView" Margin="0" Padding="0" SelectionMode="None" Grid.Row="1">
+                    <ListView x:Name="ClipboardTriggersListView" Margin="0" Padding="0" SelectionMode="None" Grid.Row="1">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="Padding" Value="7,3,7,7" />
@@ -165,9 +168,9 @@
                         </ListView.Resources>
                     </ListView>
 
-                    <TeachingTip x:Name="ClipboardActionsListViewTeachingTip" 
+                    <TeachingTip x:Name="ClipboardTriggersListViewTeachingTip" 
                                  x:Uid="ClipboardActionsListViewTeachingTip"
-                                 Target="{x:Bind ClipboardActionsListView}"
+                                 Target="{x:Bind ClipboardTriggersListView}"
                                  CloseButtonClick="TeachingTip2_CloseButtonClick"/>
                     <TeachingTip x:Name="CommandBarSaveButtonTeachingTip" 
                                  x:Uid="CommandBarSaveButtonTeachingTip"
@@ -176,7 +179,7 @@
                 </Grid>
             </PivotItem>
 
-            <PivotItem Padding="0" Margin="0" Loaded="PivotItem_Loaded">
+            <PivotItem Padding="0" Margin="0" Loaded="ClipboardActionsPivotItem_Loaded">
                 <PivotItem.Header>
                     <FontIcon x:Name="ClipboardActionsPivot" Glyph="&#xf6fa;" FontSize="16"/>
                 </PivotItem.Header>
@@ -193,54 +196,51 @@
                         </TransitionCollection>
                     </Grid.ChildrenTransitions>
 
-                    <InfoBar x:Name="NoClipboardActionsInfoBar"
-                        x:Uid="NoClipboardActionsInfoBar"
-                        x:Load="False"
-                        Visibility="Collapsed"
-                        Severity="Error" 
-                        Grid.Row="0"
-                        IsClosable="False">
-                        <InfoBar.Content>
-                            <Grid Padding="0,0,5,5" ColumnSpacing="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <HyperlinkButton Grid.Column="0" x:Uid="LocateButton" HorizontalAlignment="Stretch" Click="LocateUserFileButton_Click"/>
-                                <HyperlinkButton Grid.Column="1" x:Uid="CreateButton" HorizontalAlignment="Stretch" Click="CreateUserFileButton_Click"/>
-                            </Grid>
-                        </InfoBar.Content>
-                    </InfoBar>
-                    <InfoBar x:Name="CreateActionsInfoBar"
-                        x:Uid="OpenSaveFileInfoBar"
-                        x:Load="False"
-                        Visibility="Collapsed"
-                        Severity="Success" 
-                        Grid.Row="0">
-                        <InfoBar.Content>
-                            <HyperlinkButton x:Uid="CreateActionsButton" IsEnabled="False" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5"/>
-                        </InfoBar.Content>
-                    </InfoBar>
-                    <InfoBar x:Name="ViewActionsInfoBar"
-                        x:Uid="ViewActionsInfoBar"
-                        x:Load="False"
-                        Visibility="Collapsed"
-                        Severity="Success" 
-                        Grid.Row="0">
-                        <InfoBar.Content>
-                            <HyperlinkButton x:Uid="ViewActionsButton" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5" Click="ViewActionsButton_Click"/>
-                        </InfoBar.Content>
-                    </InfoBar>
-                    <InfoBar x:Name="StartTourInfoBar"
-                             x:Uid="StartTourInfoBar"
-                             Visibility="Collapsed"
-                             x:Load="False"
-                             Severity="Informational"
-                             Grid.Row="0">
-                        <InfoBar.Content>
-                            <Button x:Uid="StartTourButton" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5" Click="StartTourButton_Click"/>
-                        </InfoBar.Content>
-                    </InfoBar>
+                    <StackPanel Grid.Row="0" Spacing="3" HorizontalAlignment="Stretch" Orientation="Vertical">
+                        <InfoBar x:Name="NoClipboardActionsInfoBar"
+                            x:Uid="NoClipboardActionsInfoBar"
+                            x:Load="False"
+                            Visibility="Collapsed"
+                            Severity="Error" 
+                            Grid.Row="0"
+                            IsClosable="False">
+                            <InfoBar.Content>
+                                <Grid Padding="0,0,5,5" ColumnSpacing="10" ColumnDefinitions="1*,1*">
+                                    <HyperlinkButton Grid.Column="0" x:Uid="LocateButton" HorizontalAlignment="Stretch" Click="LocateUserFileButton_Click"/>
+                                    <HyperlinkButton Grid.Column="1" x:Uid="CreateButton" HorizontalAlignment="Stretch" Click="CreateUserFileButton_Click"/>
+                                </Grid>
+                            </InfoBar.Content>
+                        </InfoBar>
+                        
+                        <InfoBar x:Name="CreateActionsInfoBar"
+                            x:Uid="OpenSaveFileInfoBar"
+                            x:Load="False"
+                            Visibility="Collapsed"
+                            Severity="Success" 
+                            Grid.Row="0">
+                            <InfoBar.Content>
+                                <HyperlinkButton x:Uid="CreateActionsButton" IsEnabled="False" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5"/>
+                            </InfoBar.Content>
+                        </InfoBar>
+
+                        <InfoBar x:Name="ViewActionsInfoBar"
+                            x:Uid="ViewActionsInfoBar"
+                            x:Load="False"
+                            Visibility="Collapsed"
+                            Severity="Success" 
+                            Grid.Row="0"/>
+
+                        <InfoBar x:Name="StartTourInfoBar"
+                                 x:Uid="StartTourInfoBar"
+                                 Visibility="Collapsed"
+                                 x:Load="False"
+                                 Severity="Informational"
+                                 Grid.Row="0">
+                            <InfoBar.Content>
+                                <Button x:Uid="StartTourButton" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5" Click="StartTourButton_Click"/>
+                            </InfoBar.Content>
+                        </InfoBar>
+                    </StackPanel>
 
                     <Grid Grid.Row="1" MinHeight="35" HorizontalAlignment="Right">
                         <Grid.ColumnDefinitions>
@@ -273,7 +273,7 @@
                                 </TransitionCollection>
                             </StackPanel.ChildrenTransitions>
 
-                            <Button x:Name="ReloadActionsButton" Click="ReloadActionsButton_Click">
+                            <Button x:Name="ReloadTriggersButton" Click="ReloadTriggersButton_Click">
                                 <FontIcon FontSize="16" Glyph="&#xe72c;"/>
                             </Button>
                             <ToggleButton x:Name="SilenceNotificationsToggleButton">
@@ -315,7 +315,7 @@
                     
                     <TeachingTip x:Name="ReloadActionsButtonTeachingTip"
                                  x:Uid="ReloadActionsButtonTeachingTip"
-                                 Target="{x:Bind ReloadActionsButton}"
+                                 Target="{x:Bind ReloadTriggersButton}"
                                  ActionButtonClick="TeachingTip_CloseButtonClick">
                         <TeachingTip.ActionButtonContent>
                             <FontIcon Glyph="&#xe72a;" FontSize="14"/>
