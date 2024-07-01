@@ -100,7 +100,7 @@ void impl::ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hst
     action.label(label);
     action.regex(boost::wregex(regex));
 
-    // Reload actions:
+    // Reload triggers:
     for (uint32_t i = 0; i < ActionsGridView().Items().Size(); i++)
     {
         auto&& item = ActionsGridView().Items().GetAt(i);
@@ -145,7 +145,7 @@ winrt::async impl::ClipboardActionView::StartTour()
 
 void impl::ClipboardActionView::UserControl_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const&, winrt::Windows::Foundation::IInspectable const&)
 {
-    // Create buttons for actions:
+    // Create buttons for triggers:
     for (auto&& action : actions)
     {
         ActionsGridView().Items().InsertAt(0, box_value(action.label()));

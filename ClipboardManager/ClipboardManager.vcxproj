@@ -161,6 +161,7 @@
       <DependentUpon>HostControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="src\Process.hpp" />
     <ClInclude Include="src\notifs\NotificationTypes.hpp" />
     <ClInclude Include="src\utils\Logger.hpp" />
     <ClInclude Include="SettingsPage.h">
@@ -204,6 +205,7 @@
       <DependentUpon>HostControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="src\Process.cpp" />
     <ClCompile Include="src\utils\Logger.cpp" />
     <ClCompile Include="SettingsPage.cpp">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
@@ -250,6 +252,7 @@
     <None Include="CHANGELOG.md" />
     <None Include="packages.config" />
     <PRIResource Include="Resources.lang-en-us.resw" />
+    <PRIResource Include="Resources.lang-fr-fr.resw" />
   </ItemGroup>
   <ItemGroup>
     <!-- Island-support: Needed to run Markup Compiler on App.xaml and make the generated files -->

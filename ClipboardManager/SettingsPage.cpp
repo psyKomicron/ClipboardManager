@@ -7,18 +7,26 @@
 #include "src/utils/StartupTask.hpp"
 #include "src/utils/helpers.hpp"
 #include "src/notifs/NotificationTypes.hpp"
+#include "src/ClipboardTrigger.hpp"
+
+//#include <boost/property_tree/ptree.hpp>
+//#include <boost/property_tree/xml_parser.hpp>
 
 #include <winrt/Microsoft.UI.Xaml.Controls.h>
 #include <winrt/Windows.Foundation.Collections.h>
+#include <winrt/Windows.Storage.Pickers.h>
 
-namespace impl = winrt::ClipboardManager::implementation;
+#include <Shobjidl.h>
+
 namespace winrt
 {
     using namespace winrt::Microsoft::UI::Xaml;
     using namespace winrt::Microsoft::UI::Xaml::Controls;
     using namespace winrt::Microsoft::UI::Xaml::Controls::Primitives;
     using namespace winrt::Windows::Foundation;
+    using namespace winrt::Windows::Storage::Pickers;
 }
+namespace impl = winrt::ClipboardManager::implementation;
 
 void impl::SettingsPage::Page_Loading(winrt::FrameworkElement const&, winrt::IInspectable const&)
 {
@@ -123,7 +131,40 @@ void impl::SettingsPage::IgnoreCaseToggleSwitch_Toggled(winrt::IInspectable cons
 void impl::SettingsPage::RegexModeComboBox_SelectionChanged(winrt::IInspectable const&, winrt::SelectionChangedEventArgs const&)
 {
     check_loaded(loaded);
-    settings.insert(L"RegexMode", RegexModeComboBox().SelectedItem().as<winrt::FrameworkElement>().Tag().as<int32_t>());
+    settings.insert(L"TriggerMatchMode", RegexModeComboBox().SelectedItem().as<winrt::FrameworkElement>().Tag().as<int32_t>());
+}
+
+winrt::async impl::SettingsPage::CreateExampleTriggersFileButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    winrt::FileSavePicker picker{};
+    picker.as<IInitializeWithWindow>()->Initialize(GetActiveWindow());
+    picker.SuggestedStartLocation(winrt::PickerLocationId::ComputerFolder);
+    picker.SuggestedFileName(L"user_file.xml");
+    picker.FileTypeChoices().Insert(
+        L"XML Files", single_threaded_vector<winrt::hstring>({ L".xml" })
+    );
+
+    auto&& storageFile = co_await picker.PickSaveFileAsync();
+    if (storageFile)
+    {
+        std::filesystem::path userFilePath{ storageFile.Path().c_str() };
+        clipmgr::ClipboardTrigger::initializeSaveFile(userFilePath);
+    }
+}
+
+winrt::async impl::SettingsPage::OverwriteExampleTriggersFileButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    winrt::FileOpenPicker picker{};
+    picker.as<IInitializeWithWindow>()->Initialize(GetActiveWindow());
+    picker.FileTypeFilter().Append(L".xml");
+
+    auto&& storageFile = co_await picker.PickSingleFileAsync();
+    if (storageFile)
+    {
+        std::filesystem::path userFilePath{ storageFile.Path().c_str() };
+        settings.insert(L"UserFilePath", userFilePath);
+        clipmgr::ClipboardTrigger::initializeSaveFile(userFilePath);
+    }
 }
 
 

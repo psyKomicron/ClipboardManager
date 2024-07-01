@@ -54,7 +54,7 @@ namespace winrt::ClipboardManager::implementation
         clipmgr::Settings localSettings{};
         clipmgr::notifs::ToastNotificationHandler& manager = clipmgr::notifs::ToastNotificationHandler::getDefault();
         clipmgr::HotKey activationHotKey{ MOD_ALT, L' ' };
-        std::vector<clipmgr::ClipboardTrigger> actions{};
+        std::vector<clipmgr::ClipboardTrigger> triggers{};
         winrt::Windows::ApplicationModel::DataTransfer::Clipboard::ContentChanged_revoker clipboardContentChangedrevoker{};
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews
             = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
@@ -70,7 +70,8 @@ namespace winrt::ClipboardManager::implementation
         bool FindActions(const winrt::ClipboardManager::ClipboardActionView& actionView, std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text);
         void SendNotification(const std::vector<std::pair<std::wstring, std::wstring>>& buttons);
         void ReloadTriggers();
-        void LoadTriggers(std::filesystem::path& path);
+        bool LoadTriggers(std::filesystem::path& path);
+        void LaunchAction(const std::wstring& url);
     };
 }
 

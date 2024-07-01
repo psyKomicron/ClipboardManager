@@ -10,6 +10,8 @@
     - File has 'actions' node, meaning it has not been updated from version 0.0.x.
     - Other errors will have a generic message + the path that was invalid.
 - Added xml declaration example in settings to help user to create it's own file and debug errors.
+- Now restoring app window's size and position.
+- App window has a minimum size, it cannot be resized smaller than that size by the user.
 
 ## New
 - 
@@ -36,8 +38,8 @@
     - [ ] ErrorMessage_XmlOldVersion
         - <actions> node has been renamed <triggers> and <action> <actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.
 - [ ] Fix bugs. ??
-- [ ] Save regex flags.
-- [ ] Settings page/Regex options expander is not padded and not implemented.
+- ~~[ ] Save regex flags.~~
+- ~~[ ] Settings page/Regex options expander is not padded and not implemented.~~
 - [ ] Settings page/Start window minimized not implemented.
 - [ ] Create fr-fr language file.
 

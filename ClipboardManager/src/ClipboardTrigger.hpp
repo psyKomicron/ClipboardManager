@@ -11,8 +11,8 @@ namespace clipmgr
 {
     enum class MatchMode
     {
-        Match,
-        Search
+        Match = 0,
+        Search = 1
     };
 
     class ClipboardTrigger
@@ -41,18 +41,16 @@ namespace clipmgr
         void enabled(const bool& value);
 
         void updateMatchMode(const MatchMode& mode);
-        bool match(const std::wstring& string) const;
+        bool match(const std::wstring& string, const std::optional<MatchMode>& matchMode = {}) const;
 
         bool operator==(ClipboardTrigger& other);
-        //bool operator==(ClipboardTrigger& other);
 
     private:
         std::wstring _label{};
         std::wstring _format{};
         boost::wregex _regex{};
         bool _enabled = true;
-        MatchMode _matchMode = MatchMode::Match;
-
+        std::optional<MatchMode> _matchMode{};
 
         static void firstTimeInitialization(const std::filesystem::path& path, boost::property_tree::wptree tree);
         static boost::wregex parseRegexFromXml(boost::property_tree::wptree& options);

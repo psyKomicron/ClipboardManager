@@ -66,6 +66,9 @@
     <ClInclude Include="src\notifs\NotificationTypes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Process.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipboardManager.cpp">
@@ -113,6 +116,9 @@
     <ClCompile Include="src\notifs\ToastNotificationHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Process.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ClipboardManager.rc">
@@ -149,5 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Resources.lang-en-us.resw" />
+    <PRIResource Include="Resources.lang-fr-fr.resw" />
   </ItemGroup>
 </Project>

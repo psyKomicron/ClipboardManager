@@ -188,7 +188,7 @@ void clipmgr::notifs::ToastNotification::send(const NotificationDuration& durati
     }
 
     winrt::ToastNotification notification{ doc };
-    auto toastNotifier = clipmgr::utils::toasts::compat::DesktopNotificationManagerCompat::CreateToastNotifier();
+    auto toastNotifier = clipmgr::notifs::toasts::compat::DesktopNotificationManagerCompat::CreateToastNotifier();
     toastNotifier.Show(notification);
 }
 
@@ -198,7 +198,7 @@ void clipmgr::notifs::ToastNotification::ensureToastManagerRegistered()
     logger.info(L"Ensuring that DesktopNotificationManagerCompat has been registered.");
     try
     {
-        clipmgr::utils::toasts::compat::DesktopNotificationManagerCompat::Register(
+        clipmgr::notifs::toasts::compat::DesktopNotificationManagerCompat::Register(
             L"psykomicron.ClipboardManagerV2", L"ClipboardManager", L""
         );
 

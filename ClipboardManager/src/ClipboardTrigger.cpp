@@ -38,17 +38,21 @@ std::vector<clipmgr::ClipboardTrigger> clipmgr::ClipboardTrigger::loadClipboardT
                 auto&& modeAttribute = regexNode.get_child_optional(L"<xmlattr>.mode");
 
                 bool ignoreCase = ignoreCaseAttribute.has_value() && (ignoreCaseAttribute.get().data() == L"1" || ignoreCaseAttribute.get().data() == L"true");
-                bool useSearch = modeAttribute.has_value() && modeAttribute.get().data() == L"search";
-                
                 auto flags = boost::regex_constants::normal;
-                
                 if (ignoreCase)
                 {
                     flags = boost::regex_constants::icase;
                 }
+
+                std::optional<MatchMode> triggerMatchMode{};
+                if (modeAttribute.has_value())
+                {
+                    bool useSearch = modeAttribute.get().data() == L"search";
+                    triggerMatchMode = useSearch ? MatchMode::Search : MatchMode::Match;
+                }
                 
                 auto clipboardTrigger = clipmgr::ClipboardTrigger(label, url, boost::wregex(regexNode.data(), flags), enabled);
-                clipboardTrigger._matchMode = useSearch ? MatchMode::Search : MatchMode::Match;
+                clipboardTrigger._matchMode = triggerMatchMode;
 
                 urls.push_back(std::move(clipboardTrigger));
             }
@@ -170,10 +174,14 @@ void clipmgr::ClipboardTrigger::updateMatchMode(const MatchMode& mode)
     _matchMode = mode;
 }
 
-bool clipmgr::ClipboardTrigger::match(const std::wstring& string) const
+bool clipmgr::ClipboardTrigger::match(const std::wstring& string, const std::optional<MatchMode>& defaultMatchMode) const
 {
-    return (_matchMode == MatchMode::Match && boost::regex_match(string, _regex))
-        || (_matchMode == MatchMode::Search && boost::regex_search(string, _regex));
+    auto matchMode = _matchMode.has_value()
+        ? _matchMode.value()
+        : defaultMatchMode.value_or(MatchMode::Match);
+
+    return (matchMode == MatchMode::Match && boost::regex_match(string, _regex))
+        || (matchMode == MatchMode::Search && boost::regex_search(string, _regex));
 }
 
 bool clipmgr::ClipboardTrigger::operator==(ClipboardTrigger& other)

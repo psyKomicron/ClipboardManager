@@ -46,7 +46,7 @@
                             <Setter Property="Margin" Value="0" />
                         </Style>
                     </ListView.Resources>
-                    
+
                     <local:HostControl Header="Sound" CornerRadius="0" Background="Transparent">
                         <local:HostControl.HostContent>
                             <ComboBox x:Name="NotificationSoundComboBox" Grid.Column="1" SelectedIndex="0" MinWidth="150" SelectionChanged="NotificationSoundComboBox_SelectionChanged">
@@ -59,7 +59,7 @@
                             </ComboBox>
                         </local:HostControl.HostContent>
                     </local:HostControl>
-                    
+
                     <local:HostControl Header="Scenario" CornerRadius="0" Background="Transparent">
                         <local:HostControl.HostContent>
                             <ComboBox x:Name="NotificationScenariosComboBox" Grid.Column="1" SelectedIndex="0" MinWidth="150" SelectionChanged="NotificationScenariosComboBox_SelectionChanged">
@@ -71,7 +71,7 @@
                             </ComboBox>
                         </local:HostControl.HostContent>
                     </local:HostControl>
-                    
+
                     <local:HostControl Header="Duration" CornerRadius="0" Background="Transparent">
                         <local:HostControl.HostContent>
                             <StackPanel x:Name="DurationButtonsStackPanel" Orientation="Horizontal">
@@ -100,7 +100,7 @@
                             </StackPanel>
                         </local:HostControl.HostContent>
                     </local:HostControl>
-                    
+
                 </ListView>
             </Expander>
 
@@ -144,7 +144,96 @@
                     </ComboBox>
                 </local:HostControl.HostContent>
             </local:HostControl>
+
             
+            <TextBlock x:Uid="HeaderStorageTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
+
+            <local:HostControl x:Uid="ClearSettingsHostControl">
+                <local:HostControl.HostContent>
+                    <Button x:Uid="ClearSettingsButton" MinWidth="100"/>
+                </local:HostControl.HostContent>
+            </local:HostControl>
+            
+            <local:HostControl Header="Create example file">
+                <local:HostControl.HostContent>
+                    <StackPanel Orientation="Horizontal">
+                        <Button 
+                            x:Uid="CreateExampleTriggersFileButtton" 
+                            MinWidth="100" 
+                            CornerRadius="5,0,0,5"
+                            Click="CreateExampleTriggersFileButton_Click"/>
+                        <Button 
+                            x:Uid="OverwriteExampleTriggersFileButtton" 
+                            MinWidth="100" 
+                            CornerRadius="0,5,5,0"
+                            Click="OverwriteExampleTriggersFileButton_Click"/>
+                    </StackPanel>
+                </local:HostControl.HostContent>
+            </local:HostControl>
+
+            <Expander Style="{StaticResource ExpanderStyle}" HorizontalContentAlignment="Stretch">
+                <Expander.Header>
+                    <local:HostControl Header="Triggers XML example" Background="Transparent" BorderThickness="0" Padding="0"/>
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel HorizontalAlignment="Stretch" Spacing="2" Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
+                        <Border Background="{ThemeResource ExpanderContentBackground}" Padding="7,10" CornerRadius="{StaticResource ControlCornerRadius}">
+                            <RichTextBlock FontFamily="Cascadia Code">
+                                <Paragraph FontFamily="{StaticResource ContentControlThemeFontFamily}" Margin="10,0,0,10">Valid XML declaration</Paragraph>
+
+                                <Paragraph Foreground="LightBlue">&lt;settings&gt;</Paragraph>
+                                <Paragraph Foreground="LightBlue" TextIndent="20">&lt;triggers&gt;</Paragraph>
+
+                                <Paragraph Foreground="LightBlue" TextIndent="40">&lt;trigger&gt;</Paragraph>
+
+                                <Paragraph Foreground="LightBlue" TextIndent="60">
+                                    <Run>&lt;re&gt;</Run>
+                                    <Run>&lt;/re&gt;</Run>
+                                </Paragraph>
+
+                                <Paragraph Foreground="DarkGreen" TextIndent="60" Margin="0,10,0,0">
+                                    // Valid values: any text.
+                                </Paragraph>
+                                <Paragraph Foreground="DarkGreen" TextIndent="60">
+                                    // Remark: {} is the symbol used to insert the content matching this trigger into the string of format.
+                                </Paragraph>
+                                <Paragraph Foreground="DarkGreen" TextIndent="80">
+                                    //- example-url.com/search?={} + eleiko = example-url.com/search?=eleiko
+                                </Paragraph>
+                                <Paragraph Foreground="LightBlue" TextIndent="60">
+                                    <Run>&lt;format&gt;</Run>
+                                    <Run Foreground="{StaticResource TextFillColorPrimaryBrush}">example-url.com/search?={}</Run>
+                                    <Run>&lt;/format&gt;</Run>
+                                </Paragraph>
+
+                                <Paragraph Foreground="DarkGreen" TextIndent="60" Margin="0,10,0,0">
+                                    // Valid values: any text
+                                </Paragraph>
+                                <Paragraph Foreground="LightBlue" TextIndent="60">
+                                    <Run>&lt;label&gt;</Run>
+                                    <Run Foreground="{StaticResource TextFillColorPrimaryBrush}">Example</Run>
+                                    <Run>&lt;/label&gt;</Run>
+                                </Paragraph>
+
+                                <Paragraph Foreground="DarkGreen" TextIndent="60" Margin="0,10,0,0">
+                                    // Valid values: true,1
+                                </Paragraph>
+                                <Paragraph Foreground="LightBlue" TextIndent="60">
+                                    <Run>&lt;enabled&gt;</Run>
+                                    <Run Foreground="{StaticResource TextFillColorPrimaryBrush}">true</Run>
+                                    <Run>&lt;/enabled&gt;</Run>
+                                </Paragraph>
+
+                                <Paragraph Foreground="LightBlue" TextIndent="40">&lt;/trigger&gt;</Paragraph>
+
+                                <Paragraph Foreground="LightBlue" TextIndent="20">&lt;/triggers&gt;</Paragraph>
+                                <Paragraph Foreground="LightBlue">&lt;/settings&gt;</Paragraph>
+                            </RichTextBlock>
+                        </Border>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+
 
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>

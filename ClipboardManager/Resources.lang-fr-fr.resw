@@ -118,135 +118,135 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ActionEnabledToggleSwitchTeachingTip.Subtitle" xml:space="preserve">
-    <value>Enable or disable the trigger. A disabled trigger will not be used in any action</value>
+    <value>Active ou désactive ce déclancheur. Un déclancheur désactivé ne sera plus utilisé dans aucune actions.</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionEnabledToggleSwitchTeachingTip.Title" xml:space="preserve">
-    <value>Trigger status</value>
+    <value>Etat du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionFormatTextBlockTeachingTip.Subtitle" xml:space="preserve">
-    <value>String that will be formatted with the content of the clipboard</value>
+    <value>Chaine de formattage du contenu du presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionFormatTextBlockTeachingTip.Title" xml:space="preserve">
-    <value>Trigger format</value>
+    <value>Formattage du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionLabelTextBlockTeachingTip.Subtitle" xml:space="preserve">
-    <value>Label of the trigger, this name will be displayed for one of the button of a clipboard action</value>
+    <value>Label du déclencheur, ce nom sera affiché sur le bouton correspondant sur une action presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionLabelTextBlockTeachingTip.Title" xml:space="preserve">
-    <value>Trigger label</value>
+    <value>Label du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionRegexTextBlockTeachingTip.Subtitle" xml:space="preserve">
-    <value>Regex that the clipboard content needs to match</value>
+    <value>Regex auquel le contenu du presse-papier doit correspondre</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionRegexTextBlockTeachingTip.Title" xml:space="preserve">
-    <value>Trigger regex</value>
+    <value>Regex du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionsGridViewTeachingTip.Subtitle" xml:space="preserve">
-    <value>Action buttons will be displayed here, click one to open the link created by the trigger format</value>
+    <value>Les boutons d'action seront ici, cliquer dessus ouvrira le lien créé par le formattage du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionsGridViewTeachingTip.Title" xml:space="preserve">
-    <value>Action trigger buttons</value>
+    <value>Boutons d'action du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClearSettingsButton.Content" xml:space="preserve">
-    <value>Clear</value>
+    <value>Nettoyer</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="ClearSettingsHostControl.Header" xml:space="preserve">
-    <value>Clear settings</value>
+    <value>Nettoyer les parmètres</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="ClipboardActionRootGridTeachingTip.Subtitle" xml:space="preserve">
-    <value>This is a clipboard trigger</value>
+    <value>Ceci est un déclencheur presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardActionsListViewTeachingTip.Subtitle" xml:space="preserve">
-    <value>Triggers list</value>
+    <value>Liste des déclencheurs</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardActionsListViewTeachingTip.Title" xml:space="preserve">
-    <value>Clipboard triggers</value>
+    <value>Déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardActionsPivotTeachingTip.Subtitle" xml:space="preserve">
-    <value>View clipboard entries that triggered your custom clipboard triggers and start actions.</value>
+    <value>Affichez les entrées du presse-papiers qui ont déclenché vos déclencheurs de presse-papiers personnalisés et vos actions de lancement.</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardActionsPivotTeachingTip.Title" xml:space="preserve">
-    <value>Clipboard actions</value>
+    <value>Actions presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardActionsSaveFileMovedInfoBar.Message" xml:space="preserve">
-    <value>Choose to create or locate the missing file.</value>
+    <value>Choisir ou créer le fichier manquant.</value>
     <comment>MainPage</comment>
   </data>
   <data name="ClipboardActionsSaveFileMovedInfoBar.Title" xml:space="preserve">
-    <value>Clipboard action file is missing, it was either moved or deleted.</value>
+    <value>Le fichier des déclencheurs d'action est introuvable (déplacé ou supprimé)</value>
     <comment>MainPage</comment>
   </data>
   <data name="ClipboardHistoryPivotTeachingTip.Subtitle" xml:space="preserve">
-    <value>Same as Super + V</value>
+    <value>Pareil que Super + V</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardHistoryPivotTeachingTip.Title" xml:space="preserve">
-    <value>Clipboard history</value>
+    <value>Historique du presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardTriggersPivotTeachingTip.Subtitle" xml:space="preserve">
-    <value>View and edit clipboard triggers</value>
+    <value>Voir et modifier les déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardTriggersPivotTeachingTip.Title" xml:space="preserve">
-    <value>Clipboard triggers</value>
+    <value>Déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="CommandBarSaveButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Click to save the modifications made to any clipboard trigger</value>
+    <value>Sauvergarder les modifications faites aux déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="CreateButton.Content" xml:space="preserve">
-    <value>Create</value>
+    <value>Créer</value>
     <comment>MainPage</comment>
   </data>
   <data name="CreateExampleTriggersFileButtton.Content" xml:space="preserve">
-    <value>Create</value>
+    <value>Créer</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="EditButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Open a dialog to edit this trigger</value>
+    <value>Ouvre une fenêtre de dialogue pour modifier ce déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="EditButtonTeachingTip.Title" xml:space="preserve">
-    <value>Edit</value>
+    <value>Modifier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="EditDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Sauvegarder</value>
     <comment>ClipboardActionEditor</comment>
   </data>
   <data name="EditDialog.SecondaryButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Annuler</value>
     <comment>ClipboardActionEditor</comment>
   </data>
   <data name="FormatLinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Copy formatted link to the clipboard</value>
+    <value>Copie le lien formatté dans le presse-papier</value>
     <comment>ClipboardActionView</comment>
   </data>
   <data name="FormatLinkButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Formats the action text with the default trigger format and adds it to the clipboard</value>
+    <value>Formate le texte de l'action avec le format par défaut du déclencheur et l'ajoute au presse-papiers</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="FormatLinkButtonTeachingTip.Title" xml:space="preserve">
-    <value>Format link</value>
+    <value>Formate le lien</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="FormatTextBlock.Text" xml:space="preserve">
@@ -258,31 +258,31 @@
     <comment>SettingsPage</comment>
   </data>
   <data name="HeaderFormattingTextBlock.Text" xml:space="preserve">
-    <value>Formatting &amp; matching</value>
+    <value>Formattage &amp; correspondance</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="HeaderStorageTextBlock.Text" xml:space="preserve">
-    <value>Storage</value>
+    <value>Stockage</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="HistoryToggleButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Quickly enable or disable actions history</value>
+    <value>Activer et désactiver l'historique des actions</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="IgnoreCaseHostControl.Header" xml:space="preserve">
-    <value>Ignore case</value>
+    <value>Ignorer la capitalisation</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="LabelTextBlockTeachingTip.Subtitle" xml:space="preserve">
-    <value>Clipboard text</value>
+    <value>Texte du presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ListViewTeachingTip.Subtitle" xml:space="preserve">
-    <value>You will find here the clipboard entries that match your clipboard triggers</value>
+    <value>Les entrées du presse-papier qui déclenchent les déclencheurs presse-papier seront affichées ici</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ListViewTeachingTip.Title" xml:space="preserve">
-    <value>Clipboard action</value>
+    <value>Action presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="LocateButton.Content" xml:space="preserve">

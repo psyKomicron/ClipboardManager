@@ -84,7 +84,6 @@
         <InfoBar x:Name="GenericErrorInfoBar"
                  x:Uid="GenericErrorInfoBar"
                  Grid.Row="1"
-                 Title="Error occured"
                  Severity="Error"/>
         
         <Pivot x:Name="Pivot" SelectedIndex="3" Grid.Row="2">
