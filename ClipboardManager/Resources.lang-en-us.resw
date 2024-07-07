@@ -157,6 +157,20 @@
     <value>Action trigger buttons</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="AllowNotificationsHostControl.Header" xml:space="preserve">
+    <value>Allow notifications</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="AutomaticStartHostControl.Header" xml:space="preserve">
+    <value>Automatic start</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="BrowserHostControl.Header" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BrowserStringTextBox.PlaceholderText" xml:space="preserve">
+    <value>Executable string</value>
+  </data>
   <data name="ClearSettingsButton.Content" xml:space="preserve">
     <value>Clear</value>
     <comment>SettingsPage</comment>
@@ -217,8 +231,24 @@
     <value>Create</value>
     <comment>MainPage</comment>
   </data>
+  <data name="CreateExampleFileHostControl.Header" xml:space="preserve">
+    <value>Create example file</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="CreateExampleTriggersFileButtton.Content" xml:space="preserve">
     <value>Create</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="DurationDefaultToggleButton.Content" xml:space="preserve">
+    <value>Default</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="DurationLongToggleButton.Content" xml:space="preserve">
+    <value>Long</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="DurationShortToggleButton.Content" xml:space="preserve">
+    <value>Short</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="EditButtonTeachingTip.Subtitle" xml:space="preserve">
@@ -236,6 +266,40 @@
   <data name="EditDialog.SecondaryButtonText" xml:space="preserve">
     <value>Cancel</value>
     <comment>ClipboardActionEditor</comment>
+  </data>
+  <data name="ErrorMessage_CannotSaveTriggersFileNotFound" xml:space="preserve">
+    <value>Failed to save triggers file.</value>
+    <comment>Error message</comment>
+  </data>
+  <data name="ErrorMessage_CannotSaveTriggersNoUserFile" xml:space="preserve">
+    <value>Missing triggers user file, triggers cannot be saved.</value>
+    <comment>Error message</comment>
+  </data>
+  <data name="ErrorMessage_CannotSaveTriggersXmlError" xml:space="preserve">
+    <value>Failed to save triggers file, XML content is invalid.</value>
+    <comment>Error message</comment>
+  </data>
+  <data name="ErrorMessage_InvalidTriggersFile" xml:space="preserve">
+    <value>Triggers file contains invalid data.</value>
+    <comment>Error message</comment>
+  </data>
+  <data name="ErrorMessage_MissingTriggersNode" xml:space="preserve">
+    <value>XML declaration is missing '&lt;triggers&gt;' node.
+Check settings for an example of a valid XML declaration.</value>
+    <comment>Error message</comment>
+  </data>
+  <data name="ErrorMessage_TriggersFileNotFound" xml:space="preserve">
+    <value>Triggers (XML) file not found.</value>
+    <comment>Error message</comment>
+  </data>
+  <data name="ErrorMessage_XmlOldVersion" xml:space="preserve">
+    <value>&lt;actions&gt; node has been renamed &lt;triggers&gt; and &lt;action&gt; &lt;actions&gt;. Rename those nodes in your XML file and reload triggers.
+You can easily access your user file via settings and see an example of a valid XML declaration there.</value>
+    <comment>Error message</comment>
+  </data>
+  <data name="ErrorMessage_XmlParserError" xml:space="preserve">
+    <value>Triggers (XML) file has invalid data, XML parser failed to parse.</value>
+    <comment>Error message</comment>
   </data>
   <data name="FormatLinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Copy formatted link to the clipboard</value>
@@ -256,6 +320,9 @@
   <data name="HeaderApplicationTextBlock.Text" xml:space="preserve">
     <value>Application</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="HeaderBrowserTextBlock.Text" xml:space="preserve">
+    <value>Browser</value>
   </data>
   <data name="HeaderFormattingTextBlock.Text" xml:space="preserve">
     <value>Formatting &amp; matching</value>
@@ -289,13 +356,73 @@
     <value>Locate</value>
     <comment>MainPage</comment>
   </data>
+  <data name="MadeByTextBlock.Text" xml:space="preserve">
+    <value>Made by psyKomicron</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="NoClipboardActionsInfoBar.Title" xml:space="preserve">
-    <value>No clipboard actions have been created, please create at least one action to use clipboard actions.</value>
+    <value>No clipboard triggers have been created, please create at least one action to use clipboard actions.</value>
     <comment>MainPage</comment>
   </data>
   <data name="NoClipboardActionsTextBlock.Text" xml:space="preserve">
-    <value>No clipboard actions</value>
+    <value>No clipboard triggers</value>
     <comment>MainPage</comment>
+  </data>
+  <data name="NotificationScenariosComboBox_Alarm.Content" xml:space="preserve">
+    <value>Alarm</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="NotificationScenariosComboBox_Default.Content" xml:space="preserve">
+    <value>Default</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="NotificationScenariosComboBox_IncomingCall.Content" xml:space="preserve">
+    <value>Incoming call</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="NotificationScenariosComboBox_Reminder.Content" xml:space="preserve">
+    <value>Reminder</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="NotificationScenariosComboBox_Urgent.Content" xml:space="preserve">
+    <value>Urgent</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="NotificationsExpanderDurationHostControl.Header" xml:space="preserve">
+    <value>Duration</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="NotificationsExpanderScenarioHostControl.Header" xml:space="preserve">
+    <value>Scenario</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="NotificationsExpanderSoundHostControl.Header" xml:space="preserve">
+    <value>Sound</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="NotificationSoundComboBox_Default.Content" xml:space="preserve">
+    <value>Default</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="NotificationSoundComboBox_InstantMessage.Content" xml:space="preserve">
+    <value>Instant message</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="NotificationSoundComboBox_Mail.Content" xml:space="preserve">
+    <value>Mail</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="NotificationSoundComboBox_Reminder.Content" xml:space="preserve">
+    <value>Reminder</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="NotificationSoundComboBox_Silent.Content" xml:space="preserve">
+    <value>Silent</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="NotificationSoundComboBox_SMS.Content" xml:space="preserve">
+    <value>SMS</value>
+    <comment>SettingsPage</comment>
   </data>
   <data name="OpenOptionsButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Click here to show additional options</value>
@@ -310,7 +437,7 @@
     <comment>MainPage</comment>
   </data>
   <data name="OpenSaveFileInfoBar.Message" xml:space="preserve">
-    <value>One default action has been added as a template, do you want to edit it ?</value>
+    <value>One default trigger has been added as a template, do you want to edit it ?</value>
     <comment>MainPage</comment>
   </data>
   <data name="OpenSaveFileInfoBar.Title" xml:space="preserve">
@@ -335,6 +462,10 @@
   </data>
   <data name="RegexModeComboBox_Search_ToolTip.Text" xml:space="preserve">
     <value>Search for any subsequence in the string that matches the regex.</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="RegexModeHostControl.Header" xml:space="preserve">
+    <value>Regex mode</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="RegexTextBlock.Text" xml:space="preserve">
@@ -369,6 +500,10 @@
     <value>This is a clipboard action</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="SaveMatchingResultsHostControl.Header" xml:space="preserve">
+    <value>Save matching results</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="SettingsPivotTeachingTip.Subtitle" xml:space="preserve">
     <value>Change application settings here (auto startup, notifications)</value>
     <comment>Teaching tips</comment>
@@ -380,6 +515,14 @@
   <data name="SilenceNotificationsToggleButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Quickly enable or disable notifications</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="StartMinimizedSubtitleTextBlock.Text" xml:space="preserve">
+    <value>Control the application window state when it's auto-started.</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="StartMinimizedTextBlock.Text" xml:space="preserve">
+    <value>Start minimized</value>
+    <comment>SettingsPage</comment>
   </data>
   <data name="StartTourButton.Content" xml:space="preserve">
     <value>Start tour</value>
@@ -405,12 +548,16 @@
     <value>Too many buttons</value>
     <comment>ToastNotifications</comment>
   </data>
+  <data name="TriggersXmlExampleHostControl.Header" xml:space="preserve">
+    <value>Triggers XML example</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="ViewActionsInfoBar.Message" xml:space="preserve">
     <value>You can view your triggers in the clipboard triggers page.</value>
     <comment>MainPage</comment>
   </data>
   <data name="ViewActionsInfoBar.Title" xml:space="preserve">
-    <value>Clipboard actions successfully loaded</value>
+    <value>Clipboard triggers successfully loaded</value>
     <comment>MainPage ViewActionsInfoBar</comment>
   </data>
 </root>

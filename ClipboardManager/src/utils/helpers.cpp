@@ -11,6 +11,7 @@
 
 #include <format>
 #include <string>
+#include <iostream>
 
 winrt::Microsoft::UI::Windowing::AppWindow clipmgr::utils::getCurrentAppWindow()
 {
@@ -72,6 +73,7 @@ std::optional<winrt::hstring> clipmgr::utils::getNamedResource(const winrt::hstr
     }
     catch (winrt::hresult_error)
     {
+        std::wcerr << L"'getNamedResource' Failed to instanciate or get string from resources." << std::endl;
         return {};
     }
 }

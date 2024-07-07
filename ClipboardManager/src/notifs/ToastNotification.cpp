@@ -69,10 +69,10 @@ bool clipmgr::notifs::ToastNotification::tryAddButtons(const std::vector<std::pa
 
 void clipmgr::notifs::ToastNotification::send()
 {
-    // TODO: Call send(...) with default enums.
+    send(NotificationDurationType::Default, NotificationScenarioType::Default, NotificationSoundType::Default);
 }
 
-void clipmgr::notifs::ToastNotification::send(const NotificationDuration& durationType, const NotificationScenario& scenarioType, const NotificationSound& soundType)
+void clipmgr::notifs::ToastNotification::send(const NotificationDurationType& durationType, const NotificationScenarioType& scenarioType, const NotificationSoundType& soundType)
 {
     if (!registered)
     {
@@ -90,28 +90,28 @@ void clipmgr::notifs::ToastNotification::send(const NotificationDuration& durati
     </toast>)");
 
     auto&& toast = doc.SelectSingleNode(L"/toast");
-    if (durationType != NotificationDuration::Default)
+    if (durationType != NotificationDurationType::Default)
     {
         auto attribute = doc.CreateAttribute(L"duration");
-        attribute.Value(durationType == NotificationDuration::Short ? L"short" : L"long");
+        attribute.Value(durationType == NotificationDurationType::Short ? L"short" : L"long");
         toast.Attributes().SetNamedItem(attribute);
     }
 
-    if (scenarioType != NotificationScenario::Default)
+    if (scenarioType != NotificationScenarioType::Default)
     {
         auto attribute = doc.CreateAttribute(L"scenario");
         switch (scenarioType)
         {
-            case NotificationScenario::Reminder:
+            case NotificationScenarioType::Reminder:
                 attribute.Value(L"reminder");
                 break;
-            case NotificationScenario::Alarm:
+            case NotificationScenarioType::Alarm:
                 attribute.Value(L"alarm");
                 break;
-            case NotificationScenario::IncomingCall:
+            case NotificationScenarioType::IncomingCall:
                 attribute.Value(L"incomingCall");
                 break;
-            case NotificationScenario::Urgent:
+            case NotificationScenarioType::Urgent:
                 attribute.Value(L"urgent");
                 break;
         }
@@ -119,26 +119,26 @@ void clipmgr::notifs::ToastNotification::send(const NotificationDuration& durati
         toast.Attributes().SetNamedItem(attribute);
     }
 
-    if (soundType != NotificationSound::Default)
+    if (soundType != NotificationSoundType::Default)
     {
         auto audio = doc.CreateElement(L"audio");
 
-        if (soundType != NotificationSound::Silent)
+        if (soundType != NotificationSoundType::Silent)
         {
             std::wstring winSound = L"ms-winsoundevent:Notification.";
             auto src = doc.CreateAttribute(L"src");
             switch (soundType)
             {
-                case NotificationSound::InstantMessage:
+                case NotificationSoundType::InstantMessage:
                     winSound += L"IM";
                     break;
-                case NotificationSound::Mail:
+                case NotificationSoundType::Mail:
                     winSound += L"Mail";
                     break;
-                case NotificationSound::Reminder:
+                case NotificationSoundType::Reminder:
                     winSound += L"Reminder";
                     break;
-                case NotificationSound::SMS:
+                case NotificationSoundType::SMS:
                     winSound += L"SMS";
                     break;
             }

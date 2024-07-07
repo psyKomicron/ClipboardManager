@@ -169,7 +169,7 @@ winrt::async impl::ClipboardActionEditor::EditButton_Click(winrt::IInspectable c
         {
             winrt::hstring oldRegex = _actionRegex;
             ActionRegex(newRegex);
-            // TODO: Update parent.
+            e_regexChanged(*this, nullptr);
         }
 
         if (newLabel != _actionLabel)

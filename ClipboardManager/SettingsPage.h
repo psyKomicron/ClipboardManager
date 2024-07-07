@@ -29,6 +29,8 @@ namespace winrt::ClipboardManager::implementation
         bool loaded = false;
 
         void updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key);
+        void selectComboBoxItem(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox, const uint32_t& value);
+        uint32_t getSelectedComboBoxItemTag(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox);
     };
 }
 

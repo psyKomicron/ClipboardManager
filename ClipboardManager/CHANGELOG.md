@@ -27,15 +27,15 @@
 - [X] Implement triggers saving.
 - [ ] Implement clipboard triggers removal from clipboard actions.
 - [ ] Add I18N entries
-    - [ ] ErrorMessage_CannotSaveTriggersFileNotFound
-    - [ ] ErrorMessage_CannotSaveTriggersXmlError
-    - [ ] ErrorMessage_CannotSaveTriggersNoUserFile
-    - [ ] ErrorMessage_TriggersFileNotFound
-    - [ ] ErrorMessage_XmlParserError
-    - [ ] ErrorMessage_InvalidTriggersFile
-    - [ ] ErrorMessage_MissingTriggersNode
+    - [X] ErrorMessage_CannotSaveTriggersFileNotFound
+    - [X] ErrorMessage_CannotSaveTriggersNoUserFile
+    - [X] ErrorMessage_CannotSaveTriggersXmlError
+    - [X] ErrorMessage_TriggersFileNotFound
+    - [X] ErrorMessage_XmlParserError
+    - [X] ErrorMessage_InvalidTriggersFile
+    - [X] ErrorMessage_MissingTriggersNode
         - : XML declaration is missing '<triggers>' node.\nCheck settings for an example of a valid XML declaration.
-    - [ ] ErrorMessage_XmlOldVersion
+    - [X] ErrorMessage_XmlOldVersion
         - <actions> node has been renamed <triggers> and <action> <actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.
 - [ ] Fix bugs. ??
 - ~~[ ] Save regex flags.~~

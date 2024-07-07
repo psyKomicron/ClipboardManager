@@ -234,7 +234,7 @@ winrt::async impl::MainPage::CreateUserFileButton_Click(winrt::IInspectable cons
         clipmgr::ClipboardTrigger::initializeSaveFile(userFilePath);
 
         visualStateManager.goToState(OpenSaveFileState);
-        // TODO: Reload clipboard triggers and display them on clipboard triggers page.
+        ReloadTriggers();
     }
 }
 
@@ -317,7 +317,6 @@ winrt::async impl::MainPage::TeachingTip2_CloseButtonClick(winrt::TeachingTip co
         {
             visualStateManager.goToState(DisplayClipboardTriggersState);
 
-            // TODO: Manually add example trigger.
             auto triggerView = make<::impl::ClipboardActionEditor>();
             triggerView.ActionLabel(L"Test trigger");
             triggerView.ActionFormat(L"https://duckduckgo.com/?q={}");
@@ -572,9 +571,9 @@ void impl::MainPage::SendNotification(const std::vector<std::pair<std::wstring, 
         return;
     }
 
-    auto durationType = localSettings.get<clipmgr::notifs::NotificationDuration>(L"NotificationDurationType").value_or(clipmgr::notifs::NotificationDuration::Default);
-    auto scenarioType = localSettings.get<clipmgr::notifs::NotificationScenario>(L"NotificationScenarioType").value_or(clipmgr::notifs::NotificationScenario::Default);
-    auto soundType = localSettings.get<clipmgr::notifs::NotificationSound>(L"NotificationSoundType").value_or(clipmgr::notifs::NotificationSound::Default);
+    auto durationType = localSettings.get<clipmgr::notifs::NotificationDurationType>(L"NotificationDurationType").value_or(clipmgr::notifs::NotificationDurationType::Default);
+    auto scenarioType = localSettings.get<clipmgr::notifs::NotificationScenarioType>(L"NotificationScenarioType").value_or(clipmgr::notifs::NotificationScenarioType::Default);
+    auto soundType = localSettings.get<clipmgr::notifs::NotificationSoundType>(L"NotificationSoundType").value_or(clipmgr::notifs::NotificationSoundType::Default);
 
     clipmgr::notifs::ToastNotification notif{};
     try

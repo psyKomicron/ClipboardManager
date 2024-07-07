@@ -16,13 +16,13 @@
     <ScrollViewer>
         <StackPanel VerticalAlignment="Top" Orientation="Vertical" Spacing="5" Margin="0,0,0,15">
             <TextBlock x:Uid="HeaderApplicationTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6"/>
-            <local:HostControl Header="Automatic start">
+            <local:HostControl x:Uid="AutomaticStartHostControl">
                 <local:HostControl.HostContent>
                     <ToggleSwitch x:Name="AutoStartToggleSwitch" Toggled="AutoStartToggleSwitch_Toggled"/>
                 </local:HostControl.HostContent>
             </local:HostControl>
 
-            <local:HostControl Header="Save matching results">
+            <local:HostControl x:Uid="SaveMatchingResultsHostControl">
                 <local:HostControl.HostContent>
                     <ToggleSwitch x:Name="SaveMatchingResultsToggleSwitch" Toggled="SaveMatchingResultsToggleSwitch_Toggled"/>
                 </local:HostControl.HostContent>
@@ -30,7 +30,7 @@
 
             <Expander Style="{StaticResource ExpanderStyle}" Padding="0">
                 <Expander.Header>
-                    <local:HostControl Header="Allow notifications" Background="Transparent" BorderThickness="0" Padding="0">
+                    <local:HostControl x:Uid="AllowNotificationsHostControl" Background="Transparent" BorderThickness="0" Padding="0">
                         <local:HostControl.HostContent>
                             <ToggleSwitch x:Name="NotificationsToggleSwitch" Toggled="EnableListeningToggleSwitch_Toggled"/>
                         </local:HostControl.HostContent>
@@ -47,53 +47,50 @@
                         </Style>
                     </ListView.Resources>
 
-                    <local:HostControl Header="Sound" CornerRadius="0" Background="Transparent">
+                    <local:HostControl x:Uid="NotificationsExpanderSoundHostControl" CornerRadius="0" Background="Transparent">
                         <local:HostControl.HostContent>
                             <ComboBox x:Name="NotificationSoundComboBox" Grid.Column="1" SelectedIndex="0" MinWidth="150" SelectionChanged="NotificationSoundComboBox_SelectionChanged">
-                                <ComboBoxItem x:Uid="NotificationSoundComboBox_Default">Default</ComboBoxItem>
-                                <ComboBoxItem x:Uid="NotificationSoundComboBox_InstantMessage">Instant message</ComboBoxItem>
-                                <ComboBoxItem x:Uid="NotificationSoundComboBox_Mail">Mail</ComboBoxItem>
-                                <ComboBoxItem x:Uid="NotificationSoundComboBox_Reminder">Reminder</ComboBoxItem>
-                                <ComboBoxItem x:Uid="NotificationSoundComboBox_SMS">SMS</ComboBoxItem>
-                                <ComboBoxItem x:Uid="NotificationSoundComboBox_Silent">Silent</ComboBoxItem>
+                                <ComboBoxItem Tag="0" x:Uid="NotificationSoundComboBox_Default">Default</ComboBoxItem>
+                                <ComboBoxItem Tag="1" x:Uid="NotificationSoundComboBox_InstantMessage">Instant message</ComboBoxItem>
+                                <ComboBoxItem Tag="2" x:Uid="NotificationSoundComboBox_Mail">Mail</ComboBoxItem>
+                                <ComboBoxItem Tag="3" x:Uid="NotificationSoundComboBox_Reminder">Reminder</ComboBoxItem>
+                                <ComboBoxItem Tag="4" x:Uid="NotificationSoundComboBox_SMS">SMS</ComboBoxItem>
+                                <ComboBoxItem Tag="5" x:Uid="NotificationSoundComboBox_Silent">Silent</ComboBoxItem>
                             </ComboBox>
                         </local:HostControl.HostContent>
                     </local:HostControl>
 
-                    <local:HostControl Header="Scenario" CornerRadius="0" Background="Transparent">
+                    <local:HostControl x:Uid="NotificationsExpanderScenarioHostControl" CornerRadius="0" Background="Transparent">
                         <local:HostControl.HostContent>
                             <ComboBox x:Name="NotificationScenariosComboBox" Grid.Column="1" SelectedIndex="0" MinWidth="150" SelectionChanged="NotificationScenariosComboBox_SelectionChanged">
-                                <ComboBoxItem x:Uid="NotificationScenariosComboBox_Default">Default</ComboBoxItem>
-                                <ComboBoxItem x:Uid="NotificationScenariosComboBox_Reminder">Reminder</ComboBoxItem>
-                                <ComboBoxItem x:Uid="NotificationScenariosComboBox_Alarm">Alarm</ComboBoxItem>
-                                <ComboBoxItem x:Uid="NotificationScenariosComboBox_IncomingCall">Incoming call</ComboBoxItem>
-                                <ComboBoxItem x:Uid="NotificationScenariosComboBox_Urgent">Urgent</ComboBoxItem>
+                                <ComboBoxItem Tag="0" x:Uid="NotificationScenariosComboBox_Default">Default</ComboBoxItem>
+                                <ComboBoxItem Tag="1" x:Uid="NotificationScenariosComboBox_Reminder">Reminder</ComboBoxItem>
+                                <ComboBoxItem Tag="2" x:Uid="NotificationScenariosComboBox_Alarm">Alarm</ComboBoxItem>
+                                <ComboBoxItem Tag="3" x:Uid="NotificationScenariosComboBox_IncomingCall">Incoming call</ComboBoxItem>
+                                <ComboBoxItem Tag="4" x:Uid="NotificationScenariosComboBox_Urgent">Urgent</ComboBoxItem>
                             </ComboBox>
                         </local:HostControl.HostContent>
                     </local:HostControl>
 
-                    <local:HostControl Header="Duration" CornerRadius="0" Background="Transparent">
+                    <local:HostControl x:Uid="NotificationsExpanderDurationHostControl" CornerRadius="0" Background="Transparent">
                         <local:HostControl.HostContent>
                             <StackPanel x:Name="DurationButtonsStackPanel" Orientation="Horizontal">
                                 <ToggleButton x:Name="DurationShortToggleButton" 
                                               x:Uid="DurationShortToggleButton" 
-                                              Tag="1" 
-                                              Content="Short" 
+                                              Tag="1"
                                               CornerRadius="5,0,0,5" 
                                               MinWidth="75" 
                                               Click="DurationToggleButton_Click"/>
                                 <ToggleButton x:Name="DurationDefaultToggleButton" 
                                               x:Uid="DurationDefaultToggleButton" 
-                                              Tag="0" 
-                                              Content="Default" 
+                                              Tag="0"
                                               CornerRadius="0,0,0,0" 
                                               MinWidth="75" 
                                               IsChecked="True" 
                                               Click="DurationToggleButton_Click"/>
                                 <ToggleButton x:Name="DurationLongToggleButton" 
                                               x:Uid="DurationLongToggleButton" 
-                                              Tag="2" 
-                                              Content="Long" 
+                                              Tag="2"
                                               CornerRadius="0,5,5,0" 
                                               MinWidth="75" 
                                               Click="DurationToggleButton_Click"/>
@@ -111,8 +108,8 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Text="Start minimized"/>
-                        <TextBlock Grid.Row="1" Style="{StaticResource SettingSubheaderTextBlockStyle}" Text="Control the application window state when it's auto-started."/>
+                        <TextBlock x:Uid="StartMinimizedTextBlock" Grid.Row="0"/>
+                        <TextBlock x:Uid="StartMinimizedSubtitleTextBlock" Grid.Row="1" Style="{StaticResource SettingSubheaderTextBlockStyle}"/>
                     </Grid>
                 </local:HostControl.Header>
                 <local:HostControl.HostContent>
@@ -128,7 +125,7 @@
                 </local:HostControl.HostContent>
             </local:HostControl>
 
-            <local:HostControl Header="Regex mode">
+            <local:HostControl x:Uid="RegexModeHostControl">
                 <local:HostControl.HostContent>
                     <ComboBox x:Name="RegexModeComboBox" SelectedIndex="0" SelectionChanged="RegexModeComboBox_SelectionChanged" MinWidth="100">
                         <ComboBoxItem x:Uid="RegexModeComboBox_Match" Tag="0">
@@ -145,6 +142,14 @@
                 </local:HostControl.HostContent>
             </local:HostControl>
 
+
+            <TextBlock x:Uid="HeaderBrowserTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
+            <local:HostControl x:Uid="BrowserHostControl">
+                <local:HostControl.HostContent>
+                    <TextBox x:Name="BrowserStringTextBox" x:Uid="BrowserStringTextBox" MinWidth="200" TextWrapping="Wrap"/>
+                </local:HostControl.HostContent>
+            </local:HostControl>
+
             
             <TextBlock x:Uid="HeaderStorageTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
 
@@ -154,18 +159,16 @@
                 </local:HostControl.HostContent>
             </local:HostControl>
             
-            <local:HostControl Header="Create example file">
+            <local:HostControl x:Uid="CreateExampleFileHostControl">
                 <local:HostControl.HostContent>
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" Spacing="3">
                         <Button 
                             x:Uid="CreateExampleTriggersFileButtton" 
-                            MinWidth="100" 
-                            CornerRadius="5,0,0,5"
+                            MinWidth="100"
                             Click="CreateExampleTriggersFileButton_Click"/>
                         <Button 
                             x:Uid="OverwriteExampleTriggersFileButtton" 
-                            MinWidth="100" 
-                            CornerRadius="0,5,5,0"
+                            MinWidth="100"
                             Click="OverwriteExampleTriggersFileButton_Click"/>
                     </StackPanel>
                 </local:HostControl.HostContent>
@@ -173,7 +176,7 @@
 
             <Expander Style="{StaticResource ExpanderStyle}" HorizontalContentAlignment="Stretch">
                 <Expander.Header>
-                    <local:HostControl Header="Triggers XML example" Background="Transparent" BorderThickness="0" Padding="0"/>
+                    <local:HostControl x:Uid="TriggersXmlExampleHostControl" Background="Transparent" BorderThickness="0" Padding="0"/>
                 </Expander.Header>
                 <Expander.Content>
                     <StackPanel HorizontalAlignment="Stretch" Spacing="2" Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
@@ -238,12 +241,15 @@
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock x:Uid="SettingsOtherLinksTextBlock" Margin="0,0,0,5" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                <TextBlock x:Uid="MadeByTextBlock" Margin="0,0,0,5" Style="{StaticResource SubtitleTextBlockStyle}" Grid.Row="0"/>
 
-                <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="7">
+                <TextBlock x:Uid="SettingsOtherLinksTextBlock" Margin="0,0,0,5" Style="{StaticResource SubtitleTextBlockStyle}" Grid.Row="1"/>
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="7">
                     <HyperlinkButton
                         Content="GitHub"
                         NavigateUri="https://github.com/psyKomicron/ClipboardManager"
