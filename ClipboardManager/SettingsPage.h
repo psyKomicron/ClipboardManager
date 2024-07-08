@@ -2,6 +2,7 @@
 #include "SettingsPage.g.h"
 
 #include "src/Settings.hpp"
+#include "src/utils/Logger.hpp"
 
 namespace winrt::ClipboardManager::implementation
 {
@@ -23,10 +24,15 @@ namespace winrt::ClipboardManager::implementation
         void RegexModeComboBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
         winrt::async CreateExampleTriggersFileButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::async OverwriteExampleTriggersFileButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void SaveBrowserStringButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void BrowserStringTextBox_LostFocus(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void BrowserStringTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e);
+        void UseCustomBrowser_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
     private:
         clipmgr::Settings settings{};
         bool loaded = false;
+        clipmgr::utils::Logger logger{ L"SettingsPage" };
 
         void updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key);
         void selectComboBoxItem(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox, const uint32_t& value);

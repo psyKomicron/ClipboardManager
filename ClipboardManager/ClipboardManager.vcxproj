@@ -161,6 +161,7 @@
       <DependentUpon>HostControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="src\utils\Launcher.hpp" />
     <ClInclude Include="src\Process.hpp" />
     <ClInclude Include="src\notifs\NotificationTypes.hpp" />
     <ClInclude Include="src\utils\Logger.hpp" />
@@ -205,6 +206,7 @@
       <DependentUpon>HostControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="src\utils\Launcher.cpp" />
     <ClCompile Include="src\Process.cpp" />
     <ClCompile Include="src\utils\Logger.cpp" />
     <ClCompile Include="SettingsPage.cpp">

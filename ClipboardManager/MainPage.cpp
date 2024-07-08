@@ -10,6 +10,7 @@
 #include "src/notifs/ToastNotification.hpp"
 #include "src/notifs/win_toasts.hpp"
 #include "src/notifs/NotificationTypes.hpp"
+#include "src/utils/Launcher.hpp"
 
 #include "ClipboardActionView.h"
 #include "ClipboardActionEditor.h"
@@ -721,19 +722,13 @@ bool impl::MainPage::LoadTriggers(std::filesystem::path& path)
 
 void impl::MainPage::LaunchAction(const std::wstring& url)
 {
-    auto customBrowserPath = localSettings.get<std::wstring>(L"CustomBrowserPath");
-    if (customBrowserPath.has_value())
+    concurrency::create_task([this, url]() -> void
     {
-        throw hresult_not_implemented();
-    }
-    else
-    {
-        concurrency::create_task([this, url]() -> void
+        clipmgr::utils::Launcher launcher{};
+        launcher.launch(url).get();
+        /*if (!winrt::Launcher::LaunchUriAsync(winrt::Uri(url)).get())
         {
-            if (!winrt::Launcher::LaunchUriAsync(winrt::Uri(url)).get())
-            {
-                logger.error(L"Failed to launch: " + url);
-            }
-        });
-    }
+        logger.error(L"Failed to launch: " + url);
+        }*/
+    });
 }

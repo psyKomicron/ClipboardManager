@@ -268,37 +268,37 @@
     <comment>ClipboardActionEditor</comment>
   </data>
   <data name="ErrorMessage_CannotSaveTriggersFileNotFound" xml:space="preserve">
-    <value>Failed to save triggers file.</value>
+    <value>Impossible de sauvegarder le fichier des déclencheurs.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_CannotSaveTriggersNoUserFile" xml:space="preserve">
-    <value>Missing triggers user file, triggers cannot be saved.</value>
+    <value>Le fichier des déclencheurs est introuvable, les déclencheurs ne peuvent pas être sauvegardés.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_CannotSaveTriggersXmlError" xml:space="preserve">
-    <value>Failed to save triggers file, XML content is invalid.</value>
+    <value>Impossible de sauvegarder le fichier des déclencheurs, le contenu XML est invalide.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_InvalidTriggersFile" xml:space="preserve">
-    <value>Triggers file contains invalid data.</value>
+    <value>Le fichier des déclencheurs contient des données invalides.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_MissingTriggersNode" xml:space="preserve">
-    <value>XML declaration is missing '&lt;triggers&gt;' node.
-Check settings for an example of a valid XML declaration.</value>
+    <value>La déclaration XML manque le noeud &lt;triggers&gt;.
+Regardez dans les paramètres pour un exemple d'une déclaration XML valide.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_TriggersFileNotFound" xml:space="preserve">
-    <value>Triggers (XML) file not found.</value>
+    <value>Fichier des déclencheurs non trouvé.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_XmlOldVersion" xml:space="preserve">
-    <value>&lt;actions&gt; node has been renamed &lt;triggers&gt; and &lt;action&gt; &lt;actions&gt;. Rename those nodes in your XML file and reload triggers.
-You can easily access your user file via settings and see an example of a valid XML declaration there.</value>
+    <value>Le noeud &lt;actions&gt; à été renommé &lt;triggers&gt; et le noeud &lt;action&gt; &lt;trigger&gt;. Renommez ces noeuds dans votre fichier XML et rechargez les déclencheurs.
+Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres de l'application et voir un exemple d'une déclaration XML valide.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_XmlParserError" xml:space="preserve">
-    <value>Triggers (XML) file has invalid data, XML parser failed to parse.</value>
+    <value>Le fichier XML des déclencheurs contient des données invalides, le parseur XML n'a pas pu extraire les données.</value>
     <comment>Error message</comment>
   </data>
   <data name="FormatLinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
@@ -353,7 +353,7 @@ You can easily access your user file via settings and see an example of a valid 
     <comment>Teaching tips</comment>
   </data>
   <data name="LocateButton.Content" xml:space="preserve">
-    <value>Locate</value>
+    <value>Trouver</value>
     <comment>MainPage</comment>
   </data>
   <data name="MadeByTextBlock.Text" xml:space="preserve">
@@ -533,7 +533,7 @@ You can easily access your user file via settings and see an example of a valid 
     <comment>MainPage Startup tour</comment>
   </data>
   <data name="StartTourInfoBar.Title" xml:space="preserve">
-    <value>Is this your first time ?</value>
+    <value>Est-ce vôtre première fois ?</value>
     <comment>MainPage Startup tour</comment>
   </data>
   <data name="ToastNotification_ClickAction" xml:space="preserve">

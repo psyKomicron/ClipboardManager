@@ -46,6 +46,9 @@ void impl::SettingsPage::Page_Loading(winrt::FrameworkElement const&, winrt::IIn
     auto soundType = settings.get<clipmgr::notifs::NotificationSoundType>(L"NotificationSoundType").value_or(clipmgr::notifs::NotificationSoundType::Default);
     selectComboBoxItem(NotificationScenariosComboBox(), (int32_t)scenarioType);
     selectComboBoxItem(NotificationSoundComboBox(), (int32_t)soundType);
+
+    BrowserStringTextBox().Text(settings.get<std::wstring>(L"CustomProcessString").value_or(L""));
+    UseCustomBrowser().IsOn(settings.get<bool>(L"UseCustomProcess").value_or(false));
 }
 
 void impl::SettingsPage::Page_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
@@ -163,6 +166,24 @@ winrt::async impl::SettingsPage::OverwriteExampleTriggersFileButton_Click(winrt:
         settings.insert(L"UserFilePath", userFilePath);
         clipmgr::ClipboardTrigger::initializeSaveFile(userFilePath);
     }
+}
+
+void impl::SettingsPage::SaveBrowserStringButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    BrowserStringTextBox_TextChanged(nullptr, nullptr);
+}
+
+void impl::SettingsPage::BrowserStringTextBox_TextChanged(winrt::IInspectable const&, winrt::TextChangedEventArgs const&)
+{
+    check_loaded(loaded);
+    // TODO: Check if writing that fast to the registry can hurt performance.
+    settings.insert(L"CustomProcessString", BrowserStringTextBox().Text());
+}
+
+void impl::SettingsPage::UseCustomBrowser_Toggled(winrt::IInspectable const& sender, winrt::RoutedEventArgs const&)
+{
+    check_loaded(loaded);
+    updateSetting(sender, L"UseCustomProcess");
 }
 
 

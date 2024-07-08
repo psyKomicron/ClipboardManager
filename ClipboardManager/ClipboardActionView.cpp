@@ -5,6 +5,7 @@
 #endif
 
 #include "src/Settings.hpp"
+#include "src/utils/Launcher.hpp"
 
 #include <winrt/Windows.Storage.h>
 #include <winrt/Windows.Foundation.Collections.h>
@@ -167,9 +168,9 @@ void impl::ClipboardActionView::HyperlinkButton_Click(winrt::Windows::Foundation
         {
             if (label.value() == action.label())
             {
+                clipmgr::utils::Launcher launcher{};
                 auto text = std::wstring(_text);
-                auto wstring = std::vformat(action.format(), std::make_wformat_args(text));
-                winrt::Launcher::LaunchUriAsync(winrt::Uri(wstring));
+                launcher.launch(std::vformat(action.format(), std::make_wformat_args(text)));
             }
         }
     }
