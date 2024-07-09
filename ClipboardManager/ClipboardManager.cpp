@@ -10,20 +10,12 @@
 #include "MainPage.h"
 
 #include <Microsoft.UI.Dispatching.Interop.h> // For ContentPreTranslateMessage
+#include <winrt/Microsoft.Graphics.Display.h>
+#include <winrt/Windows.Graphics.h>
 
 #include <memory>
 #include <iostream>
 #include <chrono>
-
-#pragma region Header
-#define MAX_LOADSTRING 100
-
-// Global Variables:
-WCHAR szTitle[MAX_LOADSTRING];// The title bar text
-WCHAR szWindowClass[MAX_LOADSTRING];// the main window class name
-
-constexpr uint32_t InitialWindowWidth = 440;
-constexpr uint32_t InitialWindowHeight = 700;
 
 namespace winrt
 {
@@ -33,7 +25,19 @@ namespace winrt
     using namespace winrt::Microsoft::UI::Xaml::Hosting;
     using namespace winrt::Microsoft::UI::Xaml::Markup;
     using namespace winrt::Microsoft::UI::Windowing;
+    using namespace winrt::Microsoft::Graphics::Display;
+    using namespace winrt::Windows::Graphics;
 }
+
+#pragma region Header
+#define MAX_LOADSTRING 100
+
+// Global Variables:
+WCHAR szTitle[MAX_LOADSTRING];// The title bar text
+WCHAR szWindowClass[MAX_LOADSTRING];// the main window class name
+
+constexpr uint32_t InitialWindowWidth = 470;
+constexpr uint32_t InitialWindowHeight = 700;
 
 // Forward declarations of functions included in this code module:
 ATOM MyRegisterClass(HINSTANCE hInstance);
@@ -47,11 +51,15 @@ void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windo
 void handleWindowActivation(clipmgr::utils::WindowInfo* windowInfo, const bool& inactive);
 #pragma endregion
 
+#ifdef _DEBUG
+#define ENABLE_CONSOLE
+#endif
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int nCmdShow)
 {
-#ifdef _DEBUG
+#ifdef ENABLE_CONSOLE
     clipmgr::utils::Console console{};
-#endif
+#endif // ENABLE_CONSOLE
 
     try
     {
@@ -82,8 +90,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR,
     }
     catch (...)
     {
-        return -1;
+        std::wcout << L"Unknown error occured." << std::endl;
     }
+
+    std::wstring end = L"";
+    std::wcin >> end;
 
     return 0;
 }
@@ -244,6 +255,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             clipmgr::Settings settings{};
             settings.insert(L"WindowPosY", static_cast<int32_t>(rect.top));
             settings.insert(L"WindowPosX", static_cast<int32_t>(rect.left));
+            settings.insert(L"WindowWidth", static_cast<int32_t>(rect.right - rect.left));
+            settings.insert(L"WindowHeight", static_cast<int32_t>(rect.bottom - rect.top));
 
             if (windowInfo->desktopWinXamlSrc != nullptr && windowInfo->takeFocusRequestedToken.value != 0)
             {
@@ -255,6 +268,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             SetWindowLong(hWnd, GWLP_USERDATA, NULL);
 
+            break;
+        }
+
+        case WM_GETMINMAXINFO:
+        {
+            LPMINMAXINFO lpMMI = (LPMINMAXINFO)lParam;
+            lpMMI->ptMinTrackSize.x = 400;
+            lpMMI->ptMinTrackSize.y = 300;
             break;
         }
 
@@ -325,10 +346,21 @@ void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windo
     windowInfo->desktopWinXamlSrc.Content(winrt::make<winrt::ClipboardManager::implementation::MainPage>());
 
     clipmgr::Settings settings{};
-    auto appWindow = clipmgr::utils::getCurrentAppWindow(windowHandle);
     int32_t x = settings.get<int32_t>(L"WindowPosX").value_or(10);
     int32_t y = settings.get<int32_t>(L"WindowPosY").value_or(10);
-    appWindow.Move({ x, y });
+    int32_t width = settings.get<int32_t>(L"WindowWidth").value_or(InitialWindowWidth);
+    int32_t height = settings.get<int32_t>(L"WindowHeight").value_or(InitialWindowHeight);
+
+    auto display = winrt::DisplayArea::GetFromPoint(winrt::PointInt32(x, y), winrt::DisplayAreaFallback::None);
+    if (display == nullptr)
+    {
+        display = winrt::DisplayArea::GetFromPoint(winrt::PointInt32(x, y), winrt::DisplayAreaFallback::Primary);
+        x = (display.WorkArea().Width / 2) - (width / 2);
+        y = (display.WorkArea().Height / 2) - (height / 2);
+    }
+
+    auto appWindow = clipmgr::utils::getCurrentAppWindow(windowHandle);
+    appWindow.MoveAndResize({ x, y, width, height });
 
     if (appWindow.TitleBar().IsCustomizationSupported())
     {

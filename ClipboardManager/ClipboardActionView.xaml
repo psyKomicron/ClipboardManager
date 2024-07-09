@@ -10,7 +10,7 @@
     CornerRadius="{StaticResource OverlayCornerRadius}"
     Loading="UserControl_Loading">
 
-    <Grid  
+    <Grid x:Name="RootGrid"
         RowSpacing="4"
         Margin="0,3,0,3"
         Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
@@ -21,12 +21,21 @@
             <ColumnDefinition x:Name="ContentColumn" Width="*"/>
             <ColumnDefinition x:Name="OptionsColumn" Width="0"/>
         </Grid.ColumnDefinitions>
-
-        
+        <Grid.Transitions>
+            <TransitionCollection>
+                <ReorderThemeTransition />
+            </TransitionCollection>
+        </Grid.Transitions>
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <RepositionThemeTransition IsStaggeringEnabled="False"/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+    
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="OptionsClosed"/>
-        
+
                 <VisualState x:Name="OptionsOpen">
                     <VisualState.Setters>
                         <Setter Target="OptionsColumn.Width" Value="Auto"/>
@@ -35,6 +44,14 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
+        <TeachingTip x:Name="RootGridTeachingTip"
+                     x:Uid="RootGridTeachingTip"
+                     Target="{x:Bind RootGrid}"
+                     ActionButtonClick="TeachingTip_ButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
 
         <Grid 
             Grid.Column="0" 
@@ -49,8 +66,14 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+            <Grid.ChildrenTransitions>
+                <TransitionCollection>
+                    <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                </TransitionCollection>
+            </Grid.ChildrenTransitions>
 
             <TextBlock 
+                x:Name="LabelTextBlock"
                 Text="{x:Bind Text}"
                 IsTextSelectionEnabled="True" 
                 Grid.Column="0"
@@ -58,6 +81,7 @@
                 TextWrapping="Wrap" 
                 Grid.Row="0" 
                 Margin="3,5,0,0"/>
+
             <GridView 
                 x:Name="ActionsGridView"
                 Grid.ColumnSpan="2"
@@ -71,6 +95,7 @@
                 <GridView.ItemContainerTransitions>
                     <TransitionCollection>
                         <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                        <ReorderThemeTransition />
                     </TransitionCollection>
                 </GridView.ItemContainerTransitions>
                 <GridView.Resources>
@@ -94,11 +119,40 @@
                 </GridView.ItemTemplate>
             </GridView>
 
-            <Button Style="{StaticResource IconButtonStyle}" Grid.Column="1" Click="OpenOptionsButton_Click" VerticalAlignment="Top">
+            <Button x:Name="OpenOptionsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="1" Click="OpenOptionsButton_Click" VerticalAlignment="Top">
                 <FontIcon Glyph="&#xe712;" FontSize="14"/>
             </Button>
-        </Grid>
 
+            <TeachingTip x:Name="LabelTextBlockTeachingTip"
+                         x:Uid="LabelTextBlockTeachingTip"
+                         Target="{x:Bind LabelTextBlock}"
+                         ShouldConstrainToRootBounds="False"
+                         ActionButtonClick="TeachingTip_ButtonClick">
+                <TeachingTip.ActionButtonContent>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+                </TeachingTip.ActionButtonContent>
+            </TeachingTip>
+
+            <TeachingTip x:Name="OpenOptionsButtonTeachingTip"
+                         x:Uid="OpenOptionsButtonTeachingTip"
+                         Target="{x:Bind OpenOptionsButton}"
+                         ShouldConstrainToRootBounds="False"
+                         ActionButtonClick="TeachingTip_ButtonClick">
+                <TeachingTip.ActionButtonContent>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+                </TeachingTip.ActionButtonContent>
+            </TeachingTip>
+
+            <TeachingTip x:Name="ActionsGridViewTeachingTip"
+                         x:Uid="ActionsGridViewTeachingTip"
+                         Target="{x:Bind ActionsGridView}"
+                         ShouldConstrainToRootBounds="False"
+                         ActionButtonClick="TeachingTip_ButtonClick">
+                <TeachingTip.ActionButtonContent>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+                </TeachingTip.ActionButtonContent>
+            </TeachingTip>
+        </Grid>
 
         <Grid 
             x:Name="OptionsGrid" 
@@ -125,13 +179,33 @@
                 </Style>
             </Grid.Resources>
 
-            <Button Grid.Column="0" Click="FormatLinkButton_Click" x:Uid="FormatLinkButton">
+            <Button x:Name="FormatLinkButton" Grid.Column="0" Click="FormatLinkButton_Click" x:Uid="FormatLinkButton">
                 <FontIcon Glyph="&#xe71b;" FontSize="16"/>
             </Button>
 
-            <Button Grid.Column="1" Click="RemoveActionButton_Click" x:Uid="RemoveActionButton">
+            <Button x:Name="RemoveActionButton" Grid.Column="1" Click="RemoveActionButton_Click" x:Uid="RemoveActionButton">
                 <FontIcon Glyph="&#xe74d;" FontSize="16"/>
             </Button>
+
+            <TeachingTip x:Name="FormatLinkButtonTeachingTip"
+                         x:Uid="FormatLinkButtonTeachingTip"
+                         Target="{x:Bind FormatLinkButton}"
+                         ShouldConstrainToRootBounds="False"
+                         ActionButtonClick="TeachingTip_ButtonClick">
+                <TeachingTip.ActionButtonContent>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+                </TeachingTip.ActionButtonContent>
+            </TeachingTip>
+
+            <TeachingTip x:Name="RemoveActionButtonTeachingTip"
+                         x:Uid="RemoveActionButtonTeachingTip"
+                         Target="{x:Bind RemoveActionButton}"
+                         ShouldConstrainToRootBounds="False"
+                         ActionButtonClick="TeachingTip_ButtonClick">
+                <TeachingTip.ActionButtonContent>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+                </TeachingTip.ActionButtonContent>
+            </TeachingTip>
         </Grid>
     </Grid>
 </UserControl>

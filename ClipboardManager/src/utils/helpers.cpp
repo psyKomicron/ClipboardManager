@@ -2,6 +2,7 @@
 #include "helpers.hpp"
 
 #include <winrt/Microsoft.UI.Xaml.Data.h>
+#include <winrt/Windows.ApplicationModel.Resources.h>
 
 #include <boost/regex.hpp>
 
@@ -10,6 +11,7 @@
 
 #include <format>
 #include <string>
+#include <iostream>
 
 winrt::Microsoft::UI::Windowing::AppWindow clipmgr::utils::getCurrentAppWindow()
 {
@@ -59,6 +61,20 @@ std::optional<std::filesystem::path> clipmgr::utils::tryGetKnownFolderPath(const
     else
     {
         return std::optional<std::filesystem::path>();
+    }
+}
+
+std::optional<winrt::hstring> clipmgr::utils::getNamedResource(const winrt::hstring& name)
+{
+    try
+    {
+        winrt::Windows::ApplicationModel::Resources::ResourceLoader resLoader{};
+        return resLoader.GetString(name);
+    }
+    catch (winrt::hresult_error)
+    {
+        std::wcerr << L"'getNamedResource' Failed to instanciate or get string from resources." << std::endl;
+        return {};
     }
 }
 
@@ -118,12 +134,22 @@ bool clipmgr::utils::managed_file_handle::invalid() const
 }
 
 
+clipmgr::utils::PropChangedEventArgs::PropChangedEventArgs(const std::source_location& sourceLocation) :
+    winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(getCallerName(sourceLocation))
+{
+}
+
 winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs clipmgr::utils::PropChangedEventArgs::create(std::source_location sourceLocation)
+{
+    return winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(getCallerName(sourceLocation));
+}
+
+std::wstring clipmgr::utils::PropChangedEventArgs::getCallerName(const std::source_location& sourceLocation)
 {
     const boost::regex functionExtractor{ R"(void __cdecl ([A-z]*::)*([A-z]*)\(.*\))" };
     boost::cmatch match{};
     std::ignore = boost::regex_match(sourceLocation.function_name(), match, functionExtractor);
     std::wstring functionName = clipmgr::utils::convert(match[2]);
 
-    return winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(functionName);
+    return functionName;
 }

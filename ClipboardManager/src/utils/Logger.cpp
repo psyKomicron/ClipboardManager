@@ -15,11 +15,6 @@ clipmgr::utils::Logger::Logger(const std::wstring& className) :
     {
         maxClassNameLength = className.size();
     }
-
-    /*if (!Console::initialized())
-    {
-        static Console console{};
-    }*/
 }
 
 void clipmgr::utils::Logger::debug(const std::wstring& message) const

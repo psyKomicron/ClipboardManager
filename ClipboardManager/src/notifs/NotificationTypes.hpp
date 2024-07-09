@@ -3,14 +3,14 @@
 
 namespace clipmgr::notifs
 {
-    enum class NotificationDuration : int
+    enum class NotificationDurationType : int
     {
         Default = 0,
         Short = 1,
         Long = 2
     };
 
-    enum class NotificationSound : int
+    enum class NotificationSoundType : int
     {
         Default,
         InstantMessage,
@@ -20,7 +20,7 @@ namespace clipmgr::notifs
         Silent
     };
 
-    enum class NotificationScenario : int
+    enum class NotificationScenarioType : int
     {
         Default,
         Reminder,

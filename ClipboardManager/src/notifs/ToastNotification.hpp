@@ -20,7 +20,7 @@ namespace clipmgr::notifs
         bool tryAddButtons(const std::vector<std::pair<std::wstring, std::wstring>>& buttons);
 
         void send();
-        void send(const NotificationDuration& durationType, const NotificationScenario& scenarioType, const NotificationSound& soundType);
+        void send(const NotificationDurationType& durationType, const NotificationScenarioType& scenarioType, const NotificationSoundType& soundType);
 
     private:
         static bool registered;

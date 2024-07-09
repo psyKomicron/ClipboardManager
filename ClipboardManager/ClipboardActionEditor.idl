@@ -12,5 +12,8 @@ namespace ClipboardManager
         event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, Boolean> IsOn;
         event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, String> LabelChanged;
         event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, String> FormatChanged;
+        event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, IInspectable> Removed;
+
+        Windows.Foundation.IAsyncAction StartTour();
     }
 }

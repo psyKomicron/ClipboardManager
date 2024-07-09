@@ -118,129 +118,129 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ActionEnabledToggleSwitchTeachingTip.Subtitle" xml:space="preserve">
-    <value>Enable or disable the trigger. A disabled trigger will not be used in any action</value>
+    <value>Active ou désactive ce déclancheur. Un déclancheur désactivé ne sera plus utilisé dans aucune actions.</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionEnabledToggleSwitchTeachingTip.Title" xml:space="preserve">
-    <value>Trigger status</value>
+    <value>Etat du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionFormatTextBlockTeachingTip.Subtitle" xml:space="preserve">
-    <value>String that will be formatted with the content of the clipboard</value>
+    <value>Chaine de formattage du contenu du presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionFormatTextBlockTeachingTip.Title" xml:space="preserve">
-    <value>Trigger format</value>
+    <value>Formattage du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionLabelTextBlockTeachingTip.Subtitle" xml:space="preserve">
-    <value>Label of the trigger, this name will be displayed for one of the button of a clipboard action</value>
+    <value>Label du déclencheur, ce nom sera affiché sur le bouton correspondant sur une action presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionLabelTextBlockTeachingTip.Title" xml:space="preserve">
-    <value>Trigger label</value>
+    <value>Label du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionRegexTextBlockTeachingTip.Subtitle" xml:space="preserve">
-    <value>Regex that the clipboard content needs to match</value>
+    <value>Regex auquel le contenu du presse-papier doit correspondre</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionRegexTextBlockTeachingTip.Title" xml:space="preserve">
-    <value>Trigger regex</value>
+    <value>Regex du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionsGridViewTeachingTip.Subtitle" xml:space="preserve">
-    <value>Action buttons will be displayed here, click one to open the link created by the trigger format</value>
+    <value>Les boutons d'action seront ici, cliquer dessus ouvrira le lien créé par le formattage du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ActionsGridViewTeachingTip.Title" xml:space="preserve">
-    <value>Action trigger buttons</value>
+    <value>Boutons d'action du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="AllowNotificationsHostControl.Header" xml:space="preserve">
-    <value>Allow notifications</value>
+    <value>Autoriser les notifications</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="AutomaticStartHostControl.Header" xml:space="preserve">
-    <value>Automatic start</value>
+    <value>Démarrage automatique</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="BrowserHostControl.Header" xml:space="preserve">
-    <value>Use custom browser</value>
+    <value>Utiliser</value>
   </data>
   <data name="BrowserStringTextBox.PlaceholderText" xml:space="preserve">
-    <value>Executable string</value>
+    <value>Chaine executable</value>
   </data>
   <data name="ClearSettingsButton.Content" xml:space="preserve">
-    <value>Clear</value>
+    <value>Nettoyer</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="ClearSettingsHostControl.Header" xml:space="preserve">
-    <value>Clear settings</value>
+    <value>Nettoyer les parmètres</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="ClipboardActionRootGridTeachingTip.Subtitle" xml:space="preserve">
-    <value>This is a clipboard trigger</value>
+    <value>Ceci est un déclencheur presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardActionsListViewTeachingTip.Subtitle" xml:space="preserve">
-    <value>Triggers list</value>
+    <value>Liste des déclencheurs</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardActionsListViewTeachingTip.Title" xml:space="preserve">
-    <value>Clipboard triggers</value>
+    <value>Déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardActionsPivotTeachingTip.Subtitle" xml:space="preserve">
-    <value>View clipboard entries that triggered your custom clipboard triggers and start actions.</value>
+    <value>Affichez les entrées du presse-papiers qui ont déclenché vos déclencheurs de presse-papiers personnalisés et vos actions de lancement.</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardActionsPivotTeachingTip.Title" xml:space="preserve">
-    <value>Clipboard actions</value>
+    <value>Actions presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardActionsSaveFileMovedInfoBar.Message" xml:space="preserve">
-    <value>Choose to create or locate the missing file.</value>
+    <value>Choisir ou créer le fichier manquant.</value>
     <comment>MainPage</comment>
   </data>
   <data name="ClipboardActionsSaveFileMovedInfoBar.Title" xml:space="preserve">
-    <value>Clipboard action file is missing, it was either moved or deleted.</value>
+    <value>Le fichier des déclencheurs d'action est introuvable (déplacé ou supprimé)</value>
     <comment>MainPage</comment>
   </data>
   <data name="ClipboardHistoryPivotTeachingTip.Subtitle" xml:space="preserve">
-    <value>Same as Super + V</value>
+    <value>Pareil que Super + V</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardHistoryPivotTeachingTip.Title" xml:space="preserve">
-    <value>Clipboard history</value>
+    <value>Historique du presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardTriggersPivotTeachingTip.Subtitle" xml:space="preserve">
-    <value>View and edit clipboard triggers</value>
+    <value>Voir et modifier les déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ClipboardTriggersPivotTeachingTip.Title" xml:space="preserve">
-    <value>Clipboard triggers</value>
+    <value>Déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="CommandBarSaveButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Click to save the modifications made to any clipboard trigger</value>
+    <value>Sauvergarder les modifications faites aux déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="CreateButton.Content" xml:space="preserve">
-    <value>Create</value>
+    <value>Créer</value>
     <comment>MainPage</comment>
   </data>
   <data name="CreateExampleFileHostControl.Header" xml:space="preserve">
-    <value>Create example file</value>
+    <value>Créer un fichier example</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="CreateExampleTriggersFileButtton.Content" xml:space="preserve">
-    <value>Create</value>
+    <value>Créer</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="DurationDefaultToggleButton.Content" xml:space="preserve">
-    <value>Default</value>
+    <value>Defaut</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="DurationLongToggleButton.Content" xml:space="preserve">
@@ -248,69 +248,69 @@
     <comment>SettingsPage</comment>
   </data>
   <data name="DurationShortToggleButton.Content" xml:space="preserve">
-    <value>Short</value>
+    <value>Court</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="EditButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Open a dialog to edit this trigger</value>
+    <value>Ouvre une fenêtre de dialogue pour modifier ce déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="EditButtonTeachingTip.Title" xml:space="preserve">
-    <value>Edit</value>
+    <value>Modifier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="EditDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Sauvegarder</value>
     <comment>ClipboardActionEditor</comment>
   </data>
   <data name="EditDialog.SecondaryButtonText" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Annuler</value>
     <comment>ClipboardActionEditor</comment>
   </data>
   <data name="ErrorMessage_CannotSaveTriggersFileNotFound" xml:space="preserve">
-    <value>Failed to save triggers file.</value>
+    <value>Impossible de sauvegarder le fichier des déclencheurs.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_CannotSaveTriggersNoUserFile" xml:space="preserve">
-    <value>Missing triggers user file, triggers cannot be saved.</value>
+    <value>Le fichier des déclencheurs est introuvable, les déclencheurs ne peuvent pas être sauvegardés.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_CannotSaveTriggersXmlError" xml:space="preserve">
-    <value>Failed to save triggers file, XML content is invalid.</value>
+    <value>Impossible de sauvegarder le fichier des déclencheurs, le contenu XML est invalide.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_InvalidTriggersFile" xml:space="preserve">
-    <value>Triggers file contains invalid data.</value>
+    <value>Le fichier des déclencheurs contient des données invalides.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_MissingTriggersNode" xml:space="preserve">
-    <value>XML declaration is missing '&lt;triggers&gt;' node.
-Check settings for an example of a valid XML declaration.</value>
+    <value>La déclaration XML manque le noeud &lt;triggers&gt;.
+Regardez dans les paramètres pour un exemple d'une déclaration XML valide.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_TriggersFileNotFound" xml:space="preserve">
-    <value>Triggers (XML) file not found.</value>
+    <value>Fichier des déclencheurs non trouvé.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_XmlOldVersion" xml:space="preserve">
-    <value>&lt;actions&gt; node has been renamed &lt;triggers&gt; and &lt;action&gt; &lt;actions&gt;. Rename those nodes in your XML file and reload triggers.
-You can easily access your user file via settings and see an example of a valid XML declaration there.</value>
+    <value>Le noeud &lt;actions&gt; à été renommé &lt;triggers&gt; et le noeud &lt;action&gt; &lt;trigger&gt;. Renommez ces noeuds dans votre fichier XML et rechargez les déclencheurs.
+Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres de l'application et voir un exemple d'une déclaration XML valide.</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_XmlParserError" xml:space="preserve">
-    <value>Triggers (XML) file has invalid data, XML parser failed to parse.</value>
+    <value>Le fichier XML des déclencheurs contient des données invalides, le parseur XML n'a pas pu extraire les données.</value>
     <comment>Error message</comment>
   </data>
   <data name="FormatLinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Copy formatted link to the clipboard</value>
+    <value>Copie le lien formatté dans le presse-papier</value>
     <comment>ClipboardActionView</comment>
   </data>
   <data name="FormatLinkButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Formats the action text with the default trigger format and adds it to the clipboard</value>
+    <value>Formate le texte de l'action avec le format par défaut du déclencheur et l'ajoute au presse-papiers</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="FormatLinkButtonTeachingTip.Title" xml:space="preserve">
-    <value>Format link</value>
+    <value>Formate le lien</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="FormatTextBlock.Text" xml:space="preserve">
@@ -322,66 +322,66 @@ You can easily access your user file via settings and see an example of a valid 
     <comment>SettingsPage</comment>
   </data>
   <data name="HeaderBrowserTextBlock.Text" xml:space="preserve">
-    <value>Browser</value>
+    <value>Navigateur</value>
   </data>
   <data name="HeaderFormattingTextBlock.Text" xml:space="preserve">
-    <value>Formatting &amp; matching</value>
+    <value>Formattage &amp; correspondance</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="HeaderStorageTextBlock.Text" xml:space="preserve">
-    <value>Storage</value>
+    <value>Stockage</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="HistoryToggleButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Quickly enable or disable actions history</value>
+    <value>Activer et désactiver l'historique des actions</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="IgnoreCaseHostControl.Header" xml:space="preserve">
-    <value>Ignore case</value>
+    <value>Ignorer la capitalisation</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="LabelTextBlockTeachingTip.Subtitle" xml:space="preserve">
-    <value>Clipboard text</value>
+    <value>Texte du presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ListViewTeachingTip.Subtitle" xml:space="preserve">
-    <value>You will find here the clipboard entries that match your clipboard triggers</value>
+    <value>Les entrées du presse-papier qui déclenchent les déclencheurs presse-papier seront affichées ici</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="ListViewTeachingTip.Title" xml:space="preserve">
-    <value>Clipboard action</value>
+    <value>Action presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="LocateButton.Content" xml:space="preserve">
-    <value>Locate</value>
+    <value>Trouver</value>
     <comment>MainPage</comment>
   </data>
   <data name="MadeByTextBlock.Text" xml:space="preserve">
-    <value>Made by psyKomicron</value>
+    <value>Créé par psyKomicron</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="NoClipboardActionsInfoBar.Title" xml:space="preserve">
-    <value>No clipboard triggers have been created, please create at least one action to use clipboard actions.</value>
+    <value>Aucun déclencheur créé, au moins 1 déclencheur est nécessaire pour utiliser les actions presse-papier.</value>
     <comment>MainPage</comment>
   </data>
   <data name="NoClipboardActionsTextBlock.Text" xml:space="preserve">
-    <value>No clipboard triggers</value>
+    <value>Aucun déclencheur presse-papier</value>
     <comment>MainPage</comment>
   </data>
   <data name="NotificationScenariosComboBox_Alarm.Content" xml:space="preserve">
-    <value>Alarm</value>
+    <value>Alarme</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="NotificationScenariosComboBox_Default.Content" xml:space="preserve">
-    <value>Default</value>
+    <value>Defaut</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="NotificationScenariosComboBox_IncomingCall.Content" xml:space="preserve">
-    <value>Incoming call</value>
+    <value>Appel</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="NotificationScenariosComboBox_Reminder.Content" xml:space="preserve">
-    <value>Reminder</value>
+    <value>Rappel</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="NotificationScenariosComboBox_Urgent.Content" xml:space="preserve">
@@ -389,23 +389,23 @@ You can easily access your user file via settings and see an example of a valid 
     <comment>SettingsPage</comment>
   </data>
   <data name="NotificationsExpanderDurationHostControl.Header" xml:space="preserve">
-    <value>Duration</value>
+    <value>Longeur</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="NotificationsExpanderScenarioHostControl.Header" xml:space="preserve">
-    <value>Scenario</value>
+    <value>Scénario</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="NotificationsExpanderSoundHostControl.Header" xml:space="preserve">
-    <value>Sound</value>
+    <value>Son</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="NotificationSoundComboBox_Default.Content" xml:space="preserve">
-    <value>Default</value>
+    <value>Defaut</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="NotificationSoundComboBox_InstantMessage.Content" xml:space="preserve">
-    <value>Instant message</value>
+    <value>Message instantané</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="NotificationSoundComboBox_Mail.Content" xml:space="preserve">
@@ -413,11 +413,11 @@ You can easily access your user file via settings and see an example of a valid 
     <comment>SettingsPage</comment>
   </data>
   <data name="NotificationSoundComboBox_Reminder.Content" xml:space="preserve">
-    <value>Reminder</value>
+    <value>Rappel</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="NotificationSoundComboBox_Silent.Content" xml:space="preserve">
-    <value>Silent</value>
+    <value>Silencieux</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="NotificationSoundComboBox_SMS.Content" xml:space="preserve">
@@ -425,27 +425,27 @@ You can easily access your user file via settings and see an example of a valid 
     <comment>SettingsPage</comment>
   </data>
   <data name="OpenOptionsButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Click here to show additional options</value>
+    <value>Cliquer pour afficher les options cachées</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="OpenQuickSettingsButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Open or close quick settings</value>
+    <value>Afficher ou cacher les options rapides</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="OpenSaveFileButton.Content" xml:space="preserve">
-    <value>Open &amp; edit</value>
+    <value>Ouvrir &amp; modifier</value>
     <comment>MainPage</comment>
   </data>
   <data name="OpenSaveFileInfoBar.Message" xml:space="preserve">
-    <value>One default trigger has been added as a template, do you want to edit it ?</value>
+    <value>Une action a été ajoutée en tant qu'example, voulez-vous la modifier ?</value>
     <comment>MainPage</comment>
   </data>
   <data name="OpenSaveFileInfoBar.Title" xml:space="preserve">
-    <value>Save file successfully created !</value>
+    <value>Fichier de sauvegarde créé !</value>
     <comment>MainPage</comment>
   </data>
   <data name="OverwriteExampleTriggersFileButtton.Content" xml:space="preserve">
-    <value>Overwrite</value>
+    <value>Ecraser</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="RegexModeComboBox_Match.Content" xml:space="preserve">
@@ -453,7 +453,7 @@ You can easily access your user file via settings and see an example of a valid 
     <comment>SettingsPage</comment>
   </data>
   <data name="RegexModeComboBox_Match_ToolTip.Text" xml:space="preserve">
-    <value>String must match the full regex.</value>
+    <value>L'entièreté chaine doit vérifier la regex.</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="RegexModeComboBox_Search.Content" xml:space="preserve">
@@ -461,11 +461,11 @@ You can easily access your user file via settings and see an example of a valid 
     <comment>SettingsPage</comment>
   </data>
   <data name="RegexModeComboBox_Search_ToolTip.Text" xml:space="preserve">
-    <value>Search for any subsequence in the string that matches the regex.</value>
+    <value>Recherche dans la chaine une séquence qui vérifie la regex.</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="RegexModeHostControl.Header" xml:space="preserve">
-    <value>Regex mode</value>
+    <value>Mode regex</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="RegexTextBlock.Text" xml:space="preserve">
@@ -473,91 +473,91 @@ You can easily access your user file via settings and see an example of a valid 
     <comment>ClipboardActionEditor</comment>
   </data>
   <data name="ReloadActionsButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Manually reload clipboard triggers</value>
+    <value>Recharger les déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="RemoveActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Remove action from the list</value>
+    <value>Supprimer l'action de la liste</value>
     <comment>ClipboardActionView</comment>
   </data>
   <data name="RemoveActionButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Remove the action from the list</value>
+    <value>Supprimer l'action de la liste</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="RemoveActionButtonTeachingTip.Title" xml:space="preserve">
-    <value>Remove</value>
+    <value>Supprimer</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="RemoveButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Remove and delete trigger</value>
+    <value>Supprime et enlève le déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="RemoveButtonTeachingTip.Title" xml:space="preserve">
-    <value>Remove</value>
+    <value>Supprimer</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="RootGridTeachingTip.Subtitle" xml:space="preserve">
-    <value>This is a clipboard action</value>
+    <value>Ceci est une action presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="SaveMatchingResultsHostControl.Header" xml:space="preserve">
-    <value>Save matching results</value>
+    <value>Conserver l'historique</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="SettingsPivotTeachingTip.Subtitle" xml:space="preserve">
-    <value>Change application settings here (auto startup, notifications)</value>
+    <value>Modifiez les paramètres de l'application (démarrage automatique, notifications)</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="SettingsPivotTeachingTip.Title" xml:space="preserve">
-    <value>Settings</value>
+    <value>Paramètres</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="SilenceNotificationsToggleButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value>Quickly enable or disable notifications</value>
+    <value>Activer et désactiver les notifications rapidement</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="StartMinimizedSubtitleTextBlock.Text" xml:space="preserve">
-    <value>Control the application window state when it's auto-started.</value>
+    <value>Controler l'état de la fenetre lors du démarrage automatique.</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="StartMinimizedTextBlock.Text" xml:space="preserve">
-    <value>Start minimized</value>
+    <value>Démarrer minimisé</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="StartTourButton.Content" xml:space="preserve">
-    <value>Start tour</value>
+    <value>Démarrer le tour guidé</value>
     <comment>MainPage Startup tour</comment>
   </data>
   <data name="StartTourInfoBar.Message" xml:space="preserve">
-    <value>Start a short guided tour of the application</value>
+    <value>Démarrez un rapide tour guidé de l'application</value>
     <comment>MainPage Startup tour</comment>
   </data>
   <data name="StartTourInfoBar.Title" xml:space="preserve">
-    <value>Is this your first time ?</value>
+    <value>Est-ce vôtre première fois ?</value>
     <comment>MainPage Startup tour</comment>
   </data>
   <data name="ToastNotification_ClickAction" xml:space="preserve">
-    <value>Click action</value>
+    <value>Cliquer sur l'action</value>
     <comment>ToastNotifications</comment>
   </data>
   <data name="ToastNotification_OpenApp" xml:space="preserve">
-    <value>Open app</value>
+    <value>Ouvrir l'application</value>
     <comment>ToastNotifications</comment>
   </data>
   <data name="ToastNotification_TooManyButtons" xml:space="preserve">
-    <value>Too many buttons</value>
+    <value>Trop de boutons</value>
     <comment>ToastNotifications</comment>
   </data>
   <data name="TriggersXmlExampleHostControl.Header" xml:space="preserve">
-    <value>Triggers XML example</value>
+    <value>Example XML déclencheurs presse-papier</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="ViewActionsInfoBar.Message" xml:space="preserve">
-    <value>You can view your triggers in the clipboard triggers page.</value>
+    <value>Vous pouvez voir vos déclencheurs dans la page des déclencheur presse-papier</value>
     <comment>MainPage</comment>
   </data>
   <data name="ViewActionsInfoBar.Title" xml:space="preserve">
-    <value>Clipboard triggers successfully loaded</value>
+    <value>Déclencheurs presse-papier chargés</value>
     <comment>MainPage ViewActionsInfoBar</comment>
   </data>
 </root>

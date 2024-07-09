@@ -1,5 +1,6 @@
 #pragma once
 #include <winrt/Microsoft.UI.Windowing.h>
+#include <Windows.h>
 
 #include <filesystem>
 #include <functional>
@@ -93,10 +94,17 @@ namespace clipmgr::utils
     };
 
 
-    class PropChangedEventArgs
+    class PropChangedEventArgs : public winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs
     {
     public:
+        PropChangedEventArgs(const std::source_location& sourceLocation);
+
         static winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs create(std::source_location sourceLocation = std::source_location::current());
+
+    private:
+        std::wstring propName;
+
+        static std::wstring getCallerName(const std::source_location& sourceLocation);
     };
 }
 
@@ -109,6 +117,7 @@ namespace clipmgr::utils
     managed_file_handle createFile(const std::filesystem::path& path);
     void createDirectory(const std::filesystem::path& path);
     std::optional<std::filesystem::path> tryGetKnownFolderPath(const GUID& knownFolderId);
+    std::optional<winrt::hstring> getNamedResource(const winrt::hstring& name);
 
     WindowInfo* getWindowInfo(const HWND& windowHandle);
 

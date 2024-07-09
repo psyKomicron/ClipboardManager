@@ -51,14 +51,26 @@ namespace clipmgr
         logger.info(L"Ensuring that DesktopNotificationManagerCompat has been registered.");
         try
         {
-            clipmgr::utils::toasts::compat::DesktopNotificationManagerCompat::Register(L"psykomicron.ClipboardManagerV2", L"ClipboardManager", L"");
-            clipmgr::utils::toasts::compat::DesktopNotificationManagerCompat::OnActivated([this](clipmgr::utils::toasts::compat::DesktopNotificationActivatedEventArgsCompat args)
+            clipmgr::notifs::toasts::compat::DesktopNotificationManagerCompat::Register(L"psykomicron.ClipboardManagerV2", L"ClipboardManager", L"");
+            clipmgr::notifs::toasts::compat::DesktopNotificationManagerCompat::OnActivated([this](clipmgr::notifs::toasts::compat::DesktopNotificationActivatedEventArgsCompat args)
             {
-                for (auto&& item : args.UserInput())
+                try
                 {
-                    logger.debug(L"User input: " + std::wstring(item.Key() + item.Value()));
+                    for (auto&& item : args.UserInput())
+                    {
+                        logger.debug(L"User input: " + std::wstring(item.Key() + item.Value()));
+                    }
+
+                    findAction(args.Argument());
                 }
-                findAction(args.Argument());
+                catch (winrt::hresult_error err)
+                {
+                    logger.error(err.message().data());
+                }
+                catch (...)
+                {
+                    logger.error(L"Error");
+                }
             });
             registered = true;
 
