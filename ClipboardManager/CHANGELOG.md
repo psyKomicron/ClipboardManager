@@ -7,6 +7,7 @@
 - Reload clipboard triggers with the reload button on the clipboard triggers page.
 *XML triggers file*
 - Renamed `<actions>` to `<triggers>` and `<action>` to `<trigger>`.
+- Window can now be minimized on startup, the user needs to activate the option.
 
 ## New
 - Added xml declaration example in settings to help user to create it's own file and debug errors.
@@ -46,8 +47,8 @@
 - [ ] Fix bugs. ??
 - ~~[ ] Save regex flags.~~
 - ~~[ ] Settings page/Regex options expander is not padded and not implemented.~~
-- [ ] Settings page/Start window minimized not implemented.
-- [ ] Create fr-fr language file.
+- [X] Settings page/Start window minimized not implemented.
+- [X] Create fr-fr language file.
 
 ### Windows 10
 - [x] Notifications don't activate.
