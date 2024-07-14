@@ -47,6 +47,11 @@ namespace winrt
     using namespace winrt::Windows::Storage::Pickers;
     using namespace winrt::Windows::System;
 }
+namespace xaml
+{
+    using namespace winrt::Microsoft::UI::Xaml;
+    using namespace winrt::Microsoft::UI::Xaml::Controls;
+}
 
 impl::MainPage::MainPage()
 {
@@ -123,6 +128,13 @@ void winrt::ClipboardManager::implementation::MainPage::AppClosing()
 winrt::Windows::Foundation::IAsyncAction impl::MainPage::Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const&, winrt::Windows::Foundation::IInspectable const&)
 {
     loaded = false;
+
+    auto&& appWindow = clipmgr::utils::getCurrentAppWindow();
+    if (localSettings.get<bool>(L"StartWindowMinimized").value_or(false))
+    {
+        appWindow.Presenter().as<winrt::OverlappedPresenter>().Minimize();
+        // TODO: Send toast notification to tell the user the app has started ?
+    }
 
     auto&& clipboardHistory = co_await winrt::Clipboard::GetHistoryItemsAsync();
     for (auto&& item : clipboardHistory.Items())
