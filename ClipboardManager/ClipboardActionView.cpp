@@ -11,6 +11,7 @@
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.System.h>
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
+#include <winrt/Microsoft.UI.Input.h>
 
 #include <ppltasks.h>
 #include <pplawait.h>
@@ -18,19 +19,21 @@
 #include <vector>
 #include <format>
 
-namespace impl = winrt::ClipboardManager::implementation;
-
-namespace winrt
+namespace implementation = winrt::ClipboardManager::implementation;
+namespace ui
 {
     using namespace winrt::Microsoft::UI::Xaml;
     using namespace winrt::Microsoft::UI::Xaml::Controls;
+}
+namespace win
+{
     using namespace winrt::Windows::Foundation;
     using namespace winrt::Windows::Foundation::Collections;
     using namespace winrt::Windows::System;
     using namespace winrt::Windows::ApplicationModel::DataTransfer;
 }
 
-impl::ClipboardActionView::ClipboardActionView()
+implementation::ClipboardActionView::ClipboardActionView()
 {
     visualStateManager.initializeStates(
         {
@@ -39,42 +42,42 @@ impl::ClipboardActionView::ClipboardActionView()
         });
 }
 
-impl::ClipboardActionView::ClipboardActionView(const winrt::hstring& text) : ClipboardActionView()
+implementation::ClipboardActionView::ClipboardActionView(const winrt::hstring& text) : ClipboardActionView()
 {
     _text = text;
 }
 
-winrt::hstring impl::ClipboardActionView::Text() const
+winrt::hstring implementation::ClipboardActionView::Text() const
 {
     return _text;
 }
 
-void impl::ClipboardActionView::Text(const winrt::hstring& value)
+void implementation::ClipboardActionView::Text(const winrt::hstring& value)
 {
     _text = value;
 }
 
-winrt::event_token impl::ClipboardActionView::Removed(const event_removed_t& handler)
+winrt::event_token implementation::ClipboardActionView::Removed(const event_removed_t& handler)
 {
     return e_removed.add(handler);
 }
 
-void impl::ClipboardActionView::Removed(const winrt::event_token& token)
+void implementation::ClipboardActionView::Removed(const winrt::event_token& token)
 {
     e_removed.remove(token);
 }
 
-void impl::ClipboardActionView::AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled)
+void implementation::ClipboardActionView::AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled)
 {
     actions.push_back(clipmgr::ClipboardTrigger(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), enabled));
 }
 
-void winrt::ClipboardManager::implementation::ClipboardActionView::AddActions(const winrt::Windows::Foundation::IInspectable& inspectable)
+void implementation::ClipboardActionView::AddActions(const winrt::Windows::Foundation::IInspectable& inspectable)
 {
-    AddActions(inspectable.as<winrt::IVector<winrt::IVector<winrt::hstring>>>());
+    AddActions(inspectable.as<win::IVector<win::IVector<winrt::hstring>>>());
 }
 
-void impl::ClipboardActionView::AddActions(const actions_t actions)
+void implementation::ClipboardActionView::AddActions(const actions_t actions)
 {
     for (auto&& action : actions)
     {
@@ -88,7 +91,7 @@ void impl::ClipboardActionView::AddActions(const actions_t actions)
     }
 }
 
-void impl::ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hstring& _format, const winrt::hstring& _label, const winrt::hstring& _regex, const bool& enabled)
+void implementation::ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hstring& _format, const winrt::hstring& _label, const winrt::hstring& _regex, const bool& enabled)
 {
     auto format = std::wstring(_format);
     auto label = std::wstring(_label);
@@ -113,7 +116,7 @@ void impl::ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hst
     }
 }
 
-bool impl::ClipboardActionView::IndexOf(uint32_t& pos, const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled)
+bool implementation::ClipboardActionView::IndexOf(uint32_t& pos, const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled)
 {
     clipmgr::ClipboardTrigger action{ std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), enabled };
     for (size_t i = 0; i < actions.size(); i++)
@@ -127,7 +130,7 @@ bool impl::ClipboardActionView::IndexOf(uint32_t& pos, const winrt::hstring& for
     return false;
 }
 
-winrt::async impl::ClipboardActionView::StartTour()
+winrt::async implementation::ClipboardActionView::StartTour()
 {
     visualStateManager.goToState(OptionsOpenState);
 
@@ -144,7 +147,7 @@ winrt::async impl::ClipboardActionView::StartTour()
 }
 
 
-void impl::ClipboardActionView::UserControl_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const&, winrt::Windows::Foundation::IInspectable const&)
+void implementation::ClipboardActionView::UserControl_Loading(ui::FrameworkElement const&, win::IInspectable const&)
 {
     // Create buttons for triggers:
     for (auto&& action : actions)
@@ -153,15 +156,15 @@ void impl::ClipboardActionView::UserControl_Loading(winrt::Microsoft::UI::Xaml::
     }
 }
 
-void impl::ClipboardActionView::OpenOptionsButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+void implementation::ClipboardActionView::OpenOptionsButton_Click(win::IInspectable const&, ui::RoutedEventArgs const&)
 {
     visualStateManager.switchState(0, true);
 }
 
 
-void impl::ClipboardActionView::HyperlinkButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+void implementation::ClipboardActionView::HyperlinkButton_Click(win::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    auto&& label = sender.as<winrt::Control>().Tag().try_as<hstring>();
+    auto&& label = sender.as<ui::Control>().Tag().try_as<hstring>();
     if (label.has_value() && !label.value().empty())
     {
         for (auto&& action : actions)
@@ -176,27 +179,27 @@ void impl::ClipboardActionView::HyperlinkButton_Click(winrt::Windows::Foundation
     }
 }
 
-void impl::ClipboardActionView::FormatLinkButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+void implementation::ClipboardActionView::FormatLinkButton_Click(win::IInspectable const&, ui::RoutedEventArgs const&)
 {
     if (actions.size() == 1)
     {
-        winrt::DataPackage dataPackage{};
+        win::DataPackage dataPackage{};
         auto text = std::wstring(_text);
         dataPackage.SetText(std::vformat(actions[0].format(), std::make_wformat_args(text)));
         dataPackage.Properties().ApplicationName(L"ClipboardManager");
-        winrt::Clipboard::SetContent(dataPackage);
+        win::Clipboard::SetContent(dataPackage);
     }
 }
 
-void impl::ClipboardActionView::RemoveActionButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+void implementation::ClipboardActionView::RemoveActionButton_Click(win::IInspectable const&, ui::RoutedEventArgs const&)
 {
     e_removed(*this, nullptr);
 }
 
-void impl::ClipboardActionView::TeachingTip_ButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args)
+void implementation::ClipboardActionView::TeachingTip_ButtonClick(ui::Controls::TeachingTip const& sender, win::IInspectable const& args)
 {
     static size_t teachingTipIndex = 1;
-    static std::vector<winrt::TeachingTip> teachingTips
+    static std::vector<ui::TeachingTip> teachingTips
     {
         RootGridTeachingTip(),
         LabelTextBlockTeachingTip(),
@@ -218,4 +221,38 @@ void impl::ClipboardActionView::TeachingTip_ButtonClick(winrt::Microsoft::UI::Xa
         teachingTipsWaitFlag.test_and_set();
         teachingTipsWaitFlag.notify_all();
     }
+}
+
+void implementation::ClipboardActionView::RootGrid_PointerEntered(win::IInspectable const&, ui::Input::PointerRoutedEventArgs const&)
+{
+    visualStateManager.goToState(PointerOverState);
+    ProtectedCursor(winrt::Microsoft::UI::Input::InputSystemCursor::Create(winrt::Microsoft::UI::Input::InputSystemCursorShape::Hand));
+}
+
+void implementation::ClipboardActionView::RootGrid_PointerExited(win::IInspectable const&, ui::Input::PointerRoutedEventArgs const&)
+{
+    visualStateManager.goToState(NormalState);
+    ProtectedCursor(winrt::Microsoft::UI::Input::InputSystemCursor::Create(winrt::Microsoft::UI::Input::InputSystemCursorShape::Arrow));
+}
+
+void implementation::ClipboardActionView::RootGrid_PointerPressed(win::IInspectable const&, ui::Input::PointerRoutedEventArgs const& e)
+{
+    if (e.GetCurrentPoint(*this).Properties().IsLeftButtonPressed())
+    {
+        visualStateManager.goToState(PointerPressedState);
+
+        clipmgr::utils::Launcher launcher{};
+        if (actions.size() > 0)
+        {
+            auto&& action = actions[0];
+            auto text = std::wstring(_text);
+            launcher.launch(std::vformat(action.format(), std::make_wformat_args(text)));
+        }
+    }
+
+}
+
+void implementation::ClipboardActionView::RootGrid_PointerReleased(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
+{
+    // TODO: Implement or remove.
 }

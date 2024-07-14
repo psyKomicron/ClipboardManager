@@ -11,27 +11,21 @@
     Loading="UserControl_Loading">
 
     <Grid x:Name="RootGrid"
-        RowSpacing="4"
-        Margin="0,3,0,3"
-        Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
-        BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}" 
-        BorderThickness="1"
-        CornerRadius="{x:Bind CornerRadius}">
+          RowSpacing="4"
+          Margin="0,3,0,3"
+          Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
+          BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}" 
+          BorderThickness="1"
+          CornerRadius="{x:Bind CornerRadius}"
+          PointerEntered="RootGrid_PointerEntered"
+          PointerExited="RootGrid_PointerExited"
+          PointerPressed="RootGrid_PointerPressed"
+          PointerReleased="RootGrid_PointerReleased">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="ContentColumn" Width="*"/>
             <ColumnDefinition x:Name="OptionsColumn" Width="0"/>
         </Grid.ColumnDefinitions>
-        <Grid.Transitions>
-            <TransitionCollection>
-                <ReorderThemeTransition />
-            </TransitionCollection>
-        </Grid.Transitions>
-        <Grid.ChildrenTransitions>
-            <TransitionCollection>
-                <RepositionThemeTransition IsStaggeringEnabled="False"/>
-            </TransitionCollection>
-        </Grid.ChildrenTransitions>
-    
+        
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="OptionsClosed"/>
@@ -40,6 +34,20 @@
                     <VisualState.Setters>
                         <Setter Target="OptionsColumn.Width" Value="Auto"/>
                     </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup>
+                <VisualState x:Name="Normal"/>
+
+                <VisualState x:Name="PointerOver">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBackgroundPointerOver}" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBorderBrushPointerOver}" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
@@ -80,7 +88,8 @@
                 MaxHeight="60" 
                 TextWrapping="Wrap" 
                 Grid.Row="0" 
-                Margin="3,5,0,0"/>
+                Margin="3,5,0,0"
+                HorizontalAlignment="Left"/>
 
             <GridView 
                 x:Name="ActionsGridView"
