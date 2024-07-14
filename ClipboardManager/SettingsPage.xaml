@@ -15,6 +15,7 @@
 
     <ScrollViewer>
         <StackPanel VerticalAlignment="Top" Orientation="Vertical" Spacing="3" Margin="0,0,0,15">
+            <!--#region Application -->
             <TextBlock x:Uid="HeaderApplicationTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6"/>
             <local:HostControl x:Uid="AutomaticStartHostControl">
                 <local:HostControl.HostContent>
@@ -131,8 +132,10 @@
                     </local:HostControl>
                 </StackPanel>
             </Expander>
+            <!--#endregion-->
 
 
+            <!--#region Formatting -->
             <TextBlock x:Uid="HeaderFormattingTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
             <local:HostControl x:Uid="IgnoreCaseHostControl">
                 <local:HostControl.HostContent>
@@ -156,8 +159,10 @@
                     </ComboBox>
                 </local:HostControl.HostContent>
             </local:HostControl>
+            <!--#endregion-->
 
 
+            <!--#region Browser -->
             <TextBlock x:Uid="HeaderBrowserTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
             <Expander Style="{StaticResource ExpanderStyle}">
                 <Expander.Header>
@@ -186,8 +191,10 @@
                     </Button>
                 </Grid>
             </Expander>
+            <!--#endregion-->
 
 
+            <!--#region Window style -->
             <TextBlock x:Uid="HeaderWindowStyleTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
             <Expander x:Uid="WindowStyleExpander" Style="{StaticResource ExpanderStyle}" Background="Transparent">
                 <Expander.Header>
@@ -208,8 +215,10 @@
                     </local:HostControl>
                 </StackPanel>
             </Expander>
+            <!--#endregion-->
 
             
+            <!--#region Storage -->
             <TextBlock x:Uid="HeaderStorageTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
 
             <local:HostControl x:Uid="ClearSettingsHostControl">
@@ -295,6 +304,7 @@
                     </StackPanel>
                 </Expander.Content>
             </Expander>
+            <!--#endregion-->
 
 
             <Grid Grid.Column="0">

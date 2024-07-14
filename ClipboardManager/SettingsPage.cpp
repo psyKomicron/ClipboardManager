@@ -49,6 +49,9 @@ void impl::SettingsPage::Page_Loading(winrt::FrameworkElement const&, winrt::IIn
 
     BrowserStringTextBox().Text(settings.get<std::wstring>(L"CustomProcessString").value_or(L""));
     UseCustomBrowser().IsOn(settings.get<bool>(L"UseCustomProcess").value_or(false));
+
+    AllowMaximizeToggleSwitch().IsOn(settings.get<bool>(L"AllowWindowMaximize").value_or(false));
+    AllowMinimizeToggleSwitch().IsOn(settings.get<bool>(L"AllowWindowMinimize").value_or(true));
 }
 
 void impl::SettingsPage::Page_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
