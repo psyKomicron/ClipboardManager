@@ -4,10 +4,10 @@
 #include <vector>
 #include <map>
 
-namespace xaml = winrt::Microsoft::UI::Xaml;
-
 namespace clipmgr::ui
 {
+    namespace xaml = winrt::Microsoft::UI::Xaml;
+
     template<typename T>
     class VisualState
     {
@@ -132,6 +132,22 @@ namespace clipmgr::ui
                     break;
                 }
             }
+        }
+
+        void goToEnabledState(const bool& enabled, const bool& useTransitions = true) const
+        {
+#ifdef _DEBUG
+            if (!xaml::VisualStateManager::GoToState(control, enabled ? L"Normal" : L"Disabled", useTransitions))
+            {
+                logger.debug(std::wstring(L"XAML VisualStateManager failed to go to state '") + (enabled ? L"Normal" : L"Disabled") + L"'.");
+            }
+            else
+            {
+                logger.debug(std::wstring(L"XAML VisualStateManager go to state '") + (enabled ? L"Normal" : L"Disabled") + L"'.");
+            }
+#else
+            xaml::VisualStateManager::GoToState(control, enabled ? L"Enabled" : L"Disabled", useTransitions)
+#endif
         }
 
     private:
