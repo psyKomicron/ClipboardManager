@@ -10,9 +10,11 @@
     CornerRadius="{StaticResource ControlCornerRadius}"
     BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
     BorderThickness="1"
-    Padding="16,3,16,3" >
-    
+    Padding="16,3,16,3"
+    IsEnabledChanged="UserControl_IsEnabledChanged">
+
     <Grid 
+        x:Name="RootGrid"
         Padding="{x:Bind Padding}"
         Background="{x:Bind Background, Mode=OneWay}"
         CornerRadius="{x:Bind CornerRadius}"
@@ -26,7 +28,21 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <ContentPresenter Content="{x:Bind Header}" Grid.Column="0" VerticalAlignment="Center"/>
-        <ContentPresenter Content="{x:Bind HostContent}" Grid.Column="1" VerticalAlignment="Center"/>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Normal"/>
+                <VisualState x:Name="Disabled">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderContentPresenter" Storyboard.TargetProperty="Foreground">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextFillColorDisabledBrush}" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <ContentPresenter x:Name="HeaderContentPresenter" Content="{x:Bind Header, Mode=OneWay}" Grid.Column="0" VerticalAlignment="Center"/>
+
+        <ContentPresenter x:Name="HostContentPresenter" Content="{x:Bind HostContent, Mode=OneWay}" Grid.Column="1" VerticalAlignment="Center"/>
     </Grid>
 </UserControl>
