@@ -14,7 +14,7 @@
     </Page.Resources>
 
     <ScrollViewer>
-        <StackPanel VerticalAlignment="Top" Orientation="Vertical" Spacing="5" Margin="0,0,0,15">
+        <StackPanel VerticalAlignment="Top" Orientation="Vertical" Spacing="3" Margin="0,0,0,15">
             <TextBlock x:Uid="HeaderApplicationTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6"/>
             <local:HostControl x:Uid="AutomaticStartHostControl">
                 <local:HostControl.HostContent>
@@ -28,7 +28,7 @@
                 </local:HostControl.HostContent>
             </local:HostControl>
 
-            <Expander Style="{StaticResource ExpanderStyle}" Padding="0">
+            <Expander Style="{StaticResource ExpanderStyle}" Padding="0" Background="Transparent">
                 <Expander.Header>
                     <local:HostControl x:Uid="AllowNotificationsHostControl" Background="Transparent" BorderThickness="0" Padding="0">
                         <local:HostControl.HostContent>
@@ -45,9 +45,12 @@
                             <Setter Property="Padding" Value="0" />
                             <Setter Property="Margin" Value="0" />
                         </Style>
+                        <Style TargetType="local:HostControl">
+                            <Setter Property="Background" Value="{ThemeResource ExpanderHeaderBackground}"/>
+                        </Style>
                     </ListView.Resources>
 
-                    <local:HostControl x:Uid="NotificationsExpanderSoundHostControl" CornerRadius="0" Background="Transparent">
+                    <local:HostControl x:Uid="NotificationsExpanderSoundHostControl" CornerRadius="0">
                         <local:HostControl.HostContent>
                             <ComboBox x:Name="NotificationSoundComboBox" Grid.Column="1" SelectedIndex="0" MinWidth="150" SelectionChanged="NotificationSoundComboBox_SelectionChanged">
                                 <ComboBoxItem Tag="0" x:Uid="NotificationSoundComboBox_Default">Default</ComboBoxItem>
@@ -60,7 +63,7 @@
                         </local:HostControl.HostContent>
                     </local:HostControl>
 
-                    <local:HostControl x:Uid="NotificationsExpanderScenarioHostControl" CornerRadius="0" Background="Transparent">
+                    <local:HostControl x:Uid="NotificationsExpanderScenarioHostControl" CornerRadius="0">
                         <local:HostControl.HostContent>
                             <ComboBox x:Name="NotificationScenariosComboBox" Grid.Column="1" SelectedIndex="0" MinWidth="150" SelectionChanged="NotificationScenariosComboBox_SelectionChanged">
                                 <ComboBoxItem Tag="0" x:Uid="NotificationScenariosComboBox_Default">Default</ComboBoxItem>
@@ -72,7 +75,7 @@
                         </local:HostControl.HostContent>
                     </local:HostControl>
 
-                    <local:HostControl x:Uid="NotificationsExpanderDurationHostControl" CornerRadius="0" Background="Transparent">
+                    <local:HostControl x:Uid="NotificationsExpanderDurationHostControl" CornerRadius="0,0,5,5">
                         <local:HostControl.HostContent>
                             <StackPanel x:Name="DurationButtonsStackPanel" Orientation="Horizontal">
                                 <ToggleButton x:Name="DurationShortToggleButton" 
@@ -101,21 +104,33 @@
                 </ListView>
             </Expander>
 
-            <local:HostControl IsEnabled="False">
-                <local:HostControl.Header>
-                    <Grid ToolTipService.ToolTip="This only applies when the application auto-starts." RowSpacing="3" VerticalAlignment="Center">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock x:Uid="StartMinimizedTextBlock" Grid.Row="0"/>
-                        <TextBlock x:Uid="StartMinimizedSubtitleTextBlock" Grid.Row="1" Style="{StaticResource SettingSubheaderTextBlockStyle}"/>
-                    </Grid>
-                </local:HostControl.Header>
-                <local:HostControl.HostContent>
-                    <ToggleSwitch x:Name="StartMinimizedToggleSwitch" Toggled="StartMinimizedToggleSwitch_Toggled"/>
-                </local:HostControl.HostContent>
-            </local:HostControl>
+            <Expander Style="{StaticResource ExpanderStyle}">
+                <Expander.Header>
+                    <local:HostControl Background="Transparent" BorderThickness="0" Padding="0">
+                        <local:HostControl.Header>
+                            <Grid ToolTipService.ToolTip="This only applies when the application auto-starts." RowSpacing="3" VerticalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock x:Uid="StartMinimizedTextBlock" Grid.Row="0"/>
+                                <TextBlock x:Uid="StartMinimizedSubtitleTextBlock" Grid.Row="1" Style="{StaticResource SettingSubheaderTextBlockStyle}"/>
+                            </Grid>
+                        </local:HostControl.Header>
+                        <local:HostControl.HostContent>
+                            <ToggleSwitch x:Name="StartMinimizedToggleSwitch" Toggled="StartMinimizedToggleSwitch_Toggled"/>
+                        </local:HostControl.HostContent>
+                    </local:HostControl>
+                </Expander.Header>
+
+                <StackPanel Orientation="Vertical" Spacing="7" HorizontalAlignment="Stretch">
+                    <local:HostControl x:Uid="HideAppWindowHostControl" IsEnabled="{x:Bind StartMinimizedToggleSwitch.IsOn, Mode=OneWay}" Background="Transparent">
+                        <local:HostControl.HostContent>
+                            <ToggleSwitch x:Name="HideAppWindowToggleSwitch" Toggled="HideAppWindowToggleSwitch_Toggled"/>
+                        </local:HostControl.HostContent>
+                    </local:HostControl>
+                </StackPanel>
+            </Expander>
 
 
             <TextBlock x:Uid="HeaderFormattingTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
@@ -153,7 +168,11 @@
                     </local:HostControl>
                 </Expander.Header>
 
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10" Padding="10">
+                <Grid ColumnSpacing="10" Padding="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
                     <TextBox x:Name="BrowserStringTextBox" 
                              x:Uid="BrowserStringTextBox" 
                              Grid.Column="0"
@@ -166,6 +185,28 @@
                         <FontIcon Glyph="&#xe73e;"/>
                     </Button>
                 </Grid>
+            </Expander>
+
+
+            <TextBlock x:Uid="HeaderWindowStyleTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
+            <Expander x:Uid="WindowStyleExpander" Style="{StaticResource ExpanderStyle}" Background="Transparent">
+                <Expander.Header>
+                    <local:HostControl x:Uid="WindowStyleHostControl" Background="Transparent" BorderThickness="0" Padding="0"/>
+                </Expander.Header>
+
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+                    <local:HostControl x:Uid="WindowPresenterStyleAllowMinimizeHostControl" CornerRadius="0" Background="{ThemeResource ExpanderHeaderBackground}">
+                        <local:HostControl.HostContent>
+                            <ToggleSwitch x:Name="AllowMinimizeToggleSwitch"/>
+                        </local:HostControl.HostContent>
+                    </local:HostControl>
+
+                    <local:HostControl x:Uid="WindowPresenterStyleAllowMaximizeHostControl" CornerRadius="0,0,5,5" Background="{ThemeResource ExpanderHeaderBackground}">
+                        <local:HostControl.HostContent>
+                            <ToggleSwitch x:Name="AllowMaximizeToggleSwitch"/>
+                        </local:HostControl.HostContent>
+                    </local:HostControl>
+                </StackPanel>
             </Expander>
 
             

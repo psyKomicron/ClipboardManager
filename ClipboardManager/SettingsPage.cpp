@@ -186,6 +186,12 @@ void impl::SettingsPage::UseCustomBrowser_Toggled(winrt::IInspectable const& sen
     updateSetting(sender, L"UseCustomProcess");
 }
 
+void impl::SettingsPage::HideAppWindowToggleSwitch_Toggled(winrt::IInspectable const& sender, winrt::RoutedEventArgs const&)
+{
+    check_loaded(loaded);
+    updateSetting(sender, L"HideAppWindow");
+}
+
 
 void impl::SettingsPage::updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key)
 {
