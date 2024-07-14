@@ -332,6 +332,14 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Storage</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="HeaderWindowStyleTextBlock.Text" xml:space="preserve">
+    <value>Window</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="HideAppWindowHostControl.Header" xml:space="preserve">
+    <value>Hide app window</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="HistoryToggleButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Quickly enable or disable actions history</value>
     <comment>Teaching tips</comment>
@@ -559,5 +567,17 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="ViewActionsInfoBar.Title" xml:space="preserve">
     <value>Clipboard triggers successfully loaded</value>
     <comment>MainPage ViewActionsInfoBar</comment>
+  </data>
+  <data name="WindowPresenterStyleAllowMaximizeHostControl.Header" xml:space="preserve">
+    <value>Window can maximize</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="WindowPresenterStyleAllowMinimizeHostControl.Header" xml:space="preserve">
+    <value>Window can minimize</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="WindowStyleHostControl.Header" xml:space="preserve">
+    <value>Window presenter style</value>
+    <comment>SettingsPage</comment>
   </data>
 </root>

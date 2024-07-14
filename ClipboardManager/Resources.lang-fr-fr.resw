@@ -332,6 +332,14 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Stockage</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="HeaderWindowStyleTextBlock.Text" xml:space="preserve">
+    <value>Fenêtre</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="HideAppWindowHostControl.Header" xml:space="preserve">
+    <value>Cacher la fenêtre</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="HistoryToggleButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Activer et désactiver l'historique des actions</value>
     <comment>Teaching tips</comment>
@@ -559,5 +567,17 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="ViewActionsInfoBar.Title" xml:space="preserve">
     <value>Déclencheurs presse-papier chargés</value>
     <comment>MainPage ViewActionsInfoBar</comment>
+  </data>
+  <data name="WindowPresenterStyleAllowMaximizeHostControl.Header" xml:space="preserve">
+    <value>Maximiser la fenêtre</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="WindowPresenterStyleAllowMinimizeHostControl.Header" xml:space="preserve">
+    <value>Minimiser la fenêtre</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="WindowStyleHostControl.Header" xml:space="preserve">
+    <value>Style de la fenêtre</value>
+    <comment>SettingsPage</comment>
   </data>
 </root>
