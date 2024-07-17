@@ -167,11 +167,17 @@
   </data>
   <data name="BrowserHostControl.Header" xml:space="preserve">
     <value>Use custom browser</value>
+    <comment>SettingsPage</comment>
   </data>
   <data name="BrowserStringTextBox.PlaceholderText" xml:space="preserve">
     <value>Executable string</value>
+    <comment>SettingsPage</comment>
   </data>
-  <data name="ClearSettingsButton.Content" xml:space="preserve">
+  <data name="ClearActionsButtonToolTipTextBlock.Text" xml:space="preserve">
+    <value>Clear actions list</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ClearSettingsButton.Text" xml:space="preserve">
     <value>Clear</value>
     <comment>SettingsPage</comment>
   </data>
@@ -323,6 +329,7 @@ You can easily access your user file via settings and see an example of a valid 
   </data>
   <data name="HeaderBrowserTextBlock.Text" xml:space="preserve">
     <value>Browser</value>
+    <comment>SettingsPage</comment>
   </data>
   <data name="HeaderFormattingTextBlock.Text" xml:space="preserve">
     <value>Formatting &amp; matching</value>
@@ -346,6 +353,10 @@ You can easily access your user file via settings and see an example of a valid 
   </data>
   <data name="IgnoreCaseHostControl.Header" xml:space="preserve">
     <value>Ignore case</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ImportFromClipboardButtonToolTipTextBlock.Text" xml:space="preserve">
+    <value>Import actions from clipboard</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="LabelTextBlockTeachingTip.Subtitle" xml:space="preserve">
@@ -504,12 +515,20 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Remove</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="ReportIssueTextBlock.Text" xml:space="preserve">
+    <value>Report bugs</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="RootGridTeachingTip.Subtitle" xml:space="preserve">
     <value>This is a clipboard action</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="SaveMatchingResultsHostControl.Header" xml:space="preserve">
     <value>Save matching results</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="SettingsOtherLinksTextBlock.Text" xml:space="preserve">
+    <value>Other links</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="SettingsPivotTeachingTip.Subtitle" xml:space="preserve">
