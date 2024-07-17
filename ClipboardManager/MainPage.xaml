@@ -262,25 +262,54 @@
                             Orientation="Horizontal" 
                             Spacing="5" 
                             Margin="10,0,10,0" 
-                            VerticalAlignment="Stretch" 
-                            Background="{ThemeResource SubtleFillColorSecondaryBrush}" 
-                            CornerRadius="{StaticResource OverlayCornerRadius}" 
-                            Padding="5,4">
+                            VerticalAlignment="Stretch">
                             <StackPanel.ChildrenTransitions>
                                 <TransitionCollection>
                                     <RepositionThemeTransition IsStaggeringEnabled="False"/>
                                 </TransitionCollection>
                             </StackPanel.ChildrenTransitions>
 
-                            <Button x:Name="ReloadTriggersButton" Click="ReloadTriggersButton_Click">
-                                <FontIcon FontSize="16" Glyph="&#xe72c;"/>
-                            </Button>
-                            <ToggleButton x:Name="SilenceNotificationsToggleButton">
-                                <FontIcon FontSize="16" Glyph="&#xe7ed;"/>
-                            </ToggleButton>
-                            <ToggleButton x:Name="HistoryToggleButton">
-                                <FontIcon FontSize="16" Glyph="&#xe823;"/>
-                            </ToggleButton>
+                            <StackPanel
+                                Orientation="Horizontal" 
+                                Spacing="5"
+                                VerticalAlignment="Stretch" 
+                                Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
+                                CornerRadius="{StaticResource OverlayCornerRadius}" 
+                                Padding="7,5">
+                                <Button x:Name="ReloadTriggersButton" Click="ReloadTriggersButton_Click">
+                                    <FontIcon FontSize="16" Glyph="&#xe72c;"/>
+                                </Button>
+                                <ToggleButton x:Name="SilenceNotificationsToggleButton">
+                                    <FontIcon FontSize="16" Glyph="&#xe7ed;"/>
+                                </ToggleButton>
+                                <ToggleButton x:Name="HistoryToggleButton">
+                                    <FontIcon FontSize="16" Glyph="&#xe823;"/>
+                                </ToggleButton>
+                            </StackPanel>
+
+                            <StackPanel
+                                Orientation="Horizontal" 
+                                Spacing="5" 
+                                Margin="10,0,10,0" 
+                                VerticalAlignment="Stretch" 
+                                Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
+                                CornerRadius="{StaticResource OverlayCornerRadius}" 
+                                Padding="7,5">
+
+                                <Button x:Name="ClearActionsButton" Click="ClearActionsButton_Click">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="ClearActionsButtonToolTipTextBlock"/>
+                                    </ToolTipService.ToolTip>
+                                    <FontIcon FontSize="16" Glyph="&#xe894;"/>
+                                </Button>
+
+                                <Button Click="ImportFromClipboardButton_Click">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="ImportFromClipboardButtonToolTipTextBlock"/>
+                                    </ToolTipService.ToolTip>
+                                    <FontIcon FontSize="16" Glyph="&#xe8b6;"/>
+                                </Button>
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
 
