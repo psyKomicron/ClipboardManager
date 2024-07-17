@@ -36,3 +36,8 @@ void impl::HostControl::UserControl_IsEnabledChanged(winrt::IInspectable const&,
 {
     visualStateManager.goToEnabledState(e.NewValue().as<bool>());
 }
+
+void impl::HostControl::UserControl_Loaded(winrt::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+    visualStateManager.goToEnabledState(IsEnabled());
+}
