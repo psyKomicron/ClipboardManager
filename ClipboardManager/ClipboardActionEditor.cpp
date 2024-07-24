@@ -14,11 +14,17 @@
 #include <iostream>
 
 namespace impl = winrt::ClipboardManager::implementation;
+namespace implementation = winrt::ClipboardManager::implementation;
 namespace winrt
 {
     using namespace winrt::Windows::Foundation;
     using namespace winrt::Microsoft::UI::Xaml;
     using namespace winrt::Microsoft::UI::Xaml::Controls;
+}
+namespace xaml
+{
+    using namespace winrt::Microsoft::UI::Xaml;
+    using namespace winrt::Microsoft::UI::Xaml::Media;
 }
 
 impl::ClipboardActionEditor::ClipboardActionEditor()
@@ -26,52 +32,77 @@ impl::ClipboardActionEditor::ClipboardActionEditor()
     visualStateManager.initializeStates(
     {
         EnabledState,
-        DisabledState
+        DisabledState,
+        NoLabelErrorState,
+        LabelErrorState,
+        NoRegexErrorState,
+        RegexErrorState,
+        NoFormatErrorState,
+        FormatErrorState
     });
 }
 
-
 winrt::hstring impl::ClipboardActionEditor::ActionLabel() const
 {
-    return _actionLabel;
+    return _actionLabelProperty.get();
 }
 
 void impl::ClipboardActionEditor::ActionLabel(const winrt::hstring& value)
 {
-    _actionLabel = value;
-    NotifyPropertyChanged();
+    _actionLabelProperty.set(value);
 }
 
 winrt::hstring impl::ClipboardActionEditor::ActionFormat() const
 {
-    return _actionFormat;
+    return _actionFormatProperty.get();
 }
 
 void impl::ClipboardActionEditor::ActionFormat(const winrt::hstring& value)
 {
-    _actionFormat = value;
-    NotifyPropertyChanged();
+    _actionFormatProperty.set(value);
 }
 
 winrt::hstring impl::ClipboardActionEditor::ActionRegex() const
 {
-    return _actionRegex;
+    return _actionRegexProperty.get();
 }
 
 void impl::ClipboardActionEditor::ActionRegex(const winrt::hstring& value)
 {
-    _actionRegex = value;
-    NotifyPropertyChanged();
+    _actionRegexProperty.set(value);
 }
 
 bool impl::ClipboardActionEditor::ActionEnabled() const
 {
-    return _actionEnabled;
+    return _actionEnabledProperty.get();
 }
 
 void impl::ClipboardActionEditor::ActionEnabled(const bool& value)
 {
-    _actionEnabled = value;
+    _actionEnabledProperty.set(value);
+
+    visualStateManager.goToEnabledState(_actionEnabledProperty.get());
+    e_isOn(*this, _actionEnabledProperty.get());
+}
+
+bool implementation::ClipboardActionEditor::IgnoreCase() const
+{
+    return _ignoreCaseProperty.get();
+}
+
+void implementation::ClipboardActionEditor::IgnoreCase(const bool& value)
+{
+    _ignoreCaseProperty.set(value);
+}
+
+bool implementation::ClipboardActionEditor::UseSearch() const
+{
+    return _useSearchProperty.get();
+}
+
+void implementation::ClipboardActionEditor::UseSearch(const bool& value)
+{
+    _useSearchProperty.set(value);
 }
 
 
@@ -137,55 +168,56 @@ winrt::async impl::ClipboardActionEditor::StartTour()
     });
 }
 
-
-void impl::ClipboardActionEditor::UserControl_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+winrt::Windows::Foundation::IAsyncOperation<bool> winrt::ClipboardManager::implementation::ClipboardActionEditor::Edit()
 {
-    loaded = true;
-}
+    CheckInput();
 
-void impl::ClipboardActionEditor::RemoveButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
-{
-    // TODO: Add event to notify parent control that this editor need to be removed.
-}
-
-winrt::async impl::ClipboardActionEditor::EditButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
-{
-    if ((co_await EditDialog().ShowAsync()) == winrt::ContentDialogResult::Primary)
+    auto result = co_await EditDialog().ShowAsync();
+    if (result == winrt::ContentDialogResult::Primary)
     {
         winrt::hstring newFormat = FormatTextBox().Text();
         winrt::hstring newLabel = LabelTextBox().Text();
         winrt::hstring newRegex = RegexTextBox().Text();
-        bool ignoreCase = RegexIgnoreCaseToggleButton().IsChecked().GetBoolean();
-        bool search = RegexUseSearchToggleButton().IsChecked().GetBoolean();
 
-        if (newFormat != _actionFormat)
-        {
-            winrt::hstring oldFormat = _actionFormat;
-            ActionFormat(newFormat);
-            e_formatChanged(*this, oldFormat);
-        }
+        winrt::hstring oldFormat = _actionFormatProperty.get();
+        ActionFormat(newFormat);
+        e_formatChanged(*this, oldFormat);
 
-        if (newRegex != _actionRegex)
-        {
-            winrt::hstring oldRegex = _actionRegex;
-            ActionRegex(newRegex);
-            e_regexChanged(*this, nullptr);
-        }
+        winrt::hstring oldRegex = _actionRegexProperty.get();
+        ActionRegex(newRegex);
+        auto flags = (static_cast<int32_t>(_ignoreCaseProperty.get()) << 1) | static_cast<int32_t>(_useSearchProperty.get());
+        e_regexChanged(*this, box_value(flags));
 
-        if (newLabel != _actionLabel)
-        {
-            winrt::hstring oldLabel = _actionLabel;
-            ActionLabel(newLabel);
-            e_labelChanged(*this, oldLabel);
-        }
+        winrt::hstring oldLabel = _actionLabelProperty.get();
+        ActionLabel(newLabel);
+        e_labelChanged(*this, oldLabel);
     }
+
+    co_return result == winrt::ContentDialogResult::Primary;
+}
+
+
+void impl::ClipboardActionEditor::UserControl_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    loaded = true;
+    visualStateManager.goToEnabledState(_actionEnabledProperty.get());
+}
+
+void impl::ClipboardActionEditor::RemoveButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    e_removed(*this, nullptr);
+}
+
+winrt::async impl::ClipboardActionEditor::EditButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+{
+    co_await Edit();
 }
 
 void impl::ClipboardActionEditor::ActionEnabledToggleSwitch_Toggled(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
     check_loaded(loaded);
-    visualStateManager.switchState(EnabledState.group());
-    e_isOn(*this, visualStateManager.getCurrentState(EnabledState.group()) == EnabledState);
+
+    
 }
 
 void impl::ClipboardActionEditor::TeachingTip_CloseButtonClick(winrt::TeachingTip const& sender, winrt::IInspectable const& args)
@@ -215,8 +247,59 @@ void impl::ClipboardActionEditor::TeachingTip_CloseButtonClick(winrt::TeachingTi
     }
 }
 
-
-void impl::ClipboardActionEditor::NotifyPropertyChanged(std::source_location sourceLocation)
+void implementation::ClipboardActionEditor::LabelTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e)
 {
-    e_propertyChanged(*this, clipmgr::utils::PropChangedEventArgs(sourceLocation));
+    CheckInput();
+
+    if (LabelTextBox().Text().empty())
+    {
+        visualStateManager.goToState(LabelErrorState);
+    }
+    else
+    {
+        visualStateManager.goToState(NoLabelErrorState);
+    }
+}
+
+void implementation::ClipboardActionEditor::FormatTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e)
+{
+    CheckInput();
+
+    if (FormatTextBox().Text().empty())
+    {
+        visualStateManager.goToState(FormatErrorState);
+    }
+    else
+    {
+        visualStateManager.goToState(NoFormatErrorState);
+    }
+}
+
+void implementation::ClipboardActionEditor::RegexTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e)
+{
+    CheckInput();
+
+    if (RegexTextBox().Text().empty())
+    {
+        visualStateManager.goToState(RegexErrorState);
+    }
+    else
+    {
+        visualStateManager.goToState(NoRegexErrorState);
+    }
+}
+
+
+void implementation::ClipboardActionEditor::CheckInput()
+{
+    EditDialog().IsPrimaryButtonEnabled(
+        !RegexTextBox().Text().empty()
+        && !FormatTextBox().Text().empty()
+        && !LabelTextBox().Text().empty()
+    );
+}
+
+winrt::Windows::Foundation::IInspectable winrt::ClipboardManager::implementation::ClipboardActionEditor::asInspectable()
+{
+    return *this;
 }

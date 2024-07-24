@@ -93,17 +93,14 @@ void implementation::MainPage::Actions(const win::Collections::IObservableVector
 
 void implementation::MainPage::AppClosing()
 {
-    if (localSettings.get<bool>(L"SaveMatchingResults").value_or(false))
-    {
-        auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
-        if (userFilePath.has_value())
-        {
-            if (clipboardActionViews.Size() == 0)
-            {
-                logger.debug(L"No history to save.");
-                return;
-            }
+    auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
 
+    if (userFilePath.has_value())
+    {
+        clipmgr::ClipboardTrigger::saveClipboardTriggers(triggers, userFilePath.value());
+
+        if (localSettings.get<bool>(L"SaveMatchingResults").value_or(false) && clipboardActionViews.Size() > 0)
+        {
             boost::property_tree::wptree tree{};
             boost::property_tree::read_xml(userFilePath.value().string(), tree);
             tree.erase(L"settings.history");
@@ -114,10 +111,6 @@ void implementation::MainPage::AppClosing()
             }
 
             boost::property_tree::write_xml(userFilePath.value().string(), tree);
-        }
-        else
-        {
-            logger.debug(L"User file path not saved in settings, impossible to save history.");
         }
     }
 }
@@ -175,28 +168,37 @@ void implementation::MainPage::ClipboadTriggersListPivot_Loaded(win::IInspectabl
             editor.ActionLabel(action.label());
             editor.ActionRegex(action.regex().str());
             editor.ActionEnabled(action.enabled());
+            editor.IgnoreCase((action.regex().flags() & boost::regex_constants::icase) == boost::regex_constants::icase);
+            editor.UseSearch(action.matchMode() == clipmgr::MatchMode::Search);
 
             editor.FormatChanged({ this, &MainPage::Editor_FormatChanged });
             editor.LabelChanged({ this, &MainPage::Editor_LabelChanged });
             editor.IsOn({ this, &MainPage::Editor_Toggled });
+            editor.RegexChanged({ this, &MainPage::Editor_RegexChanged });
 
-            editor.Removed([=](auto&& sender, auto&& b)
+            editor.Removed([=](auto&& sender, auto&&)
             {
                 auto&& label = editor.ActionLabel();
                 for (size_t i = 0; i < triggers.size(); i++)
                 {
                     if (action.label() == label)
                     {
-                        // TODO: Remove action buttons on any ClipboardActionView added.
-                        /*for (auto&& view : clipboardActionViews)
-                        {
-                        uint32_t index = 0;
-                        if (view.IndexOf(index, action.format(), action.label(), action.regex().str(), action.enabled()))
-                        {
-                        }
-                        }*/
-
                         triggers.erase(triggers.begin() + i);
+                        break;
+                        // TODO: Remove action buttons on any ClipboardActionView added.
+                    }
+                }
+
+                for (auto&& item : ClipboardTriggersListView().Items())
+                {
+                    auto view = item.try_as<ClipboardManager::ClipboardActionEditor>();
+                    if (view && view.ActionLabel() == label)
+                    {
+                        uint32_t index = 0;
+                        if (ClipboardTriggersListView().Items().IndexOf(item, index))
+                        {
+                            ClipboardTriggersListView().Items().RemoveAt(index);
+                        }
 
                         break;
                     }
@@ -410,6 +412,39 @@ winrt::async implementation::MainPage::ImportFromClipboardButton_Click(win::IIns
     // TODO: Notify user that clipboard content has been imported ?
 }
 
+winrt::async implementation::MainPage::AddTriggerButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
+{
+    auto clipboardActionEditor = winrt::make<implementation::ClipboardActionEditor>();
+    ClipboardTriggersListView().Items().Append(clipboardActionEditor);
+    clipboardActionEditor.Loaded([this, clipboardActionEditor](auto, auto) -> winrt::async
+    {
+        if (!co_await clipboardActionEditor.Edit())
+        {
+            uint32_t index = 0;
+            if (ClipboardTriggersListView().Items().IndexOf(clipboardActionEditor, index))
+            {
+                ClipboardTriggersListView().Items().RemoveAt(index);
+            }
+        }
+        else
+        {
+            auto label = std::wstring(clipboardActionEditor.ActionLabel());
+            auto format = std::wstring(clipboardActionEditor.ActionFormat());
+            auto ignoreCase = clipboardActionEditor.IgnoreCase();
+            auto regex = boost::wregex(std::wstring(clipboardActionEditor.ActionRegex()),
+                (ignoreCase ? boost::regex_constants::icase : 0u));
+            auto useSearch = clipboardActionEditor.UseSearch();
+
+            auto trigger = clipmgr::ClipboardTrigger(label, format, regex, true);
+            trigger.updateMatchMode(useSearch ? clipmgr::MatchMode::Search : clipmgr::MatchMode::Match);
+
+            triggers.push_back(trigger);
+        }
+    });
+
+    co_return;
+}
+
 
 winrt::async implementation::MainPage::ClipboardContent_Changed(const win::IInspectable&, const win::IInspectable&)
 {
@@ -423,8 +458,6 @@ winrt::async implementation::MainPage::ClipboardContent_Changed(const win::IInsp
         co_return;
     }
 
-    logger.debug(L"Clipboard content changed, application name: " + std::wstring(appName));
-
     AddAction(text, true);
 }
 
@@ -437,6 +470,7 @@ void implementation::MainPage::Editor_FormatChanged(const winrt::ClipboardManage
         if (action.label() == actionLabel)
         {
             action.format(format);
+            break;
         }
     }
 }
@@ -460,6 +494,26 @@ void implementation::MainPage::Editor_LabelChanged(const winrt::ClipboardManager
                     clipboardItem.EditAction(pos, action.format(), action.label(), action.regex().str(), action.enabled());
                 }
             }
+
+            break;
+        }
+    }
+}
+
+void implementation::MainPage::Editor_RegexChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::Windows::Foundation::IInspectable& inspectable)
+{
+    auto args = inspectable.as<int32_t>();
+    auto newRegex = std::wstring(sender.ActionRegex());
+    auto actionLabel = std::wstring(sender.ActionLabel());
+    for (auto&& action : triggers)
+    {
+        if (action.label() == actionLabel)
+        {
+            bool ignoreCase = args & (1 << 1);
+            bool useSearch= args & 1;
+            auto flags = ignoreCase ? boost::regex_constants::icase : 0;
+            action.regex(boost::wregex(newRegex, flags));
+            action.updateMatchMode(useSearch ? clipmgr::MatchMode::Search : clipmgr::MatchMode::Match);
         }
     }
 }
@@ -505,7 +559,7 @@ void implementation::MainPage::Restore()
         }
         catch (const boost::property_tree::ptree_bad_path badPath)
         {
-            logger.debug(L"Failed to retreive history from user file, somehow ptree_bad_path was thrown.");
+            logger.debug(L"Failed to retreive history from user file: " + clipmgr::utils::convert(badPath.what()));
         }
     }
 

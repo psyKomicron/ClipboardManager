@@ -8,12 +8,16 @@ namespace ClipboardManager
         String ActionFormat;
         String ActionRegex;
         Boolean ActionEnabled;
+        Boolean IgnoreCase;
+        Boolean UseSearch;
 
         event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, Boolean> IsOn;
         event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, String> LabelChanged;
         event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, String> FormatChanged;
+        event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, IInspectable> RegexChanged;
         event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, IInspectable> Removed;
 
         Windows.Foundation.IAsyncAction StartTour();
+        Windows.Foundation.IAsyncOperation<Boolean> Edit();
     }
 }

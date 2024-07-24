@@ -28,12 +28,58 @@
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
-                <VisualState x:Name="Enabled"/>
+                <VisualState x:Name="Normal"/>
                 <VisualState x:Name="Disabled">
                     <VisualState.Setters>
                         <Setter Target="Control.Foreground" Value="{ThemeResource ButtonForegroundDisabled}"/>
                         <Setter Target="RemoveButton.IsEnabled" Value="False"/>
                         <Setter Target="EditButton.IsEnabled" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup>
+                <VisualState x:Name="NoLabelError"/>
+
+                <VisualState x:Name="LabelError">
+                    <VisualState.Setters>
+                        <Setter Target="LabelTextBoxBorder.BorderBrush" Value="{ThemeResource SystemFillColorCritical}"/>
+                        <Setter Target="LabelTextBoxBorder.Background">
+                            <Setter.Value>
+                                <SolidColorBrush Color="{ThemeResource SystemFillColorCritical}" Opacity="0.1"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Target="LabelTextBoxBorder.CornerRadius" Value="{StaticResource ControlCornerRadius}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup>
+                <VisualState x:Name="NoFormatError"/>
+                <VisualState x:Name="FormatError">
+                    <VisualState.Setters>
+                        <Setter Target="FormatTextBoxBorder.BorderBrush" Value="{ThemeResource SystemFillColorCritical}"/>
+                        <Setter Target="FormatTextBoxBorder.Background">
+                            <Setter.Value>
+                                <SolidColorBrush Color="{ThemeResource SystemFillColorCritical}" Opacity="0.1"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Target="FormatTextBoxBorder.CornerRadius" Value="{StaticResource ControlCornerRadius}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup>
+                <VisualState x:Name="NoRegexError"/>
+                <VisualState x:Name="RegexError">
+                    <VisualState.Setters>
+                        <Setter Target="RegexTextBoxBorder.BorderBrush" Value="{ThemeResource SystemFillColorCritical}"/>
+                        <Setter Target="RegexTextBoxBorder.Background">
+                            <Setter.Value>
+                                <SolidColorBrush Color="{ThemeResource SystemFillColorCritical}" Opacity="0.1"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Target="RegexTextBoxBorder.CornerRadius" Value="{StaticResource ControlCornerRadius}"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -125,30 +171,47 @@
         </TeachingTip>
 
 
-        <ContentDialog x:Name="EditDialog" x:Uid="EditDialog" DefaultButton="Primary">
-            <Grid RowDefinitions="1*,1*,1*">
-                <StackPanel Spacing="7" Grid.Row="0">
-                    <TextBlock x:Uid="LabelTextBlock" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,10,0,3"/>
-                    <TextBox x:Name="LabelTextBox" VerticalAlignment="Center" Text="{x:Bind ActionLabel, Mode=OneWay}"/>
-                </StackPanel>
+        <ContentDialog x:Name="EditDialog" x:Uid="EditDialog" DefaultButton="Primary" IsPrimaryButtonEnabled="False">
+            <Grid RowSpacing="9">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                
+                <Border x:Name="LabelTextBoxBorder" BorderThickness="0" Background="Transparent" Grid.Row="0">
+                    <TextBox x:Uid="LabelTextBox" x:Name="LabelTextBox" VerticalAlignment="Center" Text="{x:Bind ActionLabel, Mode=OneWay}" TextChanged="LabelTextBox_TextChanged"/>
+                </Border>
 
-                <StackPanel Spacing="7" Grid.Row="1">
-                    <TextBlock x:Uid="FormatTextBlock" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,10,0,3"/>
-                    <TextBox x:Name="FormatTextBox" VerticalAlignment="Center" Text="{x:Bind ActionFormat, Mode=OneWay}"/>
-                </StackPanel>
+                <Border x:Name="FormatTextBoxBorder" BorderThickness="0" Background="Transparent" Grid.Row="1">
+                    <TextBox x:Uid="FormatTextBox" x:Name="FormatTextBox" VerticalAlignment="Center" Text="{x:Bind ActionFormat, Mode=OneWay}" TextChanged="FormatTextBox_TextChanged"/>
+                </Border>
 
-                <StackPanel Spacing="7" Grid.Row="2">
-                    <TextBlock x:Uid="RegexTextBlock" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,7,0,7"/>
-                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="4">
-                        <TextBox x:Name="RegexTextBox" Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind ActionRegex, Mode=OneWay}"/>
-                        <ToggleButton x:Name="RegexIgnoreCaseToggleButton" x:Uid="RegexIgnoreCaseToggleButton" Grid.Column="1">
-                            Aa
-                        </ToggleButton>
-                        <ToggleButton x:Name="RegexUseSearchToggleButton" x:Uid="RegexUseSearchToggleButton" Grid.Column="2" VerticalAlignment="Stretch">
-                            <FontIcon Glyph="&#xf78b;" FontSize="16"/>
-                        </ToggleButton>
-                    </Grid>
-                </StackPanel>
+                <Grid ColumnSpacing="4" Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Border x:Name="RegexTextBoxBorder" Background="Transparent" BorderThickness="0">
+                        <TextBox x:Uid="RegexTextBox" x:Name="RegexTextBox" Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind ActionRegex, Mode=OneWay}" TextChanged="RegexTextBox_TextChanged"/>
+                    </Border>
+
+                    <ToggleButton x:Name="RegexIgnoreCaseToggleButton" 
+                                  x:Uid="RegexIgnoreCaseToggleButton" 
+                                  IsChecked="{x:Bind IgnoreCase, Mode=TwoWay}"
+                                  Grid.Column="1" 
+                                  Content="Aa" 
+                                  VerticalAlignment="Bottom"/>
+                    <ToggleButton x:Name="RegexUseSearchToggleButton" 
+                                  x:Uid="RegexUseSearchToggleButton" 
+                                  IsChecked="{x:Bind UseSearch, Mode=TwoWay}"
+                                  Grid.Column="2" 
+                                  VerticalAlignment="Bottom" 
+                                  MinHeight="32">
+                        <FontIcon Glyph="&#xf78b;" FontSize="16"/>
+                    </ToggleButton>
+                </Grid>
             </Grid>
         </ContentDialog>
     </Grid>

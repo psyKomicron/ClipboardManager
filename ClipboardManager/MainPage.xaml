@@ -99,7 +99,7 @@
 
             <PivotItem Margin="0" Padding="0">
                 <PivotItem.Header>
-                    <FontIcon x:Name="ClipboardHistoryPivot" Glyph="&#xf0e3;" FontSize="16"/>
+                    <FontIcon x:Name="ClipboardHistoryPivot" Glyph="&#xe823;" FontSize="16"/>
                 </PivotItem.Header>
 
                 <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="1">
@@ -139,7 +139,7 @@
 
             <PivotItem Padding="0" Margin="0" Loaded="ClipboadTriggersListPivot_Loaded">
                 <PivotItem.Header>
-                    <FontIcon x:Name="ClipboardTriggersPivot" Glyph="&#xe8fd;" FontSize="16"/>
+                    <FontIcon x:Name="ClipboardTriggersPivot" Glyph="&#xf0e3;" FontSize="16"/>
                 </PivotItem.Header>
 
                 <Grid>
@@ -154,6 +154,9 @@
                         </Button>
                         <Button Click="ReloadTriggersButton_Click">
                             <FontIcon Glyph="&#xe72c;" FontSize="16"/>
+                        </Button>
+                        <Button Click="AddTriggerButton_Click">
+                            <FontIcon Glyph="&#xe710;" FontSize="16"/>
                         </Button>
                     </StackPanel>
 
@@ -178,9 +181,9 @@
                 </Grid>
             </PivotItem>
 
-            <PivotItem Padding="0" Margin="0" Loaded="ClipboardActionsPivotItem_Loaded">
+            <PivotItem Padding="0" Margin="0">
                 <PivotItem.Header>
-                    <FontIcon x:Name="ClipboardActionsPivot" Glyph="&#xf6fa;" FontSize="16"/>
+                    <FontIcon x:Name="ClipboardActionsPivot" Glyph="&#xea8a;" FontSize="16"/>
                 </PivotItem.Header>
 
                 <Grid Padding="5,3,5,0">
