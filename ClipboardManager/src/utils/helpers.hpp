@@ -2,6 +2,8 @@
 #include <winrt/Microsoft.UI.Windowing.h>
 #include <Windows.h>
 
+#include <boost/regex.hpp>
+
 #include <filesystem>
 #include <functional>
 
