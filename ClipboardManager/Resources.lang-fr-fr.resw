@@ -237,7 +237,7 @@
     <value>Créer</value>
     <comment>MainPage</comment>
   </data>
-  <data name="CreateExampleFileHostControl.Header" xml:space="preserve">
+  <data name="CreateExampleFileHostControl.Text" xml:space="preserve">
     <value>Créer un fichier example</value>
     <comment>SettingsPage</comment>
   </data>
@@ -319,7 +319,7 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Formate le lien</value>
     <comment>Teaching tips</comment>
   </data>
-  <data name="FormatTextBlock.Text" xml:space="preserve">
+  <data name="FormatTextBox.Header" xml:space="preserve">
     <value>Format</value>
     <comment>ClipboardActionEditor</comment>
   </data>
@@ -362,6 +362,10 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="LabelTextBlockTeachingTip.Subtitle" xml:space="preserve">
     <value>Texte du presse-papier</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="LabelTextBox.Header" xml:space="preserve">
+    <value>Label</value>
+    <comment>ClipboardActionEditor</comment>
   </data>
   <data name="ListViewTeachingTip.Subtitle" xml:space="preserve">
     <value>Les entrées du presse-papier qui déclenchent les déclencheurs presse-papier seront affichées ici</value>
@@ -487,7 +491,7 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Mode regex</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="RegexTextBlock.Text" xml:space="preserve">
+  <data name="RegexTextBox.Header" xml:space="preserve">
     <value>Regex</value>
     <comment>ClipboardActionEditor</comment>
   </data>
@@ -575,8 +579,16 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Trop de boutons</value>
     <comment>ToastNotifications</comment>
   </data>
+  <data name="TriggersStorageExpander.Header" xml:space="preserve">
+    <value>Fichier déclencheurs presse-papier</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="TriggersXmlExampleHostControl.Header" xml:space="preserve">
     <value>Example XML déclencheurs presse-papier</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="UserFileHostControl.Header" xml:space="preserve">
+    <value>Fichier des déclencheurs presse-papier</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="ViewActionsInfoBar.Message" xml:space="preserve">

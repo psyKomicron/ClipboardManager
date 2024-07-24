@@ -237,7 +237,7 @@
     <value>Create</value>
     <comment>MainPage</comment>
   </data>
-  <data name="CreateExampleFileHostControl.Header" xml:space="preserve">
+  <data name="CreateExampleFileHostControl.Text" xml:space="preserve">
     <value>Create example file</value>
     <comment>SettingsPage</comment>
   </data>
@@ -319,7 +319,7 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Format link</value>
     <comment>Teaching tips</comment>
   </data>
-  <data name="FormatTextBlock.Text" xml:space="preserve">
+  <data name="FormatTextBox.Header" xml:space="preserve">
     <value>Format</value>
     <comment>ClipboardActionEditor</comment>
   </data>
@@ -362,6 +362,10 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="LabelTextBlockTeachingTip.Subtitle" xml:space="preserve">
     <value>Clipboard text</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="LabelTextBox.Header" xml:space="preserve">
+    <value>Label</value>
+    <comment>ClipboardActionEditor</comment>
   </data>
   <data name="ListViewTeachingTip.Subtitle" xml:space="preserve">
     <value>You will find here the clipboard entries that match your clipboard triggers</value>
@@ -487,7 +491,7 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Regex mode</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="RegexTextBlock.Text" xml:space="preserve">
+  <data name="RegexTextBox.Header" xml:space="preserve">
     <value>Regex</value>
     <comment>ClipboardActionEditor</comment>
   </data>
@@ -575,8 +579,16 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Too many buttons</value>
     <comment>ToastNotifications</comment>
   </data>
+  <data name="TriggersStorageExpander.Header" xml:space="preserve">
+    <value>Triggers file</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="TriggersXmlExampleHostControl.Header" xml:space="preserve">
     <value>Triggers XML example</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="UserFileHostControl.Header" xml:space="preserve">
+    <value>Triggers file</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="ViewActionsInfoBar.Message" xml:space="preserve">
