@@ -77,7 +77,7 @@ std::vector<clipmgr::ClipboardTrigger> clipmgr::ClipboardTrigger::loadClipboardT
     }
 }
 
-void clipmgr::ClipboardTrigger::saveClipboardTriggers(const std::vector<ClipboardTrigger>& triggers, const std::filesystem::path& userFilePath)
+void clipmgr::ClipboardTrigger::saveClipboardTriggers(const std::vector<ClipboardTrigger>& triggersList, const std::filesystem::path& userFilePath)
 {
     if (utils::pathExists(userFilePath))
     {
@@ -85,18 +85,30 @@ void clipmgr::ClipboardTrigger::saveClipboardTriggers(const std::vector<Clipboar
         boost::property_tree::read_xml(userFilePath.string(), tree);
 
         // Erase the tree so I dont induce conflicts.
-        tree.erase(L"settings.triggers");
-
-        auto&& actions = tree.put(L"settings.triggers", L"");
-        for (auto&& trigger : triggers)
+        auto settingsNode = tree.get_child_optional(L"settings");
+        if (settingsNode.has_value())
         {
-            actions.add(L"trigger.re", trigger.regex().str());
-            actions.add(L"trigger.format", trigger.format());
-            actions.add(L"trigger.label", trigger.label());
-            actions.add(L"trigger.enabled", trigger.enabled());
-        }
+            settingsNode.value().erase(L"triggers");
+            
+            auto&& triggersNode = tree.put(L"settings.triggers", L"");
 
-        boost::property_tree::write_xml(userFilePath.string(), tree);
+            for (auto&& trigger : triggersList)
+            {
+                auto&& triggerNode = triggersNode.add(L"trigger", L"");
+
+                auto&& re = triggerNode.add(L"re", trigger.regex().str());
+
+                auto flags = trigger._regex.flags();
+                re.add(L"<xmlattr>.ignoreCase", ((flags & boost::regex_constants::icase) == boost::regex_constants::icase ? L"true" : L"false"));
+                re.add(L"<xmlattr>.mode", (trigger._matchMode == MatchMode::Match ? L"match" : L"search"));
+
+                triggerNode.add(L"format", trigger.format());
+                triggerNode.add(L"label", trigger.label());
+                triggerNode.add(L"enabled", trigger.enabled());
+            }
+
+            boost::property_tree::write_xml(userFilePath.string(), tree);
+        }
     }
     else
     {
@@ -169,6 +181,11 @@ void clipmgr::ClipboardTrigger::enabled(const bool& value)
     _enabled = value;
 }
 
+std::optional<clipmgr::MatchMode> clipmgr::ClipboardTrigger::matchMode() const
+{
+    return _matchMode;
+}
+
 void clipmgr::ClipboardTrigger::updateMatchMode(const MatchMode& mode)
 {
     _matchMode = mode;
@@ -179,7 +196,7 @@ bool clipmgr::ClipboardTrigger::match(const std::wstring& string, const std::opt
     auto matchMode = _matchMode.has_value()
         ? _matchMode.value()
         : defaultMatchMode.value_or(MatchMode::Match);
-
+    
     return (matchMode == MatchMode::Match && boost::regex_match(string, _regex))
         || (matchMode == MatchMode::Search && boost::regex_search(string, _regex));
 }
