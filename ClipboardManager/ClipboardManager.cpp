@@ -93,8 +93,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR,
         std::wcout << L"Unknown error occured." << std::endl;
     }
 
-    std::wstring end = L"";
-    std::wcin >> end;
+    /*std::wstring end = L"";
+    std::wcin >> end;*/
 
     return 0;
 }
