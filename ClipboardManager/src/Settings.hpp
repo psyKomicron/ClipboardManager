@@ -79,6 +79,18 @@ namespace clipmgr
         template<StringInsertable T>
         std::optional<T> get(const key_t& key)
         {
+            std::optional<std::wstring> opt = wil::reg::try_get_value_string(hKey.get(), key.c_str());
+            if (opt.has_value())
+            {
+                return T{ opt.value() };
+            }
+
+            return std::optional<T>();
+        }
+
+        template<>
+        std::optional<std::wstring> get(const key_t& key)
+        {
             return wil::reg::try_get_value_string(hKey.get(), key.c_str());
         }
 
