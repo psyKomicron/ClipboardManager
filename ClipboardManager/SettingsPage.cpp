@@ -18,17 +18,20 @@
 
 #include <Shobjidl.h>
 
+namespace implementation = winrt::ClipboardManager::implementation;
 namespace winrt
+{
+    using namespace winrt::Windows::Foundation;
+    using namespace winrt::Windows::Storage::Pickers;
+}
+namespace xaml
 {
     using namespace winrt::Microsoft::UI::Xaml;
     using namespace winrt::Microsoft::UI::Xaml::Controls;
     using namespace winrt::Microsoft::UI::Xaml::Controls::Primitives;
-    using namespace winrt::Windows::Foundation;
-    using namespace winrt::Windows::Storage::Pickers;
 }
-namespace impl = winrt::ClipboardManager::implementation;
 
-void impl::SettingsPage::Page_Loading(winrt::FrameworkElement const&, winrt::IInspectable const&)
+void implementation::SettingsPage::Page_Loading(winrt::FrameworkElement const&, winrt::IInspectable const&)
 {
     clipmgr::utils::StartupTask startupTask{};
     AutoStartToggleSwitch().IsOn(startupTask.isTaskRegistered());
@@ -54,15 +57,15 @@ void impl::SettingsPage::Page_Loading(winrt::FrameworkElement const&, winrt::IIn
     AllowMinimizeToggleSwitch().IsOn(settings.get<bool>(L"AllowWindowMinimize").value_or(true));
 }
 
-void impl::SettingsPage::Page_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+void implementation::SettingsPage::Page_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
     loaded = true;
 }
 
-void impl::SettingsPage::AutoStartToggleSwitch_Toggled(winrt::IInspectable const& s, winrt::RoutedEventArgs const&)
+void implementation::SettingsPage::AutoStartToggleSwitch_Toggled(winrt::IInspectable const& s, winrt::RoutedEventArgs const&)
 {
     check_loaded(loaded);
-    auto sender = s.as<winrt::ToggleSwitch>();
+    auto sender = s.as<xaml::ToggleSwitch>();
 
     clipmgr::utils::StartupTask startupTask{};
     if (!startupTask.isTaskRegistered() && sender.IsOn())
@@ -75,19 +78,19 @@ void impl::SettingsPage::AutoStartToggleSwitch_Toggled(winrt::IInspectable const
     }
 }
 
-void impl::SettingsPage::StartMinimizedToggleSwitch_Toggled(winrt::IInspectable const& s, winrt::RoutedEventArgs const&)
+void implementation::SettingsPage::StartMinimizedToggleSwitch_Toggled(winrt::IInspectable const& s, xaml::RoutedEventArgs const&)
 {
     check_loaded(loaded);
     updateSetting(s, L"StartWindowMinimized");
 }
 
-void impl::SettingsPage::SaveMatchingResultsToggleSwitch_Toggled(winrt::IInspectable const& s, winrt::RoutedEventArgs const&)
+void implementation::SettingsPage::SaveMatchingResultsToggleSwitch_Toggled(winrt::IInspectable const& s, xaml::RoutedEventArgs const&)
 {
     check_loaded(loaded);
     updateSetting(s, L"SaveMatchingResults");
 }
 
-void impl::SettingsPage::EnableListeningToggleSwitch_Toggled(winrt::IInspectable const& s, winrt::RoutedEventArgs const&)
+void implementation::SettingsPage::EnableListeningToggleSwitch_Toggled(winrt::IInspectable const& s, xaml::RoutedEventArgs const&)
 {
     NotificationsExpander().IsEnabled(NotificationsToggleSwitch().IsOn());
     
@@ -95,14 +98,14 @@ void impl::SettingsPage::EnableListeningToggleSwitch_Toggled(winrt::IInspectable
     updateSetting(s, L"NotificationsEnabled");
 }
 
-void impl::SettingsPage::DurationToggleButton_Click(winrt::IInspectable const& sender, winrt::RoutedEventArgs const& e)
+void implementation::SettingsPage::DurationToggleButton_Click(winrt::IInspectable const& sender, xaml::RoutedEventArgs const& e)
 {
-    auto senderToggleButton = sender.as<winrt::ToggleButton>();
+    auto senderToggleButton = sender.as<xaml::ToggleButton>();
     if (senderToggleButton.IsChecked())
     {
         for (auto&& child : DurationButtonsStackPanel().Children())
         {
-            auto toggleButton = child.as<winrt::ToggleButton>();
+            auto toggleButton = child.as<xaml::ToggleButton>();
             if (toggleButton.Tag().as<hstring>() != senderToggleButton.Tag().as<hstring>())
             {
                 toggleButton.IsChecked(false);
@@ -114,31 +117,31 @@ void impl::SettingsPage::DurationToggleButton_Click(winrt::IInspectable const& s
     settings.insert(L"NotificationDurationType", static_cast<clipmgr::notifs::NotificationDurationType>(tag));
 }
 
-void impl::SettingsPage::NotificationScenariosComboBox_SelectionChanged(winrt::IInspectable const&, winrt::SelectionChangedEventArgs const& e)
+void implementation::SettingsPage::NotificationScenariosComboBox_SelectionChanged(winrt::IInspectable const&, xaml::SelectionChangedEventArgs const& e)
 {
     check_loaded(loaded);
     settings.insert(L"NotificationScenarioType", getSelectedComboBoxItemTag(NotificationScenariosComboBox()));
 }
 
-void impl::SettingsPage::NotificationSoundComboBox_SelectionChanged(winrt::IInspectable const&, winrt::SelectionChangedEventArgs const& e)
+void implementation::SettingsPage::NotificationSoundComboBox_SelectionChanged(winrt::IInspectable const&, xaml::SelectionChangedEventArgs const& e)
 {
     check_loaded(loaded);
     settings.insert(L"NotificationSoundType", getSelectedComboBoxItemTag(NotificationSoundComboBox()));
 }
 
-void impl::SettingsPage::IgnoreCaseToggleSwitch_Toggled(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+void implementation::SettingsPage::IgnoreCaseToggleSwitch_Toggled(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
     check_loaded(loaded);
     settings.insert(L"RegexIgnoreCase", IgnoreCaseToggleSwitch().IsOn());
 }
 
-void impl::SettingsPage::RegexModeComboBox_SelectionChanged(winrt::IInspectable const&, winrt::SelectionChangedEventArgs const&)
+void implementation::SettingsPage::RegexModeComboBox_SelectionChanged(winrt::IInspectable const&, xaml::SelectionChangedEventArgs const&)
 {
     check_loaded(loaded);
     settings.insert(L"TriggerMatchMode", RegexModeComboBox().SelectedItem().as<winrt::FrameworkElement>().Tag().as<int32_t>());
 }
 
-winrt::async impl::SettingsPage::CreateExampleTriggersFileButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+winrt::async implementation::SettingsPage::CreateExampleTriggersFileButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
     winrt::FileSavePicker picker{};
     picker.as<IInitializeWithWindow>()->Initialize(GetActiveWindow());
@@ -156,7 +159,7 @@ winrt::async impl::SettingsPage::CreateExampleTriggersFileButton_Click(winrt::II
     }
 }
 
-winrt::async impl::SettingsPage::OverwriteExampleTriggersFileButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+winrt::async implementation::SettingsPage::OverwriteExampleTriggersFileButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
     winrt::FileOpenPicker picker{};
     picker.as<IInitializeWithWindow>()->Initialize(GetActiveWindow());
@@ -171,43 +174,54 @@ winrt::async impl::SettingsPage::OverwriteExampleTriggersFileButton_Click(winrt:
     }
 }
 
-void impl::SettingsPage::SaveBrowserStringButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
+void implementation::SettingsPage::SaveBrowserStringButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
 {
     BrowserStringTextBox_TextChanged(nullptr, nullptr);
 }
 
-void impl::SettingsPage::BrowserStringTextBox_TextChanged(winrt::IInspectable const&, winrt::TextChangedEventArgs const&)
+void implementation::SettingsPage::BrowserStringTextBox_TextChanged(winrt::IInspectable const&, xaml::TextChangedEventArgs const&)
 {
     check_loaded(loaded);
     // TODO: Check if writing that fast to the registry can hurt performance.
     settings.insert(L"CustomProcessString", BrowserStringTextBox().Text());
 }
 
-void impl::SettingsPage::UseCustomBrowser_Toggled(winrt::IInspectable const& sender, winrt::RoutedEventArgs const&)
+void implementation::SettingsPage::UseCustomBrowser_Toggled(winrt::IInspectable const& sender, winrt::RoutedEventArgs const&)
 {
     check_loaded(loaded);
     updateSetting(sender, L"UseCustomProcess");
 }
 
-void impl::SettingsPage::HideAppWindowToggleSwitch_Toggled(winrt::IInspectable const& sender, winrt::RoutedEventArgs const&)
+void implementation::SettingsPage::HideAppWindowToggleSwitch_Toggled(winrt::IInspectable const& sender, winrt::RoutedEventArgs const&)
 {
     check_loaded(loaded);
     updateSetting(sender, L"HideAppWindow");
 }
 
-
-void impl::SettingsPage::updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key)
+void implementation::SettingsPage::ClearSettingsButton_Click(winrt::IInspectable const&, xaml::RoutedEventArgs const& e)
 {
-    auto sender = s.as<winrt::ToggleSwitch>();
+    settings.clear();
+    visualStateManager.goToState(ClearSettingsShowIconState);
+}
+
+void implementation::SettingsPage::TriggersStorageExpander_Expanding(xaml::Controls::Expander const&, xaml::Controls::ExpanderExpandingEventArgs const&)
+{
+    UserFilePathTextBlock().Text(settings.get<hstring>(L"UserFilePath").value_or(L""));
+}
+
+
+void implementation::SettingsPage::updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key)
+{
+    auto sender = s.as<xaml::ToggleSwitch>();
     auto isOn = sender.IsOn();
     settings.insert(key, isOn);
 }
 
-void impl::SettingsPage::selectComboBoxItem(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox, const uint32_t& value)
+void implementation::SettingsPage::selectComboBoxItem(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox, const uint32_t& value)
 {
     for (auto&& inspectable : comboBox.Items())
     {
-        auto item = inspectable.try_as<winrt::ComboBoxItem>();
+        auto item = inspectable.try_as<xaml::ComboBoxItem>();
         if (item && item.Tag().as<hstring>() == std::to_wstring(value))
         {
             comboBox.SelectedItem(inspectable);
@@ -216,7 +230,7 @@ void impl::SettingsPage::selectComboBoxItem(const winrt::Microsoft::UI::Xaml::Co
     }
 }
 
-uint32_t impl::SettingsPage::getSelectedComboBoxItemTag(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox)
+uint32_t implementation::SettingsPage::getSelectedComboBoxItemTag(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox)
 {
-    return std::stoi(comboBox.SelectedItem().as<winrt::ComboBoxItem>().Tag().as<hstring>().data());
+    return std::stoi(comboBox.SelectedItem().as<xaml::ComboBoxItem>().Tag().as<hstring>().data());
 }
