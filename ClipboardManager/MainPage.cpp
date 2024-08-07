@@ -64,7 +64,7 @@ implementation::MainPage::MainPage()
         QuickSettingsOpenState
     });
 
-    manager.registerAction(L"action", [this](clipmgr::notifs::ToastNotificationAction toastNotificationAction)
+    manager.registerAction(L"action", [this](clip::notifs::ToastNotificationAction toastNotificationAction)
     {
         auto params = toastNotificationAction.parameters();
         auto&& action = toastNotificationAction.action<std::wstring>();
@@ -75,9 +75,9 @@ implementation::MainPage::MainPage()
         LaunchAction(url);
     });
 
-    manager.registerAction(L"", [this](clipmgr::notifs::ToastNotificationAction)
+    manager.registerAction(L"", [this](clip::notifs::ToastNotificationAction)
     {
-        clipmgr::utils::getCurrentAppWindow().Show();
+        clip::utils::getCurrentAppWindow().Show();
     });
 }
 
@@ -97,20 +97,25 @@ void implementation::MainPage::AppClosing()
 
     if (userFilePath.has_value())
     {
-        clipmgr::ClipboardTrigger::saveClipboardTriggers(triggers, userFilePath.value());
+        clip::ClipboardTrigger::saveClipboardTriggers(triggers, userFilePath.value());
 
         if (localSettings.get<bool>(L"SaveMatchingResults").value_or(false) && clipboardActionViews.Size() > 0)
         {
             boost::property_tree::wptree tree{};
             boost::property_tree::read_xml(userFilePath.value().string(), tree);
-            tree.erase(L"settings.history");
 
-            for (auto&& view : clipboardActionViews)
+            auto settingsNode = tree.get_child_optional(L"settings");
+            if (settingsNode.has_value())
             {
-                tree.add(L"settings.history.item", std::wstring(view.Text()));
-            }
+                tree.erase(L"settings.history");
 
-            boost::property_tree::write_xml(userFilePath.value().string(), tree);
+                for (auto&& view : clipboardActionViews)
+                {
+                    tree.add(L"settings.history.item", std::wstring(view.Text()));
+                }
+
+                boost::property_tree::write_xml(userFilePath.value().string(), tree);
+            }
         }
     }
 }
@@ -120,7 +125,7 @@ winrt::async implementation::MainPage::Page_Loading(xaml::FrameworkElement const
 {
     loaded = false;
 
-    auto&& appWindow = clipmgr::utils::getCurrentAppWindow();
+    auto&& appWindow = clip::utils::getCurrentAppWindow();
     if (localSettings.get<bool>(L"StartWindowMinimized").value_or(false))
     {
         appWindow.Presenter().as<xaml::OverlappedPresenter>().Minimize();
@@ -169,7 +174,7 @@ void implementation::MainPage::ClipboadTriggersListPivot_Loaded(win::IInspectabl
             editor.ActionRegex(action.regex().str());
             editor.ActionEnabled(action.enabled());
             editor.IgnoreCase((action.regex().flags() & boost::regex_constants::icase) == boost::regex_constants::icase);
-            editor.UseSearch(action.matchMode() == clipmgr::MatchMode::Search);
+            editor.UseSearch(action.matchMode() == clip::MatchMode::Search);
 
             editor.FormatChanged({ this, &MainPage::Editor_FormatChanged });
             editor.LabelChanged({ this, &MainPage::Editor_LabelChanged });
@@ -242,7 +247,7 @@ winrt::async implementation::MainPage::CreateUserFileButton_Click(win::IInspecta
     if (storageFile)
     {
         std::filesystem::path userFilePath{ storageFile.Path().c_str() };
-        clipmgr::ClipboardTrigger::initializeSaveFile(userFilePath);
+        clip::ClipboardTrigger::initializeSaveFile(userFilePath);
 
         visualStateManager.goToState(OpenSaveFileState);
         ReloadTriggers();
@@ -367,11 +372,11 @@ void implementation::MainPage::CommandBarSaveButton_Click(win::IInspectable cons
     {
         try
         {
-            clipmgr::ClipboardTrigger::saveClipboardTriggers(triggers, optPath.value());
+            clip::ClipboardTrigger::saveClipboardTriggers(triggers, optPath.value());
         }
         catch (std::invalid_argument invalidArgument)
         {
-            auto message = clipmgr::utils::getNamedResource(L"ErrorMessage_CannotSaveTriggersFileNotFound")
+            auto message = clip::utils::getNamedResource(L"ErrorMessage_CannotSaveTriggersFileNotFound")
                 .value_or(L"Cannot save triggers, the specified user file cannot be found.");
             
             GenericErrorInfoBar().Message(message);
@@ -379,7 +384,7 @@ void implementation::MainPage::CommandBarSaveButton_Click(win::IInspectable cons
         }
         catch (boost::property_tree::xml_parser_error xmlParserError)
         {
-            auto message = clipmgr::utils::getNamedResource(L"ErrorMessage_CannotSaveTriggersXmlError")
+            auto message = clip::utils::getNamedResource(L"ErrorMessage_CannotSaveTriggersXmlError")
                 .value_or(L"Cannot save triggers, XML parsing error occured.");
 
             GenericErrorInfoBar().Message(message);
@@ -388,7 +393,7 @@ void implementation::MainPage::CommandBarSaveButton_Click(win::IInspectable cons
     }
     else
     {
-        auto message = clipmgr::utils::getNamedResource(L"ErrorMessage_CannotSaveTriggersNoUserFile")
+        auto message = clip::utils::getNamedResource(L"ErrorMessage_CannotSaveTriggersNoUserFile")
             .value_or(L"Cannot save triggers, no user file has been specified for this application.");
         GenericErrorInfoBar().Message(message);
         GenericErrorInfoBar().IsOpen(true);
@@ -435,8 +440,8 @@ winrt::async implementation::MainPage::AddTriggerButton_Click(win::IInspectable 
                 (ignoreCase ? boost::regex_constants::icase : 0u));
             auto useSearch = clipboardActionEditor.UseSearch();
 
-            auto trigger = clipmgr::ClipboardTrigger(label, format, regex, true);
-            trigger.updateMatchMode(useSearch ? clipmgr::MatchMode::Search : clipmgr::MatchMode::Match);
+            auto trigger = clip::ClipboardTrigger(label, format, regex, true);
+            trigger.updateMatchMode(useSearch ? clip::MatchMode::Search : clip::MatchMode::Match);
 
             triggers.push_back(trigger);
         }
@@ -513,7 +518,7 @@ void implementation::MainPage::Editor_RegexChanged(const winrt::ClipboardManager
             bool useSearch= args & 1;
             auto flags = ignoreCase ? boost::regex_constants::icase : 0;
             action.regex(boost::wregex(newRegex, flags));
-            action.updateMatchMode(useSearch ? clipmgr::MatchMode::Search : clipmgr::MatchMode::Match);
+            action.updateMatchMode(useSearch ? clip::MatchMode::Search : clip::MatchMode::Match);
         }
     }
 }
@@ -544,7 +549,7 @@ void implementation::MainPage::Restore()
 {
     // Load triggers:
     auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
-    if (userFilePath.has_value() && clipmgr::utils::pathExists(userFilePath.value()))
+    if (userFilePath.has_value() && clip::utils::pathExists(userFilePath.value()))
     {
         LoadTriggers(userFilePath.value());
 
@@ -559,17 +564,17 @@ void implementation::MainPage::Restore()
         }
         catch (const boost::property_tree::ptree_bad_path badPath)
         {
-            logger.debug(L"Failed to retreive history from user file: " + clipmgr::utils::convert(badPath.what()));
+            logger.debug(L"Failed to retreive history from user file: " + clip::utils::convert(badPath.what()));
         }
     }
 
     // Get activation hot key (shortcut that brings the app window to the foreground):
-    auto&& map = localSettings.get<std::map<std::wstring, clipmgr::reg_types>>(L"ActivationHotKey");
+    auto&& map = localSettings.get<std::map<std::wstring, clip::reg_types>>(L"ActivationHotKey");
     if (!map.empty())
     {
         auto key = std::get<std::wstring>(map[L"Key"])[0];
         auto mod = std::get<uint32_t>(map[L"Mod"]);
-        activationHotKey = clipmgr::HotKey(mod, key);
+        activationHotKey = clip::HotKey(mod, key);
     }
 
     activationHotKey.startListening([this]()
@@ -625,7 +630,7 @@ void implementation::MainPage::AddAction(const std::wstring& text, const bool& n
 
 bool implementation::MainPage::FindActions(const winrt::ClipboardManager::ClipboardActionView& actionView, std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text)
 {
-    auto matchMode = localSettings.get<clipmgr::MatchMode>(L"TriggerMatchMode");
+    auto matchMode = localSettings.get<clip::MatchMode>(L"TriggerMatchMode");
     bool hasMatch = false;
     for (auto&& action : triggers)
     {
@@ -652,11 +657,11 @@ void implementation::MainPage::SendNotification(const std::vector<std::pair<std:
         return;
     }
 
-    auto durationType = localSettings.get<clipmgr::notifs::NotificationDurationType>(L"NotificationDurationType").value_or(clipmgr::notifs::NotificationDurationType::Default);
-    auto scenarioType = localSettings.get<clipmgr::notifs::NotificationScenarioType>(L"NotificationScenarioType").value_or(clipmgr::notifs::NotificationScenarioType::Default);
-    auto soundType = localSettings.get<clipmgr::notifs::NotificationSoundType>(L"NotificationSoundType").value_or(clipmgr::notifs::NotificationSoundType::Default);
+    auto durationType = localSettings.get<clip::notifs::NotificationDurationType>(L"NotificationDurationType").value_or(clip::notifs::NotificationDurationType::Default);
+    auto scenarioType = localSettings.get<clip::notifs::NotificationScenarioType>(L"NotificationScenarioType").value_or(clip::notifs::NotificationScenarioType::Default);
+    auto soundType = localSettings.get<clip::notifs::NotificationSoundType>(L"NotificationSoundType").value_or(clip::notifs::NotificationSoundType::Default);
 
-    clipmgr::notifs::ToastNotification notif{};
+    clip::notifs::ToastNotification notif{};
     try
     {
         win::ResourceLoader resLoader{};
@@ -701,7 +706,7 @@ void implementation::MainPage::SendNotification(const std::vector<std::pair<std:
 void implementation::MainPage::ReloadTriggers()
 {
     auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
-    if (userFilePath.has_value() && clipmgr::utils::pathExists(userFilePath.value()) && LoadTriggers(userFilePath.value()))
+    if (userFilePath.has_value() && clip::utils::pathExists(userFilePath.value()) && LoadTriggers(userFilePath.value()))
     {
         auto vector = winrt::single_threaded_observable_vector<winrt::hstring>();
         for (auto&& view : clipboardActionViews)
@@ -744,7 +749,7 @@ bool implementation::MainPage::LoadTriggers(std::filesystem::path& path)
 {
     try
     {
-        triggers = clipmgr::ClipboardTrigger::loadClipboardTriggers(path);
+        triggers = clip::ClipboardTrigger::loadClipboardTriggers(path);
 
         visualStateManager.goToState(
             triggers.empty() 
@@ -756,33 +761,33 @@ bool implementation::MainPage::LoadTriggers(std::filesystem::path& path)
     catch (std::invalid_argument invalidArgument)
     {
         GenericErrorInfoBar().Message(
-            clipmgr::utils::getNamedResource(L"ErrorMessage_TriggersFileNotFound").value_or(L"Triggers file not found/available"));
+            clip::utils::getNamedResource(L"ErrorMessage_TriggersFileNotFound").value_or(L"Triggers file not found/available"));
         GenericErrorInfoBar().IsOpen(true);
     }
     catch (boost::property_tree::xml_parser_error xmlParserError)
     {
         GenericErrorInfoBar().Message(
-            clipmgr::utils::getNamedResource(L"ErrorMessage_XmlParserError").value_or(L"Triggers file has invalid markup data."));
+            clip::utils::getNamedResource(L"ErrorMessage_XmlParserError").value_or(L"Triggers file has invalid markup data."));
         GenericErrorInfoBar().IsOpen(true);
     }
     catch (boost::property_tree::ptree_bad_path badPath)
     {
-        hstring message = clipmgr::utils::getNamedResource(L"ErrorMessage_InvalidTriggersFile").value_or(L"Triggers file has invalid markup data.");
+        hstring message = clip::utils::getNamedResource(L"ErrorMessage_InvalidTriggersFile").value_or(L"Triggers file has invalid markup data.");
         hstring content = L"";
 
         auto wpath = badPath.path<boost::property_tree::wpath>();
-        auto path = clipmgr::utils::convert(wpath.dump());
+        auto path = clip::utils::convert(wpath.dump());
 
         if (path == L"settings.triggers")
         {
             // Missing <settings><triggers> node.
-            content = clipmgr::utils::getNamedResource(L"ErrorMessage_MissingTriggersNode")
+            content = clip::utils::getNamedResource(L"ErrorMessage_MissingTriggersNode")
                 .value_or(L"XML declaration is missing '<triggers>' node.\nCheck settings for an example of a valid XML declaration.");
         }
         else if (path == L"settings.actions")
         {
             // Old version of triggers file.
-            content = clipmgr::utils::getNamedResource(L"ErrorMessage_XmlOldVersion")
+            content = clip::utils::getNamedResource(L"ErrorMessage_XmlOldVersion")
                 .value_or(L"<actions> node has been renamed <triggers> and <action> <actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.");
         }
         else
@@ -802,7 +807,7 @@ void implementation::MainPage::LaunchAction(const std::wstring& url)
 {
     concurrency::create_task([this, url]() -> void
     {
-        clipmgr::utils::Launcher launcher{};
+        clip::utils::Launcher launcher{};
         launcher.launch(url).get();
         /*if (!winrt::Launcher::LaunchUriAsync(winrt::Uri(url)).get())
         {

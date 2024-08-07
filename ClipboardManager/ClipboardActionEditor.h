@@ -57,16 +57,16 @@ namespace winrt::ClipboardManager::implementation
         void RegexTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e);
 
     private:
-        const clipmgr::ui::VisualState<ClipboardActionEditor> EnabledState{ L"Enabled", 0, true };
-        const clipmgr::ui::VisualState<ClipboardActionEditor> DisabledState{ L"Disabled", 0, false };
-        const clipmgr::ui::VisualState<ClipboardActionEditor> NoLabelErrorState{ L"NoLabelError", 1, true };
-        const clipmgr::ui::VisualState<ClipboardActionEditor> LabelErrorState{ L"LabelError", 1, false };
-        const clipmgr::ui::VisualState<ClipboardActionEditor> NoFormatErrorState{ L"NoFormatError", 2, true };
-        const clipmgr::ui::VisualState<ClipboardActionEditor> FormatErrorState{ L"FormatError", 2, false };
-        const clipmgr::ui::VisualState<ClipboardActionEditor> NoRegexErrorState{ L"NoRegexError", 3, true };
-        const clipmgr::ui::VisualState<ClipboardActionEditor> RegexErrorState{ L"RegexError", 3, false };
-        const clipmgr::utils::Logger logger{ L"ClipboardActionEditor" };
-        clipmgr::ui::VisualStateManager<ClipboardActionEditor> visualStateManager{ *this };
+        const clip::ui::VisualState<ClipboardActionEditor> EnabledState{ L"Enabled", 0, true };
+        const clip::ui::VisualState<ClipboardActionEditor> DisabledState{ L"Disabled", 0, false };
+        const clip::ui::VisualState<ClipboardActionEditor> NoLabelErrorState{ L"NoLabelError", 1, true };
+        const clip::ui::VisualState<ClipboardActionEditor> LabelErrorState{ L"LabelError", 1, false };
+        const clip::ui::VisualState<ClipboardActionEditor> NoFormatErrorState{ L"NoFormatError", 2, true };
+        const clip::ui::VisualState<ClipboardActionEditor> FormatErrorState{ L"FormatError", 2, false };
+        const clip::ui::VisualState<ClipboardActionEditor> NoRegexErrorState{ L"NoRegexError", 3, true };
+        const clip::ui::VisualState<ClipboardActionEditor> RegexErrorState{ L"RegexError", 3, false };
+        const clip::utils::Logger logger{ L"ClipboardActionEditor" };
+        clip::ui::VisualStateManager<ClipboardActionEditor> visualStateManager{ *this };
 
         bool loaded = false;
         std::atomic_flag waitFlag{};

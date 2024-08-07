@@ -69,7 +69,7 @@ void implementation::ClipboardActionView::Removed(const winrt::event_token& toke
 
 void implementation::ClipboardActionView::AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled)
 {
-    actions.push_back(clipmgr::ClipboardTrigger(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), enabled));
+    actions.push_back(clip::ClipboardTrigger(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), enabled));
 }
 
 void implementation::ClipboardActionView::AddActions(const winrt::Windows::Foundation::IInspectable& inspectable)
@@ -86,7 +86,7 @@ void implementation::ClipboardActionView::AddActions(const actions_t actions)
         auto regex = action.GetAt(2);
 
         this->actions.push_back(
-            clipmgr::ClipboardTrigger(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), true)
+            clip::ClipboardTrigger(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), true)
         );
     }
 }
@@ -118,7 +118,7 @@ void implementation::ClipboardActionView::EditAction(const uint32_t& pos, const 
 
 bool implementation::ClipboardActionView::IndexOf(uint32_t& pos, const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled)
 {
-    clipmgr::ClipboardTrigger action{ std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), enabled };
+    clip::ClipboardTrigger action{ std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), enabled };
     for (size_t i = 0; i < actions.size(); i++)
     {
         if (actions[i] == action)
@@ -171,7 +171,7 @@ void implementation::ClipboardActionView::HyperlinkButton_Click(win::IInspectabl
         {
             if (label.value() == action.label())
             {
-                clipmgr::utils::Launcher launcher{};
+                clip::utils::Launcher launcher{};
                 auto text = std::wstring(_text);
                 launcher.launch(std::vformat(action.format(), std::make_wformat_args(text)));
             }
@@ -241,7 +241,7 @@ void implementation::ClipboardActionView::RootGrid_PointerPressed(win::IInspecta
     {
         visualStateManager.goToState(PointerPressedState);
 
-        clipmgr::utils::Launcher launcher{};
+        clip::utils::Launcher launcher{};
         if (actions.size() > 0)
         {
             auto&& action = actions[0];

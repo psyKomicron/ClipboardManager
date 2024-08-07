@@ -33,20 +33,20 @@ namespace xaml
 
 void implementation::SettingsPage::Page_Loading(winrt::FrameworkElement const&, winrt::IInspectable const&)
 {
-    clipmgr::utils::StartupTask startupTask{};
+    clip::utils::StartupTask startupTask{};
     AutoStartToggleSwitch().IsOn(startupTask.isTaskRegistered());
 
     SaveMatchingResultsToggleSwitch().IsOn(settings.get<bool>(L"SaveMatchingResults").value_or(false));
     StartMinimizedToggleSwitch().IsOn(settings.get<bool>(L"StartWindowMinimized").value_or(false));
     NotificationsToggleSwitch().IsOn(settings.get<bool>(L"NotificationsEnabled").value_or(false));
     
-    auto durationType = settings.get<clipmgr::notifs::NotificationDurationType>(L"NotificationDurationType").value_or(clipmgr::notifs::NotificationDurationType::Default);
-    DurationDefaultToggleButton().IsChecked(durationType == clipmgr::notifs::NotificationDurationType::Default);
-    DurationShortToggleButton().IsChecked(durationType == clipmgr::notifs::NotificationDurationType::Short);
-    DurationLongToggleButton().IsChecked(durationType == clipmgr::notifs::NotificationDurationType::Long);
+    auto durationType = settings.get<clip::notifs::NotificationDurationType>(L"NotificationDurationType").value_or(clip::notifs::NotificationDurationType::Default);
+    DurationDefaultToggleButton().IsChecked(durationType == clip::notifs::NotificationDurationType::Default);
+    DurationShortToggleButton().IsChecked(durationType == clip::notifs::NotificationDurationType::Short);
+    DurationLongToggleButton().IsChecked(durationType == clip::notifs::NotificationDurationType::Long);
 
-    auto scenarioType = settings.get<clipmgr::notifs::NotificationScenarioType>(L"NotificationScenarioType").value_or(clipmgr::notifs::NotificationScenarioType::Default);
-    auto soundType = settings.get<clipmgr::notifs::NotificationSoundType>(L"NotificationSoundType").value_or(clipmgr::notifs::NotificationSoundType::Default);
+    auto scenarioType = settings.get<clip::notifs::NotificationScenarioType>(L"NotificationScenarioType").value_or(clip::notifs::NotificationScenarioType::Default);
+    auto soundType = settings.get<clip::notifs::NotificationSoundType>(L"NotificationSoundType").value_or(clip::notifs::NotificationSoundType::Default);
     selectComboBoxItem(NotificationScenariosComboBox(), (int32_t)scenarioType);
     selectComboBoxItem(NotificationSoundComboBox(), (int32_t)soundType);
 
@@ -67,7 +67,7 @@ void implementation::SettingsPage::AutoStartToggleSwitch_Toggled(winrt::IInspect
     check_loaded(loaded);
     auto sender = s.as<xaml::ToggleSwitch>();
 
-    clipmgr::utils::StartupTask startupTask{};
+    clip::utils::StartupTask startupTask{};
     if (!startupTask.isTaskRegistered() && sender.IsOn())
     {
         startupTask.set();
@@ -114,7 +114,7 @@ void implementation::SettingsPage::DurationToggleButton_Click(winrt::IInspectabl
     }
 
     auto tag = std::stoi(std::wstring(senderToggleButton.Tag().as<hstring>()));
-    settings.insert(L"NotificationDurationType", static_cast<clipmgr::notifs::NotificationDurationType>(tag));
+    settings.insert(L"NotificationDurationType", static_cast<clip::notifs::NotificationDurationType>(tag));
 }
 
 void implementation::SettingsPage::NotificationScenariosComboBox_SelectionChanged(winrt::IInspectable const&, xaml::SelectionChangedEventArgs const& e)
@@ -155,7 +155,7 @@ winrt::async implementation::SettingsPage::CreateExampleTriggersFileButton_Click
     if (storageFile)
     {
         std::filesystem::path userFilePath{ storageFile.Path().c_str() };
-        clipmgr::ClipboardTrigger::initializeSaveFile(userFilePath);
+        clip::ClipboardTrigger::initializeSaveFile(userFilePath);
     }
 }
 
@@ -170,7 +170,7 @@ winrt::async implementation::SettingsPage::OverwriteExampleTriggersFileButton_Cl
     {
         std::filesystem::path userFilePath{ storageFile.Path().c_str() };
         settings.insert(L"UserFilePath", userFilePath);
-        clipmgr::ClipboardTrigger::initializeSaveFile(userFilePath);
+        clip::ClipboardTrigger::initializeSaveFile(userFilePath);
     }
 }
 

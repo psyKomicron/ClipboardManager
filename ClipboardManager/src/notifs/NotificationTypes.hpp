@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-namespace clipmgr::notifs
+namespace clip::notifs
 {
     enum class NotificationDurationType : int
     {

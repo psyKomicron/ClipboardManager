@@ -7,7 +7,7 @@
 #include <functional>
 #include <memory>
 
-bool clipmgr::utils::StartupTask::isTaskRegistered()
+bool clip::utils::StartupTask::isTaskRegistered()
 {
     //RegCreateKeyW(HKEY_CURRENT_USER)
     auto lresult = RegGetValueW(
@@ -22,7 +22,7 @@ bool clipmgr::utils::StartupTask::isTaskRegistered()
     return lresult == ERROR_SUCCESS;
 }
 
-void clipmgr::utils::StartupTask::set()
+void clip::utils::StartupTask::set()
 {
     if (!isTaskRegistered())
     {
@@ -32,7 +32,7 @@ void clipmgr::utils::StartupTask::set()
         DWORD dwDisposition{};
         if (RegCreateKeyExW(hKey, regAutoRunKey.c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, nullptr, &subKey, &dwDisposition) == ERROR_SUCCESS)
         {
-            clipmgr::utils::managed_resource<HKEY, std::function<LSTATUS(HKEY)>> hKeyPtr2{ subKey, RegCloseKey };
+            clip::utils::managed_resource<HKEY, std::function<LSTATUS(HKEY)>> hKeyPtr2{ subKey, RegCloseKey };
             
             auto startupCommandLine = getStartupCommandLine();
             
@@ -60,7 +60,7 @@ void clipmgr::utils::StartupTask::set()
     }
 }
 
-void clipmgr::utils::StartupTask::remove()
+void clip::utils::StartupTask::remove()
 {
     if (isTaskRegistered())
     {
@@ -68,7 +68,7 @@ void clipmgr::utils::StartupTask::remove()
         DWORD dwDisposition{};
         if (RegOpenKeyExW(hKey, regAutoRunKey.c_str(), 0, KEY_SET_VALUE, &subKey) == ERROR_SUCCESS)
         {
-            clipmgr::utils::managed_resource<HKEY, std::function<LSTATUS(HKEY)>> hKeyPtr2{ subKey, RegCloseKey };
+            clip::utils::managed_resource<HKEY, std::function<LSTATUS(HKEY)>> hKeyPtr2{ subKey, RegCloseKey };
 
             auto result = RegDeleteValueW(subKey, regKeyName.c_str());
 
@@ -84,13 +84,13 @@ void clipmgr::utils::StartupTask::remove()
     }
 }
 
-std::wstring clipmgr::utils::StartupTask::getStartupCommandLine()
+std::wstring clip::utils::StartupTask::getStartupCommandLine()
 {
     auto&& executablePath = getModulePath();
     return std::vformat(L"\"{}\" -as", std::make_wformat_args(executablePath));
 }
 
-std::wstring clipmgr::utils::StartupTask::getModulePath()
+std::wstring clip::utils::StartupTask::getModulePath()
 {
     wchar_t* ptr{};
     auto err = _get_wpgmptr(&ptr);

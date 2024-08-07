@@ -41,23 +41,23 @@ namespace winrt::ClipboardManager::implementation
         winrt::async AddTriggerButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
     private:
-        const clipmgr::utils::Logger logger{ L"MainPage" };
-        const clipmgr::ui::VisualState<MainPage> OpenSaveFileState{ L"CreateNewActions", 0, false };
-        const clipmgr::ui::VisualState<MainPage> ViewActionsState{ L"ViewActions", 0, false };
-        const clipmgr::ui::VisualState<MainPage> DisplayClipboardTriggersState{ L"DisplayClipboardTriggers", 1, false };
-        const clipmgr::ui::VisualState<MainPage> NoClipboardTriggersToDisplayState{ L"NoClipboardTriggersToDisplay", 1, false };
-        const clipmgr::ui::VisualState<MainPage> FirstStartupState{ L"FirstStartup", 2, false };
-        const clipmgr::ui::VisualState<MainPage> NormalStartupState{ L"NormalStartup", 2, true };
-        const clipmgr::ui::VisualState<MainPage> QuickSettingsClosedState{ L"QuickSettingsClosed", 3, true };
-        const clipmgr::ui::VisualState<MainPage> QuickSettingsOpenState{ L"QuickSettingsOpen", 3, false };
+        const clip::utils::Logger logger{ L"MainPage" };
+        const clip::ui::VisualState<MainPage> OpenSaveFileState{ L"CreateNewActions", 0, false };
+        const clip::ui::VisualState<MainPage> ViewActionsState{ L"ViewActions", 0, false };
+        const clip::ui::VisualState<MainPage> DisplayClipboardTriggersState{ L"DisplayClipboardTriggers", 1, false };
+        const clip::ui::VisualState<MainPage> NoClipboardTriggersToDisplayState{ L"NoClipboardTriggersToDisplay", 1, false };
+        const clip::ui::VisualState<MainPage> FirstStartupState{ L"FirstStartup", 2, false };
+        const clip::ui::VisualState<MainPage> NormalStartupState{ L"NormalStartup", 2, true };
+        const clip::ui::VisualState<MainPage> QuickSettingsClosedState{ L"QuickSettingsClosed", 3, true };
+        const clip::ui::VisualState<MainPage> QuickSettingsOpenState{ L"QuickSettingsOpen", 3, false };
 
         winrt::Microsoft::UI::Windowing::OverlappedPresenter presenter{ nullptr };
         bool loaded = false;
-        clipmgr::ui::VisualStateManager<MainPage> visualStateManager{ *this };
-        clipmgr::Settings localSettings{};
-        clipmgr::notifs::ToastNotificationHandler& manager = clipmgr::notifs::ToastNotificationHandler::getDefault();
-        clipmgr::HotKey activationHotKey{ MOD_ALT, L' ' };
-        std::vector<clipmgr::ClipboardTrigger> triggers{};
+        clip::ui::VisualStateManager<MainPage> visualStateManager{ *this };
+        clip::Settings localSettings{};
+        clip::notifs::ToastNotificationHandler& manager = clip::notifs::ToastNotificationHandler::getDefault();
+        clip::HotKey activationHotKey{ MOD_ALT, L' ' };
+        std::vector<clip::ClipboardTrigger> triggers{};
         winrt::Windows::ApplicationModel::DataTransfer::Clipboard::ContentChanged_revoker clipboardContentChangedrevoker{};
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews
             = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();

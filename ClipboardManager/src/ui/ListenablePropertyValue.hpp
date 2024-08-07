@@ -49,7 +49,7 @@ namespace clip::ui
                 const boost::regex functionExtractor{ R"(void __cdecl ([A-z]*::)*([A-z]*)\(.*\))" };
                 boost::cmatch match{};
                 std::ignore = boost::regex_match(callerLocation.function_name(), match, functionExtractor);
-                winrt::hstring functionName{ clipmgr::utils::convert(match[2]) };
+                winrt::hstring functionName{ clip::utils::convert(match[2]) };
 
                 _propName = functionName;
 
@@ -69,10 +69,20 @@ namespace clip::ui
 
         virtual winrt::Windows::Foundation::IInspectable asInspectable() PURE;
 
-        void raisePropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args);
+        void raisePropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args)
+        {
+            e_propertyChanged(asInspectable(), args);
+        }
 
-        winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& value);
-        void PropertyChanged(winrt::event_token const& token);
+        winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& value)
+        {
+            return e_propertyChanged.add(value);
+        }
+
+        void PropertyChanged(winrt::event_token const& token)
+        {
+            e_propertyChanged.remove(token);
+        }
 
     private:
         winrt::event<winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> e_propertyChanged;

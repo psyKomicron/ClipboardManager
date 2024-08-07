@@ -3,7 +3,7 @@
 
 #include <src/notifs/win_toasts.hpp>
 
-namespace clipmgr
+namespace clip
 {
     notifs::ToastNotificationHandler::ToastNotificationHandler()
     {
@@ -51,8 +51,8 @@ namespace clipmgr
         logger.info(L"Ensuring that DesktopNotificationManagerCompat has been registered.");
         try
         {
-            clipmgr::notifs::toasts::compat::DesktopNotificationManagerCompat::Register(L"psykomicron.ClipboardManagerV2", L"ClipboardManager", L"");
-            clipmgr::notifs::toasts::compat::DesktopNotificationManagerCompat::OnActivated([this](clipmgr::notifs::toasts::compat::DesktopNotificationActivatedEventArgsCompat args)
+            clip::notifs::toasts::compat::DesktopNotificationManagerCompat::Register(L"psykomicron.ClipboardManagerV2", L"ClipboardManager", L"");
+            clip::notifs::toasts::compat::DesktopNotificationManagerCompat::OnActivated([this](clip::notifs::toasts::compat::DesktopNotificationActivatedEventArgsCompat args)
             {
                 try
                 {
@@ -84,7 +84,7 @@ namespace clipmgr
     }
 }
 
-namespace clipmgr
+namespace clip
 {
     std::map<std::wstring, std::wstring> notifs::ToastNotificationAction::parameters()
     {

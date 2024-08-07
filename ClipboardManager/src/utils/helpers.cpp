@@ -13,23 +13,23 @@
 #include <string>
 #include <iostream>
 
-winrt::Microsoft::UI::Windowing::AppWindow clipmgr::utils::getCurrentAppWindow()
+winrt::Microsoft::UI::Windowing::AppWindow clip::utils::getCurrentAppWindow()
 {
     auto hwnd = GetActiveWindow();
     return getCurrentAppWindow(hwnd);
 }
 
-winrt::Microsoft::UI::Windowing::AppWindow clipmgr::utils::getCurrentAppWindow(const HWND& hwnd)
+winrt::Microsoft::UI::Windowing::AppWindow clip::utils::getCurrentAppWindow(const HWND& hwnd)
 {
     return winrt::Microsoft::UI::Windowing::AppWindow::GetFromWindowId(winrt::Microsoft::UI::GetWindowIdFromWindow(hwnd));
 }
 
-bool clipmgr::utils::pathExists(const std::filesystem::path& path)
+bool clip::utils::pathExists(const std::filesystem::path& path)
 {
     return PathFileExistsW(path.wstring().c_str());
 }
 
-clipmgr::utils::managed_file_handle clipmgr::utils::createFile(const std::filesystem::path& path)
+clip::utils::managed_file_handle clip::utils::createFile(const std::filesystem::path& path)
 {
     auto handle = CreateFileW(path.wstring().c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW, 0, nullptr);
 
@@ -38,10 +38,10 @@ clipmgr::utils::managed_file_handle clipmgr::utils::createFile(const std::filesy
         throw std::runtime_error(std::format("Failed to create file: '{}'", path.string()));
     }
 
-    return clipmgr::utils::managed_file_handle(handle);
+    return clip::utils::managed_file_handle(handle);
 }
 
-void clipmgr::utils::createDirectory(const std::filesystem::path& path)
+void clip::utils::createDirectory(const std::filesystem::path& path)
 {
     if (!CreateDirectoryW(path.wstring().c_str(), nullptr))
     {
@@ -49,7 +49,7 @@ void clipmgr::utils::createDirectory(const std::filesystem::path& path)
     }
 }
 
-std::optional<std::filesystem::path> clipmgr::utils::tryGetKnownFolderPath(const GUID& knownFolderId)
+std::optional<std::filesystem::path> clip::utils::tryGetKnownFolderPath(const GUID& knownFolderId)
 {
     wchar_t* pWstr = nullptr;
     if (SHGetKnownFolderPath(FOLDERID_Documents, KF_FLAG_DEFAULT, nullptr, &pWstr) == S_OK && pWstr != nullptr)
@@ -64,7 +64,7 @@ std::optional<std::filesystem::path> clipmgr::utils::tryGetKnownFolderPath(const
     }
 }
 
-std::optional<winrt::hstring> clipmgr::utils::getNamedResource(const winrt::hstring& name)
+std::optional<winrt::hstring> clip::utils::getNamedResource(const winrt::hstring& name)
 {
     try
     {
@@ -78,12 +78,12 @@ std::optional<winrt::hstring> clipmgr::utils::getNamedResource(const winrt::hstr
     }
 }
 
-clipmgr::utils::WindowInfo* clipmgr::utils::getWindowInfo(const HWND& windowHandle)
+clip::utils::WindowInfo* clip::utils::getWindowInfo(const HWND& windowHandle)
 {
     return reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(windowHandle, GWLP_USERDATA));
 }
 
-std::wstring clipmgr::utils::convert(const std::string& string)
+std::wstring clip::utils::convert(const std::string& string)
 {
     std::wstring wstring{};
     wstring.resize(string.size(), L'\0');
@@ -98,27 +98,27 @@ std::wstring clipmgr::utils::convert(const std::string& string)
 }
 
 
-clipmgr::utils::managed_dispatcher_queue_controller::managed_dispatcher_queue_controller(const winrt::Microsoft::UI::Dispatching::DispatcherQueueController& controller)
+clip::utils::managed_dispatcher_queue_controller::managed_dispatcher_queue_controller(const winrt::Microsoft::UI::Dispatching::DispatcherQueueController& controller)
 {
     dispatcherQueueController = controller;
 }
 
-clipmgr::utils::managed_dispatcher_queue_controller::~managed_dispatcher_queue_controller()
+clip::utils::managed_dispatcher_queue_controller::~managed_dispatcher_queue_controller()
 {
     dispatcherQueueController.ShutdownQueue();
 }
 
-clipmgr::utils::managed_file_handle::managed_file_handle(const HANDLE& fileHandle)
+clip::utils::managed_file_handle::managed_file_handle(const HANDLE& fileHandle)
 {
     handle = fileHandle;
 }
 
-clipmgr::utils::managed_file_handle::~managed_file_handle()
+clip::utils::managed_file_handle::~managed_file_handle()
 {
     close();
 }
 
-void clipmgr::utils::managed_file_handle::close()
+void clip::utils::managed_file_handle::close()
 {
     if (!handleClosed && !invalid())
     {
@@ -128,28 +128,28 @@ void clipmgr::utils::managed_file_handle::close()
     }
 }
 
-bool clipmgr::utils::managed_file_handle::invalid() const
+bool clip::utils::managed_file_handle::invalid() const
 {
     return handle == INVALID_HANDLE_VALUE || handle == nullptr;
 }
 
 
-clipmgr::utils::PropChangedEventArgs::PropChangedEventArgs(const std::source_location& sourceLocation) :
+clip::utils::PropChangedEventArgs::PropChangedEventArgs(const std::source_location& sourceLocation) :
     winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(getCallerName(sourceLocation))
 {
 }
 
-winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs clipmgr::utils::PropChangedEventArgs::create(std::source_location sourceLocation)
+winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs clip::utils::PropChangedEventArgs::create(std::source_location sourceLocation)
 {
     return winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(getCallerName(sourceLocation));
 }
 
-std::wstring clipmgr::utils::PropChangedEventArgs::getCallerName(const std::source_location& sourceLocation)
+std::wstring clip::utils::PropChangedEventArgs::getCallerName(const std::source_location& sourceLocation)
 {
     const boost::regex functionExtractor{ R"(void __cdecl ([A-z]*::)*([A-z]*)\(.*\))" };
     boost::cmatch match{};
     std::ignore = boost::regex_match(sourceLocation.function_name(), match, functionExtractor);
-    std::wstring functionName = clipmgr::utils::convert(match[2]);
+    std::wstring functionName = clip::utils::convert(match[2]);
 
     return functionName;
 }

@@ -4,7 +4,7 @@
 #include <map>
 #include <functional>
 
-namespace clipmgr::notifs
+namespace clip::notifs
 {
     class ToastNotificationAction
     {
@@ -39,7 +39,7 @@ namespace clipmgr::notifs
         void registerAction(const std::wstring& actionName, const std::function<void(ToastNotificationAction)>& callback);
 
     private:
-        clipmgr::utils::Logger logger{ L"ToastNotificationHandler" };
+        clip::utils::Logger logger{ L"ToastNotificationHandler" };
         bool registered = false;
         std::map<std::wstring, std::function<void(ToastNotificationAction)>> callbackMap{};
 

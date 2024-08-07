@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 
-namespace clipmgr::ui
+namespace clip::ui
 {
     namespace xaml = winrt::Microsoft::UI::Xaml;
 
@@ -153,7 +153,7 @@ namespace clipmgr::ui
     private:
         xaml::Controls::Control control{ nullptr };
         std::map<int32_t, std::vector<VisualState<T>>> _visualStates;
-        clipmgr::utils::Logger logger{ L"VisualStateManager" };
+        clip::utils::Logger logger{ L"VisualStateManager" };
     };
 }
 

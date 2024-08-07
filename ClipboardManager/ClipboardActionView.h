@@ -44,17 +44,17 @@ namespace winrt::ClipboardManager::implementation
         void RootGrid_PointerReleased(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 
     private:
-        using VisualState = clipmgr::ui::VisualState<ClipboardActionView>;
+        using VisualState = clip::ui::VisualState<ClipboardActionView>;
         const VisualState OptionsClosedState{ L"OptionsClosed", 0, true };
         const VisualState OptionsOpenState{ L"OptionsOpen", 0, false };
         const VisualState NormalState{ L"Normal", 1, true };
         const VisualState PointerOverState{ L"PointerOver", 1, false };
         const VisualState PointerPressedState{ L"PointerPressed", 1, false };
 
-        clipmgr::utils::Logger logger{ L"ClipboardActionView" };
-        std::vector<clipmgr::ClipboardTrigger> actions{};
+        clip::utils::Logger logger{ L"ClipboardActionView" };
+        std::vector<clip::ClipboardTrigger> actions{};
         winrt::hstring _text{};
-        clipmgr::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
+        clip::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
         winrt::event<event_removed_t> e_removed{};
         std::atomic_flag teachingTipsWaitFlag{};
     };

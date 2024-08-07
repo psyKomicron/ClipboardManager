@@ -1,5 +1,5 @@
 #pragma once
-namespace clipmgr::utils
+namespace clip::utils
 {
     class StartupTask
     {

@@ -207,7 +207,6 @@
       <DependentUpon>HostControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="src\ui\ListenablePropertyValue.cpp" />
     <ClCompile Include="src\utils\Launcher.cpp" />
     <ClCompile Include="src\Process.cpp" />
     <ClCompile Include="src\utils\Logger.cpp" />
@@ -237,7 +236,6 @@
     <!-- Island-support: This generated file implements some activation factories -->
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="ClipboardManager.cpp" />
-    <ClCompile Include="src\Settings.cpp" />
     <ClCompile Include="src\utils\helpers.cpp" />
     <ClCompile Include="src\ui\VisualStateManager.cpp" />
     <ClCompile Include="src\utils\StartupTask.cpp" />

@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-clipmgr::ClipboardTrigger::ClipboardTrigger(const std::wstring& label, const std::wstring& format, const boost::wregex& regex, const bool& enabled) :
+clip::ClipboardTrigger::ClipboardTrigger(const std::wstring& label, const std::wstring& format, const boost::wregex& regex, const bool& enabled) :
     _label{ label },
     _format{ format },
     _regex{ regex },
@@ -15,11 +15,11 @@ clipmgr::ClipboardTrigger::ClipboardTrigger(const std::wstring& label, const std
 {
 }
 
-std::vector<clipmgr::ClipboardTrigger> clipmgr::ClipboardTrigger::loadClipboardTriggers(const std::filesystem::path& userFilePath)
+std::vector<clip::ClipboardTrigger> clip::ClipboardTrigger::loadClipboardTriggers(const std::filesystem::path& userFilePath)
 {
     if (utils::pathExists(userFilePath))
     {
-        std::vector<clipmgr::ClipboardTrigger> urls{};
+        std::vector<clip::ClipboardTrigger> urls{};
         boost::property_tree::wptree tree{};
 
         try
@@ -51,7 +51,7 @@ std::vector<clipmgr::ClipboardTrigger> clipmgr::ClipboardTrigger::loadClipboardT
                     triggerMatchMode = useSearch ? MatchMode::Search : MatchMode::Match;
                 }
                 
-                auto clipboardTrigger = clipmgr::ClipboardTrigger(label, url, boost::wregex(regexNode.data(), flags), enabled);
+                auto clipboardTrigger = clip::ClipboardTrigger(label, url, boost::wregex(regexNode.data(), flags), enabled);
                 clipboardTrigger._matchMode = triggerMatchMode;
 
                 urls.push_back(std::move(clipboardTrigger));
@@ -77,7 +77,7 @@ std::vector<clipmgr::ClipboardTrigger> clipmgr::ClipboardTrigger::loadClipboardT
     }
 }
 
-void clipmgr::ClipboardTrigger::saveClipboardTriggers(const std::vector<ClipboardTrigger>& triggersList, const std::filesystem::path& userFilePath)
+void clip::ClipboardTrigger::saveClipboardTriggers(const std::vector<ClipboardTrigger>& triggersList, const std::filesystem::path& userFilePath)
 {
     if (utils::pathExists(userFilePath))
     {
@@ -117,7 +117,7 @@ void clipmgr::ClipboardTrigger::saveClipboardTriggers(const std::vector<Clipboar
 }
 
 
-void clipmgr::ClipboardTrigger::firstTimeInitialization(const std::filesystem::path& path, boost::property_tree::wptree tree)
+void clip::ClipboardTrigger::firstTimeInitialization(const std::filesystem::path& path, boost::property_tree::wptree tree)
 {
     auto&& actions = tree.put(L"settings.triggers", L"");
     actions.add(L"trigger.re", L"[A-Z]{,3}");
@@ -128,9 +128,9 @@ void clipmgr::ClipboardTrigger::firstTimeInitialization(const std::filesystem::p
     boost::property_tree::write_xml(path.string(), tree);
 }
 
-void clipmgr::ClipboardTrigger::initializeSaveFile(const std::filesystem::path& userFilePath)
+void clip::ClipboardTrigger::initializeSaveFile(const std::filesystem::path& userFilePath)
 {
-    if (clipmgr::utils::pathExists(userFilePath) && clipmgr::utils::pathExists(userFilePath.parent_path()))
+    if (clip::utils::pathExists(userFilePath) && clip::utils::pathExists(userFilePath.parent_path()))
     {
         boost::property_tree::wptree tree{};
         firstTimeInitialization(userFilePath, tree);
@@ -141,57 +141,57 @@ void clipmgr::ClipboardTrigger::initializeSaveFile(const std::filesystem::path& 
     }
 }
 
-std::wstring clipmgr::ClipboardTrigger::label() const
+std::wstring clip::ClipboardTrigger::label() const
 {
     return _label;
 }
 
-void clipmgr::ClipboardTrigger::label(const std::wstring& value)
+void clip::ClipboardTrigger::label(const std::wstring& value)
 {
     _label = value;
 }
 
-std::wstring clipmgr::ClipboardTrigger::format() const
+std::wstring clip::ClipboardTrigger::format() const
 {
     return _format;
 }
 
-void clipmgr::ClipboardTrigger::format(const std::wstring& value)
+void clip::ClipboardTrigger::format(const std::wstring& value)
 {
     _format = value;
 }
 
-boost::wregex clipmgr::ClipboardTrigger::regex() const
+boost::wregex clip::ClipboardTrigger::regex() const
 {
     return _regex;
 }
 
-void clipmgr::ClipboardTrigger::regex(const boost::wregex& regex)
+void clip::ClipboardTrigger::regex(const boost::wregex& regex)
 {
     _regex = regex;
 }
 
-bool clipmgr::ClipboardTrigger::enabled() const
+bool clip::ClipboardTrigger::enabled() const
 {
     return _enabled;
 }
 
-void clipmgr::ClipboardTrigger::enabled(const bool& value)
+void clip::ClipboardTrigger::enabled(const bool& value)
 {
     _enabled = value;
 }
 
-std::optional<clipmgr::MatchMode> clipmgr::ClipboardTrigger::matchMode() const
+std::optional<clip::MatchMode> clip::ClipboardTrigger::matchMode() const
 {
     return _matchMode;
 }
 
-void clipmgr::ClipboardTrigger::updateMatchMode(const MatchMode& mode)
+void clip::ClipboardTrigger::updateMatchMode(const MatchMode& mode)
 {
     _matchMode = mode;
 }
 
-bool clipmgr::ClipboardTrigger::match(const std::wstring& string, const std::optional<MatchMode>& defaultMatchMode) const
+bool clip::ClipboardTrigger::match(const std::wstring& string, const std::optional<MatchMode>& defaultMatchMode) const
 {
     auto matchMode = _matchMode.has_value()
         ? _matchMode.value()
@@ -201,7 +201,7 @@ bool clipmgr::ClipboardTrigger::match(const std::wstring& string, const std::opt
         || (matchMode == MatchMode::Search && boost::regex_search(string, _regex));
 }
 
-bool clipmgr::ClipboardTrigger::operator==(ClipboardTrigger& other)
+bool clip::ClipboardTrigger::operator==(ClipboardTrigger& other)
 {
     return _enabled == other.enabled()
         &&_label == other.label()

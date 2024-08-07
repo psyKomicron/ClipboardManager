@@ -12,7 +12,7 @@ using namespace winrt;
 using namespace Windows::ApplicationModel;
 using namespace Windows::UI::Notifications;
 using namespace Windows::Foundation::Collections;
-using namespace clipmgr::notifs::toasts::compat;
+using namespace clip::notifs::toasts::compat;
 
 struct Win32AppInfo
 {

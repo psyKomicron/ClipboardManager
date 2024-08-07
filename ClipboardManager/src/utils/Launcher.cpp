@@ -13,7 +13,7 @@ namespace winrt
     using namespace winrt::Windows::System;
 }
 
-winrt::async clipmgr::utils::Launcher::launch(const std::wstring& uri)
+winrt::async clip::utils::Launcher::launch(const std::wstring& uri)
 {
     if (settings.get<bool>(L"UseCustomProcess").value_or(false))
     {

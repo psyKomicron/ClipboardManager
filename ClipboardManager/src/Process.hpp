@@ -1,5 +1,5 @@
 #pragma once
-namespace clipmgr
+namespace clip
 {
     class Process
     {

@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace clipmgr::notifs::toasts::compat
+namespace clip::notifs::toasts::compat
 {
     constexpr auto TOAST_ACTIVATED_LAUNCH_ARG = "-ToastActivated";
 

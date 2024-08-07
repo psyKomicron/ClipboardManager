@@ -17,7 +17,7 @@ namespace winrt::ClipboardManager::implementation
         void UserControl_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
     private:
-        const clipmgr::ui::VisualStateManager<HostControl> visualStateManager{ *this };
+        const clip::ui::VisualStateManager<HostControl> visualStateManager{ *this };
         winrt::Windows::Foundation::IInspectable _headerContent{};
         winrt::Windows::Foundation::IInspectable _hostContent{};
     };

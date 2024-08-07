@@ -5,9 +5,9 @@
 
 #include <iostream>
 
-std::atomic_bool clipmgr::utils::Console::consoleInitialized = false;
+std::atomic_bool clip::utils::Console::consoleInitialized = false;
 
-clipmgr::utils::Console::Console()
+clip::utils::Console::Console()
 {
     if (consoleInitialized) return;
 
@@ -26,7 +26,7 @@ clipmgr::utils::Console::Console()
     consoleInitialized = true;
 }
 
-clipmgr::utils::Console::~Console()
+clip::utils::Console::~Console()
 {
     if (consoleAllocated)
     {
@@ -34,17 +34,17 @@ clipmgr::utils::Console::~Console()
     }
 }
 
-void clipmgr::utils::Console::test()
+void clip::utils::Console::test()
 {
     std::wcout << L"Console test" << std::endl;
 }
 
-bool clipmgr::utils::Console::initialized()
+bool clip::utils::Console::initialized()
 {
     return consoleInitialized;
 }
 
-void clipmgr::utils::Console::redirectConsole()
+void clip::utils::Console::redirectConsole()
 {
     file_t fp = nullptr;
     
@@ -73,7 +73,7 @@ void clipmgr::utils::Console::redirectConsole()
     std::cin.clear();
 }
 
-void clipmgr::utils::Console::releaseConsole()
+void clip::utils::Console::releaseConsole()
 {
     file_t fp = nullptr;
 
@@ -84,7 +84,7 @@ void clipmgr::utils::Console::releaseConsole()
     std::ignore = FreeConsole();
 }
 
-void clipmgr::utils::Console::resizeConsole(const uint16_t& minLength)
+void clip::utils::Console::resizeConsole(const uint16_t& minLength)
 {
     CONSOLE_SCREEN_BUFFER_INFO conInfo{};
     auto outHandle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -102,22 +102,22 @@ void clipmgr::utils::Console::resizeConsole(const uint16_t& minLength)
     SetConsoleScreenBufferSize(outHandle, conInfo.dwSize);
 }
 
-bool clipmgr::utils::Console::hasInput() const
+bool clip::utils::Console::hasInput() const
 {
     return GetStdHandle(STD_INPUT_HANDLE) != INVALID_HANDLE_VALUE;
 }
 
-bool clipmgr::utils::Console::hasOutput() const
+bool clip::utils::Console::hasOutput() const
 {
     return GetStdHandle(STD_OUTPUT_HANDLE) != INVALID_HANDLE_VALUE;
 }
 
-bool clipmgr::utils::Console::hasErr() const
+bool clip::utils::Console::hasErr() const
 {
     return GetStdHandle(STD_ERROR_HANDLE) != INVALID_HANDLE_VALUE;
 }
 
-void clipmgr::utils::Console::redirectCon(const std::string& con, const std::string& mode, FILE* fp, FILE* io)
+void clip::utils::Console::redirectCon(const std::string& con, const std::string& mode, FILE* fp, FILE* io)
 {
     if (freopen_s(&fp, con.c_str(), mode.c_str(), io) != 0)
     {
@@ -126,7 +126,7 @@ void clipmgr::utils::Console::redirectCon(const std::string& con, const std::str
     setvbuf(io, nullptr, _IONBF, 0);
 }
 
-void clipmgr::utils::Console::releaseCon(clipmgr::utils::Console::file_t fp, const std::string& mode, clipmgr::utils::Console::file_t io)
+void clip::utils::Console::releaseCon(clip::utils::Console::file_t fp, const std::string& mode, clip::utils::Console::file_t io)
 {
     freopen_s(&fp, "NUL:", mode.c_str(), io);
     setvbuf(io, nullptr, _IONBF, 0);

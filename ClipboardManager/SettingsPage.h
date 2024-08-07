@@ -34,12 +34,12 @@ namespace winrt::ClipboardManager::implementation
         void TriggersStorageExpander_Expanding(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args);
 
     private:
-        const clipmgr::ui::VisualState<SettingsPage> ClearSettingsDefaultState{ L"ClearSettingsDefault", 0, true };
-        const clipmgr::ui::VisualState<SettingsPage> ClearSettingsShowIconState{ L"ClearSettingsShowIcon", 0, false };
-        clipmgr::Settings settings{};
+        const clip::ui::VisualState<SettingsPage> ClearSettingsDefaultState{ L"ClearSettingsDefault", 0, true };
+        const clip::ui::VisualState<SettingsPage> ClearSettingsShowIconState{ L"ClearSettingsShowIcon", 0, false };
+        clip::Settings settings{};
         bool loaded = false;
-        clipmgr::utils::Logger logger{ L"SettingsPage" };
-        clipmgr::ui::VisualStateManager<SettingsPage> visualStateManager{ *this };
+        clip::utils::Logger logger{ L"SettingsPage" };
+        clip::ui::VisualStateManager<SettingsPage> visualStateManager{ *this };
 
         void updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key);
         void selectComboBoxItem(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox, const uint32_t& value);

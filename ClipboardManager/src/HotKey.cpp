@@ -2,18 +2,18 @@
 #include "HotKey.hpp"
 // TODO: Find a better implementation using std::jthread.
 
-clipmgr::HotKey::HotKey(const uint32_t& modifier, const wchar_t& key) :
+clip::HotKey::HotKey(const uint32_t& modifier, const wchar_t& key) :
     modifier{ modifier },
     key{ key }
 {
 }
 
-clipmgr::HotKey::~HotKey()
+clip::HotKey::~HotKey()
 {
     stopListening();
 }
 
-void clipmgr::HotKey::startListening(const callback_t& callback)
+void clip::HotKey::startListening(const callback_t& callback)
 {
     this->callback = callback;
     keyboardListenerThread = std::jthread(&HotKey::listener, this);
@@ -21,7 +21,7 @@ void clipmgr::HotKey::startListening(const callback_t& callback)
     flag.clear();
 }
 
-void clipmgr::HotKey::stopListening()
+void clip::HotKey::stopListening()
 {
     if (hotKeyRegistered)
     {
@@ -36,7 +36,7 @@ void clipmgr::HotKey::stopListening()
     std::ignore = keyboardListenerThread.request_stop();
 }
 
-void clipmgr::HotKey::editHotKey(const uint32_t& modifier_, const wchar_t& key_)
+void clip::HotKey::editHotKey(const uint32_t& modifier_, const wchar_t& key_)
 {
     stopListening();
     modifier = modifier_;
@@ -44,13 +44,13 @@ void clipmgr::HotKey::editHotKey(const uint32_t& modifier_, const wchar_t& key_)
     startListening(callback);
 }
 
-void clipmgr::HotKey::wait()
+void clip::HotKey::wait()
 {
     flag.wait(false);
     flag.clear();
 }
 
-clipmgr::HotKey& clipmgr::HotKey::operator=(HotKey&& left) noexcept
+clip::HotKey& clip::HotKey::operator=(HotKey&& left) noexcept
 {
     modifier = left.modifier;
     key = left.key;
@@ -68,7 +68,7 @@ clipmgr::HotKey& clipmgr::HotKey::operator=(HotKey&& left) noexcept
 }
 
 
-void clipmgr::HotKey::listener()
+void clip::HotKey::listener()
 {
     listening = true;
     flag.test_and_set();

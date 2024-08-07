@@ -3,7 +3,7 @@
 
 #include <Windows.h>
 
-void clipmgr::DirectoryWatcher::startWatching()
+void clip::DirectoryWatcher::startWatching()
 {
     std::atomic_flag waitFlag{};
     int retValue = 0;
@@ -13,7 +13,7 @@ void clipmgr::DirectoryWatcher::startWatching()
     waitFlag.clear();
 }
 
-void clipmgr::DirectoryWatcher::watchDirectoryChanges(std::atomic_flag* waitFlag, int* retValue)
+void clip::DirectoryWatcher::watchDirectoryChanges(std::atomic_flag* waitFlag, int* retValue)
 {
     watcherRunning = true;
 
