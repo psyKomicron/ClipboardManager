@@ -149,6 +149,9 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="7" Margin="0,0,7,5">
+                        <Button Click="TestRegexButton_Click">
+                            <FontIcon Glyph="&#xe943;" FontSize="16"/>
+                        </Button>
                         <Button x:Name="CommandBarSaveButton" Click="CommandBarSaveButton_Click">
                             <FontIcon Glyph="&#xe74e;" FontSize="16"/>
                         </Button>
@@ -162,13 +165,15 @@
 
                     <TextBlock x:Name="NoClipboardTriggersTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8" Grid.Row="1" x:Load="False" Visibility="Collapsed"/>
                     
-                    <ListView x:Name="ClipboardTriggersListView" Margin="0" Padding="0" SelectionMode="None" Grid.Row="1">
+                    <ListView x:Name="ClipboardTriggersListView" Margin="0" Padding="0" SelectionMode="None" Grid.Row="1" AllowDrop="True" CanReorderItems="True">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="Padding" Value="7,3,7,7" />
                             </Style>
                         </ListView.Resources>
                     </ListView>
+
+                    <local:RegexTesterControl x:Name="TestRegexContentDialog" Grid.RowSpan="2"/>
 
                     <TeachingTip x:Name="ClipboardTriggersListViewTeachingTip" 
                                  x:Uid="ClipboardActionsListViewTeachingTip"
@@ -256,6 +261,9 @@
                         </Grid.Transitions>
 
                         <Button x:Name="OpenQuickSettingsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="0" Click="OpenQuickSettingsButton_Click">
+                            <ToolTipService.ToolTip>
+                                <TextBlock x:Uid="OpenQuickSettingsButton_ToolTipTextBlock"/>
+                            </ToolTipService.ToolTip>
                             <FontIcon x:Name="OpenQuickSettingsButtonFontIcon" FontSize="14" Glyph="&#xe76b;"/>
                         </Button>
 
@@ -279,12 +287,23 @@
                                 CornerRadius="{StaticResource OverlayCornerRadius}" 
                                 Padding="7,5">
                                 <Button x:Name="ReloadTriggersButton" Click="ReloadTriggersButton_Click">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="ReloadTriggersButton_ToolTipTextBlock"/>
+                                    </ToolTipService.ToolTip>
                                     <FontIcon FontSize="16" Glyph="&#xe72c;"/>
                                 </Button>
+                                
                                 <ToggleButton x:Name="SilenceNotificationsToggleButton">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="SilenceNotificationsToggleButton_ToolTipTextBlock"/>
+                                    </ToolTipService.ToolTip>
                                     <FontIcon FontSize="16" Glyph="&#xe7ed;"/>
                                 </ToggleButton>
+                                
                                 <ToggleButton x:Name="HistoryToggleButton">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="HistoryToggleButton_ToolTipTextBlock"/>
+                                    </ToolTipService.ToolTip>
                                     <FontIcon FontSize="16" Glyph="&#xe823;"/>
                                 </ToggleButton>
                             </StackPanel>
@@ -315,7 +334,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <ListView x:Name="ListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2">
+                    <ListView x:Name="ListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2" AllowDrop="True" CanReorderItems="True">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="Padding" Value="0" />

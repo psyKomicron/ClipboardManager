@@ -5,6 +5,10 @@
 
 #include <boost/regex.hpp>
 
+#ifdef _DEBUG
+#include <iostream>
+#endif
+
 namespace clip::ui
 {
     template<typename T>
@@ -27,7 +31,7 @@ namespace clip::ui
             return value;
         }
 
-        void set(const T& newValue, std::source_location callerLocation = {})
+        void set(const T& newValue, std::source_location callerLocation = std::source_location::current())
         {
             value = newValue;
             _callback(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(getPropertyName(callerLocation)));
@@ -48,6 +52,7 @@ namespace clip::ui
             {
                 const boost::regex functionExtractor{ R"(void __cdecl ([A-z]*::)*([A-z]*)\(.*\))" };
                 boost::cmatch match{};
+
                 std::ignore = boost::regex_match(callerLocation.function_name(), match, functionExtractor);
                 winrt::hstring functionName{ clip::utils::convert(match[2]) };
 

@@ -3,7 +3,6 @@
 #include <unknwn.h>
 #include <functional>
 #include <winrt/Windows.UI.Notifications.h>
-#include <winrt/Windows.Foundation.Collections.h>
 
 #include <string>
 

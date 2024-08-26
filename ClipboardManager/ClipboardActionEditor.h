@@ -52,11 +52,11 @@ namespace winrt::ClipboardManager::implementation
         void ActionEnabledToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void UserControl_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void TeachingTip_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
-        void LabelTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e);
-        void FormatTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e);
-        void RegexTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e);
+        void RootGrid_PointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+        void RootGrid_PointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 
     private:
+        clip::ui::VisualStateManager<ClipboardActionEditor> visualStateManager{ *this };
         const clip::ui::VisualState<ClipboardActionEditor> EnabledState{ L"Enabled", 0, true };
         const clip::ui::VisualState<ClipboardActionEditor> DisabledState{ L"Disabled", 0, false };
         const clip::ui::VisualState<ClipboardActionEditor> NoLabelErrorState{ L"NoLabelError", 1, true };
@@ -65,17 +65,21 @@ namespace winrt::ClipboardManager::implementation
         const clip::ui::VisualState<ClipboardActionEditor> FormatErrorState{ L"FormatError", 2, false };
         const clip::ui::VisualState<ClipboardActionEditor> NoRegexErrorState{ L"NoRegexError", 3, true };
         const clip::ui::VisualState<ClipboardActionEditor> RegexErrorState{ L"RegexError", 3, false };
+        const clip::ui::VisualState<ClipboardActionEditor> IgnoreCaseDisabledState{ L"IgnoreCaseDisabled", 4, true };
+        const clip::ui::VisualState<ClipboardActionEditor> IgnoreCaseEnabledState{ L"IgnoreCaseEnabled", 4, false };
+        const clip::ui::VisualState<ClipboardActionEditor> UseSearchEnabledState{ L"UseSearchEnabled", 5, true };
+        const clip::ui::VisualState<ClipboardActionEditor> UseSearchDisabledState{ L"UseSearchDisabled", 5, false };
+
         const clip::utils::Logger logger{ L"ClipboardActionEditor" };
-        clip::ui::VisualStateManager<ClipboardActionEditor> visualStateManager{ *this };
 
         bool loaded = false;
         std::atomic_flag waitFlag{};
-        clip::ui::ListenablePropertyValue<bool> _ignoreCaseProperty{ std::bind(&ClipboardActionEditor::raisePropertyChanged, this, std::placeholders::_1) };
-        clip::ui::ListenablePropertyValue<bool> _useSearchProperty{ std::bind(&ClipboardActionEditor::raisePropertyChanged, this, std::placeholders::_1) };
+        clip::ui::ListenablePropertyValue<bool> _ignoreCaseProperty{ std::bind(&ClipboardActionEditor::ignoreCasePropertyChanged, this, std::placeholders::_1) };
+        clip::ui::ListenablePropertyValue<bool> _useSearchProperty{ std::bind(&ClipboardActionEditor::useSearchPropertyChanged, this, std::placeholders::_1) };
         clip::ui::ListenablePropertyValue<bool> _actionEnabledProperty{ std::bind(&ClipboardActionEditor::raisePropertyChanged, this, std::placeholders::_1) };
-        clip::ui::ListenablePropertyValue<winrt::hstring> _actionLabelProperty{ std::bind(&ClipboardActionEditor::raisePropertyChanged, this, std::placeholders::_1) };
-        clip::ui::ListenablePropertyValue<winrt::hstring> _actionFormatProperty{ std::bind(&ClipboardActionEditor::raisePropertyChanged, this, std::placeholders::_1) };
-        clip::ui::ListenablePropertyValue<winrt::hstring> _actionRegexProperty{ std::bind(&ClipboardActionEditor::raisePropertyChanged, this, std::placeholders::_1) };
+        clip::ui::ListenablePropertyValue<winrt::hstring> _triggerLabelProperty{ std::bind(&ClipboardActionEditor::raisePropertyChanged, this, std::placeholders::_1) };
+        clip::ui::ListenablePropertyValue<winrt::hstring> _triggerFormatProperty{ std::bind(&ClipboardActionEditor::raisePropertyChanged, this, std::placeholders::_1) };
+        clip::ui::ListenablePropertyValue<winrt::hstring> _triggerRegexProperty{ std::bind(&ClipboardActionEditor::raisePropertyChanged, this, std::placeholders::_1) };
 
         winrt::event<event_is_on_t> e_isOn{};
         winrt::event<event_changed_t> e_labelChanged{};
@@ -83,7 +87,8 @@ namespace winrt::ClipboardManager::implementation
         winrt::event<event_re_changed_t> e_regexChanged{};
         winrt::event<event_removed_t> e_removed{};
 
-        void CheckInput();
+        void useSearchPropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args);
+        void ignoreCasePropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args);
 
         // Inherited via PropertyChangedClass
         winrt::Windows::Foundation::IInspectable asInspectable() override;

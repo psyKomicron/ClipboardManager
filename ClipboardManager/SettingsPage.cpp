@@ -13,7 +13,6 @@
 //#include <boost/property_tree/xml_parser.hpp>
 
 #include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Storage.Pickers.h>
 
 #include <Shobjidl.h>

@@ -57,6 +57,8 @@ namespace winrt::ClipboardManager::implementation
         clip::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
         winrt::event<event_removed_t> e_removed{};
         std::atomic_flag teachingTipsWaitFlag{};
+
+        void AddTriggerButton(clip::ClipboardTrigger& trigger);
     };
 }
 

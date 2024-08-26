@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="UserControls">
+      <UniqueIdentifier>{5e03d2f3-e151-4e09-83c1-80139935ce03}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">
@@ -75,6 +78,16 @@
     <ClInclude Include="src\ui\ListenablePropertyValue.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\implementation\Settings_implementation.hpp" />
+    <ClInclude Include="src\utils\ResLoader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\res\strings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\implementation\VisualStateManager_implementation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipboardManager.cpp">
@@ -96,9 +109,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\Console.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\VisualStateManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\HotKey.cpp">
@@ -125,6 +135,9 @@
     <ClCompile Include="src\utils\Launcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\ResLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ClipboardManager.rc">
@@ -145,10 +158,20 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />
-    <Page Include="ClipboardActionView.xaml" />
-    <Page Include="HostControl.xaml" />
     <Page Include="SettingsPage.xaml" />
-    <Page Include="ClipboardActionEditor.xaml" />
+    <Page Include="ClipboardActionEditor.xaml">
+      <Filter>UserControls</Filter>
+    </Page>
+    <Page Include="ClipboardActionView.xaml">
+      <Filter>UserControls</Filter>
+    </Page>
+    <Page Include="ClipboardTriggerEditControl.xaml">
+      <Filter>UserControls</Filter>
+    </Page>
+    <Page Include="HostControl.xaml">
+      <Filter>UserControls</Filter>
+    </Page>
+    <Page Include="RegexTesterControl.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
@@ -160,7 +183,11 @@
     <Xml Include="..\..\..\..\..\Documents\Clipboard Manager\user_file.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="Resources.lang-en-us.resw" />
-    <PRIResource Include="Resources.lang-fr-fr.resw" />
+    <PRIResource Include="Resources.lang-en-us.resw">
+      <Filter>Resource Files</Filter>
+    </PRIResource>
+    <PRIResource Include="Resources.lang-fr-fr.resw">
+      <Filter>Resource Files</Filter>
+    </PRIResource>
   </ItemGroup>
 </Project>

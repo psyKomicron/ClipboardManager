@@ -2,6 +2,7 @@
 #include "Logger.hpp"
 
 #include "Console.hpp"
+#include "src/utils/helpers.hpp"
 
 #include <iostream>
 #include <format>
@@ -32,6 +33,11 @@ void clip::utils::Logger::info(const std::wstring& message) const
 void clip::utils::Logger::error(const std::wstring& message) const
 {
     print(message, ConsoleColors::Red);
+}
+
+void clip::utils::Logger::error(const std::string& message) const
+{
+    print(clip::utils::convert(message), ConsoleColors::Red);
 }
 
 void clip::utils::Logger::print(const std::wstring& message, const clip::utils::ConsoleColors& color) const

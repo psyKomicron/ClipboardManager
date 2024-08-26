@@ -20,6 +20,7 @@ namespace clip::utils
         void debug(const std::wstring& message) const;
         void info(const std::wstring& message) const;
         void error(const std::wstring& message) const;
+        void error(const std::string& message) const;
         void print(const std::wstring& message, const clip::utils::ConsoleColors& color = ConsoleColors::White) const;
 
     private:

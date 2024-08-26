@@ -1,0 +1,16 @@
+namespace ClipboardManager
+{
+    [default_interface]
+    runtimeclass ClipboardTriggerEditControl : Microsoft.UI.Xaml.Controls.UserControl, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        ClipboardTriggerEditControl();
+
+        String TriggerLabel;
+        String TriggerFormat;
+        String TriggerRegex;
+        Boolean IgnoreCase;
+        Boolean UseSearch;
+
+        Windows.Foundation.IAsyncOperation<Boolean> Edit();
+    }
+}

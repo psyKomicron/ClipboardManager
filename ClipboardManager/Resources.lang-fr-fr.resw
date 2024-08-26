@@ -157,6 +157,10 @@
     <value>Boutons d'action du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="AddDuplicatedActionsHostControl.Header" xml:space="preserve">
+    <value>Ajouter les actions en double</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="AllowNotificationsHostControl.Header" xml:space="preserve">
     <value>Autoriser les notifications</value>
     <comment>SettingsPage</comment>
@@ -266,7 +270,7 @@
     <comment>Teaching tips</comment>
   </data>
   <data name="EditDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Sauvegarder</value>
+    <value>Valider</value>
     <comment>ClipboardActionEditor</comment>
   </data>
   <data name="EditDialog.SecondaryButtonText" xml:space="preserve">
@@ -323,6 +327,10 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Format</value>
     <comment>ClipboardActionEditor</comment>
   </data>
+  <data name="FormatWarningTextBlock.Text" xml:space="preserve">
+    <value>Protocole (http/https) manquant, l'application utilisera https par défaut</value>
+    <comment>ClipboardTriggerEditControl</comment>
+  </data>
   <data name="HeaderApplicationTextBlock.Text" xml:space="preserve">
     <value>Application</value>
     <comment>SettingsPage</comment>
@@ -350,6 +358,10 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="HistoryToggleButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Activer et désactiver l'historique des actions</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="HistoryToggleButton_ToolTipTextBlock.Text" xml:space="preserve">
+    <value>Désactiver l'historique</value>
+    <comment>MainPage</comment>
   </data>
   <data name="IgnoreCaseHostControl.Header" xml:space="preserve">
     <value>Ignorer la capitalisation</value>
@@ -455,6 +467,10 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Afficher ou cacher les options rapides</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="OpenQuickSettingsButton_ToolTipTextBlock.Text" xml:space="preserve">
+    <value>Raccourcis</value>
+    <comment>MainPage</comment>
+  </data>
   <data name="OpenSaveFileButton.Content" xml:space="preserve">
     <value>Ouvrir &amp; modifier</value>
     <comment>MainPage</comment>
@@ -470,6 +486,10 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="OverwriteExampleTriggersFileButtton.Content" xml:space="preserve">
     <value>Ecraser</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="RegexIgnoreCaseTextBlock.Text" xml:space="preserve">
+    <value>Ignorer la casse</value>
+    <comment>RegexTesterControl</comment>
   </data>
   <data name="RegexModeComboBox_Match.Content" xml:space="preserve">
     <value>Match</value>
@@ -491,6 +511,10 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Mode regex</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="RegexModeTextBlock.Text" xml:space="preserve">
+    <value>Recherche</value>
+    <comment>RegexTesterControl</comment>
+  </data>
   <data name="RegexTextBox.Header" xml:space="preserve">
     <value>Regex</value>
     <comment>ClipboardActionEditor</comment>
@@ -498,6 +522,10 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="ReloadActionsButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Recharger les déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="ReloadTriggersButton_ToolTipTextBlock.Text" xml:space="preserve">
+    <value>Rafraichir les déclencheurs</value>
+    <comment>MainPage</comment>
   </data>
   <data name="RemoveActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Supprimer l'action de la liste</value>
@@ -547,6 +575,10 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Activer et désactiver les notifications rapidement</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="SilenceNotificationsToggleButton_ToolTipTextBlock.Text" xml:space="preserve">
+    <value>Mode silencieux</value>
+    <comment>MainPage</comment>
+  </data>
   <data name="StartMinimizedSubtitleTextBlock.Text" xml:space="preserve">
     <value>Controler l'état de la fenetre lors du démarrage automatique.</value>
     <comment>SettingsPage</comment>
@@ -566,6 +598,10 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="StartTourInfoBar.Title" xml:space="preserve">
     <value>Est-ce vôtre première fois ?</value>
     <comment>MainPage Startup tour</comment>
+  </data>
+  <data name="TestInputTextBox.Header" xml:space="preserve">
+    <value>Texte</value>
+    <comment>RegexTesterControl</comment>
   </data>
   <data name="ToastNotification_ClickAction" xml:space="preserve">
     <value>Cliquer sur l'action</value>

@@ -97,59 +97,66 @@ std::wstring clip::utils::convert(const std::string& string)
     }
 }
 
-
-clip::utils::managed_dispatcher_queue_controller::managed_dispatcher_queue_controller(const winrt::Microsoft::UI::Dispatching::DispatcherQueueController& controller)
+namespace clip::utils
 {
-    dispatcherQueueController = controller;
-}
-
-clip::utils::managed_dispatcher_queue_controller::~managed_dispatcher_queue_controller()
-{
-    dispatcherQueueController.ShutdownQueue();
-}
-
-clip::utils::managed_file_handle::managed_file_handle(const HANDLE& fileHandle)
-{
-    handle = fileHandle;
-}
-
-clip::utils::managed_file_handle::~managed_file_handle()
-{
-    close();
-}
-
-void clip::utils::managed_file_handle::close()
-{
-    if (!handleClosed && !invalid())
+    managed_dispatcher_queue_controller::managed_dispatcher_queue_controller(const winrt::Microsoft::UI::Dispatching::DispatcherQueueController& controller)
     {
-        CloseHandle(handle);
-        handle = nullptr;
-        handleClosed = true;
+        dispatcherQueueController = controller;
+    }
+
+    managed_dispatcher_queue_controller::~managed_dispatcher_queue_controller()
+    {
+        dispatcherQueueController.ShutdownQueue();
     }
 }
 
-bool clip::utils::managed_file_handle::invalid() const
+namespace clip::utils
 {
-    return handle == INVALID_HANDLE_VALUE || handle == nullptr;
+    managed_file_handle::managed_file_handle(const HANDLE& fileHandle)
+    {
+        handle = fileHandle;
+    }
+
+    managed_file_handle::~managed_file_handle()
+    {
+        close();
+    }
+
+    void managed_file_handle::close()
+    {
+        if (!handleClosed && !invalid())
+        {
+            CloseHandle(handle);
+            handle = nullptr;
+            handleClosed = true;
+        }
+    }
+
+    bool managed_file_handle::invalid() const
+    {
+        return handle == INVALID_HANDLE_VALUE || handle == nullptr;
+    }
 }
 
-
-clip::utils::PropChangedEventArgs::PropChangedEventArgs(const std::source_location& sourceLocation) :
-    winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(getCallerName(sourceLocation))
+namespace clip::utils
 {
-}
+    PropChangedEventArgs::PropChangedEventArgs(const std::source_location& sourceLocation) :
+        winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(getCallerName(sourceLocation))
+    {
+    }
 
-winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs clip::utils::PropChangedEventArgs::create(std::source_location sourceLocation)
-{
-    return winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(getCallerName(sourceLocation));
-}
+    winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs PropChangedEventArgs::create(std::source_location sourceLocation)
+    {
+        return winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(getCallerName(sourceLocation));
+    }
 
-std::wstring clip::utils::PropChangedEventArgs::getCallerName(const std::source_location& sourceLocation)
-{
-    const boost::regex functionExtractor{ R"(void __cdecl ([A-z]*::)*([A-z]*)\(.*\))" };
-    boost::cmatch match{};
-    std::ignore = boost::regex_match(sourceLocation.function_name(), match, functionExtractor);
-    std::wstring functionName = clip::utils::convert(match[2]);
+    std::wstring PropChangedEventArgs::getCallerName(const std::source_location& sourceLocation)
+    {
+        const boost::regex functionExtractor{ R"(void __cdecl ([A-z]*::)*([A-z]*)\(.*\))" };
+        boost::cmatch match{};
+        std::ignore = boost::regex_match(sourceLocation.function_name(), match, functionExtractor);
+        std::wstring functionName = clip::utils::convert(match[2]);
 
-    return functionName;
+        return functionName;
+    }
 }

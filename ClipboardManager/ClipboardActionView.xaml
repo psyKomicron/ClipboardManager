@@ -13,14 +13,10 @@
     <Grid x:Name="RootGrid"
           RowSpacing="4"
           Margin="0,3,0,3"
-          Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
+          Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
           BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}" 
           BorderThickness="1"
-          CornerRadius="{x:Bind CornerRadius}"
-          PointerEntered="RootGrid_PointerEntered"
-          PointerExited="RootGrid_PointerExited"
-          PointerPressed="RootGrid_PointerPressed"
-          PointerReleased="RootGrid_PointerReleased">
+          CornerRadius="{x:Bind CornerRadius}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="ContentColumn" Width="*"/>
             <ColumnDefinition x:Name="OptionsColumn" Width="0"/>
@@ -41,10 +37,10 @@
 
                 <VisualState x:Name="PointerOver">
                     <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentGrid" Storyboard.TargetProperty="Background">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBackgroundPointerOver}" />
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentGrid" Storyboard.TargetProperty="BorderBrush">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBorderBrushPointerOver}" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
@@ -61,11 +57,15 @@
             </TeachingTip.ActionButtonContent>
         </TeachingTip>
 
-        <Grid 
+        <Grid x:Name="ContentGrid"
+            PointerEntered="RootGrid_PointerEntered"
+            PointerExited="RootGrid_PointerExited"
+            PointerPressed="RootGrid_PointerPressed"
+            PointerReleased="RootGrid_PointerReleased"
             Grid.Column="0" 
             Padding="5,5,5,0"
-            Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
-            CornerRadius="{StaticResource OverlayCornerRadius}" >
+            Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
+            CornerRadius="{StaticResource OverlayCornerRadius}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -92,7 +92,7 @@
                 HorizontalAlignment="Left"/>
 
             <GridView 
-                x:Name="ActionsGridView"
+                x:Name="TriggersGridView"
                 Grid.ColumnSpan="2"
                 Grid.Row="1"
                 VerticalAlignment="Bottom" 
@@ -120,12 +120,6 @@
                         <Setter Property="Margin" Value="3,0,3,0" />
                     </Style>
                 </GridView.Resources>
-
-                <GridView.ItemTemplate>
-                    <DataTemplate x:DataType="x:String">
-                        <HyperlinkButton Tag="{x:Bind}" Content="{x:Bind}" VerticalAlignment="Stretch" Click="HyperlinkButton_Click"/>
-                    </DataTemplate>
-                </GridView.ItemTemplate>
             </GridView>
 
             <Button x:Name="OpenOptionsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="1" Click="OpenOptionsButton_Click" VerticalAlignment="Top">
@@ -154,7 +148,7 @@
 
             <TeachingTip x:Name="ActionsGridViewTeachingTip"
                          x:Uid="ActionsGridViewTeachingTip"
-                         Target="{x:Bind ActionsGridView}"
+                         Target="{x:Bind TriggersGridView}"
                          ShouldConstrainToRootBounds="False"
                          ActionButtonClick="TeachingTip_ButtonClick">
                 <TeachingTip.ActionButtonContent>

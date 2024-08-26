@@ -7,7 +7,6 @@
 #include "src/ui/VisualStateManager.hpp"
 #include "src/notifs/ToastNotificationHandler.hpp"
 
-#include <winrt/Windows.Foundation.Collections.h>
 
 #include <vector>
 #include <filesystem>
@@ -76,6 +75,9 @@ namespace winrt::ClipboardManager::implementation
         void ReloadTriggers();
         bool LoadTriggers(std::filesystem::path& path);
         void LaunchAction(const std::wstring& url);
+    public:
+        void TestRegexButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void TestRegexContentDialog_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::ContentDialog const& sender, winrt::Microsoft::UI::Xaml::Controls::ContentDialogButtonClickEventArgs const& args);
     };
 }
 

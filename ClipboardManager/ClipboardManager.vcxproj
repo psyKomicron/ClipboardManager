@@ -80,6 +80,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <!-- Island-support: The markup compiler generates files that include pch.h, better setup PCH. -->
@@ -99,6 +105,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <TreatSpecificWarningsAsErrors>4715;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -129,6 +136,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <TreatSpecificWarningsAsErrors>4715;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,6 +169,16 @@
       <DependentUpon>HostControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="ClipboardTriggerEditControl.h">
+      <DependentUpon>ClipboardTriggerEditControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="RegexTesterControl.h">
+      <DependentUpon>RegexTesterControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="src\implementation\VisualStateManager_implementation.hpp" />
+    <ClInclude Include="src\utils\ResLoader.hpp" />
     <ClInclude Include="src\ui\ListenablePropertyValue.hpp" />
     <ClInclude Include="src\utils\Launcher.hpp" />
     <ClInclude Include="src\Process.hpp" />
@@ -193,6 +211,7 @@
     <ClInclude Include="src\utils\helpers.hpp" />
     <ClInclude Include="src\utils\StartupTask.hpp" />
     <ClInclude Include="src\notifs\win_toasts.hpp" />
+    <ClInclude Include="src\res\strings.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="src\ui\VisualStateManager.hpp" />
     <ClInclude Include="src\notifs\ToastNotification.hpp" />
@@ -207,6 +226,15 @@
       <DependentUpon>HostControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ClipboardTriggerEditControl.cpp">
+      <DependentUpon>ClipboardTriggerEditControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="RegexTesterControl.cpp">
+      <DependentUpon>RegexTesterControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="src\utils\ResLoader.cpp" />
     <ClCompile Include="src\utils\Launcher.cpp" />
     <ClCompile Include="src\Process.cpp" />
     <ClCompile Include="src\utils\Logger.cpp" />
@@ -237,7 +265,6 @@
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="ClipboardManager.cpp" />
     <ClCompile Include="src\utils\helpers.cpp" />
-    <ClCompile Include="src\ui\VisualStateManager.cpp" />
     <ClCompile Include="src\utils\StartupTask.cpp" />
     <ClCompile Include="src\notifs\win_toasts.cpp" />
     <ClCompile Include="src\notifs\ToastNotification.cpp" />
@@ -253,6 +280,9 @@
   <ItemGroup>
     <None Include="CHANGELOG.md" />
     <None Include="packages.config" />
+    <ClInclude Include="src\implementation\Settings_implementation.hpp">
+      <FileType>Document</FileType>
+    </ClInclude>
     <PRIResource Include="Resources.lang-en-us.resw" />
     <PRIResource Include="Resources.lang-fr-fr.resw" />
   </ItemGroup>
@@ -281,8 +311,16 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="RegexTesterControl.idl">
+      <DependentUpon>RegexTesterControl.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="SettingsPage.idl">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ClipboardTriggerEditControl.idl">
+      <DependentUpon>ClipboardTriggerEditControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
   </ItemGroup>
@@ -299,7 +337,13 @@
     <Page Include="MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="RegexTesterControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="SettingsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ClipboardTriggerEditControl.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

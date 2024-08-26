@@ -21,11 +21,13 @@ void clip::DirectoryWatcher::watchDirectoryChanges(std::atomic_flag* waitFlag, i
     if (handle == INVALID_HANDLE_VALUE)
     {
         *retValue = -1;
+        runThread = false;
     }
 
     if (handle == nullptr)
     {
         *retValue = -2;
+        runThread = false;
     }
 
     waitFlag->test_and_set();
