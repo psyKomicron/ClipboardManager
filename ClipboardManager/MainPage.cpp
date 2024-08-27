@@ -133,11 +133,20 @@ namespace winrt::ClipboardManager::implementation
             // TODO: Send toast notification to tell the user the app has started ?
         }
 
-        auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
-        for (auto&& item : clipboardHistory.Items())
+        try
         {
-            auto&& itemText = co_await item.Content().GetTextAsync();
-            ClipboardHistoryListView().Items().Append(box_value(itemText));
+            auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
+            for (auto&& item : clipboardHistory.Items())
+            {
+                auto&& itemText = co_await item.Content().GetTextAsync();
+                ClipboardHistoryListView().Items().Append(box_value(itemText));
+            }
+        }
+        catch (hresult_error error)
+        {
+            GenericErrorInfoBar().Title(L"Failed to retreive clipboard history.");
+            GenericErrorInfoBar().Message(error.message());
+            GenericErrorInfoBar().IsOpen(true);
         }
 
         clipboardContentChangedrevoker = win::Clipboard::ContentChanged(winrt::auto_revoke, { this, &MainPage::ClipboardContent_Changed });
