@@ -37,7 +37,7 @@ void implementation::SettingsPage::Page_Loading(winrt::FrameworkElement const&, 
 
     SaveMatchingResultsToggleSwitch().IsOn(settings.get<bool>(L"SaveMatchingResults").value_or(false));
     StartMinimizedToggleSwitch().IsOn(settings.get<bool>(L"StartWindowMinimized").value_or(false));
-    NotificationsToggleSwitch().IsOn(settings.get<bool>(L"NotificationsEnabled").value_or(false));
+    NotificationsToggleSwitch().IsOn(settings.get<bool>(L"NotificationsEnabled").value_or(true));
     
     auto durationType = settings.get<clip::notifs::NotificationDurationType>(L"NotificationDurationType").value_or(clip::notifs::NotificationDurationType::Default);
     DurationDefaultToggleButton().IsChecked(durationType == clip::notifs::NotificationDurationType::Default);

@@ -140,6 +140,15 @@ namespace winrt::ClipboardManager::implementation
             startupTask.remove();
         }
 
+        // Enable notifications by default.
+        if (!localSettings.get<bool>(L"NotificationsEnabled").has_value())
+        {
+            clip::utils::StartupTask startupTask{};
+            startupTask.set();
+
+            localSettings.insert(L"NotificationsEnabled", true);
+        }
+
         localSettings.insert(L"CurrentAppVersion", APP_VERSION);
 
         if (localSettings.get<bool>(L"StartWindowMinimized").value_or(false))
