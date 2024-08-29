@@ -145,9 +145,6 @@ namespace winrt::ClipboardManager::implementation
         // Enable notifications by default.
         if (!localSettings.get<bool>(L"NotificationsEnabled").has_value())
         {
-            clip::utils::StartupTask startupTask{};
-            startupTask.set();
-
             localSettings.insert(L"NotificationsEnabled", true);
         }
 
