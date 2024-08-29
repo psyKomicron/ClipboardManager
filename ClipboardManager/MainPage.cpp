@@ -5,12 +5,15 @@
 #endif
 
 #include "ClipboardManager.h"
+#include "Resource.h"
 #include "src/Settings.hpp"
 #include "src/utils/helpers.hpp"
+#include "src/utils/Launcher.hpp"
+#include "src/utils/AppVersion.hpp"
+#include "src/utils/StartupTask.hpp"
 #include "src/notifs/ToastNotification.hpp"
 #include "src/notifs/win_toasts.hpp"
 #include "src/notifs/NotificationTypes.hpp"
-#include "src/utils/Launcher.hpp"
 
 #include "ClipboardActionView.h"
 #include "ClipboardActionEditor.h"
@@ -27,7 +30,6 @@
 
 #include <Shobjidl.h>
 #include <ppltasks.h>
-//#include <pplawait.h>
 
 #include <iostream>
 
@@ -37,6 +39,7 @@ namespace xaml
     using namespace winrt::Microsoft::UI::Xaml::Controls;
     using namespace winrt::Microsoft::UI::Windowing;
 }
+
 namespace win
 {
     using namespace winrt::Microsoft::Windows::AppNotifications;
@@ -48,6 +51,7 @@ namespace win
     using namespace winrt::Windows::Storage::Pickers;
     using namespace winrt::Windows::System;
 }
+
 
 namespace winrt::ClipboardManager::implementation
 {
@@ -126,48 +130,64 @@ namespace winrt::ClipboardManager::implementation
     {
         loaded = false;
 
-        auto&& appWindow = clip::utils::getCurrentAppWindow();
+        clip::utils::AppVersion appVersion{ APP_VERSION };
+        clip::utils::AppVersion currentAppVersion{ localSettings.get<std::wstring>(L"CurrentAppVersion").value_or(APP_VERSION) };
+        if (appVersion.compare(currentAppVersion))
+        {
+            logger.info(L"Application has been updated, clearing settings and removing startup task.");
+
+            localSettings.clear();
+
+            clip::utils::StartupTask startupTask{};
+            startupTask.remove();
+        }
+
+        // Enable notifications by default.
+        if (!localSettings.get<bool>(L"NotificationsEnabled").has_value())
+        {
+            localSettings.insert(L"NotificationsEnabled", true);
+        }
+
+        localSettings.insert(L"CurrentAppVersion", APP_VERSION);
+
         if (localSettings.get<bool>(L"StartWindowMinimized").value_or(false))
         {
+            auto&& appWindow = clip::utils::getCurrentAppWindow();
             appWindow.Presenter().as<xaml::OverlappedPresenter>().Minimize();
             // TODO: Send toast notification to tell the user the app has started ?
         }
 
-        try
-        {
-            auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
-            for (auto&& item : clipboardHistory.Items())
-            {
-                auto&& itemText = co_await item.Content().GetTextAsync();
-                ClipboardHistoryListView().Items().Append(box_value(itemText));
-            }
-        }
-        catch (hresult_error error)
-        {
-            GenericErrorInfoBar().Title(L"Failed to retreive clipboard history.");
-            GenericErrorInfoBar().Message(error.message());
-            GenericErrorInfoBar().IsOpen(true);
-        }
+        auto task = loadClipboardHistory();
 
         clipboardContentChangedrevoker = win::Clipboard::ContentChanged(winrt::auto_revoke, { this, &MainPage::ClipboardContent_Changed });
+
+        co_await task;
     }
 
-    void MainPage::Page_Loaded(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    winrt::async MainPage::Page_Loaded(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
         Restore();
 
         loaded = true;
 
+        co_await resume_background();
+
         if (!localSettings.get<bool>(L"FirstStartup").has_value())
         {
             localSettings.insert(L"FirstStartup", false);
-            visualStateManager.goToState(FirstStartupState);
+
+            DispatcherQueue().TryEnqueue([this]()
+            {
+                visualStateManager.goToState(FirstStartupState);
+            });    
         }
 
-        visualStateManager.goToState(
-            triggers.empty() 
-            ? NoClipboardTriggersToDisplayState
-            : DisplayClipboardTriggersState);
+        DispatcherQueue().TryEnqueue([this]()
+        {
+            visualStateManager.goToState(triggers.empty() 
+                ? NoClipboardTriggersToDisplayState
+                : DisplayClipboardTriggersState);
+        });
     }
 
     void MainPage::ClipboadTriggersListPivot_Loaded(win::IInspectable const&, win::IInspectable const&)
@@ -844,10 +864,26 @@ namespace winrt::ClipboardManager::implementation
             launcher.launch(url).get();
         });
     }
-}
 
-
-void winrt::ClipboardManager::implementation::MainPage::TestRegexContentDialog_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::ContentDialog const& sender, winrt::Microsoft::UI::Xaml::Controls::ContentDialogButtonClickEventArgs const& args)
-{
-
+    winrt::async MainPage::loadClipboardHistory()
+    {
+        auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
+        for (auto&& item : clipboardHistory.Items())
+        {
+            try
+            {
+                uint32_t index = 0;
+                auto&& availableFormats = item.Content().AvailableFormats();
+                if (availableFormats.IndexOf(L"Text", index))
+                {
+                    auto&& itemText = co_await item.Content().GetTextAsync();
+                    ClipboardHistoryListView().Items().Append(box_value(itemText));
+                }
+            }
+            catch (hresult_error error)
+            {
+                logger.error(L"Failed to retreive item from clipboard history.");
+            }
+        }
+    }
 }
