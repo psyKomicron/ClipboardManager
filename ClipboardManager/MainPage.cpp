@@ -882,13 +882,6 @@ namespace winrt::ClipboardManager::implementation
                     auto&& itemText = co_await item.Content().GetTextAsync();
                     ClipboardHistoryListView().Items().Append(box_value(itemText));
                 }
-                else if (availableFormats.IndexOf(L"Bitmap", index))
-                {
-                    auto&& bitmap = co_await item.Content().GetBitmapAsync();
-
-                }
-
-                logger.debug(std::to_wstring(index));
             }
             catch (hresult_error error)
             {
