@@ -39,6 +39,7 @@ namespace xaml
     using namespace winrt::Microsoft::UI::Xaml::Controls;
     using namespace winrt::Microsoft::UI::Windowing;
 }
+
 namespace win
 {
     using namespace winrt::Microsoft::Windows::AppNotifications;
@@ -50,6 +51,7 @@ namespace win
     using namespace winrt::Windows::Storage::Pickers;
     using namespace winrt::Windows::System;
 }
+
 
 namespace winrt::ClipboardManager::implementation
 {
@@ -158,21 +160,11 @@ namespace winrt::ClipboardManager::implementation
             // TODO: Send toast notification to tell the user the app has started ?
         }
 
-        auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
-        for (auto&& item : clipboardHistory.Items())
-        {
-            try
-            {
-                auto&& itemText = co_await item.Content().GetTextAsync();
-                ClipboardHistoryListView().Items().Append(box_value(itemText));
-            }
-            catch (hresult_error error)
-            {
-                logger.error(L"Failed to retreive item from clipboard history.");
-            }
-        }
+        auto task = loadClipboardHistory();
 
         clipboardContentChangedrevoker = win::Clipboard::ContentChanged(winrt::auto_revoke, { this, &MainPage::ClipboardContent_Changed });
+
+        co_await task;
     }
 
     winrt::async MainPage::Page_Loaded(win::IInspectable const&, xaml::RoutedEventArgs const&)
@@ -875,10 +867,33 @@ namespace winrt::ClipboardManager::implementation
             launcher.launch(url).get();
         });
     }
-}
 
+    winrt::async MainPage::loadClipboardHistory()
+    {
+        auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
+        for (auto&& item : clipboardHistory.Items())
+        {
+            try
+            {
+                uint32_t index = 0;
+                auto&& availableFormats = item.Content().AvailableFormats();
+                if (availableFormats.IndexOf(L"Text", index))
+                {
+                    auto&& itemText = co_await item.Content().GetTextAsync();
+                    ClipboardHistoryListView().Items().Append(box_value(itemText));
+                }
+                else if (availableFormats.IndexOf(L"Bitmap", index))
+                {
+                    auto&& bitmap = co_await item.Content().GetBitmapAsync();
 
-void winrt::ClipboardManager::implementation::MainPage::TestRegexContentDialog_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::ContentDialog const& sender, winrt::Microsoft::UI::Xaml::Controls::ContentDialogButtonClickEventArgs const& args)
-{
+                }
 
+                logger.debug(std::to_wstring(index));
+            }
+            catch (hresult_error error)
+            {
+                logger.error(L"Failed to retreive item from clipboard history.");
+            }
+        }
+    }
 }
