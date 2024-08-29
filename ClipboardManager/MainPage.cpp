@@ -141,7 +141,6 @@ namespace winrt::ClipboardManager::implementation
         }
 
         localSettings.insert(L"CurrentAppVersion", APP_VERSION);
-        //localSettings.insert<std::wstring>(L"CurrentAppVersion", APP_VERSION);
 
         if (localSettings.get<bool>(L"StartWindowMinimized").value_or(false))
         {
