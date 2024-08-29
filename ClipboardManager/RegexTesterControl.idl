@@ -1,0 +1,10 @@
+namespace ClipboardManager
+{
+    [default_interface]
+    runtimeclass RegexTesterControl : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        RegexTesterControl();
+
+        Windows.Foundation.IAsyncAction Open();
+    }
+}

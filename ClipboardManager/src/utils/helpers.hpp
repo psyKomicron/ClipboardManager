@@ -2,6 +2,8 @@
 #include <winrt/Microsoft.UI.Windowing.h>
 #include <Windows.h>
 
+#include <boost/regex.hpp>
+
 #include <filesystem>
 #include <functional>
 
@@ -17,7 +19,7 @@ namespace winrt
     using namespace winrt::Microsoft::UI::Windowing;
 }
 
-namespace clipmgr::utils
+namespace clip::utils
 {
     class managed_dispatcher_queue_controller
     {
@@ -108,7 +110,7 @@ namespace clipmgr::utils
     };
 }
 
-namespace clipmgr::utils
+namespace clip::utils
 {
     winrt::AppWindow getCurrentAppWindow();
     winrt::AppWindow getCurrentAppWindow(const HWND& hwnd);

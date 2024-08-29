@@ -3,6 +3,7 @@
 
 #include "src/Settings.hpp"
 #include "src/utils/Logger.hpp"
+#include "src/ui/VisualStateManager.hpp"
 
 namespace winrt::ClipboardManager::implementation
 {
@@ -28,11 +29,17 @@ namespace winrt::ClipboardManager::implementation
         void BrowserStringTextBox_LostFocus(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void BrowserStringTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e);
         void UseCustomBrowser_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void HideAppWindowToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void ClearSettingsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void TriggersStorageExpander_Expanding(winrt::Microsoft::UI::Xaml::Controls::Expander const& sender, winrt::Microsoft::UI::Xaml::Controls::ExpanderExpandingEventArgs const& args);
 
     private:
-        clipmgr::Settings settings{};
+        const clip::ui::VisualState<SettingsPage> ClearSettingsDefaultState{ L"ClearSettingsDefault", 0, true };
+        const clip::ui::VisualState<SettingsPage> ClearSettingsShowIconState{ L"ClearSettingsShowIcon", 0, false };
+        clip::Settings settings{};
         bool loaded = false;
-        clipmgr::utils::Logger logger{ L"SettingsPage" };
+        clip::utils::Logger logger{ L"SettingsPage" };
+        clip::ui::VisualStateManager<SettingsPage> visualStateManager{ *this };
 
         void updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key);
         void selectComboBoxItem(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox, const uint32_t& value);

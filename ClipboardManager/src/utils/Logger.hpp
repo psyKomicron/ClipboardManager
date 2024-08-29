@@ -2,7 +2,7 @@
 #include <atomic>
 #include <string>
 
-namespace clipmgr::utils
+namespace clip::utils
 {
     enum class ConsoleColors
     {
@@ -20,7 +20,8 @@ namespace clipmgr::utils
         void debug(const std::wstring& message) const;
         void info(const std::wstring& message) const;
         void error(const std::wstring& message) const;
-        void print(const std::wstring& message, const clipmgr::utils::ConsoleColors& color = ConsoleColors::White) const;
+        void error(const std::string& message) const;
+        void print(const std::wstring& message, const clip::utils::ConsoleColors& color = ConsoleColors::White) const;
 
     private:
         static const bool useColors = false;

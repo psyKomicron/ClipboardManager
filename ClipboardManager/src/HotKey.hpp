@@ -5,7 +5,7 @@
 #include <optional>
 #include <functional>
 
-namespace clipmgr
+namespace clip
 {
     class HotKey
     {
@@ -24,7 +24,7 @@ namespace clipmgr
         HotKey& operator=(HotKey&& left) noexcept;
 
     private:
-        const clipmgr::utils::Logger logger{ L"HotKey" };
+        const clip::utils::Logger logger{ L"HotKey" };
         wchar_t key;
         uint32_t modifier;
         std::jthread keyboardListenerThread{};

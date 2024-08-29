@@ -1,7 +1,7 @@
 #pragma once
 #include <atomic>
 
-namespace clipmgr::utils
+namespace clip::utils
 {
     class Console
     {
@@ -27,6 +27,6 @@ namespace clipmgr::utils
         bool hasOutput() const;
         bool hasErr() const;
         void redirectCon(const std::string& con, const std::string& mode, FILE* fp, FILE* io);
-        void releaseCon(clipmgr::utils::Console::file_t fp, const std::string& mode, clipmgr::utils::Console::file_t io);
+        void releaseCon(clip::utils::Console::file_t fp, const std::string& mode, clip::utils::Console::file_t io);
     };
 }

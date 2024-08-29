@@ -489,6 +489,16 @@
                 <Setter Property="Padding" Value="0" />
             </Style>
 
+            <Style x:Key="BorderErrorStyle" TargetType="Border">
+                <Setter Property="BorderBrush" Value="{ThemeResource SystemFillColorCritical}"/>
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <SolidColorBrush Color="{ThemeResource SystemFillColorCritical}" Opacity="0.1"/>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}"/>
+            </Style>
+
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
                     <Color x:Key="ButtonForegroundColor">White</Color>

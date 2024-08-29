@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <thread>
 
-namespace clipmgr
+namespace clip
 {
     class DirectoryWatcher
     {
@@ -20,7 +20,7 @@ namespace clipmgr
         std::atomic_bool watcherRunning = false;
         std::atomic_bool runThread = true;
         std::filesystem::path path{};
-        clipmgr::utils::Logger logger{ L"DirectoryWatcher" };
+        clip::utils::Logger logger{ L"DirectoryWatcher" };
 
         void watchDirectoryChanges(std::atomic_flag* waitFlag, int* retValue);
     };

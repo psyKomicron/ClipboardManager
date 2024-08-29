@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-namespace clipmgr::notifs
+namespace clip::notifs
 {
     class ToastNotification
     {
@@ -24,7 +24,7 @@ namespace clipmgr::notifs
 
     private:
         static bool registered;
-        clipmgr::utils::Logger logger{ L"ToastNotification" };
+        clip::utils::Logger logger{ L"ToastNotification" };
         std::wstring title{};
         std::vector<std::wstring> textElements{};
         std::vector<std::pair<std::wstring, std::wstring>> buttonElements{};

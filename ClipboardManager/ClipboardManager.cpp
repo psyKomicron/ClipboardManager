@@ -47,8 +47,8 @@ INT_PTR CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 
 winrt::DispatcherQueueController initIslandApp();
 bool processMessageForTabNav(const HWND& window, MSG& msg);
-void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windowHandle);
-void handleWindowActivation(clipmgr::utils::WindowInfo* windowInfo, const bool& inactive);
+void createWinUIWindow(clip::utils::WindowInfo* windowInfo, const HWND& windowHandle);
+void handleWindowActivation(clip::utils::WindowInfo* windowInfo, const bool& inactive);
 #pragma endregion
 
 #ifdef _DEBUG
@@ -58,12 +58,12 @@ void handleWindowActivation(clipmgr::utils::WindowInfo* windowInfo, const bool& 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int nCmdShow)
 {
 #ifdef ENABLE_CONSOLE
-    clipmgr::utils::Console console{};
+    clip::utils::Console console{};
 #endif // ENABLE_CONSOLE
 
     try
     {
-        auto dispatcherQueueController = clipmgr::utils::managed_dispatcher_queue_controller(initIslandApp());
+        auto dispatcherQueueController = clip::utils::managed_dispatcher_queue_controller(initIslandApp());
         
         // Perform application initialization:
         auto topLevelWindow = InitInstance(hInstance, nCmdShow);
@@ -93,8 +93,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR,
         std::wcout << L"Unknown error occured." << std::endl;
     }
 
-    std::wstring end = L"";
-    std::wcin >> end;
+    /*std::wstring end = L"";
+    std::wcin >> end;*/
 
     return 0;
 }
@@ -165,7 +165,7 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    clipmgr::utils::WindowInfo* windowInfo = clipmgr::utils::getWindowInfo(hWnd);
+    clip::utils::WindowInfo* windowInfo = clip::utils::getWindowInfo(hWnd);
 
     switch (message)
     {
@@ -252,7 +252,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             RECT rect{};
             GetWindowRect(hWnd, &rect);
-            clipmgr::Settings settings{};
+            clip::Settings settings{};
             settings.insert(L"WindowPosY", static_cast<int32_t>(rect.top));
             settings.insert(L"WindowPosX", static_cast<int32_t>(rect.left));
             settings.insert(L"WindowWidth", static_cast<int32_t>(rect.right - rect.left));
@@ -308,7 +308,7 @@ bool processMessageForTabNav(const HWND& window, MSG& msg)
         const bool isShiftKeyDown = (GetKeyState(VK_SHIFT) & (1 << 15)) != 0;
         const HWND nextFocusedWindow = ::GetNextDlgTabItem(window, focusedWindow, isShiftKeyDown);
 
-        clipmgr::utils::WindowInfo* windowInfo = clipmgr::utils::getWindowInfo(window);
+        clip::utils::WindowInfo* windowInfo = clip::utils::getWindowInfo(window);
         const HWND dwxsWindow = winrt::GetWindowFromWindowId(windowInfo->desktopWinXamlSrc.SiteBridge().WindowId());
 
         if (dwxsWindow == nextFocusedWindow)
@@ -330,11 +330,11 @@ bool processMessageForTabNav(const HWND& window, MSG& msg)
     return false;
 }
 
-void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windowHandle)
+void createWinUIWindow(clip::utils::WindowInfo* windowInfo, const HWND& windowHandle)
 {
     assert(windowInfo == nullptr);
 
-    windowInfo = new clipmgr::utils::WindowInfo();
+    windowInfo = new clip::utils::WindowInfo();
     SetWindowLongPtrW(windowHandle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(windowInfo));
 
     windowInfo->desktopWinXamlSrc = winrt::DesktopWindowXamlSource();
@@ -345,7 +345,7 @@ void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windo
     // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
     windowInfo->desktopWinXamlSrc.Content(winrt::make<winrt::ClipboardManager::implementation::MainPage>());
 
-    clipmgr::Settings settings{};
+    clip::Settings settings{};
     int32_t x = settings.get<int32_t>(L"WindowPosX").value_or(10);
     int32_t y = settings.get<int32_t>(L"WindowPosY").value_or(10);
     int32_t width = settings.get<int32_t>(L"WindowWidth").value_or(InitialWindowWidth);
@@ -359,7 +359,7 @@ void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windo
         y = (display.WorkArea().Height / 2) - (height / 2);
     }
 
-    auto appWindow = clipmgr::utils::getCurrentAppWindow(windowHandle);
+    auto appWindow = clip::utils::getCurrentAppWindow(windowHandle);
     appWindow.MoveAndResize({ x, y, width, height });
 
     if (appWindow.TitleBar().IsCustomizationSupported())
@@ -398,7 +398,7 @@ void createWinUIWindow(clipmgr::utils::WindowInfo* windowInfo, const HWND& windo
     }
 }
 
-void handleWindowActivation(clipmgr::utils::WindowInfo * windowInfo, const bool & inactive)
+void handleWindowActivation(clip::utils::WindowInfo * windowInfo, const bool & inactive)
 {
     if (inactive)
     {

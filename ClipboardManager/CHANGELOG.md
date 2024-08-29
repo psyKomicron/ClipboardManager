@@ -1,54 +1,34 @@
 # Change log
 ## Changes
-- Added scrolling to clipboard view.
-- Fixed "Create" user file button not working.
-- Reordered teaching tips to better match the flow of the guided tour.
-- Fixed application crashing mid guided tour.
-- Reload clipboard triggers with the reload button on the clipboard triggers page.
-*XML triggers file*
-- Renamed `<actions>` to `<triggers>` and `<action>` to `<trigger>`.
+- Fixed clipboard triggers not properly saving, not being able to delete actions, not saving regex ignore case and algorithm matching mode.
+- ~~Fixed matching triggers history duplication.~~
+- Improved trigger modification.
+- Now displaying if the trigger is using search mode and/or ignore case.
 
 ## New
-- Added xml declaration example in settings to help user to create it's own file and debug errors.
-- Added user messages (InfoBar) for when the application fails to load the triggers file.
-    - File is missing 'triggers' node.
-    - File has 'actions' node, meaning it has not been updated from version 0.0.x.
-    - Other errors will have a generic message + the path that was invalid.
-- Now restoring app window's size and position.
-- App window has a minimum size, it cannot be resized smaller than that size by the user.
-- Added custom browser support, you can use any executable not just a custom browser.
-*XML triggers file*
-- `<re>` node supports 2 attributes:
-    - `mode="search|match"` Match is the default value. If the attribute is not added or the attribute value doesn't match any known value, the value will be `"match"`.
-    - `ignoreCase="true|false"` False is the default value. If the attribute is not added or the attribute value doesn't match any known value, the value will be `"false"`.
+- Add new clipboard triggers without interacting directly with the XML file. XML file editing is still possible.
+- Added tooltips for quick settings buttons (`/Actions page`).
 
 ## Bugs
-- Locating user file when prompted to will not load the actions into the application.
-- ~~Clicking "Create" on startup when asked wether to locate or create a user file if one is not found doesn't create a file.~~
-- Settings page not translated.
-- Clipboard action matches page has non functional buttons.
 
 ## TODO
-- [X] Implement reload button on triggers page.
-- [X] Implement triggers saving.
-- [ ] Implement clipboard triggers removal from clipboard actions.
-- [X] Add I18N entries
-    - [X] ErrorMessage_CannotSaveTriggersFileNotFound
-    - [X] ErrorMessage_CannotSaveTriggersNoUserFile
-    - [X] ErrorMessage_CannotSaveTriggersXmlError
-    - [X] ErrorMessage_TriggersFileNotFound
-    - [X] ErrorMessage_XmlParserError
-    - [X] ErrorMessage_InvalidTriggersFile
-    - [X] ErrorMessage_MissingTriggersNode
-        - : XML declaration is missing '\<triggers>' node.\nCheck settings for an example of a valid XML declaration.
-    - [X] ErrorMessage_XmlOldVersion
-        - \<actions> node has been renamed \<triggers> and \<action> \<actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.
-- [ ] Fix bugs. ??
-- ~~[ ] Save regex flags.~~
-- ~~[ ] Settings page/Regex options expander is not padded and not implemented.~~
-- [ ] Settings page/Start window minimized not implemented.
-- [ ] Create fr-fr language file.
+- [X] Implement "import from clipboard".
 
-### Windows 10
-- [x] Notifications don't activate.
-    - The function wasn't implemented to launch any URI.
+- [ ] Implement `/Actions page/Clear actions`.
+- [X] Implement `/Triggers page/Test regex`.
+- [ ] Implement clipboard triggers removal from clipboard actions.
+- [ ] Tooltips (I18Ned).
+- [ ] Lower spacing between blocks `/Actions page/quick settings`.
+- [ ] Add translated error messages for regex errors :
+    - [ ] Code 8 - "Found a closing ) with no corresponding opening parenthesis."
+    - [ ] Code 7 - "Unmatched [ or [^ in character class declaration."
+    - [ ] Code 4 - "Invalid character class name, collating name, or character range."
+    - [ ] Code 13 - "The repeat operator "*" cannot start a regular expression."
+- [ ] Translate error messages (and add them to the .resw files) :
+    - [ ] StringFormatError_MissingOpener
+    - [ ] StringFormatError_MissingCloser
+    - [ ] StringFormatError_MissingBraces
+    - [ ] StringFormatErorrMissingValue
+    - [ ] StringRegexError_Invalid
+    - [ ] StringRegexError_EmptyString
+    - [ ] TriggerError_FailedToReload

@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "Process.hpp"
 
-clipmgr::Process::Process(const std::wstring& command) :
+clip::Process::Process(const std::wstring& command) :
     command{ command }
 {
 }
 
-clipmgr::Process::~Process()
+clip::Process::~Process()
 {
     if (processHandle)
     {
@@ -19,7 +19,7 @@ clipmgr::Process::~Process()
     }
 }
 
-void clipmgr::Process::invoke()
+void clip::Process::invoke()
 {
     STARTUPINFOW info{ sizeof(STARTUPINFOW) };
     PROCESS_INFORMATION processInfo{};

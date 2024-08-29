@@ -99,7 +99,7 @@
 
             <PivotItem Margin="0" Padding="0">
                 <PivotItem.Header>
-                    <FontIcon x:Name="ClipboardHistoryPivot" Glyph="&#xf0e3;" FontSize="16"/>
+                    <FontIcon x:Name="ClipboardHistoryPivot" Glyph="&#xe823;" FontSize="16"/>
                 </PivotItem.Header>
 
                 <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="1">
@@ -139,7 +139,7 @@
 
             <PivotItem Padding="0" Margin="0" Loaded="ClipboadTriggersListPivot_Loaded">
                 <PivotItem.Header>
-                    <FontIcon x:Name="ClipboardTriggersPivot" Glyph="&#xe8fd;" FontSize="16"/>
+                    <FontIcon x:Name="ClipboardTriggersPivot" Glyph="&#xf0e3;" FontSize="16"/>
                 </PivotItem.Header>
 
                 <Grid>
@@ -149,23 +149,31 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="7" Margin="0,0,7,5">
+                        <Button Click="TestRegexButton_Click">
+                            <FontIcon Glyph="&#xe943;" FontSize="16"/>
+                        </Button>
                         <Button x:Name="CommandBarSaveButton" Click="CommandBarSaveButton_Click">
                             <FontIcon Glyph="&#xe74e;" FontSize="16"/>
                         </Button>
                         <Button Click="ReloadTriggersButton_Click">
                             <FontIcon Glyph="&#xe72c;" FontSize="16"/>
                         </Button>
+                        <Button Click="AddTriggerButton_Click">
+                            <FontIcon Glyph="&#xe710;" FontSize="16"/>
+                        </Button>
                     </StackPanel>
 
                     <TextBlock x:Name="NoClipboardTriggersTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8" Grid.Row="1" x:Load="False" Visibility="Collapsed"/>
                     
-                    <ListView x:Name="ClipboardTriggersListView" Margin="0" Padding="0" SelectionMode="None" Grid.Row="1">
+                    <ListView x:Name="ClipboardTriggersListView" Margin="0" Padding="0" SelectionMode="None" Grid.Row="1" AllowDrop="True" CanReorderItems="True">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="Padding" Value="7,3,7,7" />
                             </Style>
                         </ListView.Resources>
                     </ListView>
+
+                    <local:RegexTesterControl x:Name="TestRegexContentDialog" Grid.RowSpan="2"/>
 
                     <TeachingTip x:Name="ClipboardTriggersListViewTeachingTip" 
                                  x:Uid="ClipboardActionsListViewTeachingTip"
@@ -178,9 +186,9 @@
                 </Grid>
             </PivotItem>
 
-            <PivotItem Padding="0" Margin="0" Loaded="ClipboardActionsPivotItem_Loaded">
+            <PivotItem Padding="0" Margin="0">
                 <PivotItem.Header>
-                    <FontIcon x:Name="ClipboardActionsPivot" Glyph="&#xf6fa;" FontSize="16"/>
+                    <FontIcon x:Name="ClipboardActionsPivot" Glyph="&#xea8a;" FontSize="16"/>
                 </PivotItem.Header>
 
                 <Grid Padding="5,3,5,0">
@@ -253,6 +261,9 @@
                         </Grid.Transitions>
 
                         <Button x:Name="OpenQuickSettingsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="0" Click="OpenQuickSettingsButton_Click">
+                            <ToolTipService.ToolTip>
+                                <TextBlock x:Uid="OpenQuickSettingsButton_ToolTipTextBlock"/>
+                            </ToolTipService.ToolTip>
                             <FontIcon x:Name="OpenQuickSettingsButtonFontIcon" FontSize="14" Glyph="&#xe76b;"/>
                         </Button>
 
@@ -260,31 +271,70 @@
                             Visibility="Collapsed"
                             Grid.Column="1" 
                             Orientation="Horizontal" 
-                            Spacing="5" 
-                            Margin="10,0,10,0" 
-                            VerticalAlignment="Stretch" 
-                            Background="{ThemeResource SubtleFillColorSecondaryBrush}" 
-                            CornerRadius="{StaticResource OverlayCornerRadius}" 
-                            Padding="5,4">
+                            Spacing="5"
+                            VerticalAlignment="Stretch">
                             <StackPanel.ChildrenTransitions>
                                 <TransitionCollection>
                                     <RepositionThemeTransition IsStaggeringEnabled="False"/>
                                 </TransitionCollection>
                             </StackPanel.ChildrenTransitions>
 
-                            <Button x:Name="ReloadTriggersButton" Click="ReloadTriggersButton_Click">
-                                <FontIcon FontSize="16" Glyph="&#xe72c;"/>
-                            </Button>
-                            <ToggleButton x:Name="SilenceNotificationsToggleButton">
-                                <FontIcon FontSize="16" Glyph="&#xe7ed;"/>
-                            </ToggleButton>
-                            <ToggleButton x:Name="HistoryToggleButton">
-                                <FontIcon FontSize="16" Glyph="&#xe823;"/>
-                            </ToggleButton>
+                            <StackPanel
+                                Orientation="Horizontal" 
+                                Spacing="5"
+                                VerticalAlignment="Stretch" 
+                                Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
+                                CornerRadius="{StaticResource OverlayCornerRadius}" 
+                                Padding="7,5">
+                                <Button x:Name="ReloadTriggersButton" Click="ReloadTriggersButton_Click">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="ReloadTriggersButton_ToolTipTextBlock"/>
+                                    </ToolTipService.ToolTip>
+                                    <FontIcon FontSize="16" Glyph="&#xe72c;"/>
+                                </Button>
+                                
+                                <ToggleButton x:Name="SilenceNotificationsToggleButton">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="SilenceNotificationsToggleButton_ToolTipTextBlock"/>
+                                    </ToolTipService.ToolTip>
+                                    <FontIcon FontSize="16" Glyph="&#xe7ed;"/>
+                                </ToggleButton>
+                                
+                                <ToggleButton x:Name="HistoryToggleButton">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="HistoryToggleButton_ToolTipTextBlock"/>
+                                    </ToolTipService.ToolTip>
+                                    <FontIcon FontSize="16" Glyph="&#xe823;"/>
+                                </ToggleButton>
+                            </StackPanel>
+
+                            <StackPanel
+                                Orientation="Horizontal" 
+                                Spacing="5" 
+                                Margin="5,0,5,0" 
+                                VerticalAlignment="Stretch" 
+                                Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
+                                CornerRadius="{StaticResource OverlayCornerRadius}" 
+                                Padding="7,5">
+
+                                <Button x:Name="ClearActionsButton" Click="ClearActionsButton_Click">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="ClearActionsButtonToolTipTextBlock"/>
+                                    </ToolTipService.ToolTip>
+                                    <FontIcon FontSize="16" Glyph="&#xe894;"/>
+                                </Button>
+
+                                <Button Click="ImportFromClipboardButton_Click">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="ImportFromClipboardButtonToolTipTextBlock"/>
+                                    </ToolTipService.ToolTip>
+                                    <FontIcon FontSize="16" Glyph="&#xe8b6;"/>
+                                </Button>
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
 
-                    <ListView x:Name="ListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2">
+                    <ListView x:Name="ListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2" AllowDrop="True" CanReorderItems="True">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="Padding" Value="0" />

@@ -3,6 +3,7 @@
 
 #include "src/ClipboardTrigger.hpp"
 #include "src/ui/VisualStateManager.hpp"
+#include "src/utils/Logger.hpp"
 
 #include <atomic>
 
@@ -37,15 +38,27 @@ namespace winrt::ClipboardManager::implementation
         void FormatLinkButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void RemoveActionButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void TeachingTip_ButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
+        void RootGrid_PointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+        void RootGrid_PointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+        void RootGrid_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+        void RootGrid_PointerReleased(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 
     private:
-        const clipmgr::ui::VisualState<ClipboardActionView> OptionsClosedState{ L"OptionsClosed", 0, true };
-        const clipmgr::ui::VisualState<ClipboardActionView> OptionsOpenState{ L"OptionsOpen", 0, false };
-        std::vector<clipmgr::ClipboardTrigger> actions{};
+        using VisualState = clip::ui::VisualState<ClipboardActionView>;
+        const VisualState OptionsClosedState{ L"OptionsClosed", 0, true };
+        const VisualState OptionsOpenState{ L"OptionsOpen", 0, false };
+        const VisualState NormalState{ L"Normal", 1, true };
+        const VisualState PointerOverState{ L"PointerOver", 1, false };
+        const VisualState PointerPressedState{ L"PointerPressed", 1, false };
+
+        clip::utils::Logger logger{ L"ClipboardActionView" };
+        std::vector<clip::ClipboardTrigger> actions{};
         winrt::hstring _text{};
-        clipmgr::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
+        clip::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
         winrt::event<event_removed_t> e_removed{};
         std::atomic_flag teachingTipsWaitFlag{};
+
+        void AddTriggerButton(clip::ClipboardTrigger& trigger);
     };
 }
 

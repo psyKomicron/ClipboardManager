@@ -2,13 +2,14 @@
 #include "Logger.hpp"
 
 #include "Console.hpp"
+#include "src/utils/helpers.hpp"
 
 #include <iostream>
 #include <format>
 
-std::atomic_size_t clipmgr::utils::Logger::maxClassNameLength = 10;
+std::atomic_size_t clip::utils::Logger::maxClassNameLength = 10;
 
-clipmgr::utils::Logger::Logger(const std::wstring& className) :
+clip::utils::Logger::Logger(const std::wstring& className) :
     className{ className }
 {
     if (maxClassNameLength < className.size())
@@ -17,24 +18,29 @@ clipmgr::utils::Logger::Logger(const std::wstring& className) :
     }
 }
 
-void clipmgr::utils::Logger::debug(const std::wstring& message) const
+void clip::utils::Logger::debug(const std::wstring& message) const
 {
 #ifdef _DEBUG
     print(message, ConsoleColors::Yellow);
 #endif // _DEBUG
 }
 
-void clipmgr::utils::Logger::info(const std::wstring& message) const
+void clip::utils::Logger::info(const std::wstring& message) const
 {
     print(message, ConsoleColors::Green);
 }
 
-void clipmgr::utils::Logger::error(const std::wstring& message) const
+void clip::utils::Logger::error(const std::wstring& message) const
 {
     print(message, ConsoleColors::Red);
 }
 
-void clipmgr::utils::Logger::print(const std::wstring& message, const clipmgr::utils::ConsoleColors& color) const
+void clip::utils::Logger::error(const std::string& message) const
+{
+    print(clip::utils::convert(message), ConsoleColors::Red);
+}
+
+void clip::utils::Logger::print(const std::wstring& message, const clip::utils::ConsoleColors& color) const
 {
     const wchar_t* colorEnd = L"\033[0m";
 
@@ -93,7 +99,7 @@ void clipmgr::utils::Logger::print(const std::wstring& message, const clipmgr::u
     }
 }
 
-std::wstring clipmgr::utils::Logger::formatClassName(const std::wstring& className) const
+std::wstring clip::utils::Logger::formatClassName(const std::wstring& className) const
 {
     const std::wstring padding = std::wstring((maxClassNameLength - className.size()) / 2, L' ');
     auto&& formattedName = std::vformat(L"{}{}{}", std::make_wformat_args(

@@ -157,6 +157,10 @@
     <value>Action trigger buttons</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="AddDuplicatedActionsHostControl.Header" xml:space="preserve">
+    <value>Add duplicated actions</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="AllowNotificationsHostControl.Header" xml:space="preserve">
     <value>Allow notifications</value>
     <comment>SettingsPage</comment>
@@ -167,11 +171,17 @@
   </data>
   <data name="BrowserHostControl.Header" xml:space="preserve">
     <value>Use custom browser</value>
+    <comment>SettingsPage</comment>
   </data>
   <data name="BrowserStringTextBox.PlaceholderText" xml:space="preserve">
     <value>Executable string</value>
+    <comment>SettingsPage</comment>
   </data>
-  <data name="ClearSettingsButton.Content" xml:space="preserve">
+  <data name="ClearActionsButtonToolTipTextBlock.Text" xml:space="preserve">
+    <value>Clear actions list</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ClearSettingsButton.Text" xml:space="preserve">
     <value>Clear</value>
     <comment>SettingsPage</comment>
   </data>
@@ -231,7 +241,7 @@
     <value>Create</value>
     <comment>MainPage</comment>
   </data>
-  <data name="CreateExampleFileHostControl.Header" xml:space="preserve">
+  <data name="CreateExampleFileHostControl.Text" xml:space="preserve">
     <value>Create example file</value>
     <comment>SettingsPage</comment>
   </data>
@@ -260,7 +270,7 @@
     <comment>Teaching tips</comment>
   </data>
   <data name="EditDialog.PrimaryButtonText" xml:space="preserve">
-    <value>Save</value>
+    <value>Ok</value>
     <comment>ClipboardActionEditor</comment>
   </data>
   <data name="EditDialog.SecondaryButtonText" xml:space="preserve">
@@ -313,9 +323,13 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Format link</value>
     <comment>Teaching tips</comment>
   </data>
-  <data name="FormatTextBlock.Text" xml:space="preserve">
+  <data name="FormatTextBox.Header" xml:space="preserve">
     <value>Format</value>
     <comment>ClipboardActionEditor</comment>
+  </data>
+  <data name="FormatWarningTextBlock.Text" xml:space="preserve">
+    <value>Missing url protocol (https/http), application will default to https</value>
+    <comment>ClipboardTriggerEditControl</comment>
   </data>
   <data name="HeaderApplicationTextBlock.Text" xml:space="preserve">
     <value>Application</value>
@@ -323,6 +337,7 @@ You can easily access your user file via settings and see an example of a valid 
   </data>
   <data name="HeaderBrowserTextBlock.Text" xml:space="preserve">
     <value>Browser</value>
+    <comment>SettingsPage</comment>
   </data>
   <data name="HeaderFormattingTextBlock.Text" xml:space="preserve">
     <value>Formatting &amp; matching</value>
@@ -332,17 +347,37 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Storage</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="HeaderWindowStyleTextBlock.Text" xml:space="preserve">
+    <value>Window</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="HideAppWindowHostControl.Header" xml:space="preserve">
+    <value>Hide app window</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="HistoryToggleButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Quickly enable or disable actions history</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="HistoryToggleButton_ToolTipTextBlock.Text" xml:space="preserve">
+    <value>Disable history</value>
+    <comment>MainPage</comment>
   </data>
   <data name="IgnoreCaseHostControl.Header" xml:space="preserve">
     <value>Ignore case</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="ImportFromClipboardButtonToolTipTextBlock.Text" xml:space="preserve">
+    <value>Import actions from clipboard</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="LabelTextBlockTeachingTip.Subtitle" xml:space="preserve">
     <value>Clipboard text</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="LabelTextBox.Header" xml:space="preserve">
+    <value>Label</value>
+    <comment>ClipboardActionEditor</comment>
   </data>
   <data name="ListViewTeachingTip.Subtitle" xml:space="preserve">
     <value>You will find here the clipboard entries that match your clipboard triggers</value>
@@ -432,6 +467,10 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Open or close quick settings</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="OpenQuickSettingsButton_ToolTipTextBlock.Text" xml:space="preserve">
+    <value>Quick settings</value>
+    <comment>MainPage</comment>
+  </data>
   <data name="OpenSaveFileButton.Content" xml:space="preserve">
     <value>Open &amp; edit</value>
     <comment>MainPage</comment>
@@ -447,6 +486,10 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="OverwriteExampleTriggersFileButtton.Content" xml:space="preserve">
     <value>Overwrite</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="RegexIgnoreCaseTextBlock.Text" xml:space="preserve">
+    <value>Ignore case</value>
+    <comment>RegexTesterControl</comment>
   </data>
   <data name="RegexModeComboBox_Match.Content" xml:space="preserve">
     <value>Match</value>
@@ -468,13 +511,21 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Regex mode</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="RegexTextBlock.Text" xml:space="preserve">
+  <data name="RegexModeTextBlock.Text" xml:space="preserve">
+    <value>Search</value>
+    <comment>RegexTesterControl</comment>
+  </data>
+  <data name="RegexTextBox.Header" xml:space="preserve">
     <value>Regex</value>
     <comment>ClipboardActionEditor</comment>
   </data>
   <data name="ReloadActionsButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Manually reload clipboard triggers</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="ReloadTriggersButton_ToolTipTextBlock.Text" xml:space="preserve">
+    <value>Reload triggers</value>
+    <comment>MainPage</comment>
   </data>
   <data name="RemoveActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Remove action from the list</value>
@@ -496,12 +547,20 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Remove</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="ReportIssueTextBlock.Text" xml:space="preserve">
+    <value>Report bugs</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="RootGridTeachingTip.Subtitle" xml:space="preserve">
     <value>This is a clipboard action</value>
     <comment>Teaching tips</comment>
   </data>
   <data name="SaveMatchingResultsHostControl.Header" xml:space="preserve">
     <value>Save matching results</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="SettingsOtherLinksTextBlock.Text" xml:space="preserve">
+    <value>Other links</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="SettingsPivotTeachingTip.Subtitle" xml:space="preserve">
@@ -515,6 +574,10 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="SilenceNotificationsToggleButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Quickly enable or disable notifications</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="SilenceNotificationsToggleButton_ToolTipTextBlock.Text" xml:space="preserve">
+    <value>Silence notifications</value>
+    <comment>MainPage</comment>
   </data>
   <data name="StartMinimizedSubtitleTextBlock.Text" xml:space="preserve">
     <value>Control the application window state when it's auto-started.</value>
@@ -536,6 +599,10 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Is this your first time ?</value>
     <comment>MainPage Startup tour</comment>
   </data>
+  <data name="TestInputTextBox.Header" xml:space="preserve">
+    <value>Input</value>
+    <comment>RegexTesterControl</comment>
+  </data>
   <data name="ToastNotification_ClickAction" xml:space="preserve">
     <value>Click action</value>
     <comment>ToastNotifications</comment>
@@ -548,8 +615,16 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Too many buttons</value>
     <comment>ToastNotifications</comment>
   </data>
+  <data name="TriggersStorageExpander.Header" xml:space="preserve">
+    <value>Triggers file</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="TriggersXmlExampleHostControl.Header" xml:space="preserve">
     <value>Triggers XML example</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="UserFileHostControl.Header" xml:space="preserve">
+    <value>Triggers file</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="ViewActionsInfoBar.Message" xml:space="preserve">
@@ -559,5 +634,17 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="ViewActionsInfoBar.Title" xml:space="preserve">
     <value>Clipboard triggers successfully loaded</value>
     <comment>MainPage ViewActionsInfoBar</comment>
+  </data>
+  <data name="WindowPresenterStyleAllowMaximizeHostControl.Header" xml:space="preserve">
+    <value>Window can maximize</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="WindowPresenterStyleAllowMinimizeHostControl.Header" xml:space="preserve">
+    <value>Window can minimize</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="WindowStyleHostControl.Header" xml:space="preserve">
+    <value>Window presenter style</value>
+    <comment>SettingsPage</comment>
   </data>
 </root>

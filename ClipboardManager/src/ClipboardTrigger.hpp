@@ -7,7 +7,7 @@
 #include <vector>
 #include <filesystem>
 
-namespace clipmgr
+namespace clip
 {
     enum class MatchMode
     {
@@ -39,6 +39,7 @@ namespace clipmgr
         void regex(const boost::wregex& regex);
         bool enabled() const;
         void enabled(const bool& value);
+        std::optional<clip::MatchMode> matchMode() const;
 
         void updateMatchMode(const MatchMode& mode);
         bool match(const std::wstring& string, const std::optional<MatchMode>& matchMode = {}) const;

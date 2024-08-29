@@ -2,7 +2,7 @@
 #include "src/Settings.hpp"
 #include "src/utils/Logger.hpp"
 
-namespace clipmgr::utils
+namespace clip::utils
 {
     class Launcher
     {
@@ -12,7 +12,8 @@ namespace clipmgr::utils
         winrt::async launch(const std::wstring& uri);
 
     private:
-        const clipmgr::utils::Logger logger{ L"Launcher" };
-        clipmgr::Settings settings{};
+        const wchar_t* DefaultProtocol = L"https";
+        const clip::utils::Logger logger{ L"Launcher" };
+        clip::Settings settings{};
     };
 }

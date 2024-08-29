@@ -16,9 +16,9 @@ namespace winrt
     using namespace winrt::Windows::Data::Xml::Dom;
 }
 
-bool clipmgr::notifs::ToastNotification::registered = false;
+bool clip::notifs::ToastNotification::registered = false;
 
-clipmgr::notifs::ToastNotification::ToastNotification()
+clip::notifs::ToastNotification::ToastNotification()
 {
     static std::once_flag once_flag{};
     std::call_once(once_flag, [this]()
@@ -27,22 +27,22 @@ clipmgr::notifs::ToastNotification::ToastNotification()
     });
 }
 
-void clipmgr::notifs::ToastNotification::addText(const std::wstring& text)
+void clip::notifs::ToastNotification::addText(const std::wstring& text)
 {
     textElements.push_back(text);
 }
 
-void clipmgr::notifs::ToastNotification::setTitle(const std::wstring& title)
+void clip::notifs::ToastNotification::setTitle(const std::wstring& title)
 {
     this->title = title;
 }
 
-void clipmgr::notifs::ToastNotification::addButton(const std::wstring& content, const std::wstring& tag)
+void clip::notifs::ToastNotification::addButton(const std::wstring& content, const std::wstring& tag)
 {
     buttonElements.push_back({ content, tag });
 }
 
-bool clipmgr::notifs::ToastNotification::tryAddButtons(const std::vector<std::pair<std::wstring, std::wstring>>& buttons)
+bool clip::notifs::ToastNotification::tryAddButtons(const std::vector<std::pair<std::wstring, std::wstring>>& buttons)
 {
     if (buttons.size() > 5)
     {
@@ -67,12 +67,12 @@ bool clipmgr::notifs::ToastNotification::tryAddButtons(const std::vector<std::pa
     return true;
 }
 
-void clipmgr::notifs::ToastNotification::send()
+void clip::notifs::ToastNotification::send()
 {
     send(NotificationDurationType::Default, NotificationScenarioType::Default, NotificationSoundType::Default);
 }
 
-void clipmgr::notifs::ToastNotification::send(const NotificationDurationType& durationType, const NotificationScenarioType& scenarioType, const NotificationSoundType& soundType)
+void clip::notifs::ToastNotification::send(const NotificationDurationType& durationType, const NotificationScenarioType& scenarioType, const NotificationSoundType& soundType)
 {
     if (!registered)
     {
@@ -188,17 +188,17 @@ void clipmgr::notifs::ToastNotification::send(const NotificationDurationType& du
     }
 
     winrt::ToastNotification notification{ doc };
-    auto toastNotifier = clipmgr::notifs::toasts::compat::DesktopNotificationManagerCompat::CreateToastNotifier();
+    auto toastNotifier = clip::notifs::toasts::compat::DesktopNotificationManagerCompat::CreateToastNotifier();
     toastNotifier.Show(notification);
 }
 
 
-void clipmgr::notifs::ToastNotification::ensureToastManagerRegistered()
+void clip::notifs::ToastNotification::ensureToastManagerRegistered()
 {
     logger.info(L"Ensuring that DesktopNotificationManagerCompat has been registered.");
     try
     {
-        clipmgr::notifs::toasts::compat::DesktopNotificationManagerCompat::Register(
+        clip::notifs::toasts::compat::DesktopNotificationManagerCompat::Register(
             L"psykomicron.ClipboardManagerV2", L"ClipboardManager", L""
         );
 

@@ -6,13 +6,12 @@
 #include <appmodel.h>
 #include "NotificationActivationCallback.h"
 #include <winrt/Windows.Storage.h>
-#include <winrt/Windows.Foundation.Collections.h>
 
 using namespace winrt;
 using namespace Windows::ApplicationModel;
 using namespace Windows::UI::Notifications;
 using namespace Windows::Foundation::Collections;
-using namespace clipmgr::notifs::toasts::compat;
+using namespace clip::notifs::toasts::compat;
 
 struct Win32AppInfo
 {
@@ -387,7 +386,7 @@ bool HasIdentity()
 	if (!_checkedHasIdentity)
 	{
 		// https://stackoverflow.com/questions/39609643/determine-if-c-application-is-running-as-a-uwp-app-in-desktop-bridge-project
-		UINT32 length;
+		UINT32 length{};
 		wchar_t packageFamilyName[PACKAGE_FAMILY_NAME_MAX_LENGTH + 1];
 		LONG result = GetPackageFamilyName(GetCurrentProcess(), &length, packageFamilyName);
 		_hasIdentity = result == ERROR_SUCCESS;
