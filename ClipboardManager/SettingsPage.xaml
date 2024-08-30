@@ -270,7 +270,7 @@
                 <StackPanel>
                     <clip:HostControl x:Uid="UserFileHostControl" Background="{ThemeResource ExpanderHeaderBackground}" CornerRadius="0">
                         <clip:HostControl.HostContent>
-                            <Button x:Uid="LocateButton"/>
+                            <Button x:Uid="LocateButton" Click="LocateButton_Clicked"/>
                         </clip:HostControl.HostContent>
                     </clip:HostControl>
 

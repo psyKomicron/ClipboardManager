@@ -174,6 +174,7 @@
                     </ListView>
 
                     <local:RegexTesterControl x:Name="TestRegexContentDialog" Grid.RowSpan="2"/>
+                    <local:ClipboardTriggerEditControl x:Name="ClipboardTriggerEditControl" Grid.RowSpan="2"/>
 
                     <TeachingTip x:Name="ClipboardTriggersListViewTeachingTip" 
                                  x:Uid="ClipboardActionsListViewTeachingTip"

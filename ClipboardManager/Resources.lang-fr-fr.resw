@@ -170,7 +170,7 @@
     <comment>SettingsPage</comment>
   </data>
   <data name="BrowserHostControl.Header" xml:space="preserve">
-    <value>Utiliser</value>
+    <value>Navigateur personnalisé</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="BrowserStringTextBox.PlaceholderText" xml:space="preserve">

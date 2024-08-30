@@ -178,7 +178,14 @@ namespace clip
     template<concepts::StringInsertable T>
     inline void Settings::insert(const key_t& key, const T& value)
     {
-        wil::reg::set_value(hKey.get(), key.c_str(), value.c_str());
+        if constexpr (std::same_as<T, std::wstring>)
+        {
+            wil::reg::set_value(hKey.get(), key.c_str(), value.c_str());
+        }
+        else
+        {
+            wil::reg::set_value(hKey.get(), key.c_str(), std::wstring(value).c_str());
+        }
     }
 
     template<concepts::BooleanInsertable T>

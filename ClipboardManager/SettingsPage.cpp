@@ -23,6 +23,7 @@ namespace winrt
     using namespace winrt::Windows::Foundation;
     using namespace winrt::Windows::Storage::Pickers;
 }
+
 namespace xaml
 {
     using namespace winrt::Microsoft::UI::Xaml;
@@ -37,7 +38,7 @@ void implementation::SettingsPage::Page_Loading(winrt::FrameworkElement const&, 
 
     SaveMatchingResultsToggleSwitch().IsOn(settings.get<bool>(L"SaveMatchingResults").value_or(false));
     StartMinimizedToggleSwitch().IsOn(settings.get<bool>(L"StartWindowMinimized").value_or(false));
-    NotificationsToggleSwitch().IsOn(settings.get<bool>(L"NotificationsEnabled").value_or(false));
+    NotificationsToggleSwitch().IsOn(settings.get<bool>(L"NotificationsEnabled").value_or(true));
     
     auto durationType = settings.get<clip::notifs::NotificationDurationType>(L"NotificationDurationType").value_or(clip::notifs::NotificationDurationType::Default);
     DurationDefaultToggleButton().IsChecked(durationType == clip::notifs::NotificationDurationType::Default);
@@ -206,6 +207,20 @@ void implementation::SettingsPage::ClearSettingsButton_Click(winrt::IInspectable
 void implementation::SettingsPage::TriggersStorageExpander_Expanding(xaml::Controls::Expander const&, xaml::Controls::ExpanderExpandingEventArgs const&)
 {
     UserFilePathTextBlock().Text(settings.get<hstring>(L"UserFilePath").value_or(L""));
+}
+
+winrt::async implementation::SettingsPage::LocateButton_Clicked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+    FileOpenPicker picker{};
+    picker.as<IInitializeWithWindow>()->Initialize(GetActiveWindow());
+    picker.FileTypeFilter().Append(L".xml");
+
+    auto&& storageFile = co_await picker.PickSingleFileAsync();
+    if (storageFile)
+    {
+        std::filesystem::path userFilePath{ storageFile.Path().c_str() };
+        settings.insert(L"UserFilePath", userFilePath);
+    }
 }
 
 
