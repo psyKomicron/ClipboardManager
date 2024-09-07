@@ -1,0 +1,13 @@
+namespace ClipboardManager
+{
+    [default_interface]
+    runtimeclass MessagesBar : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        MessagesBar();
+
+        void Add(String title, String message);
+        void Add(String titleKey, String altTitle, String messageKey, String altMessage);
+        void AddMessage(String message);
+        void AddMessage(String messageKey, String messageAlt);
+    }
+}
