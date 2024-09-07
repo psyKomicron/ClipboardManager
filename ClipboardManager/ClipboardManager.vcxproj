@@ -161,6 +161,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="MessagesBar.h">
+      <DependentUpon>MessagesBar.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="src\utils\AppVersion.hpp" />
     <ClInclude Include="ClipboardActionEditor.h">
       <DependentUpon>ClipboardActionEditor.xaml</DependentUpon>
@@ -219,6 +223,10 @@
     <ClInclude Include="src\notifs\ToastNotificationHandler.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MessagesBar.cpp">
+      <DependentUpon>MessagesBar.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="src\utils\AppVersion.cpp" />
     <ClCompile Include="ClipboardActionEditor.cpp">
       <DependentUpon>ClipboardActionEditor.xaml</DependentUpon>
@@ -285,7 +293,9 @@
     <ClInclude Include="src\implementation\Settings_implementation.hpp">
       <FileType>Document</FileType>
     </ClInclude>
-    <PRIResource Include="Resources.lang-en-us.resw" />
+    <PRIResource Include="Resources.lang-en-us.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <PRIResource Include="Resources.lang-fr-fr.resw" />
   </ItemGroup>
   <ItemGroup>
@@ -313,6 +323,10 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="MessagesBar.idl">
+      <DependentUpon>MessagesBar.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="RegexTesterControl.idl">
       <DependentUpon>RegexTesterControl.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -337,6 +351,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MessagesBar.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="RegexTesterControl.xaml">
