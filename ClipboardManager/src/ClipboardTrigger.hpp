@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <filesystem>
+#include <stdexcept>
 
 namespace clip
 {
@@ -13,6 +14,32 @@ namespace clip
     {
         Match = 0,
         Search = 1
+    };
+
+    enum class FormatExceptionCode : uint32_t
+    {
+        Unknown = 0,
+        MissingOpenBraces = 1,
+        MissingClosingBraces = 1 << 1,
+        InvalidFormat = 1 << 2
+    };
+
+    inline FormatExceptionCode operator|(const FormatExceptionCode& left, const FormatExceptionCode& right)
+    {
+        return static_cast<FormatExceptionCode>(static_cast<int32_t>(left) | static_cast<int32_t>(right));
+    }
+
+    class ClipboardTriggerFormatException : std::invalid_argument
+    {
+    public:
+        ClipboardTriggerFormatException(const FormatExceptionCode& code, const std::wstring& message = {});
+
+        std::wstring message() const;
+        FormatExceptionCode code() const;
+
+    private:
+        std::wstring _message{};
+        FormatExceptionCode _code = FormatExceptionCode::Unknown;
     };
 
     class ClipboardTrigger
@@ -43,6 +70,11 @@ namespace clip
 
         void updateMatchMode(const MatchMode& mode);
         bool match(const std::wstring& string, const std::optional<MatchMode>& matchMode = {}) const;
+        /**
+         * @brief Checks the format string of this trigger.
+         * @throws clip::ClipboardTriggerFormatException Throws when the format is invalid.
+         */
+        void checkFormat();
 
         bool operator==(ClipboardTrigger& other);
 
@@ -54,7 +86,8 @@ namespace clip
         std::optional<MatchMode> _matchMode{};
 
         static void firstTimeInitialization(const std::filesystem::path& path, boost::property_tree::wptree tree);
-        static boost::wregex parseRegexFromXml(boost::property_tree::wptree& options);
+        //static boost::wregex parseRegexFromXml(boost::property_tree::wptree& options);
+        ClipboardTriggerFormatException checkFormat(const std::wstring& format);
     };
 }
 
