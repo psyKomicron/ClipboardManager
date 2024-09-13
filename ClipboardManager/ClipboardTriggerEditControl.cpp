@@ -149,7 +149,7 @@ namespace winrt::ClipboardManager::implementation
         }
         else
         {
-            message = resLoader.getOrAlt(L"StringFormatError_MissingValue", clip::res::StringFormatErorrMissingValue);
+            message = resLoader.getOrAlt(L"StringFormatError_Empty", clip::res::StringFormatError_Empty);
         }
 
         FormatTextBoxError().Text(message);

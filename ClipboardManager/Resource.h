@@ -14,7 +14,7 @@
 #define IDR_MAINFRAME                   128
 #define IDC_STATIC                      -1
 
-#define APP_VERSION                     L"0.3.4"
+#define APP_VERSION                     L"0.4.0"
 
 // Next default values for new objects
 // 

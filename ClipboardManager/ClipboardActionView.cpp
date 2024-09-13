@@ -6,6 +6,7 @@
 
 #include "src/Settings.hpp"
 #include "src/utils/Launcher.hpp"
+#include "src/res/strings.h"
 
 #include <winrt/Windows.Storage.h>
 #include <winrt/Windows.System.h>
@@ -18,7 +19,6 @@
 #include <vector>
 #include <format>
 
-namespace implementation = winrt::ClipboardManager::implementation;
 namespace ui
 {
     using namespace winrt::Microsoft::UI::Xaml;
@@ -70,7 +70,33 @@ namespace winrt::ClipboardManager::implementation
 
     void ClipboardActionView::AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled)
     {
-        actions.push_back(clip::ClipboardTrigger(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), enabled));
+        auto trigger = clip::ClipboardTrigger(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), enabled);
+        try
+        {
+            trigger.checkFormat();
+        }
+        catch (clip::ClipboardTriggerFormatException formatException)
+        {
+            hstring message{};
+            switch (formatException.code())
+            {
+                case clip::FormatExceptionCode::MissingOpenBraces:
+                    message = resLoader.getOrAlt(L"StringFormatError_MissingBraces", clip::res::StringFormatError_MissingBraces);
+                    break;
+                case clip::FormatExceptionCode::MissingClosingBraces:
+                    message = resLoader.getOrAlt(L"StringFormatError_MissingOpener", clip::res::StringFormatError_MissingOpener);
+                    break;
+                case clip::FormatExceptionCode::InvalidFormat:
+                case clip::FormatExceptionCode::Unknown:
+                default:
+                    message = resLoader.getOrAlt(L"StringFormatError_InvalidFormat", L"Invalid format string");
+                    break;
+            }
+
+            // TODO: Check format clipboard action view.
+            //FormatErrorTextBlock().Text(message);
+        }
+        actions.push_back(std::move(trigger));
     }
 
     void ClipboardActionView::AddActions(const winrt::Windows::Foundation::IInspectable& inspectable)

@@ -4,6 +4,7 @@
 #include "src/ClipboardTrigger.hpp"
 #include "src/ui/VisualStateManager.hpp"
 #include "src/utils/Logger.hpp"
+#include "src/utils/ResLoader.hpp"
 
 #include <atomic>
 
@@ -51,12 +52,14 @@ namespace winrt::ClipboardManager::implementation
         const VisualState PointerOverState{ L"PointerOver", 1, false };
         const VisualState PointerPressedState{ L"PointerPressed", 1, false };
 
-        clip::utils::Logger logger{ L"ClipboardActionView" };
-        std::vector<clip::ClipboardTrigger> actions{};
-        winrt::hstring _text{};
-        clip::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
-        winrt::event<event_removed_t> e_removed{};
         std::atomic_flag teachingTipsWaitFlag{};
+        clip::utils::Logger logger{ L"ClipboardActionView" };
+        winrt::hstring _text{};
+        clip::utils::ResLoader resLoader{};
+        std::vector<clip::ClipboardTrigger> actions{};
+        clip::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
+
+        winrt::event<event_removed_t> e_removed{};
 
         void AddTriggerButton(clip::ClipboardTrigger& trigger);
     };

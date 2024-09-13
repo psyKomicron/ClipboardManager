@@ -6,6 +6,28 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include <iostream>
+#include <format>
+#include <string>
+
+namespace clip
+{
+    ClipboardTriggerFormatException::ClipboardTriggerFormatException(const FormatExceptionCode& code, const std::wstring& message) :
+        std::invalid_argument("Invalid format"),
+        _message{ message },
+        _code{ code }
+    {
+    }
+
+    std::wstring ClipboardTriggerFormatException::message() const
+    {
+        return _message;
+    }
+
+    FormatExceptionCode ClipboardTriggerFormatException::code() const
+    {
+        return _code;
+    }
+}
 
 namespace clip
 {
@@ -15,6 +37,7 @@ namespace clip
         _regex{ regex },
         _enabled{ enabled }
     {
+        //checkFormat();
     }
 
     std::vector<ClipboardTrigger> ClipboardTrigger::loadClipboardTriggers(const std::filesystem::path& userFilePath)
@@ -40,12 +63,8 @@ namespace clip
                     auto&& modeAttribute = regexNode.get_child_optional(L"<xmlattr>.mode");
 
                     bool ignoreCase = ignoreCaseAttribute.has_value() && (ignoreCaseAttribute.get().data() == L"1" || ignoreCaseAttribute.get().data() == L"true");
-                    auto flags = boost::regex_constants::normal;
-                    if (ignoreCase)
-                    {
-                        flags = boost::regex_constants::icase;
-                    }
-
+                    auto flags = ignoreCase ? boost::regex_constants::icase : boost::regex_constants::normal;
+                    
                     std::optional<MatchMode> triggerMatchMode{};
                     if (modeAttribute.has_value())
                     {
@@ -119,17 +138,6 @@ namespace clip
     }
 
 
-    void ClipboardTrigger::firstTimeInitialization(const std::filesystem::path& path, boost::property_tree::wptree tree)
-    {
-        auto&& actions = tree.put(L"settings.triggers", L"");
-        actions.add(L"trigger.re", L"[A-Z]{,3}");
-        actions.add(L"trigger.format", L"https://example-namespace.com/search?={}");
-        actions.add(L"trigger.label", L"Search example-namespace");
-        actions.add(L"trigger.enabled", L"true");
-
-        boost::property_tree::write_xml(path.string(), tree);
-    }
-
     void ClipboardTrigger::initializeSaveFile(const std::filesystem::path& userFilePath)
     {
         if (utils::pathExists(userFilePath) && utils::pathExists(userFilePath.parent_path()))
@@ -160,6 +168,7 @@ namespace clip
 
     void ClipboardTrigger::format(const std::wstring& value)
     {
+        checkFormat(value);
         _format = value;
     }
 
@@ -203,11 +212,87 @@ namespace clip
             || (matchMode == MatchMode::Search && boost::regex_search(string, _regex));
     }
 
+    void ClipboardTrigger::checkFormat()
+    {
+        auto optional = checkFormat(_format);
+        if (optional.has_value())
+        {
+            throw optional.value();
+        }
+    }
+
     bool ClipboardTrigger::operator==(ClipboardTrigger& other)
     {
         return _enabled == other.enabled()
             &&_label == other.label()
             && _format == other.format()
             && _regex == other.regex();
+    }
+
+
+    void ClipboardTrigger::firstTimeInitialization(const std::filesystem::path& path, boost::property_tree::wptree tree)
+    {
+        auto&& actions = tree.put(L"settings.triggers", L"");
+        actions.add(L"trigger.re", L"[A-Z]{,3}");
+        actions.add(L"trigger.format", L"https://example-namespace.com/search?={}");
+        actions.add(L"trigger.label", L"Search example-namespace");
+        actions.add(L"trigger.enabled", L"true");
+
+        boost::property_tree::write_xml(path.string(), tree);
+    }
+
+    std::optional<ClipboardTriggerFormatException> ClipboardTrigger::checkFormat(const std::wstring& format)
+    {
+        if (format.empty())
+        {
+            return ClipboardTriggerFormatException(FormatExceptionCode::EmptyString);
+        }
+
+        const size_t& npos = std::wstring::npos;
+
+        auto openIndex = format.find_first_of(L'{');
+        auto closeIndex = format.find_first_of(L'}');
+
+        if (openIndex == npos && closeIndex == npos)
+        {
+            // Missing both '{' and '}'
+            auto flags = FormatExceptionCode::MissingOpenBraces | FormatExceptionCode::MissingClosingBraces;
+            return ClipboardTriggerFormatException(flags);
+        }
+        else if (openIndex == npos)
+        {
+            // Missing '{'
+            return ClipboardTriggerFormatException(FormatExceptionCode::MissingOpenBraces);
+        }
+        else if (closeIndex == npos)
+        {
+            // Missing '}'
+            return ClipboardTriggerFormatException(FormatExceptionCode::MissingClosingBraces);
+        }
+
+        if (openIndex > closeIndex)
+        {
+            // }{
+            return ClipboardTriggerFormatException(FormatExceptionCode::BadBraceOrder);
+        }
+
+        try
+        {
+            std::ignore = std::vformat(format, std::make_wformat_args(L"ClipboardManager"));
+        }
+        catch (std::format_error& formatError)
+        {
+            const std::string what{ formatError.what() };
+            if (what.compare("Argument not found.") == 0)
+            {
+                auto bracesContent = format.substr(openIndex + 1, (closeIndex - openIndex) - 1);
+
+                return ClipboardTriggerFormatException(FormatExceptionCode::ArgumentNotFound, bracesContent);
+            }
+
+            return ClipboardTriggerFormatException(FormatExceptionCode::InvalidFormat, clip::utils::convert(formatError.what()));
+        }
+
+        return {};
     }
 }
