@@ -9,8 +9,9 @@ namespace clip::res
     res_t StringFormatError_MissingOpener{ L"Format string is missing opening brace '{'" };
     res_t StringFormatError_MissingCloser{ L"Format string is missing closing brace '}'" };
     res_t StringFormatError_MissingBraces{ L"Format string is missing opening and closing brace '{}'" };
-    res_t StringFormatErorrMissingValue{ L"Format string can't be empty" };
+    res_t StringFormatError_Empty{ L"Format string can't be empty" };
     res_t StringFormatWarning_MissingProtocol{ L"Missing url protocol (https/http), application will default to https" };
+    res_t StringFormatError_ArgumentNotFound{ L"Argument not found: {}" };
     
     res_t StringRegexError_Invalid{ L"Invalid regex at position {}" };
     res_t StringRegexError_EmptyString{ L"Regex string cannot be empty" };
