@@ -2,8 +2,9 @@
 #include "ClipboardActionEditor.g.h"
 
 #include "src/ui/VisualStateManager.hpp"
-#include "src/utils/Logger.hpp"
 #include "src/ui/ListenablePropertyValue.hpp"
+#include "src/utils/Logger.hpp"
+#include "src/utils/ResLoader.hpp"
 
 #include <atomic>
 #include <functional>
@@ -59,12 +60,17 @@ namespace winrt::ClipboardManager::implementation
         clip::ui::VisualStateManager<ClipboardActionEditor> visualStateManager{ *this };
         const clip::ui::VisualState<ClipboardActionEditor> EnabledState{ L"Enabled", 0, true };
         const clip::ui::VisualState<ClipboardActionEditor> DisabledState{ L"Disabled", 0, false };
+        // Label error states:
         const clip::ui::VisualState<ClipboardActionEditor> NoLabelErrorState{ L"NoLabelError", 1, true };
         const clip::ui::VisualState<ClipboardActionEditor> LabelErrorState{ L"LabelError", 1, false };
+        // Format error states:
         const clip::ui::VisualState<ClipboardActionEditor> NoFormatErrorState{ L"NoFormatError", 2, true };
         const clip::ui::VisualState<ClipboardActionEditor> FormatErrorState{ L"FormatError", 2, false };
+        const clip::ui::VisualState<ClipboardActionEditor> FormatWarningState{ L"FormatWarning", 2, false };
+        // Regex error states:
         const clip::ui::VisualState<ClipboardActionEditor> NoRegexErrorState{ L"NoRegexError", 3, true };
         const clip::ui::VisualState<ClipboardActionEditor> RegexErrorState{ L"RegexError", 3, false };
+        // Trigger options states:
         const clip::ui::VisualState<ClipboardActionEditor> IgnoreCaseDisabledState{ L"IgnoreCaseDisabled", 4, true };
         const clip::ui::VisualState<ClipboardActionEditor> IgnoreCaseEnabledState{ L"IgnoreCaseEnabled", 4, false };
         const clip::ui::VisualState<ClipboardActionEditor> UseSearchEnabledState{ L"UseSearchEnabled", 5, true };
@@ -74,6 +80,7 @@ namespace winrt::ClipboardManager::implementation
 
         bool loaded = false;
         std::atomic_flag waitFlag{};
+        clip::utils::ResLoader resLoader{};
         clip::ui::ListenablePropertyValue<bool> _ignoreCaseProperty{ std::bind(&ClipboardActionEditor::ignoreCasePropertyChanged, this, std::placeholders::_1) };
         clip::ui::ListenablePropertyValue<bool> _useSearchProperty{ std::bind(&ClipboardActionEditor::useSearchPropertyChanged, this, std::placeholders::_1) };
         clip::ui::ListenablePropertyValue<bool> _actionEnabledProperty{ std::bind(&ClipboardActionEditor::raisePropertyChanged, this, std::placeholders::_1) };

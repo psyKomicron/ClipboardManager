@@ -214,7 +214,11 @@ namespace clip
 
     void ClipboardTrigger::checkFormat()
     {
-        throw checkFormat(_format);
+        auto optional = checkFormat(_format);
+        if (optional.has_value())
+        {
+            throw optional.value();
+        }
     }
 
     bool ClipboardTrigger::operator==(ClipboardTrigger& other)
@@ -237,9 +241,14 @@ namespace clip
         boost::property_tree::write_xml(path.string(), tree);
     }
 
-    ClipboardTriggerFormatException ClipboardTrigger::checkFormat(const std::wstring& format)
+    std::optional<ClipboardTriggerFormatException> ClipboardTrigger::checkFormat(const std::wstring& format)
     {
-        const auto npos = std::wstring::npos;
+        if (format.empty())
+        {
+            return ClipboardTriggerFormatException(FormatExceptionCode::EmptyString);
+        }
+
+        const size_t& npos = std::wstring::npos;
 
         auto openIndex = format.find_first_of(L'{');
         auto closeIndex = format.find_first_of(L'}');
@@ -255,22 +264,17 @@ namespace clip
             // Missing '{'
             return ClipboardTriggerFormatException(FormatExceptionCode::MissingOpenBraces);
         }
-        else
+        else if (closeIndex == npos)
         {
             // Missing '}'
             return ClipboardTriggerFormatException(FormatExceptionCode::MissingClosingBraces);
         }
 
-        //if (openIndex != (closeIndex - 1))
-        //{
-        //    if (openIndex > closeIndex)
-        //    {
-        //        // }{
-        //    }
-
-        //    auto openIndexN1 = format.at(openIndex + 1);
-        //    
-        //}
+        if (openIndex > closeIndex)
+        {
+            // }{
+            return ClipboardTriggerFormatException(FormatExceptionCode::BadBraceOrder);
+        }
 
         try
         {
@@ -278,7 +282,17 @@ namespace clip
         }
         catch (std::format_error& formatError)
         {
+            const std::string what{ formatError.what() };
+            if (what.compare("Argument not found.") == 0)
+            {
+                auto bracesContent = format.substr(openIndex + 1, (closeIndex - openIndex) - 1);
+
+                return ClipboardTriggerFormatException(FormatExceptionCode::ArgumentNotFound, bracesContent);
+            }
+
             return ClipboardTriggerFormatException(FormatExceptionCode::InvalidFormat, clip::utils::convert(formatError.what()));
         }
+
+        return {};
     }
 }

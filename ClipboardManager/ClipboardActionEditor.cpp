@@ -4,15 +4,15 @@
 #include "ClipboardActionEditor.g.cpp"
 #endif
 
+#include <src/ClipboardTrigger.hpp>
 #include <src/utils/helpers.hpp>
+#include <src/res/strings.h>
 
 #include <boost/regex.hpp>
 
 #include <pplawait.h>
 #include <iostream>
 
-namespace impl = winrt::ClipboardManager::implementation;
-namespace implementation = winrt::ClipboardManager::implementation;
 namespace winrt
 {
     using namespace winrt::Windows::Foundation;
@@ -212,7 +212,69 @@ namespace winrt::ClipboardManager::implementation
     void ClipboardActionEditor::UserControl_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
     {
         loaded = true;
+
         visualStateManager.goToEnabledState(_actionEnabledProperty.get());
+
+        // Check if the associated trigger is valid.
+        auto trigger = clip::ClipboardTrigger(std::wstring(_triggerLabelProperty.get()), 
+            std::wstring(_triggerFormatProperty.get()), 
+            boost::wregex(std::wstring(_triggerRegexProperty.get())), true);
+        try
+        {
+            trigger.checkFormat();
+        }
+        catch (clip::ClipboardTriggerFormatException formatException)
+        {
+            hstring message{};
+            switch (formatException.code())
+            {
+                case clip::FormatExceptionCode::MissingOpenBraces:
+                    message = resLoader.getOrAlt(L"StringFormatError_MissingOpener", clip::res::StringFormatError_MissingOpener);
+                    break;
+                case clip::FormatExceptionCode::MissingClosingBraces:
+                    message = resLoader.getOrAlt(L"StringFormatError_MissingCloser", clip::res::StringFormatError_MissingCloser);
+                    break;
+                case clip::FormatExceptionCode::EmptyString:
+                    message = resLoader.getOrAlt(L"StringFormatError_Empty", clip::res::StringFormatError_Empty);
+                    break;
+                case clip::FormatExceptionCode::ArgumentNotFound:
+                {
+                    message = resLoader.getOrAlt(L"StringFormatError_ArgumentNotFound", clip::res::StringFormatError_ArgumentNotFound);
+                    auto argument = formatException.message();
+                    message = std::vformat(message, std::make_wformat_args(argument));
+                    break;
+                }
+                case (clip::FormatExceptionCode::MissingOpenBraces | clip::FormatExceptionCode::MissingClosingBraces):
+                    message = resLoader.getOrAlt(L"StringFormatError_MissingBraces", clip::res::StringFormatError_MissingBraces);
+                    break;
+                case clip::FormatExceptionCode::InvalidFormat:
+                case clip::FormatExceptionCode::Unknown:
+                default:
+                    message = resLoader.getOrAlt(L"StringFormatError_InvalidFormat", L"Invalid format string");
+                    break;
+            }
+
+            switch (formatException.code())
+            {
+                // Warning errors
+                case clip::FormatExceptionCode::EmptyString:
+                case (clip::FormatExceptionCode::MissingOpenBraces | clip::FormatExceptionCode::MissingClosingBraces):
+                    visualStateManager.goToState(FormatWarningState);
+                    break;
+
+                // Errors
+                case clip::FormatExceptionCode::MissingOpenBraces:
+                case clip::FormatExceptionCode::MissingClosingBraces:
+                case clip::FormatExceptionCode::ArgumentNotFound:
+                case clip::FormatExceptionCode::InvalidFormat:
+                case clip::FormatExceptionCode::Unknown:
+                default:
+                    visualStateManager.goToState(FormatErrorState);
+                    break;
+            }
+
+            FormatErrorTextBlock().Text(message);
+        }
     }
 
     void ClipboardActionEditor::RemoveButton_Click(winrt::IInspectable const&, winrt::RoutedEventArgs const&)

@@ -11,10 +11,20 @@ namespace winrt::ClipboardManager::implementation
     public:
         MessagesBar() = default;
 
-        void Add(const winrt::hstring& title, const winrt::hstring& message);
+        void Add(const winrt::hstring& title, const winrt::hstring& message, const winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity& severity);
         void Add(const winrt::hstring& titleKey, const winrt::hstring& altTitle, const winrt::hstring& messageKey, const winrt::hstring& messageAlt);
+
         void AddMessage(const winrt::hstring& message);
         void AddMessage(const winrt::hstring& messageKey, const winrt::hstring& messageAlt);
+
+        void AddWarning(const winrt::hstring& messageKey, const winrt::hstring& messageAlt);
+        void AddWarning(const winrt::hstring& titleKey, const winrt::hstring& altTitle, const winrt::hstring& messageKey, const winrt::hstring& messageAlt);
+        
+        void AddError(const winrt::hstring& messageKey, const winrt::hstring& messageAlt);
+        void AddError(const winrt::hstring& titleKey, const winrt::hstring& altTitle, const winrt::hstring& messageKey, const winrt::hstring& messageAlt);
+
+        void AddContent(const winrt::hstring& titleContent, const winrt::hstring& messageContent, 
+            const winrt::Windows::Foundation::IInspectable& content, const winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity& severity);
 
         void UserControl_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void LeftButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);

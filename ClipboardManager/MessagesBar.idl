@@ -5,9 +5,17 @@ namespace ClipboardManager
     {
         MessagesBar();
 
-        void Add(String title, String message);
+        void Add(String title, String message, Microsoft.UI.Xaml.Controls.InfoBarSeverity severity);
         void Add(String titleKey, String altTitle, String messageKey, String altMessage);
+
         void AddMessage(String message);
         void AddMessage(String messageKey, String messageAlt);
+
+        void AddError(String errorKey, String errorAlt);
+        void AddError(String titleKey, String altTitle, String messageKey, String altMessage);
+
+        void AddWarning(String warningKey, String warningAlt);
+
+        void AddContent(String titleContent, String messageContent, IInspectable content, Microsoft.UI.Xaml.Controls.InfoBarSeverity severity);
     }
 }

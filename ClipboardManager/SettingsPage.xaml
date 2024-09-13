@@ -56,6 +56,8 @@
         <StackPanel VerticalAlignment="Top" Orientation="Vertical" Spacing="3" Margin="0,0,0,15">
             <!--#region Application -->
             <TextBlock x:Uid="HeaderApplicationTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6"/>
+            <clip:HostControl x:Name="ApplicationVersionHostControl" x:Uid="ApplicationVersionHostControl"/>
+
             <clip:HostControl x:Uid="AutomaticStartHostControl">
                 <clip:HostControl.HostContent>
                     <ToggleSwitch x:Name="AutoStartToggleSwitch" Toggled="AutoStartToggleSwitch_Toggled"/>

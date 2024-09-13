@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\FormatExceptionCode.hpp" />
     <ClInclude Include="MessagesBar.h">
       <DependentUpon>MessagesBar.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -223,6 +224,7 @@
     <ClInclude Include="src\notifs\ToastNotificationHandler.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\FormatExceptionCode.cpp" />
     <ClCompile Include="MessagesBar.cpp">
       <DependentUpon>MessagesBar.xaml</DependentUpon>
       <SubType>Code</SubType>

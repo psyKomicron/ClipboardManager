@@ -1,5 +1,6 @@
 #pragma once
 #include <src/utils/Logger.hpp>
+#include "src/FormatExceptionCode.hpp"
 
 #include <boost/regex.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -15,19 +16,6 @@ namespace clip
         Match = 0,
         Search = 1
     };
-
-    enum class FormatExceptionCode : uint32_t
-    {
-        Unknown = 0,
-        MissingOpenBraces = 1,
-        MissingClosingBraces = 1 << 1,
-        InvalidFormat = 1 << 2
-    };
-
-    inline FormatExceptionCode operator|(const FormatExceptionCode& left, const FormatExceptionCode& right)
-    {
-        return static_cast<FormatExceptionCode>(static_cast<int32_t>(left) | static_cast<int32_t>(right));
-    }
 
     class ClipboardTriggerFormatException : std::invalid_argument
     {
@@ -87,7 +75,7 @@ namespace clip
 
         static void firstTimeInitialization(const std::filesystem::path& path, boost::property_tree::wptree tree);
         //static boost::wregex parseRegexFromXml(boost::property_tree::wptree& options);
-        ClipboardTriggerFormatException checkFormat(const std::wstring& format);
+        std::optional<ClipboardTriggerFormatException> checkFormat(const std::wstring& format);
     };
 }
 

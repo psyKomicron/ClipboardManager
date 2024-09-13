@@ -91,6 +91,9 @@
     <ClInclude Include="src\utils\AppVersion.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\FormatExceptionCode.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipboardManager.cpp">
@@ -142,6 +145,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\utils\AppVersion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FormatExceptionCode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

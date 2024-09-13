@@ -676,8 +676,17 @@ namespace winrt::ClipboardManager::implementation
                 // TODO: When i add triggers, only enabled triggers will be added yet they can be enabled or disabled later. What do if.
                 actionView.AddAction(action.format(), action.label(), action.regex().str(), true);
 
-                auto url = std::vformat(action.format(), std::make_wformat_args(text));
-                buttons.push_back({ action.label(), std::format(L"open&url={}", url) });
+                try
+                {
+                    auto url = std::vformat(action.format(), std::make_wformat_args(text));
+                    buttons.push_back({ action.label(), std::format(L"open&url={}", url) });
+                }
+                catch (std::invalid_argument formatError)
+                {
+                    logger.error(clip::utils::convert(formatError.what()));
+
+                    MessagesBar().AddWarning(L"", L"Failed to create format for trigger " + action.label());
+                }
             }
         }
 
@@ -689,6 +698,7 @@ namespace winrt::ClipboardManager::implementation
         if (!localSettings.get<bool>(L"NotificationsEnabled").value_or(false))
         {
             logger.info(L"Not sending notification, notifications are not enabled.");
+            MessagesBar().AddMessage(L"Not sending notification, notifications are not enabled.");
             return;
         }
 
@@ -718,6 +728,7 @@ namespace winrt::ClipboardManager::implementation
             {
                 // Don't forget to rename "ClipboardManager.pri" to "resources.pri".
                 logger.error(L"Failed to load translation file (resources.pri), sending notification without translating the string.");
+
                 if (!notif.tryAddButtons(buttons))
                 {
                     notif.addText(L"Open app");
@@ -769,13 +780,10 @@ namespace winrt::ClipboardManager::implementation
             }
         }
 
-        clip::utils::ResLoader resLoader{};
-        hstring title = resLoader.getOrAlt(L"ReloadActionsUserFileNotFoundTitle", L"Failed to reload triggers");
-        hstring message = resLoader.getOrAlt(
+        MessagesBar().AddError(L"ReloadActionsUserFileNotFoundTitle", 
+            L"Failed to reload triggers", 
             L"ReloadActionsUserFileNotFoundMessage", 
             L"Actions user file has either been moved/deleted or application settings have been cleared.");
-
-        MessagesBar().Add(title, message);
     }
 
     bool MainPage::LoadTriggers(std::filesystem::path& path)
@@ -785,7 +793,7 @@ namespace winrt::ClipboardManager::implementation
             triggers = clip::ClipboardTrigger::loadClipboardTriggers(path);
 
             bool showError = false;
-            std::vector<std::wstring> invalidTriggers{};
+            std::wstring invalidTriggers{};
             for (auto&& trigger : triggers)
             {
                 try
@@ -798,13 +806,15 @@ namespace winrt::ClipboardManager::implementation
 
                     showError = true;
 
-                    invalidTriggers.push_back(trigger.label());
+                    invalidTriggers += L"\n" + trigger.label();
                 }
             }
 
             if (showError)
             {
-                MessagesBar().Add(L"Invalid trigger", L"One or more triggers have invalid data, check the triggers page for more information.");
+                MessagesBar().Add(L"Invalid trigger", 
+                    L"One or more triggers have invalid data, check the triggers page for more information. Invalid triggers:" + invalidTriggers, 
+                    xaml::InfoBarSeverity::Error);
             }
             else
             {
@@ -818,21 +828,19 @@ namespace winrt::ClipboardManager::implementation
         }
         catch (clip::ClipboardTriggerFormatException formatExcept)
         {
-            MessagesBar().AddMessage(L"One trigger doesn't respect the valid format syntax.");
+            MessagesBar().AddError(L"", L"One trigger doesn't respect the valid format syntax.");
 
             triggers.clear();
         }
         catch (std::invalid_argument invalidArgument)
         {
-            MessagesBar().AddMessage(
-                clip::utils::getNamedResource(L"ErrorMessage_TriggersFileNotFound").value_or(L"Triggers file not available or contains invalid data.")
-            );
+            MessagesBar().AddError(L"ErrorMessage_TriggersFileNotFound", 
+                L"Triggers file not available or contains invalid data.");
         }
         catch (boost::property_tree::xml_parser_error xmlParserError)
         {
-            MessagesBar().AddMessage(
-                clip::utils::getNamedResource(L"ErrorMessage_XmlParserError").value_or(L"Triggers file has invalid XML markup data.")
-            );
+            MessagesBar().AddError(L"ErrorMessage_XmlParserError", 
+                L"Triggers file has invalid XML markup data.");
         }
         catch (boost::property_tree::ptree_bad_path badPath)
         {
@@ -859,7 +867,7 @@ namespace winrt::ClipboardManager::implementation
                 content = L"Path not found: '" + hstring(path) + L"'";
             }
 
-            MessagesBar().Add(message, content);
+            MessagesBar().Add(message, content, xaml::InfoBarSeverity::Error);
         }
 
         return false;

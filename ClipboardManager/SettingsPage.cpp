@@ -8,6 +8,7 @@
 #include "src/utils/helpers.hpp"
 #include "src/notifs/NotificationTypes.hpp"
 #include "src/ClipboardTrigger.hpp"
+#include "Resource.h"
 
 //#include <boost/property_tree/ptree.hpp>
 //#include <boost/property_tree/xml_parser.hpp>
@@ -33,6 +34,8 @@ namespace xaml
 
 void implementation::SettingsPage::Page_Loading(winrt::FrameworkElement const&, winrt::IInspectable const&)
 {
+    ApplicationVersionHostControl().HostContent(box_value(APP_VERSION));
+
     clip::utils::StartupTask startupTask{};
     AutoStartToggleSwitch().IsOn(startupTask.isTaskRegistered());
 
