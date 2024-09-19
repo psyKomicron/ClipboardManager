@@ -104,7 +104,7 @@
 
                 <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="1">
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="x:String">
+                        <DataTemplate>
                             <Grid Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}" CornerRadius="{StaticResource OverlayCornerRadius}" BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}" BorderThickness="1" Padding="7,5" Margin="0,3,0,3">
                                 <Grid.Transitions>
                                     <TransitionCollection>
@@ -120,8 +120,13 @@
                                     <RowDefinition Height="1*"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
+                                <Grid.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="IsTextSelectionEnabled" Value="True"/>
+                                    </Style>
+                                </Grid.Resources>
 
-                                <TextBlock Text="{x:Bind}" IsTextSelectionEnabled="True" Grid.Column="0" MaxHeight="60" TextWrapping="Wrap"/>
+                                <ContentPresenter Content="{x:Bind}" Grid.Column="0" MaxHeight="60" TextWrapping="Wrap"/>
 
                                 <StackPanel Grid.Column="1" Grid.RowSpan="2" Orientation="Vertical" Spacing="5">
                                     <Button Style="{StaticResource IconButtonStyle}">

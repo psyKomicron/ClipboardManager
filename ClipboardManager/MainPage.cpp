@@ -25,6 +25,13 @@
 #include <winrt/Microsoft.Windows.AppNotifications.h>
 #include <winrt/Microsoft.Windows.AppNotifications.Builder.h>
 #include <winrt/Windows.System.h>
+// OCR
+#include <winrt/Windows.Graphics.Imaging.h>
+#include <winrt/Windows.Media.Ocr.h>
+#include <winrt/Windows.Globalization.h>
+#include <winrt/Windows.Storage.Streams.h>
+#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
+#include <src/utils/com_closable_ptr.h>
 
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -872,12 +879,51 @@ namespace winrt::ClipboardManager::implementation
         {
             try
             {
-                uint32_t index = 0;
-                auto&& availableFormats = item.Content().AvailableFormats();
-                if (availableFormats.IndexOf(L"Text", index))
+                auto&& content = item.Content();
+                
+                if (content.Contains(win::StandardDataFormats::Text()))
                 {
-                    auto&& itemText = co_await item.Content().GetTextAsync();
+                    auto&& itemText = co_await content.GetTextAsync();
                     ClipboardHistoryListView().Items().Append(box_value(itemText));
+                }
+                else if (content.Contains(win::StandardDataFormats::Bitmap()))
+                {
+                    logger.info(L"Detected image in clipboard, performing OCR on it");
+
+                    logger.info(L"OCR engine available recognizer languages:");
+                    auto availableRecognizerLanguages = Windows::Media::Ocr::OcrEngine::AvailableRecognizerLanguages();
+                    for (auto&& language : availableRecognizerLanguages)
+                    {
+                        logger.info(language.DisplayName().data());
+                    }
+
+                    //wil::unique_com
+                    auto&& clipboardStream = co_await item.Content().GetBitmapAsync();
+                    auto&& bitmapStream = co_await clipboardStream.OpenReadAsync();
+                    Windows::Foundation::IClosable closable = bitmapStream;
+                    clip::utils::unique_closable bitmapStreamPtr{ &closable, &clip::utils::closeIClosable };
+
+                    Microsoft::UI::Xaml::Media::Imaging::BitmapImage bitmapImage{};
+                    bitmapImage.SetSource(bitmapStream);
+                    DispatcherQueue().TryEnqueue([this, bitmapImage]()
+                    {
+                        //xaml::Image image{};
+                        xaml::Image image{};
+                        image.Source(bitmapImage);
+
+                        try
+                        {
+                            ClipboardHistoryListView().Items().Append(image);
+                        }
+                        catch (hresult_error err)
+                        {
+                            logger.error(err.message().data());
+                        }
+                    });
+
+                    logger.debug(L"Decoding bitmap stream and creating software bitmap.");
+                    auto&& bitmapDecoder = co_await Windows::Graphics::Imaging::BitmapDecoder::CreateAsync(bitmapStream);
+                    auto&& softwareBitmap = co_await bitmapDecoder.GetSoftwareBitmapAsync();
                 }
             }
             catch (hresult_error error)
