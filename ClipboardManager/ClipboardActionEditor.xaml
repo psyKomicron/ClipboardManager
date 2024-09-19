@@ -8,7 +8,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
     Loaded="UserControl_Loaded">
 
     <Grid
@@ -17,7 +16,7 @@
         BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}" 
         BorderThickness="1"
         Padding="16,10,16,16"
-        CornerRadius="{StaticResource ControlCornerRadius}"
+        CornerRadius="{StaticResource OverlayCornerRadius}"
         RowSpacing="7"
         PointerEntered="RootGrid_PointerEntered"
         PointerExited="RootGrid_PointerExited">
@@ -29,10 +28,11 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
+            <VisualStateGroup x:Name="EnabledStates">
                 <VisualState x:Name="Normal"/>
                 <VisualState x:Name="Disabled">
                     <VisualState.Setters>
@@ -43,7 +43,7 @@
                 </VisualState>
             </VisualStateGroup>
 
-            <VisualStateGroup>
+            <VisualStateGroup x:Name="Pointers">
                 <VisualState x:Name="PointerOut"/>
 
                 <VisualState x:Name="PointerOver">
@@ -58,56 +58,98 @@
                 </VisualState>
             </VisualStateGroup>
 
-            <VisualStateGroup>
+            <VisualStateGroup x:Name="IgnoreCaseStates">
                 <VisualState x:Name="IgnoreCaseDisabled"/>
                 <VisualState x:Name="IgnoreCaseEnabled">
                     <VisualState.Setters>
-                        <Setter Target="IgnoreCaseBorder.Background" Value="{ThemeResource AccentFillColorTertiaryBrush}"/>
-                        <Setter Target="IgnoreCaseTextBlock.Foreground" Value="{ThemeResource TextOnAccentFillColorPrimaryBrush}"/>
+                        <Setter Target="IgnoreCaseTextBlock.Foreground" Value="{ThemeResource AccentFillColorDefaultBrush}"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
 
-            <VisualStateGroup>
+            <VisualStateGroup x:Name="UseSearchStates">
                 <VisualState x:Name="UseSearchDisabled"/>
                 <VisualState x:Name="UseSearchEnabled">
                     <VisualState.Setters>
-                        <Setter Target="UseSearchBorder.Background" Value="{ThemeResource AccentFillColorTertiaryBrush}"/>
-                        <Setter Target="UseSearchFontIcon.Foreground" Value="{ThemeResource TextOnAccentFillColorPrimaryBrush}"/>
+                        <Setter Target="UseSearchFontIcon.Foreground" Value="{ThemeResource AccentFillColorDefaultBrush}"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup x:Name="FormatErrorStates">
+                <VisualState x:Name="NoFormatError"/>
+                <VisualState x:Name="FormatWarning">
+                    <VisualState.Setters>
+                        <Setter Target="FormatErrorIconBackground.Visibility" Value="Visible"/>
+                        <Setter Target="FormatErrorIconBackground.Foreground" Value="{ThemeResource InfoBarWarningSeverityIconBackground}"/>
+                        <Setter Target="FormatErrorIcon.Visibility" Value="Visible"/>
+                        <Setter Target="FormatErrorIcon.Glyph" Value="&#xF13C;"/>
+                        <Setter Target="FormatErrorBorder.Visibility" Value="Visible"/>
+                        <Setter Target="FormatErrorBorder.Background" Value="{ThemeResource SystemFillColorCautionBackgroundBrush}"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="FormatError">
+                    <VisualState.Setters>
+                        <Setter Target="FormatErrorIconBackground.Visibility" Value="Visible"/>
+                        <Setter Target="FormatErrorIcon.Visibility" Value="Visible"/>
+                        <Setter Target="FormatErrorBorder.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup x:Name="RegexErrorStates">
+                <VisualState x:Name="NoRegexError"/>
+                <VisualState x:Name="RegexError">
+                    <VisualState.Setters>
+                        <Setter Target="RegexErrorIconBackground.Visibility" Value="Visible"/>
+                        <Setter Target="RegexErrorIcon.Visibility" Value="Visible"/>
+                        <Setter Target="RegexErrorBorder.Visibility" Value="Visible"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
+        <!--<Border Grid.ColumnSpan="2" Grid.RowSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.9" BorderBrush="{ThemeResource SystemFillColorCritical}" BorderThickness="2" Background="Transparent" IsHitTestVisible="False" Margin="-16,-10,-16,-16" CornerRadius="{StaticResource ControlCornerRadius}"/>-->
+
         <TextBlock x:Name="ActionLabelTextBlock" Grid.Row="0" Style="{StaticResource BodyStrongTextBlockStyle}" FontSize="20" VerticalAlignment="Center" Text="{x:Bind ActionLabel, Mode=OneWay}"/>
 
-        <TextBlock x:Name="ActionFormatTextBlock" VerticalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind ActionFormat, Mode=OneWay}"/>
-        <StackPanel Grid.Row="2" Spacing="5" Orientation="Horizontal">
-            <TextBlock x:Name="ActionRegexTextBlock" 
-                   FontFamily="Consolas"
-                   CharacterSpacing="70"
-                   VerticalAlignment="Center" 
-                   Grid.Row="2" 
-                   Grid.ColumnSpan="2" 
-                   Text="{x:Bind ActionRegex, Mode=OneWay}"/>
-            <Border x:Name="IgnoreCaseBorder"
-                Margin="25,0,0,0" 
-                Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" 
-                BorderBrush="{ThemeResource SubtleFillColorTertiaryBrush}"
-                BorderThickness="1"
-                Padding="{StaticResource ButtonPadding}" 
-                CornerRadius="{StaticResource ControlCornerRadius}">
-                <TextBlock x:Name="IgnoreCaseTextBlock" Text="Aa"/>
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <FontIcon x:Name="FormatErrorIconBackground" x:Load="False" Visibility="Collapsed" Glyph="&#xF136;" Foreground="{ThemeResource InfoBarErrorSeverityIconBackground}" Margin="0,0,4,0"/>
+            <FontIcon x:Name="FormatErrorIcon" x:Load="False" Visibility="Collapsed" Glyph="&#xF13D;" Foreground="{ThemeResource InfoBarWarningSeverityIconForeground}" Margin="0,0,4,0"/>
+            <TextBlock x:Name="ActionFormatTextBlock" Grid.Column="1" VerticalAlignment="Center" Text="{x:Bind ActionFormat, Mode=OneWay}"/>
+            <Border x:Name="FormatErrorBorder" x:Load="False" Visibility="Collapsed" Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}" Grid.ColumnSpan="2" Grid.Row="1" Padding="10,14,10,14" CornerRadius="{StaticResource ControlCornerRadius}" Margin="-4,4,-4,0">
+                <TextBlock x:Name="FormatErrorTextBlock" TextWrapping="Wrap" VerticalAlignment="Center"/>
             </Border>
-            <Border x:Name="UseSearchBorder"
-                Background="{ThemeResource SolidBackgroundFillColorBaseBrush}" 
-                BorderBrush="{ThemeResource SubtleFillColorTertiaryBrush}"
-                BorderThickness="1"
-                Padding="{StaticResource ButtonPadding}" 
-                CornerRadius="{StaticResource ControlCornerRadius}">
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <FontIcon x:Name="RegexErrorIconBackground" x:Load="False" Visibility="Collapsed" Glyph="&#xF136;" Foreground="{ThemeResource InfoBarErrorSeverityIconBackground}" Margin="0,0,4,0"/>
+            <FontIcon x:Name="RegexErrorIcon" x:Load="False" Visibility="Collapsed" Glyph="&#xF13D;" Foreground="{ThemeResource InfoBarWarningSeverityIconForeground}" Margin="0,0,4,0"/>
+            <StackPanel Grid.Column="1" Spacing="9" Orientation="Horizontal">
+                <TextBlock x:Name="ActionRegexTextBlock" FontFamily="Consolas" CharacterSpacing="70" VerticalAlignment="Center" Text="{x:Bind ActionRegex, Mode=OneWay}"/>
+                <TextBlock x:Name="IgnoreCaseTextBlock" Text="Aa" VerticalAlignment="Top" Margin="20,0,0,0"/>
                 <FontIcon x:Name="UseSearchFontIcon" Glyph="&#xf78b;" FontSize="16"/>
+            </StackPanel>
+            <Border x:Name="RegexErrorBorder" x:Load="False" Visibility="Collapsed" Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}" Grid.ColumnSpan="2" Grid.Row="1" Padding="10,14,10,14" CornerRadius="{StaticResource ControlCornerRadius}" Margin="-4,4,-4,0">
+                <TextBlock x:Name="RegexErrorTextBlock" TextWrapping="Wrap" VerticalAlignment="Center"/>
             </Border>
-        </StackPanel>
+        </Grid>
 
         <StackPanel Orientation="Horizontal" Spacing="3" Grid.Column="1">
             <ToggleSwitch x:Name="ActionEnabledToggleSwitch" Grid.Column="1" Grid.Row="1" Toggled="ActionEnabledToggleSwitch_Toggled" Style="{StaticResource FlippedToggleSwitchStyle}" OnContent="{x:Null}" OffContent="{x:Null}" IsOn="{x:Bind ActionEnabled, Mode=TwoWay}"/>
@@ -123,6 +165,11 @@
             </Button>
         </StackPanel>
 
+        <InfoBar x:Name="InfoBar" Grid.ColumnSpan="2" Grid.Row="3"/>
+
+        <local:ClipboardTriggerEditControl x:Name="TriggerEditControl"/>
+        
+        <!--#region Teaching tips -->
         <TeachingTip x:Name="ClipboardActionRootGridTeachingTip"
              x:Uid="ClipboardActionRootGridTeachingTip"
              Target="{x:Bind RootGrid}"
@@ -131,7 +178,6 @@
                 <FontIcon Glyph="&#xe72a;" FontSize="14"/>
             </TeachingTip.ActionButtonContent>
         </TeachingTip>
-
         <TeachingTip x:Name="ActionLabelTextBlockTeachingTip"
                      x:Uid="ActionLabelTextBlockTeachingTip"
                      Target="{x:Bind ActionLabelTextBlock}"
@@ -188,7 +234,6 @@
                 <FontIcon Glyph="&#xe72a;" FontSize="14"/>
             </TeachingTip.ActionButtonContent>
         </TeachingTip>
-
-        <local:ClipboardTriggerEditControl x:Name="TriggerEditControl"/>
+        <!--#endregion-->
     </Grid>
 </UserControl>

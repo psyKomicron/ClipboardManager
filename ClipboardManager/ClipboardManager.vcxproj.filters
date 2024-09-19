@@ -88,6 +88,12 @@
     <ClInclude Include="src\implementation\VisualStateManager_implementation.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\utils\AppVersion.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FormatExceptionCode.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipboardManager.cpp">
@@ -138,6 +144,12 @@
     <ClCompile Include="src\utils\ResLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\AppVersion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FormatExceptionCode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ClipboardManager.rc">
@@ -172,6 +184,7 @@
       <Filter>UserControls</Filter>
     </Page>
     <Page Include="RegexTesterControl.xaml" />
+    <Page Include="MessagesBar.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

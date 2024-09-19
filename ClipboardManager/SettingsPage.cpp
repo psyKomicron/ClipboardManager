@@ -8,6 +8,7 @@
 #include "src/utils/helpers.hpp"
 #include "src/notifs/NotificationTypes.hpp"
 #include "src/ClipboardTrigger.hpp"
+#include "Resource.h"
 
 //#include <boost/property_tree/ptree.hpp>
 //#include <boost/property_tree/xml_parser.hpp>
@@ -23,6 +24,7 @@ namespace winrt
     using namespace winrt::Windows::Foundation;
     using namespace winrt::Windows::Storage::Pickers;
 }
+
 namespace xaml
 {
     using namespace winrt::Microsoft::UI::Xaml;
@@ -32,6 +34,8 @@ namespace xaml
 
 void implementation::SettingsPage::Page_Loading(winrt::FrameworkElement const&, winrt::IInspectable const&)
 {
+    ApplicationVersionHostControl().HostContent(box_value(APP_VERSION));
+
     clip::utils::StartupTask startupTask{};
     AutoStartToggleSwitch().IsOn(startupTask.isTaskRegistered());
 
@@ -206,6 +210,20 @@ void implementation::SettingsPage::ClearSettingsButton_Click(winrt::IInspectable
 void implementation::SettingsPage::TriggersStorageExpander_Expanding(xaml::Controls::Expander const&, xaml::Controls::ExpanderExpandingEventArgs const&)
 {
     UserFilePathTextBlock().Text(settings.get<hstring>(L"UserFilePath").value_or(L""));
+}
+
+winrt::async implementation::SettingsPage::LocateButton_Clicked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+    FileOpenPicker picker{};
+    picker.as<IInitializeWithWindow>()->Initialize(GetActiveWindow());
+    picker.FileTypeFilter().Append(L".xml");
+
+    auto&& storageFile = co_await picker.PickSingleFileAsync();
+    if (storageFile)
+    {
+        std::filesystem::path userFilePath{ storageFile.Path().c_str() };
+        settings.insert(L"UserFilePath", userFilePath);
+    }
 }
 
 

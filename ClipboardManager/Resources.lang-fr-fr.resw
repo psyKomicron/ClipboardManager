@@ -165,6 +165,10 @@
     <value>Autoriser les notifications</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="ApplicationVersionHostControl.Header" xml:space="preserve">
+    <value>Version d'application</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="AutomaticStartHostControl.Header" xml:space="preserve">
     <value>Démarrage automatique</value>
     <comment>SettingsPage</comment>
@@ -599,6 +603,30 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Est-ce vôtre première fois ?</value>
     <comment>MainPage Startup tour</comment>
   </data>
+  <data name="StringFormatError_ArgumentNotFound" xml:space="preserve">
+    <value>Argument non trouvé.</value>
+  </data>
+  <data name="StringFormatError_Empty" xml:space="preserve">
+    <value>La chaine de formattage ne peut être vide.</value>
+  </data>
+  <data name="StringFormatError_MissingBraces" xml:space="preserve">
+    <value>La chaine de formattage doit contenir des accolades '{}'.</value>
+  </data>
+  <data name="StringFormatError_MissingCloser" xml:space="preserve">
+    <value>La chaine de formattage doit contenir une accolade fermante '}'.</value>
+  </data>
+  <data name="StringFormatError_MissingOpener" xml:space="preserve">
+    <value>La chaine de formattage doit contenir une accolade ouvrante '{'.</value>
+  </data>
+  <data name="StringFormatWarning_MissingProtocol" xml:space="preserve">
+    <value>Protocole d'url manquand (http/https), l'application utilisera https par défaut.</value>
+  </data>
+  <data name="StringRegexError_EmptyString" xml:space="preserve">
+    <value>L'expression régulière ne peut être vide.</value>
+  </data>
+  <data name="StringRegexError_Invalid" xml:space="preserve">
+    <value>Regex invalide à la position {}.</value>
+  </data>
   <data name="TestInputTextBox.Header" xml:space="preserve">
     <value>Texte</value>
     <comment>RegexTesterControl</comment>
@@ -614,6 +642,9 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="ToastNotification_TooManyButtons" xml:space="preserve">
     <value>Trop de boutons</value>
     <comment>ToastNotifications</comment>
+  </data>
+  <data name="TriggerError_FailedToReload" xml:space="preserve">
+    <value>Echec lors du rechargement des déclencheurs.</value>
   </data>
   <data name="TriggersStorageExpander.Header" xml:space="preserve">
     <value>Fichier déclencheurs presse-papier</value>

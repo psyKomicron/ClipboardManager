@@ -3,7 +3,7 @@
     x:Class="ClipboardManager.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ClipboardManager"
+    xmlns:clip="using:ClipboardManager"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -81,11 +81,12 @@
             VerticalAlignment="Center"
             Opacity="0.7"/>
 
-        <InfoBar x:Name="GenericErrorInfoBar"
+        <!--<InfoBar x:Name="GenericErrorInfoBar"
                  x:Uid="GenericErrorInfoBar"
                  Grid.Row="1"
-                 Severity="Error"/>
-        
+                 Severity="Error"/>-->
+        <clip:MessagesBar x:Name="MessagesBar" Grid.Row="1"/>
+
         <Pivot x:Name="Pivot" SelectedIndex="3" Grid.Row="2">
             <PivotItem Margin="0" Padding="5,3,5,0">
                 <PivotItem.Header>
@@ -93,7 +94,7 @@
                 </PivotItem.Header>
 
                 <Frame>
-                    <local:SettingsPage/>
+                    <clip:SettingsPage/>
                 </Frame>
             </PivotItem>
 
@@ -178,7 +179,8 @@
                         </ListView.Resources>
                     </ListView>
 
-                    <local:RegexTesterControl x:Name="TestRegexContentDialog" Grid.RowSpan="2"/>
+                    <clip:RegexTesterControl x:Name="TestRegexContentDialog" Grid.RowSpan="2"/>
+                    <clip:ClipboardTriggerEditControl x:Name="ClipboardTriggerEditControl" Grid.RowSpan="2"/>
 
                     <TeachingTip x:Name="ClipboardTriggersListViewTeachingTip" 
                                  x:Uid="ClipboardActionsListViewTeachingTip"
