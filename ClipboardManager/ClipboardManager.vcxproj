@@ -179,6 +179,7 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="src\implementation\VisualStateManager_implementation.hpp" />
+    <ClInclude Include="src\utils\com_closable_ptr.h" />
     <ClInclude Include="src\utils\ResLoader.hpp" />
     <ClInclude Include="src\ui\ListenablePropertyValue.hpp" />
     <ClInclude Include="src\utils\Launcher.hpp" />
