@@ -104,6 +104,8 @@ namespace winrt::ClipboardManager::implementation
 
     void MainPage::AppClosing()
     {
+        win::Clipboard::ContentChanged(clipboardContentChangedToken);
+
         auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
 
         if (userFilePath.has_value())
@@ -169,6 +171,8 @@ namespace winrt::ClipboardManager::implementation
 
         loaded = true;
 
+        clipboardContentChangedToken = win::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
+
         co_await resume_background();
 
         if (!localSettings.get<bool>(L"FirstStartup").has_value())
@@ -187,9 +191,6 @@ namespace winrt::ClipboardManager::implementation
                 ? NoClipboardTriggersToDisplayState
                 : DisplayClipboardTriggersState);
         });
-
-        win::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
-
     }
 
     void MainPage::ClipboadTriggersListPivot_Loaded(win::IInspectable const&, win::IInspectable const&)
@@ -469,9 +470,12 @@ namespace winrt::ClipboardManager::implementation
 
     winrt::async MainPage::ClipboardContent_Changed(const win::IInspectable&, const win::IInspectable&)
     {
+        logger.debug(L"Clipboard content changed.");
+
         auto clipboardContent = win::Clipboard::GetContent();
 
         co_await resume_background();
+
         auto appName = clipboardContent.Properties().ApplicationName();
         if (appName == L"ClipboardManager")
         {
@@ -698,7 +702,6 @@ namespace winrt::ClipboardManager::implementation
         if (!localSettings.get<bool>(L"NotificationsEnabled").value_or(true))
         {
             logger.info(L"Not sending notification, notifications are not enabled.");
-            MessagesBar().AddWarning(L"", L"Not sending notification, notifications are not enabled.");
             return;
         }
 

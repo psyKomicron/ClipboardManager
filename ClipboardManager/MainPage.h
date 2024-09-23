@@ -59,10 +59,9 @@ namespace winrt::ClipboardManager::implementation
         clip::notifs::ToastNotificationHandler& manager = clip::notifs::ToastNotificationHandler::getDefault();
         clip::HotKey activationHotKey{ MOD_ALT, L' ' };
         std::vector<clip::ClipboardTrigger> triggers{};
-        winrt::Windows::ApplicationModel::DataTransfer::Clipboard::ContentChanged_revoker clipboardContentChangedrevoker{};
-        winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews
-            = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
+        winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
         size_t teachingTipIndex = 0;
+        winrt::event_token clipboardContentChangedToken{};
 
         winrt::async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
         void Editor_FormatChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldFormat);
