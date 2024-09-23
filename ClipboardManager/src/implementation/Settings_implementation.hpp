@@ -5,9 +5,11 @@ namespace clip
     {
         std::vector<std::pair<std::wstring, reg_types>> entries{};
 
+#ifdef ENABLE_LOGGING
         logger.info(std::format(L"Retreiving all settings. {} values, {} subkeys.", 
             wil::reg::get_child_value_count(hKey.get()),
             wil::reg::get_child_key_count(hKey.get())));
+#endif
 
         // Iterate sub keys.
         {
@@ -100,7 +102,10 @@ namespace clip
         }
         else
         {
+#ifdef ENABLE_LOGGING
             logger.debug(L"'" + key + L"' not in registry.");
+#endif // ENABLE_LOGGING
+
             return std::optional<bool>();
         }
     }
@@ -252,7 +257,10 @@ namespace clip
                 clearKey(subKey.get());
             }
 
+#ifdef ENABLE_LOGGING
             logger.error(ex.what());
+#endif // ENABLE_LOGGING
+
             throw;
         }
     }
