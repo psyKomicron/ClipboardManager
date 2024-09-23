@@ -1,10 +1,12 @@
 # Change log
-## Changes
-- New way to display messages.
-
 ## New
-- Clipboard triggers now show if the format string is invalid, same for the regex string.
-- If a trigger doesn't have a valid format string, a message will be shown to the user.
+- Clipboard history will now show images stored in the clipboard.
+- OCR will be performed on images stored in the clipboard and when an image is copied into it. If the text matches a trigger, matching actions will be created.
+
+## Changes
+- Implemented "Add duplicated actions" toggle in settings page.
+- Fixed mismatch between settings defaulting "Allow notifications" to true and the rest of the application defaulting to false.
+- Now defaulting "Add duplicated actions" to true.
 
 ## Bugs
 
@@ -29,3 +31,4 @@
     - [X] TriggerError_FailedToReload
 
 - [ ] Add format checking/validation for `ClipboardActionView`.
+- [ ] Implement copy and pin buttons for clipboard history items.

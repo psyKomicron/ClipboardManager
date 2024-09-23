@@ -203,7 +203,7 @@
 
             <clip:HostControl x:Uid="AddDuplicatedActionsHostControl">
                 <clip:HostControl.HostContent>
-                    <ToggleSwitch/>
+                    <ToggleSwitch x:Name="AddDuplicatedActionsToggleSwitch" Toggled="AddDuplicatedActionsToggleSwitch_Toggled"/>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
             <!--#endregion-->

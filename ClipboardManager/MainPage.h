@@ -7,6 +7,8 @@
 #include "src/ui/VisualStateManager.hpp"
 #include "src/notifs/ToastNotificationHandler.hpp"
 
+#include <winrt/Windows.Media.Ocr.h>
+#include <winrt/Windows.Storage.Streams.h>
 
 #include <vector>
 #include <filesystem>
@@ -57,10 +59,9 @@ namespace winrt::ClipboardManager::implementation
         clip::notifs::ToastNotificationHandler& manager = clip::notifs::ToastNotificationHandler::getDefault();
         clip::HotKey activationHotKey{ MOD_ALT, L' ' };
         std::vector<clip::ClipboardTrigger> triggers{};
-        winrt::Windows::ApplicationModel::DataTransfer::Clipboard::ContentChanged_revoker clipboardContentChangedrevoker{};
-        winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews
-            = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
+        winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
         size_t teachingTipIndex = 0;
+        winrt::event_token clipboardContentChangedToken{};
 
         winrt::async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
         void Editor_FormatChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldFormat);
@@ -75,7 +76,9 @@ namespace winrt::ClipboardManager::implementation
         void ReloadTriggers();
         bool LoadTriggers(std::filesystem::path& path);
         void LaunchAction(const std::wstring& url);
-        winrt::async loadClipboardHistory();
+        winrt::async LoadClipboardHistory();
+        Windows::Foundation::IAsyncOperation<Windows::Media::Ocr::OcrResult> RunOcr(Windows::Storage::Streams::IRandomAccessStreamWithContentType& bitmapStream);
+        winrt::async AddClipboardItem(Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers);
     };
 }
 

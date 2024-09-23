@@ -43,7 +43,11 @@ namespace winrt::ClipboardManager::implementation
         void LoadFirst();
         void LoadNext();
         void LoadPrevious();
-        Microsoft::UI::Xaml::Controls::InfoBar CreateInfoBar(const winrt::hstring& title, const winrt::hstring& message, const Windows::Foundation::IInspectable& content = nullptr);
+        Microsoft::UI::Xaml::Controls::InfoBar CreateInfoBar(
+            const winrt::hstring& title, 
+            const winrt::hstring& message, 
+            const winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity& severity,
+            const Windows::Foundation::IInspectable& content = nullptr);
     };
 }
 

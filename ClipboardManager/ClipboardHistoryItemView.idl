@@ -1,0 +1,10 @@
+namespace ClipboardManager
+{
+    [default_interface]
+    runtimeclass ClipboardHistoryItemView : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        ClipboardHistoryItemView();
+
+        IInspectable HostContent;
+    }
+}

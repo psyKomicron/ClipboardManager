@@ -13,6 +13,7 @@
 #include <concepts>
 #include <iostream>
 
+//#define ENABLE_LOGGING
 
 namespace clip
 {
@@ -80,7 +81,10 @@ namespace clip
         Settings()
         {
             hKey = wil::reg::create_unique_key(HKEY_CURRENT_USER, (L"SOFTWARE\\" + applicationName).c_str(), wil::reg::key_access::readwrite);
+#ifdef ENABLE_LOGGING
             logger.debug(L"Opened registry node for application settings.");
+#endif // ENABLE_LOGGING
+
         }
 
         std::vector<std::pair<std::wstring, clip::reg_types>> getAll();
@@ -103,7 +107,7 @@ namespace clip
         template<concepts::LongIntegralInsertable T>
         std::optional<T> get(const key_t& key);
 
-        template<concepts::EnumInsertable T> 
+        template<concepts::EnumInsertable T>
         std::optional<T> get(const key_t& key);
 
         template<concepts::Insertable T>
@@ -127,7 +131,10 @@ namespace clip
     private:
         const std::wstring applicationName = L"ClipboardManagerV2";
         wil::unique_hkey hKey{ nullptr };
+#ifdef ENABLE_LOGGING
         utils::Logger logger{ L"Settings" };
+#endif // ENABLE_LOGGING
+
 
         void clearKey(HKEY hkey);
         wil::shared_hkey createSubKey(const key_t& key);
