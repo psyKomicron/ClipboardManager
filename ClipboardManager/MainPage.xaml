@@ -103,44 +103,7 @@
                     <FontIcon x:Name="ClipboardHistoryPivot" Glyph="&#xe823;" FontSize="16"/>
                 </PivotItem.Header>
 
-                <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="1">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}" CornerRadius="{StaticResource OverlayCornerRadius}" BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}" BorderThickness="1" Padding="7,5" Margin="0,3,0,3">
-                                <Grid.Transitions>
-                                    <TransitionCollection>
-                                        <RepositionThemeTransition/>
-                                    </TransitionCollection>
-                                </Grid.Transitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="1*"/>
-                                    <RowDefinition Height="1*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.Resources>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="IsTextSelectionEnabled" Value="True"/>
-                                    </Style>
-                                </Grid.Resources>
-
-                                <ContentPresenter Content="{x:Bind}" Grid.Column="0" MaxHeight="60" TextWrapping="Wrap"/>
-
-                                <StackPanel Grid.Column="1" Grid.RowSpan="2" Orientation="Vertical" Spacing="5">
-                                    <Button Style="{StaticResource IconButtonStyle}">
-                                        <FontIcon Glyph="&#xe8c8;" FontSize="14"/>
-                                    </Button>
-                                    <Button Style="{StaticResource IconButtonStyle}">
-                                        <FontIcon Glyph="&#xe718;" FontSize="14"/>
-                                    </Button>
-                                </StackPanel>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="0"/>
             </PivotItem>
 
             <PivotItem Padding="0" Margin="0" Loaded="ClipboadTriggersListPivot_Loaded">
