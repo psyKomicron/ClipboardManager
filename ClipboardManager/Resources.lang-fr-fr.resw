@@ -178,7 +178,7 @@
     <comment>SettingsPage</comment>
   </data>
   <data name="BrowserStringTextBox.PlaceholderText" xml:space="preserve">
-    <value>Chaine executable</value>
+    <value>Chaine exécutable</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="ClearActionsButtonToolTipTextBlock.Text" xml:space="preserve">
@@ -190,7 +190,7 @@
     <comment>SettingsPage</comment>
   </data>
   <data name="ClearSettingsHostControl.Header" xml:space="preserve">
-    <value>Nettoyer les parmètres</value>
+    <value>Nettoyer les paramètres</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="ClipboardActionRootGridTeachingTip.Subtitle" xml:space="preserve">
