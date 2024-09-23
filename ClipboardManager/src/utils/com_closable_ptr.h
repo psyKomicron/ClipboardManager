@@ -11,12 +11,12 @@ namespace clip::utils
         source->Close();
     }*/
     
-    inline void __stdcall closeIClosable(winrt::Windows::Foundation::IClosable source)
+    inline void __stdcall closeIClosable(winrt::Windows::Foundation::IClosable* source)
     {
-        source.Close();
+        source->Close();
     }
 
-    using unique_closable = std::unique_ptr<winrt::Windows::Foundation::IClosable, std::function<void(winrt::Windows::Foundation::IClosable)>>;
+    using unique_closable = std::unique_ptr<winrt::Windows::Foundation::IClosable, std::function<void(winrt::Windows::Foundation::IClosable*)>>;
     
     /*using unique_closable_call = 
         wil::unique_com_call<
