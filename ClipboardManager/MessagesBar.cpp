@@ -13,7 +13,7 @@ namespace winrt::ClipboardManager::implementation
 {
     void MessagesBar::Add(const winrt::hstring& title, const winrt::hstring& message, const xaml::InfoBarSeverity& severity)
     {
-        infoBars.push_back(CreateInfoBar(title, message));
+        infoBars.push_back(CreateInfoBar(title, message, severity));
 
         InfoBadge().Value(static_cast<int32_t>(infoBars.size()));
         PipsPager().NumberOfPages(static_cast<int32_t>(infoBars.size()));
@@ -59,7 +59,7 @@ namespace winrt::ClipboardManager::implementation
 
     void MessagesBar::AddContent(const winrt::hstring& titleContent, const winrt::hstring& messageContent, const winrt::Windows::Foundation::IInspectable& content, const winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity& severity)
     {
-        auto&& infoBar = CreateInfoBar(titleContent, messageContent);
+        auto&& infoBar = CreateInfoBar(titleContent, messageContent, severity);
         infoBar.Content(content);
         infoBar.Severity(severity);
 
@@ -133,7 +133,8 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    Microsoft::UI::Xaml::Controls::InfoBar MessagesBar::CreateInfoBar(const winrt::hstring& title, const winrt::hstring& message, const Windows::Foundation::IInspectable& content)
+    Microsoft::UI::Xaml::Controls::InfoBar MessagesBar::CreateInfoBar(
+        const winrt::hstring& title, const winrt::hstring& message, const winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity& severity, const Windows::Foundation::IInspectable& content)
     {
         Microsoft::UI::Xaml::Controls::InfoBar infoBar{};
 
@@ -152,7 +153,7 @@ namespace winrt::ClipboardManager::implementation
             infoBar.Content(content);
         }
 
-        infoBar.Severity(Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error);
+        infoBar.Severity(severity);
         infoBar.IsOpen(true);
 
         infoBar.Closed([this](auto&& infoBar, auto&&)
