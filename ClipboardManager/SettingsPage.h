@@ -45,6 +45,8 @@ namespace winrt::ClipboardManager::implementation
         void updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key);
         void selectComboBoxItem(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox, const uint32_t& value);
         uint32_t getSelectedComboBoxItemTag(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox);
+    public:
+        void AddDuplicatedActionsToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
     };
 }
 
