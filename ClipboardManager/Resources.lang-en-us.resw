@@ -371,6 +371,10 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Ignore case</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="ImportClipboardHistoryHostControl.Header" xml:space="preserve">
+    <value>Import clipboard</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="ImportFromClipboardButtonToolTipTextBlock.Text" xml:space="preserve">
     <value>Import actions from clipboard</value>
     <comment>SettingsPage</comment>

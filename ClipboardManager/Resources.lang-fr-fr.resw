@@ -117,10 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ActionEnabledToggleSwitchTeachingTip.Subtitle" xml:space="preserve">
-    <value>Active ou désactive ce déclancheur. Un déclancheur désactivé ne sera plus utilisé dans aucune actions.</value>
-    <comment>Teaching tips</comment>
-  </data>
   <data name="ActionEnabledToggleSwitchTeachingTip.Title" xml:space="preserve">
     <value>Etat du déclencheur</value>
     <comment>Teaching tips</comment>
@@ -369,6 +365,14 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   </data>
   <data name="IgnoreCaseHostControl.Header" xml:space="preserve">
     <value>Ignorer la capitalisation</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ActionEnabledToggleSwitchTeachingTip.Subtitle" xml:space="preserve">
+    <value>Active ou désactive ce déclencheur. Un déclencheur désactivé ne sera plus utilisé dans aucune actions.</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ImportClipboardHistoryHostControl.Header" xml:space="preserve">
+    <value>Importer le contenu du presse-papier</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="ImportFromClipboardButtonToolTipTextBlock.Text" xml:space="preserve">
