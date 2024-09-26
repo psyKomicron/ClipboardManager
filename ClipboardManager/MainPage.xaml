@@ -170,6 +170,7 @@
                     <Grid.ChildrenTransitions>
                         <TransitionCollection>
                             <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                            <EntranceThemeTransition />
                         </TransitionCollection>
                     </Grid.ChildrenTransitions>
 

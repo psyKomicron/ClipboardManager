@@ -474,8 +474,6 @@ namespace winrt::ClipboardManager::implementation
 
         auto clipboardContent = win::Clipboard::GetContent();
 
-        co_await resume_background();
-
         auto appName = clipboardContent.Properties().ApplicationName();
         if (appName == L"ClipboardManager")
         {
@@ -887,26 +885,29 @@ namespace winrt::ClipboardManager::implementation
 
     winrt::async MainPage::LoadClipboardHistory()
     {
+        auto loadClipboardHistory = localSettings.get<bool>(L"ImportClipboardHistory").value_or(false);
+
         auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
-        for (auto&& item : clipboardHistory.Items())
+        auto&& items = clipboardHistory.Items();
+        for (int i = items.Size() - 1; i >= 0; i--)
         {
+            auto&& item = items.GetAt(i);
             try
             {
                 auto&& content = item.Content();
-                AddClipboardItem(content, false);
+                co_await AddClipboardItem(content, loadClipboardHistory);
             }
             catch (hresult_error error)
             {
                 logger.error(L"Failed to retreive item from clipboard history.");
+
+                MessagesBar().AddWarning(L"", L"Failed to load clipboard history.");
             }
         }
     }
 
     Windows::Foundation::IAsyncOperation<Windows::Media::Ocr::OcrResult> MainPage::RunOcr(Windows::Storage::Streams::IRandomAccessStreamWithContentType& bitmapStream)
     {
-        //auto availableRecognizerLanguages = Windows::Media::Ocr::OcrEngine::AvailableRecognizerLanguages();
-        logger.debug(L"Decoding bitmap stream and creating software bitmap.");
-
         auto&& bitmapDecoder = co_await Windows::Graphics::Imaging::BitmapDecoder::CreateAsync(bitmapStream);
         auto&& softwareBitmap = co_await bitmapDecoder.GetSoftwareBitmapAsync();
         Windows::Foundation::IClosable isoftwareBitmap = softwareBitmap;
@@ -944,22 +945,26 @@ namespace winrt::ClipboardManager::implementation
                 // Add text/clipboard content to history list:
                 auto view = make<ClipboardHistoryItemView>();
                 view.HostContent(box_value(itemText));
-                ClipboardHistoryListView().Items().Append(view);
+                
+                ClipboardHistoryListView().Items().InsertAt(0, view);
             });
         }
         else if (content.Contains(win::StandardDataFormats::Bitmap()))
         {
+            logger.info(L"Detected image in clipboard, performing OCR on it");
+
+            Microsoft::UI::Xaml::Media::Imaging::BitmapImage bitmapImage{};
+
             // Get bitmap stream from DataPackageView:
             auto&& clipboardStream = co_await content.GetBitmapAsync();
-            auto&& bitmapStream = co_await clipboardStream.OpenReadAsync();
-            Windows::Foundation::IClosable closable = bitmapStream;
-            clip::utils::unique_closable bitmapStreamPtr{ &closable, &clip::utils::closeIClosable };
 
-            logger.info(L"Detected image in clipboard, performing OCR on it");
+            auto&& bitmapStream = co_await clipboardStream.OpenReadAsync();
+            clip::utils::shared_closable sharedBitmapStreamPtr{ reinterpret_cast<Windows::Foundation::IClosable*>(&bitmapStream), &clip::utils::closeIClosable };
+
             auto&& ocrResult = co_await RunOcr(bitmapStream);
 
             // If the OCR found text, run triggers on the text:
-            if (!ocrResult.Text().empty() && runTriggers)
+            if (runTriggers && !ocrResult.Text().empty())
             {
                 DispatcherQueue().TryEnqueue([this, text = ocrResult.Text().data()]()
                 {
@@ -967,11 +972,10 @@ namespace winrt::ClipboardManager::implementation
                 });
             }
 
-            // Return to the end of the bitmap stream, so that Xaml BitmapImage can load it properly:
+            // Return to the begining of the bitmap stream, so that Xaml BitmapImage can load it properly:
             bitmapStream.Seek(0);
 
             // Create bitmap from bitmap stream and show it:
-            Microsoft::UI::Xaml::Media::Imaging::BitmapImage bitmapImage{};
             bitmapImage.SetSource(bitmapStream);
             DispatcherQueue().TryEnqueue([this, bitmapImage, text = ocrResult.Text()]()
             {                        
@@ -994,7 +998,7 @@ namespace winrt::ClipboardManager::implementation
                 auto view = make<ClipboardHistoryItemView>();
                 view.HostContent(panel);
 
-                ClipboardHistoryListView().Items().Append(view);
+                ClipboardHistoryListView().Items().InsertAt(0, view);
             });
         }
     }
