@@ -206,6 +206,12 @@
                     <ToggleSwitch x:Name="AddDuplicatedActionsToggleSwitch" Toggled="AddDuplicatedActionsToggleSwitch_Toggled"/>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
+
+            <clip:HostControl x:Uid="ImportClipboardHistoryHostControl">
+                <clip:HostControl.HostContent>
+                    <ToggleSwitch x:Name="ImportClipboardHistoryToggleSwitch" Toggled="ImportClipboardHistoryToggleSwitch_Toggled"/>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
             <!--#endregion-->
 
 

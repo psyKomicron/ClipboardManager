@@ -37,6 +37,7 @@ namespace winrt::ClipboardManager::implementation
     {
         ApplicationVersionHostControl().HostContent(box_value(APP_VERSION));
 
+        // Application:
         clip::utils::StartupTask startupTask{};
         AutoStartToggleSwitch().IsOn(startupTask.isTaskRegistered());
 
@@ -44,8 +45,13 @@ namespace winrt::ClipboardManager::implementation
         StartMinimizedToggleSwitch().IsOn(settings.get<bool>(L"StartWindowMinimized").value_or(false));
         NotificationsToggleSwitch().IsOn(settings.get<bool>(L"NotificationsEnabled").value_or(true));
 
+        // Formatting & matching:
+        IgnoreCaseToggleSwitch().IsOn(settings.get<bool>(L"RegexIgnoreCase").value_or(false));
+        selectComboBoxItem(RegexModeComboBox(), settings.get<int32_t>(L"TriggerMatchMode").value_or(0));
         AddDuplicatedActionsToggleSwitch().IsOn(settings.get<bool>(L"AddDuplicatedActions").value_or(true));
+        ImportClipboardHistoryToggleSwitch().IsOn(settings.get<bool>(L"ImportClipboardHistory").value_or(false));
 
+        // Notifications:
         auto durationType = settings.get<clip::notifs::NotificationDurationType>(L"NotificationDurationType").value_or(clip::notifs::NotificationDurationType::Default);
         DurationDefaultToggleButton().IsChecked(durationType == clip::notifs::NotificationDurationType::Default);
         DurationShortToggleButton().IsChecked(durationType == clip::notifs::NotificationDurationType::Short);
@@ -56,9 +62,11 @@ namespace winrt::ClipboardManager::implementation
         selectComboBoxItem(NotificationScenariosComboBox(), (int32_t)scenarioType);
         selectComboBoxItem(NotificationSoundComboBox(), (int32_t)soundType);
 
+        // Browser:
         BrowserStringTextBox().Text(settings.get<std::wstring>(L"CustomProcessString").value_or(L""));
         UseCustomBrowser().IsOn(settings.get<bool>(L"UseCustomProcess").value_or(false));
 
+        // Window style:
         AllowMaximizeToggleSwitch().IsOn(settings.get<bool>(L"AllowWindowMaximize").value_or(false));
         AllowMinimizeToggleSwitch().IsOn(settings.get<bool>(L"AllowWindowMinimize").value_or(true));
     }
@@ -235,6 +243,12 @@ namespace winrt::ClipboardManager::implementation
         updateSetting(sender, L"AddDuplicatedActions");
     }
 
+    void SettingsPage::ImportClipboardHistoryToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+    {
+        check_loaded(loaded);
+        updateSetting(sender, L"ImportClipboardHistory");
+    }
+
 
     void SettingsPage::updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key)
     {
@@ -261,3 +275,4 @@ namespace winrt::ClipboardManager::implementation
         return std::stoi(comboBox.SelectedItem().as<xaml::ComboBoxItem>().Tag().as<hstring>().data());
     }
 }
+
