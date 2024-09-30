@@ -12,7 +12,7 @@ namespace clip::utils
         winrt::async launch(const std::wstring& uri);
 
     private:
-        const wchar_t* DefaultProtocol = L"https";
+        const wchar_t* DefaultProtocol = L"https://";
         const clip::utils::Logger logger{ L"Launcher" };
         clip::Settings settings{};
     };
