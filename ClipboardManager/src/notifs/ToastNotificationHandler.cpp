@@ -14,15 +14,14 @@ namespace clip
         });
     }
 
-    notifs::ToastNotificationHandler& notifs::ToastNotificationHandler::getDefault()
+    void notifs::ToastNotificationHandler::registerActionCallback(const std::function<void(std::wstring)>& callback)
     {
-        static notifs::ToastNotificationHandler instance{};
-        return instance;
+        buttonClickedCallback = callback;
     }
 
-    void notifs::ToastNotificationHandler::registerAction(const std::wstring& actionName, const std::function<void(ToastNotificationAction)>& callback)
+    void notifs::ToastNotificationHandler::registerActivatedCallback(const std::function<void()>& callback)
     {
-        callbackMap.insert({ actionName, callback });
+        toastClickedCallback = callback;
     }
 
 
@@ -31,18 +30,11 @@ namespace clip
         if (args.empty())
         {
             // TODO: Call the "toast activated" callback.
+            toastClickedCallback();
         }
         else
         {
-            // action={}&[parameters]
-            auto index = args.find_first_of(L'=');
-            auto name = args.substr(0, index);
-            if (callbackMap.contains(name))
-            {
-                ToastNotificationAction action{};
-                action.load(args);
-                callbackMap[name](std::move(action));
-            }
+            buttonClickedCallback(args);
         }
     }
 
@@ -56,11 +48,6 @@ namespace clip
             {
                 try
                 {
-                    for (auto&& item : args.UserInput())
-                    {
-                        logger.debug(L"User input: " + std::wstring(item.Key() + item.Value()));
-                    }
-
                     findAction(args.Argument());
                 }
                 catch (winrt::hresult_error err)
@@ -69,9 +56,10 @@ namespace clip
                 }
                 catch (...)
                 {
-                    logger.error(L"Error");
+                    logger.error(L"Unspecified error.");
                 }
             });
+
             registered = true;
 
             logger.info(L"DesktopNotificationManagerCompat successfully registered for toast notifications.");
@@ -80,39 +68,6 @@ namespace clip
         {
             registered = false;
             logger.error(L"DesktopNotificationManagerCompat failed to register: " + std::wstring(err.message()));
-        }
-    }
-}
-
-namespace clip
-{
-    std::map<std::wstring, std::wstring> notifs::ToastNotificationAction::parameters()
-    {
-        return _parameters;
-    }
-
-    void notifs::ToastNotificationAction::load(std::wstring string)
-    {
-        const wchar_t delimiter{ L'&' };
-        size_t pos = std::wstring::npos;
-        size_t offset = 0;
-        while ((pos = string.find(delimiter, offset)) != std::wstring::npos)
-        {
-            std::wstring sub = string.substr(offset, pos);
-            offset = ++pos;
-
-            auto splitIndex = sub.find(L'=');
-            auto first = sub.substr(0, splitIndex);
-            auto second = sub.substr(splitIndex + 1);
-            _parameters[first] = second;
-        }
-
-        if (offset < string.size())
-        {
-            auto splitIndex = string.find(L'=', offset);
-            auto first = string.substr(offset, splitIndex - offset);
-            auto second = string.substr(splitIndex + 1);
-            _parameters[first] = second;
         }
     }
 }

@@ -174,7 +174,8 @@ void clip::notifs::ToastNotification::send(const NotificationDurationType& durat
         {
             auto action = doc.CreateElement(L"action");
             action.SetAttribute(L"content", buttonElement.first);
-            action.SetAttribute(L"arguments", std::format(L"action={}", buttonElement.second));
+            //action.SetAttribute(L"arguments", std::format(L"action={}", buttonElement.second));
+            action.SetAttribute(L"arguments", buttonElement.second);
             actions.AppendChild(action);
         }
     }
