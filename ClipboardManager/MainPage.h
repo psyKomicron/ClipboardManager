@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <filesystem>
+#include <mutex>
 
 namespace winrt::ClipboardManager::implementation
 {
@@ -62,6 +63,7 @@ namespace winrt::ClipboardManager::implementation
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
         size_t teachingTipIndex = 0;
         winrt::event_token clipboardContentChangedToken{};
+        std::mutex mutex{};
 
         winrt::async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
         void Editor_FormatChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldFormat);

@@ -39,6 +39,9 @@
 #include <ppltasks.h>
 
 #include <iostream>
+#include <chrono>
+
+using namespace std::chrono_literals;
 
 namespace xaml
 {
@@ -472,16 +475,101 @@ namespace winrt::ClipboardManager::implementation
     {
         logger.debug(L"Clipboard content changed.");
 
-        auto clipboardContent = win::Clipboard::GetContent();
+        auto content = win::Clipboard::GetContent();
 
-        auto appName = clipboardContent.Properties().ApplicationName();
-        if (appName == L"ClipboardManager")
+        if (content.Properties().ApplicationName() == L"ClipboardManager")
         {
             logger.info(L"Clipboard content changed, but the available format is not text or the application that changed the clipboard content is me.");
             co_return;
         }
 
-        co_await AddClipboardItem(clipboardContent, true);
+        //co_await AddClipboardItem(clipboardContent, true);
+
+        auto runTriggers = true;
+
+        if (content.Contains(win::StandardDataFormats::Text()))
+        {
+            auto&& itemText = co_await content.GetTextAsync();
+
+            DispatcherQueue().TryEnqueue([this, itemText, runTriggers]()
+            {
+                // Run triggers on the text:
+                if (runTriggers)
+                {
+                    auto&& text = std::wstring(itemText);
+                    AddAction(text, true);
+                }
+
+                // Add text/clipboard content to history list:
+                auto view = make<ClipboardHistoryItemView>();
+                view.HostContent(box_value(itemText));
+
+                ClipboardHistoryListView().Items().InsertAt(0, view);
+            });
+        }
+        else if (content.Contains(win::StandardDataFormats::Bitmap()))
+        {
+            std::unique_lock lock{ mutex, std::defer_lock };
+            if (lock.try_lock())
+            {
+                // Get bitmap stream from DataPackageView:
+                auto&& clipboardStream = co_await content.GetBitmapAsync();
+
+                auto&& bitmapStream = co_await clipboardStream.OpenReadAsync();
+                clip::utils::unique_closable<Windows::Storage::Streams::IRandomAccessStream> bitmapStreamCloser{ bitmapStream };
+
+                logger.info(L"Detected image in clipboard, performing OCR on it");
+                auto&& ocrResult = co_await RunOcr(bitmapStream);
+
+                // If the OCR found text, run triggers on the text:
+                if (runTriggers && !ocrResult.Text().empty())
+                {
+                    DispatcherQueue().TryEnqueue([this, text = ocrResult.Text().data()]()
+                    {
+                        AddAction(text, true);
+                    });
+                }
+
+                // Return to the begining of the bitmap stream, so that Xaml BitmapImage can load it properly:
+                bitmapStream.Seek(0);
+
+                // Create bitmap from bitmap stream and show it:
+                DispatcherQueue().TryEnqueue([this, bitmapStream = bitmapStream.CloneStream(), text = ocrResult.Text()]()
+                {  
+                    clip::utils::unique_closable<Windows::Storage::Streams::IRandomAccessStream> bitmapStreamCloser{ bitmapStream };
+
+                    Microsoft::UI::Xaml::Media::Imaging::BitmapImage bitmapImage{};
+                    bitmapImage.SetSource(bitmapStream);
+
+                    xaml::StackPanel panel{};
+                    panel.Spacing(7);
+                    panel.Orientation(xaml::Orientation::Vertical);
+
+                    xaml::Image image{};
+                    image.Source(bitmapImage);
+                    image.Height(200);
+
+                    panel.Children().Append(image);
+
+                    xaml::TextBlock textBlock{};
+                    textBlock.TextWrapping(xaml::TextWrapping::Wrap);
+                    textBlock.Text(text);
+
+                    panel.Children().Append(textBlock);
+
+                    auto view = make<ClipboardHistoryItemView>();
+                    view.HostContent(panel);
+
+                    ClipboardHistoryListView().Items().InsertAt(0, view);
+                });
+
+                co_await 100ms;
+            }
+            else
+            {
+                logger.info(L"Failed to lock mutex, image OCR is already running.");
+            }
+        }
     }
 
     void MainPage::Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel)
@@ -910,14 +998,20 @@ namespace winrt::ClipboardManager::implementation
     {
         auto&& bitmapDecoder = co_await Windows::Graphics::Imaging::BitmapDecoder::CreateAsync(bitmapStream);
         auto&& softwareBitmap = co_await bitmapDecoder.GetSoftwareBitmapAsync();
-        Windows::Foundation::IClosable isoftwareBitmap = softwareBitmap;
-        clip::utils::unique_closable softwareBitmapPtr{ &isoftwareBitmap, &clip::utils::closeIClosable};
+        clip::utils::unique_closable softwareBitmapPtr{ softwareBitmap };
 
         auto ocrEngine = Windows::Media::Ocr::OcrEngine::TryCreateFromUserProfileLanguages();
         if (ocrEngine)
         {
-            auto&& ocrResult = co_await ocrEngine.RecognizeAsync(softwareBitmap);
-            co_return ocrResult;
+            try
+            {
+                auto&& ocrResult = co_await ocrEngine.RecognizeAsync(softwareBitmap);
+                co_return ocrResult;
+            }
+            catch (hresult_error error)
+            {
+                logger.error(error.message().data());
+            }
         }
         else
         {
@@ -929,77 +1023,6 @@ namespace winrt::ClipboardManager::implementation
 
     winrt::async MainPage::AddClipboardItem(Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers)
     {
-        if (content.Contains(win::StandardDataFormats::Text()))
-        {
-            auto&& itemText = co_await content.GetTextAsync();
-
-            DispatcherQueue().TryEnqueue([this, itemText, runTriggers]()
-            {
-                // Run triggers on the text:
-                if (runTriggers)
-                {
-                    auto&& text = std::wstring(itemText);
-                    AddAction(text, true);
-                }
-
-                // Add text/clipboard content to history list:
-                auto view = make<ClipboardHistoryItemView>();
-                view.HostContent(box_value(itemText));
-                
-                ClipboardHistoryListView().Items().InsertAt(0, view);
-            });
-        }
-        else if (content.Contains(win::StandardDataFormats::Bitmap()))
-        {
-            logger.info(L"Detected image in clipboard, performing OCR on it");
-
-            Microsoft::UI::Xaml::Media::Imaging::BitmapImage bitmapImage{};
-
-            // Get bitmap stream from DataPackageView:
-            auto&& clipboardStream = co_await content.GetBitmapAsync();
-
-            auto&& bitmapStream = co_await clipboardStream.OpenReadAsync();
-            clip::utils::shared_closable sharedBitmapStreamPtr{ reinterpret_cast<Windows::Foundation::IClosable*>(&bitmapStream), &clip::utils::closeIClosable };
-
-            auto&& ocrResult = co_await RunOcr(bitmapStream);
-
-            // If the OCR found text, run triggers on the text:
-            if (runTriggers && !ocrResult.Text().empty())
-            {
-                DispatcherQueue().TryEnqueue([this, text = ocrResult.Text().data()]()
-                {
-                    AddAction(text, true);
-                });
-            }
-
-            // Return to the begining of the bitmap stream, so that Xaml BitmapImage can load it properly:
-            bitmapStream.Seek(0);
-
-            // Create bitmap from bitmap stream and show it:
-            bitmapImage.SetSource(bitmapStream);
-            DispatcherQueue().TryEnqueue([this, bitmapImage, text = ocrResult.Text()]()
-            {                        
-                xaml::StackPanel panel{};
-                panel.Spacing(7);
-                panel.Orientation(xaml::Orientation::Vertical);
-
-                xaml::Image image{};
-                image.Source(bitmapImage);
-                image.Height(200);
-
-                panel.Children().Append(image);
-
-                xaml::TextBlock textBlock{};
-                textBlock.TextWrapping(xaml::TextWrapping::Wrap);
-                textBlock.Text(text);
-
-                panel.Children().Append(textBlock);
-
-                auto view = make<ClipboardHistoryItemView>();
-                view.HostContent(panel);
-
-                ClipboardHistoryListView().Items().InsertAt(0, view);
-            });
-        }
+        co_return;
     }
 }
