@@ -101,7 +101,12 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <Border x:Name="FormatTextBoxWarningBorder" Background="{ThemeResource SystemFillColorCautionBackgroundBrush}" Grid.Row="1" Padding="5,6" Visibility="Collapsed">
+                <Border 
+                    x:Name="FormatTextBoxWarningBorder" 
+                    Background="{ThemeResource SystemFillColorCautionBackgroundBrush}" 
+                    Grid.Row="1" 
+                    Padding="5,6" 
+                    Visibility="Collapsed">
                     <Grid ColumnSpacing="4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
