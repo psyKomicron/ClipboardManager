@@ -6,6 +6,7 @@
 #include "src/HotKey.hpp"
 #include "src/ui/VisualStateManager.hpp"
 #include "src/notifs/ToastNotificationHandler.hpp"
+#include "src/utils/ResLoader.hpp"
 
 #include <winrt/Windows.Media.Ocr.h>
 #include <winrt/Windows.Storage.Streams.h>
@@ -56,12 +57,13 @@ namespace winrt::ClipboardManager::implementation
         bool loaded = false;
         clip::ui::VisualStateManager<MainPage> visualStateManager{ *this };
         clip::Settings localSettings{};
-        clip::notifs::ToastNotificationHandler& manager = clip::notifs::ToastNotificationHandler::getDefault();
+        clip::notifs::ToastNotificationHandler manager{};
         clip::HotKey activationHotKey{ MOD_ALT, L' ' };
         std::vector<clip::ClipboardTrigger> triggers{};
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
         size_t teachingTipIndex = 0;
         winrt::event_token clipboardContentChangedToken{};
+        clip::utils::ResLoader resLoader{};
 
         winrt::async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
         void Editor_FormatChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldFormat);
@@ -77,7 +79,6 @@ namespace winrt::ClipboardManager::implementation
         bool LoadTriggers(std::filesystem::path& path);
         void LaunchAction(const std::wstring& url);
         winrt::async LoadClipboardHistory();
-        Windows::Foundation::IAsyncOperation<Windows::Media::Ocr::OcrResult> RunOcr(Windows::Storage::Streams::IRandomAccessStreamWithContentType& bitmapStream);
         winrt::async AddClipboardItem(Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers);
     };
 }

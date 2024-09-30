@@ -11,7 +11,6 @@
 #include "src/utils/Launcher.hpp"
 #include "src/utils/AppVersion.hpp"
 #include "src/utils/StartupTask.hpp"
-#include "src/utils/ResLoader.hpp"
 #include "src/notifs/ToastNotification.hpp"
 #include "src/notifs/win_toasts.hpp"
 #include "src/notifs/NotificationTypes.hpp"
@@ -27,11 +26,6 @@
 #include <winrt/Microsoft.Windows.AppNotifications.h>
 #include <winrt/Microsoft.Windows.AppNotifications.Builder.h>
 #include <winrt/Windows.System.h>
-// OCR
-#include <winrt/Windows.Graphics.Imaging.h>
-#include <winrt/Windows.Globalization.h>
-#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
-#include <src/utils/com_closable_ptr.h>
 
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -75,18 +69,12 @@ namespace winrt::ClipboardManager::implementation
             QuickSettingsOpenState
         });
 
-        manager.registerAction(L"action", [this](clip::notifs::ToastNotificationAction toastNotificationAction)
+        manager.registerActionCallback([this](std::wstring args)
         {
-            auto params = toastNotificationAction.parameters();
-            auto&& action = toastNotificationAction.action<std::wstring>();
-            auto&& url = params[L"url"];
-
-            logger.debug(std::vformat(L"Action has been clicked: \n\t- {}\n\t- {}", std::make_wformat_args(action, url)));
-
-            LaunchAction(url);
+            LaunchAction(args);
         });
 
-        manager.registerAction(L"", [this](clip::notifs::ToastNotificationAction)
+        manager.registerActivatedCallback([this]()
         {
             clip::utils::getCurrentAppWindow().Show();
         });
@@ -470,14 +458,9 @@ namespace winrt::ClipboardManager::implementation
 
     winrt::async MainPage::ClipboardContent_Changed(const win::IInspectable&, const win::IInspectable&)
     {
-        logger.debug(L"Clipboard content changed.");
-
         auto clipboardContent = win::Clipboard::GetContent();
 
-        co_await resume_background();
-
-        auto appName = clipboardContent.Properties().ApplicationName();
-        if (appName == L"ClipboardManager")
+        if (clipboardContent.Properties().ApplicationName() == L"ClipboardManager")
         {
             logger.info(L"Clipboard content changed, but the available format is not text or the application that changed the clipboard content is me.");
             co_return;
@@ -683,7 +666,7 @@ namespace winrt::ClipboardManager::implementation
                 try
                 {
                     auto url = std::vformat(action.format(), std::make_wformat_args(text));
-                    buttons.push_back({ action.label(), std::format(L"open&url={}", url) });
+                    buttons.push_back({ action.label(), url });
                 }
                 catch (std::invalid_argument formatError)
                 {
@@ -815,6 +798,7 @@ namespace winrt::ClipboardManager::implementation
 
             if (showError)
             {
+                // I18N: Invalid trigger.
                 MessagesBar().Add(L"Invalid trigger", 
                     L"One or more triggers have invalid data, check the triggers page for more information. Invalid triggers:" + invalidTriggers, 
                     xaml::InfoBarSeverity::Error);
@@ -880,8 +864,21 @@ namespace winrt::ClipboardManager::implementation
     {
         concurrency::create_task([this, url]() -> void
         {
-            clip::utils::Launcher launcher{};
-            launcher.launch(url).get();
+            try
+            {
+                clip::utils::Launcher launcher{};
+                launcher.launch(url).get();
+            }
+            catch (hresult_error error)
+            {
+                logger.error(L"Failed to launch url: " + std::wstring(error.message().data()));
+
+                // I18N: Failed to launch url: '{}'
+                DispatcherQueue().TryEnqueue([this, url]()
+                {
+                    MessagesBar().AddError(L"", L"Failed to launch url: '" + url + L"'.");
+                });
+            }
         });
     }
 
@@ -900,30 +897,6 @@ namespace winrt::ClipboardManager::implementation
                 logger.error(L"Failed to retreive item from clipboard history.");
             }
         }
-    }
-
-    Windows::Foundation::IAsyncOperation<Windows::Media::Ocr::OcrResult> MainPage::RunOcr(Windows::Storage::Streams::IRandomAccessStreamWithContentType& bitmapStream)
-    {
-        //auto availableRecognizerLanguages = Windows::Media::Ocr::OcrEngine::AvailableRecognizerLanguages();
-        logger.debug(L"Decoding bitmap stream and creating software bitmap.");
-
-        auto&& bitmapDecoder = co_await Windows::Graphics::Imaging::BitmapDecoder::CreateAsync(bitmapStream);
-        auto&& softwareBitmap = co_await bitmapDecoder.GetSoftwareBitmapAsync();
-        Windows::Foundation::IClosable isoftwareBitmap = softwareBitmap;
-        clip::utils::unique_closable softwareBitmapPtr{ &isoftwareBitmap, &clip::utils::closeIClosable};
-
-        auto ocrEngine = Windows::Media::Ocr::OcrEngine::TryCreateFromUserProfileLanguages();
-        if (ocrEngine)
-        {
-            auto&& ocrResult = co_await ocrEngine.RecognizeAsync(softwareBitmap);
-            co_return ocrResult;
-        }
-        else
-        {
-            logger.error(L"Failed to create OCR engine from user profile languages.");
-        }
-
-        co_return Windows::Media::Ocr::OcrResult(nullptr);
     }
 
     winrt::async MainPage::AddClipboardItem(Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers)
@@ -947,55 +920,9 @@ namespace winrt::ClipboardManager::implementation
                 ClipboardHistoryListView().Items().Append(view);
             });
         }
-        else if (content.Contains(win::StandardDataFormats::Bitmap()))
+        else
         {
-            // Get bitmap stream from DataPackageView:
-            auto&& clipboardStream = co_await content.GetBitmapAsync();
-            auto&& bitmapStream = co_await clipboardStream.OpenReadAsync();
-            Windows::Foundation::IClosable closable = bitmapStream;
-            clip::utils::unique_closable bitmapStreamPtr{ &closable, &clip::utils::closeIClosable };
-
-            logger.info(L"Detected image in clipboard, performing OCR on it");
-            auto&& ocrResult = co_await RunOcr(bitmapStream);
-
-            // If the OCR found text, run triggers on the text:
-            if (!ocrResult.Text().empty() && runTriggers)
-            {
-                DispatcherQueue().TryEnqueue([this, text = ocrResult.Text().data()]()
-                {
-                    AddAction(text, true);
-                });
-            }
-
-            // Return to the end of the bitmap stream, so that Xaml BitmapImage can load it properly:
-            bitmapStream.Seek(0);
-
-            // Create bitmap from bitmap stream and show it:
-            Microsoft::UI::Xaml::Media::Imaging::BitmapImage bitmapImage{};
-            bitmapImage.SetSource(bitmapStream);
-            DispatcherQueue().TryEnqueue([this, bitmapImage, text = ocrResult.Text()]()
-            {                        
-                xaml::StackPanel panel{};
-                panel.Spacing(7);
-                panel.Orientation(xaml::Orientation::Vertical);
-
-                xaml::Image image{};
-                image.Source(bitmapImage);
-                image.Height(200);
-
-                panel.Children().Append(image);
-
-                xaml::TextBlock textBlock{};
-                textBlock.TextWrapping(xaml::TextWrapping::Wrap);
-                textBlock.Text(text);
-
-                panel.Children().Append(textBlock);
-
-                auto view = make<ClipboardHistoryItemView>();
-                view.HostContent(panel);
-
-                ClipboardHistoryListView().Items().Append(view);
-            });
+            logger.info(L"Unrecognized clipboard format (not text).");
         }
     }
 }
