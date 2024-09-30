@@ -11,24 +11,27 @@ namespace clip::utils
         {
             resourceLoader = winrt::Windows::ApplicationModel::Resources::ResourceLoader();
         }
-        catch (winrt::hresult_error)
+        catch (winrt::hresult_error error)
         {
+            std::wcout << L"Failed to create instance of winrt::Windows::ApplicationModel::Resources::ResourceLoader: " << error.message().data() << std::endl;
+            OutputDebugStringW(error.message().c_str());
         }
     }
 
     std::optional<winrt::hstring> ResLoader::getNamedResource(const winrt::hstring& name)
     {
-        if (resourceLoader.has_value())
+        if (resourceLoader != nullptr)
         {
             try
             {
-                return resourceLoader.value().GetString(name);
+                return resourceLoader.GetString(name);
             }
             catch (winrt::hresult_error)
             {
                 std::wcerr << L"'getNamedResource' Failed to instanciate or get string from resources." << std::endl;
             }
         }
+
         return {};
     }
 

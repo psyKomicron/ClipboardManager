@@ -14,6 +14,6 @@ namespace clip::utils
         winrt::hstring getOrAlt(const winrt::hstring& name, const winrt::hstring& alt);
 
     private:
-        std::optional<winrt::Windows::ApplicationModel::Resources::ResourceLoader> resourceLoader{};
+        winrt::Windows::ApplicationModel::Resources::ResourceLoader resourceLoader{ nullptr };
     };
 }
