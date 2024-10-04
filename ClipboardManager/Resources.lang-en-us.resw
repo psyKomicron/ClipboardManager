@@ -608,28 +608,37 @@ You can easily access your user file via settings and see an example of a valid 
     <comment>MainPage Startup tour</comment>
   </data>
   <data name="StringFormatError_ArgumentNotFound" xml:space="preserve">
-    <value>Argument not found: {}</value>
+    <value>Argument not found: {}.
+If you are using multiple placeholders '{}' index them (ex: {0}...{0}).</value>
+    <comment>Error message</comment>
   </data>
   <data name="StringFormatError_Empty" xml:space="preserve">
     <value>Format string can't be empty</value>
+    <comment>Error message</comment>
   </data>
   <data name="StringFormatError_MissingBraces" xml:space="preserve">
     <value>Format string is missing opening and closing brace '{}'</value>
+    <comment>Error message</comment>
   </data>
   <data name="StringFormatError_MissingCloser" xml:space="preserve">
     <value>Format string is missing closing brace '}'</value>
+    <comment>Error message</comment>
   </data>
   <data name="StringFormatError_MissingOpener" xml:space="preserve">
     <value>Format string is missing opening brace '{'</value>
+    <comment>Error message</comment>
   </data>
   <data name="StringFormatWarning_MissingProtocol" xml:space="preserve">
     <value>Missing url protocol (https/http), application will default to https</value>
+    <comment>Warning message</comment>
   </data>
   <data name="StringRegexError_EmptyString" xml:space="preserve">
     <value>Regex string cannot be empty</value>
+    <comment>Error message</comment>
   </data>
   <data name="StringRegexError_Invalid" xml:space="preserve">
     <value>Invalid regex at position {}</value>
+    <comment>Error message</comment>
   </data>
   <data name="TestInputTextBox.Header" xml:space="preserve">
     <value>Input</value>
@@ -649,6 +658,7 @@ You can easily access your user file via settings and see an example of a valid 
   </data>
   <data name="TriggerError_FailedToReload" xml:space="preserve">
     <value>Failed to reload triggers</value>
+    <comment>Error message</comment>
   </data>
   <data name="TriggersStorageExpander.Header" xml:space="preserve">
     <value>Triggers file</value>
@@ -669,6 +679,10 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="ViewActionsInfoBar.Title" xml:space="preserve">
     <value>Clipboard triggers successfully loaded</value>
     <comment>MainPage ViewActionsInfoBar</comment>
+  </data>
+  <data name="Warning_FailedToLoadClipboardHistory" xml:space="preserve">
+    <value>Failed to load clipboard history</value>
+    <comment>Warning</comment>
   </data>
   <data name="WindowPresenterStyleAllowMaximizeHostControl.Header" xml:space="preserve">
     <value>Window can maximize</value>

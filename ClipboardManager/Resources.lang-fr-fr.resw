@@ -608,7 +608,8 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <comment>MainPage Startup tour</comment>
   </data>
   <data name="StringFormatError_ArgumentNotFound" xml:space="preserve">
-    <value>Argument non trouvé.</value>
+    <value>Argument non trouvé.
+Si vous utilisez plusieurs fois {} indexez les (ex: {0}....{0}).</value>
     <comment>Error message</comment>
   </data>
   <data name="StringFormatError_Empty" xml:space="preserve">
@@ -690,5 +691,9 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="WindowStyleHostControl.Header" xml:space="preserve">
     <value>Style de la fenêtre</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="Warning_FailedToLoadClipboardHistory" xml:space="preserve">
+    <value>Impossible de récupérer l'historique du presse-papier.</value>
+    <comment>Warning</comment>
   </data>
 </root>
