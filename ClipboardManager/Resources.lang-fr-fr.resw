@@ -616,7 +616,7 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <comment>Error message</comment>
   </data>
   <data name="StringFormatError_MissingBraces" xml:space="preserve">
-    <value>La chaine de formattage doit contenir des accolades '{}'. 1</value>
+    <value>La chaine de formattage doit contenir des accolades '{}'.</value>
     <comment>Error message</comment>
   </data>
   <data name="StringFormatError_MissingCloser" xml:space="preserve">
