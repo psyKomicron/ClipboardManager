@@ -118,18 +118,16 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    void ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hstring& _format, const winrt::hstring& _label, const winrt::hstring& _regex, const bool& enabled)
+    void ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hstring& _label, const winrt::hstring& _format, const winrt::hstring& _regex, const bool& _enabled)
     {
-        auto format = std::wstring(_format);
         auto label = std::wstring(_label);
-        auto regex = std::wstring(_regex);
+        auto format = std::wstring(_format);
+        auto regexString = std::wstring(_regex);
 
         auto& action = actions[pos]; // Semi-blind index access.
-        auto oldLabel = action.label();
-
         action.format(format);
         action.label(label);
-        action.regex(boost::wregex(regex));
+        action.regex(boost::wregex(regexString));
 
         // Reload triggers:
         for (uint32_t i = 0; i < TriggersGridView().Items().Size(); i++)
@@ -140,19 +138,17 @@ namespace winrt::ClipboardManager::implementation
                 button.Content(box_value(_label));
                 ui::ToolTipService::SetToolTip(button, box_value(_format));
 
-                //TriggersGridView().Items().SetAt(i, content);
-
                 break;
             }
         }
     }
 
-    bool ClipboardActionView::IndexOf(uint32_t& pos, const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled)
+    bool ClipboardActionView::IndexOf(uint32_t& pos, const winrt::hstring& _label)
     {
-        clip::ClipboardTrigger action{ std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), enabled };
+        auto label = std::wstring(_label);
         for (size_t i = 0; i < actions.size(); i++)
         {
-            if (actions[i] == action)
+            if (actions[i].label() == label)
             {
                 pos = i;
                 return true;

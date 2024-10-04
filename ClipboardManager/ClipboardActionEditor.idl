@@ -12,10 +12,9 @@ namespace ClipboardManager
         Boolean UseSearch;
 
         event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, Boolean> IsOn;
-        event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, String> LabelChanged;
-        event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, String> FormatChanged;
-        event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, IInspectable> RegexChanged;
         event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, IInspectable> Removed;
+        event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, String> LabelChanged;
+        event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, IInspectable> Changed;
 
         Windows.Foundation.IAsyncAction StartTour();
         Windows.Foundation.IAsyncOperation<Boolean> Edit();

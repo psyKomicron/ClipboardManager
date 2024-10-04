@@ -4,8 +4,9 @@
 #include "src/Settings.hpp"
 #include "src/ClipboardTrigger.hpp"
 #include "src/HotKey.hpp"
-#include "src/ui/VisualStateManager.hpp"
 #include "src/notifs/ToastNotificationHandler.hpp"
+#include "src/ui/VisualStateManager.hpp"
+#include "src/utils/ResLoader.hpp"
 
 #include <winrt/Windows.Media.Ocr.h>
 #include <winrt/Windows.Storage.Streams.h>
@@ -64,12 +65,12 @@ namespace winrt::ClipboardManager::implementation
         size_t teachingTipIndex = 0;
         winrt::event_token clipboardContentChangedToken{};
         std::mutex mutex{};
+        clip::utils::ResLoader resLoader{};
 
         winrt::async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
-        void Editor_FormatChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldFormat);
-        void Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel);
         void Editor_Toggled(const winrt::ClipboardManager::ClipboardActionEditor& sender, const bool& isOn);
-        void Editor_RegexChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::Windows::Foundation::IInspectable& args);
+        void Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const Windows::Foundation::IInspectable& oldFormat);
+        void Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel);
 
         void Restore();
         void AddAction(const std::wstring& text, const bool& notify);

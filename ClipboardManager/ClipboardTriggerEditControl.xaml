@@ -127,14 +127,17 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBox x:Name="FormatTextBox" 
+                        <TextBox 
+                            x:Name="FormatTextBox" 
                             x:Uid="FormatTextBox" 
                             Grid.ColumnSpan="2" 
                             Grid.Row="0" 
                             VerticalAlignment="Center" 
                             Text="{x:Bind TriggerFormat, Mode=TwoWay}" 
+                            TextWrapping="Wrap"
                             TextChanged="TextBox_TextChanged"/>
-                        <FontIcon x:Name="FormatTextBoxErrorIcon"
+                        <FontIcon 
+                            x:Name="FormatTextBoxErrorIcon"
                             Grid.Column="0" 
                             Grid.Row="1" 
                             Visibility="Collapsed"
@@ -170,13 +173,15 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBox x:Name="RegexTextBox"
-                                x:Uid="RegexTextBox" 
-                                FontFamily="Consolas"
-                                CharacterSpacing="70"
-                                VerticalAlignment="Center" 
-                                Text="{x:Bind TriggerRegex, Mode=TwoWay}" 
-                                TextChanged="TextBox_TextChanged"/>
+                        <TextBox 
+                            x:Name="RegexTextBox"
+                            x:Uid="RegexTextBox" 
+                            FontFamily="Consolas"
+                            CharacterSpacing="70"
+                            VerticalAlignment="Center" 
+                            Text="{x:Bind TriggerRegex, Mode=TwoWay}" 
+                            TextWrapping="Wrap"
+                            TextChanged="TextBox_TextChanged"/>
                         <ToggleButton x:Name="RegexIgnoreCaseToggleButton" 
                                 IsChecked="{x:Bind IgnoreCase, Mode=TwoWay}"
                                 Grid.Column="1" 

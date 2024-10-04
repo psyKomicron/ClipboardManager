@@ -11,7 +11,6 @@
 #include "src/utils/Launcher.hpp"
 #include "src/utils/AppVersion.hpp"
 #include "src/utils/StartupTask.hpp"
-#include "src/utils/ResLoader.hpp"
 #include "src/notifs/ToastNotification.hpp"
 #include "src/notifs/win_toasts.hpp"
 #include "src/notifs/NotificationTypes.hpp"
@@ -212,10 +211,9 @@ namespace winrt::ClipboardManager::implementation
                 editor.IgnoreCase((action.regex().flags() & boost::regex_constants::icase) == boost::regex_constants::icase);
                 editor.UseSearch(action.matchMode() == clip::MatchMode::Search);
 
-                editor.FormatChanged({ this, &MainPage::Editor_FormatChanged });
-                editor.LabelChanged({ this, &MainPage::Editor_LabelChanged });
                 editor.IsOn({ this, &MainPage::Editor_Toggled });
-                editor.RegexChanged({ this, &MainPage::Editor_RegexChanged });
+                editor.LabelChanged({ this, &MainPage::Editor_LabelChanged });
+                editor.Changed({ this, &MainPage::Editor_Changed });
 
                 editor.Removed([=](auto&& sender, auto&&)
                 {
@@ -524,9 +522,22 @@ namespace winrt::ClipboardManager::implementation
                 // If the OCR found text, run triggers on the text:
                 if (runTriggers && !ocrResult.Text().empty())
                 {
-                    DispatcherQueue().TryEnqueue([this, text = ocrResult.Text().data()]()
+                    DispatcherQueue().TryEnqueue([this, ocrResult]()
                     {
-                        AddAction(text, true);
+                        std::wstring string{};
+                        for (auto&& line : ocrResult.Lines())
+                        {
+                            if (string.empty())
+                            {
+                                string += line.Text();
+                            }
+                            else
+                            {
+                                string += L"\n" + line.Text();
+                            }
+                        }
+
+                        AddAction(string, true);
                     });
                 }
 
@@ -563,7 +574,7 @@ namespace winrt::ClipboardManager::implementation
                     ClipboardHistoryListView().Items().InsertAt(0, view);
                 });
 
-                co_await 100ms;
+                co_await 300ms;
             }
             else
             {
@@ -586,9 +597,9 @@ namespace winrt::ClipboardManager::implementation
                 for (auto&& clipboardItem : clipboardActionViews)
                 {
                     uint32_t pos = 0;
-                    if (clipboardItem.IndexOf(pos, action.format(), label, action.regex().str(), action.enabled()))
+                    if (clipboardItem.IndexOf(pos, label))
                     {
-                        clipboardItem.EditAction(pos, action.format(), action.label(), action.regex().str(), action.enabled());
+                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), action.enabled());
                     }
                 }
 
@@ -597,47 +608,35 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    void MainPage::Editor_FormatChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldFormat)
+    void MainPage::Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const Windows::Foundation::IInspectable& inspectable)
     {
-        auto format = std::wstring(sender.ActionFormat());
         auto actionLabel = std::wstring(sender.ActionLabel());
+        auto format = std::wstring(sender.ActionFormat());
+        auto newRegex = std::wstring(sender.ActionRegex());
+
+        auto args = inspectable.as<int32_t>();
+        bool ignoreCase = args & (1 << 1);
+        bool useSearch= args & 1;
+        auto flags = ignoreCase ? boost::regex_constants::icase : 0;
 
         for (auto&& action : triggers)
         {
             if (action.label() == actionLabel)
             {
                 action.format(format);
+                action.regex(boost::wregex(newRegex, flags));
+                action.updateMatchMode(useSearch ? clip::MatchMode::Search : clip::MatchMode::Match);
 
                 for (auto&& clipboardItem : clipboardActionViews)
                 {
                     uint32_t pos = 0;
-                    if (clipboardItem.IndexOf(pos, oldFormat, action.label(), action.regex().str(), action.enabled()))
+                    if (clipboardItem.IndexOf(pos, action.label()))
                     {
-                        clipboardItem.EditAction(pos, action.format(), action.label(), action.regex().str(), action.enabled());
+                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), action.enabled());
                     }
                 }
 
                 break;
-            }
-        }
-    }
-
-    void MainPage::Editor_RegexChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::Windows::Foundation::IInspectable& inspectable)
-    {
-        auto args = inspectable.as<int32_t>();
-        auto newRegex = std::wstring(sender.ActionRegex());
-        auto actionLabel = std::wstring(sender.ActionLabel());
-        for (auto&& action : triggers)
-        {
-            if (action.label() == actionLabel)
-            {
-                bool ignoreCase = args & (1 << 1);
-                bool useSearch= args & 1;
-                auto flags = ignoreCase ? boost::regex_constants::icase : 0;
-
-                action.regex(boost::wregex(newRegex, flags));
-
-                action.updateMatchMode(useSearch ? clip::MatchMode::Search : clip::MatchMode::Match);
             }
         }
     }
@@ -652,7 +651,7 @@ namespace winrt::ClipboardManager::implementation
                 for (auto&& view : clipboardActionViews)
                 {
                     uint32_t index = 0;
-                    if (view.IndexOf(index, action.format(), action.label(), action.regex().str(), action.enabled()))
+                    if (view.IndexOf(index, action.label()))
                     {
                         view.IsEnabled(action.enabled());
                     }
@@ -663,7 +662,7 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    void MainPage::TestRegexButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+    void MainPage::TestRegexButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
     {
         TestRegexContentDialog().Open();
     }
@@ -735,14 +734,6 @@ namespace winrt::ClipboardManager::implementation
                     {
                         clipboardActionViews.RemoveAt(i);
                     }
-
-                    /*for (uint32_t i = 0; i < clipboardActionViews.Size(); i++)
-                    {
-                        if (sender == clipboardActionViews.GetAt(i))
-                        {
-                            clipboardActionViews.RemoveAt(i);
-                        }
-                    }*/
                 });
 
                 if (notify)
@@ -785,9 +776,9 @@ namespace winrt::ClipboardManager::implementation
 
     void MainPage::SendNotification(const std::vector<std::pair<std::wstring, std::wstring>>& buttons)
     {
-        if (!localSettings.get<bool>(L"NotificationsEnabled").value_or(true))
+        if (!localSettings.get<bool>(L"NotificationsEnabled").value_or(true) 
+            || SilenceNotificationsToggleButton().IsChecked().GetBoolean())
         {
-            logger.info(L"Not sending notification, notifications are not enabled.");
             return;
         }
 
@@ -796,52 +787,40 @@ namespace winrt::ClipboardManager::implementation
         auto soundType = localSettings.get<clip::notifs::NotificationSoundType>(L"NotificationSoundType").value_or(clip::notifs::NotificationSoundType::Default);
 
         clip::notifs::ToastNotification notif{};
+
+        if (!notif.tryAddButtons(buttons))
+        {
+            notif.addText(std::wstring(
+                resLoader.getOrAlt(L"ToastNotification_TooManyButtons", 
+                    L"Too many triggers matched, open the app to activate the action of your choice")));
+
+            notif.addButton(
+                std::wstring(resLoader.getOrAlt(L"ToastNotification_OpenApp", L"Open app")),
+                L"action=focus");
+        }
+        else
+        {
+            notif.addText(std::wstring(
+                resLoader.getOrAlt(L"ToastNotification_ClickAction",
+                    L"Click corresponding trigger to activate it")));
+        }
+
         try
         {
-            win::ResourceLoader resLoader{};
-            if (!notif.tryAddButtons(buttons))
-            {
-                notif.addText(std::wstring(resLoader.GetString(L"ToastNotification_TooManyButtons")));
-                notif.addButton(std::wstring(resLoader.GetString(L"ToastNotification_OpenApp")), L"action=focus");
-            }
-            else
-            {
-                notif.addText(std::wstring(resLoader.GetString(L"ToastNotification_ClickAction")));
-            }
-
             notif.send(durationType, scenarioType, soundType);
         }
-        catch (winrt::hresult_error err)
+        catch (hresult_access_denied accessDenied)
         {
-            if (err.code() == 0x80070002)
-            {
-                // Don't forget to rename "ClipboardManager.pri" to "resources.pri".
-                logger.error(L"Failed to load translation file (resources.pri), sending notification without translating the string.");
-
-                if (!notif.tryAddButtons(buttons))
-                {
-                    notif.addText(L"Open app");
-                    notif.addButton(L"Too many triggers matched, open the app to activate the action of your choice", L"action=focus");
-                }
-                else
-                {
-                    notif.addText(L"Activate action");
-                }
-
-                notif.addText(L"Text isn't translated due to app error.");
-                notif.send(durationType, scenarioType, soundType);
-            }
-            else
-            {
-                logger.error(L"Failed to send toast notification. " + std::wstring(err.message()));
-            }
+            MessagesBar().AddWarning(L"ToastNotification_FailedToSendWarning", L"Failed to send toast notification.");
         }
     }
 
     void MainPage::ReloadTriggers()
     {
         auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
-        if (userFilePath.has_value() && clip::utils::pathExists(userFilePath.value()) && LoadTriggers(userFilePath.value()))
+        if (userFilePath.has_value() 
+            && clip::utils::pathExists(userFilePath.value()) 
+            && LoadTriggers(userFilePath.value()))
         {
             try
             {
@@ -933,7 +912,7 @@ namespace winrt::ClipboardManager::implementation
         }
         catch (boost::property_tree::ptree_bad_path badPath)
         {
-            hstring message = clip::utils::getNamedResource(L"ErrorMessage_InvalidTriggersFile").value_or(L"Triggers file has invalid XML markup data.");
+            hstring message = resLoader.getOrAlt(L"ErrorMessage_InvalidTriggersFile", L"Triggers file has invalid XML markup data.");
             hstring content = L"";
 
             auto wpath = badPath.path<boost::property_tree::wpath>();
@@ -942,14 +921,14 @@ namespace winrt::ClipboardManager::implementation
             if (path == L"settings.triggers")
             {
                 // Missing <settings><triggers> node.
-                content = clip::utils::getNamedResource(L"ErrorMessage_MissingTriggersNode")
-                    .value_or(L"XML declaration is missing '<triggers>' node.\nCheck settings for an example of a valid XML declaration.");
+                content = resLoader.getOrAlt(L"ErrorMessage_MissingTriggersNode", 
+                    L"XML declaration is missing '<triggers>' node.\nCheck settings for an example of a valid XML declaration.");
             }
             else if (path == L"settings.actions")
             {
                 // Old version of triggers file.
-                content = clip::utils::getNamedResource(L"ErrorMessage_XmlOldVersion")
-                    .value_or(L"<actions> node has been renamed <triggers> and <action> <actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.");
+                content = resLoader.getOrAlt(L"ErrorMessage_XmlOldVersion", 
+                    L"<actions> node has been renamed <triggers> and <action> <actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.");
             }
             else
             {
@@ -968,6 +947,9 @@ namespace winrt::ClipboardManager::implementation
         {
             clip::utils::Launcher launcher{};
             launcher.launch(url).get();
+        }).then([this]()
+        {
+            logger.debug(L"Launcher task finished.");
         });
     }
 
@@ -989,7 +971,7 @@ namespace winrt::ClipboardManager::implementation
             {
                 logger.error(L"Failed to retreive item from clipboard history.");
 
-                MessagesBar().AddWarning(L"", L"Failed to load clipboard history.");
+                MessagesBar().AddWarning(L"Warning_FailedToLoadClipboardHistory", L"Failed to load clipboard history.");
             }
         }
     }

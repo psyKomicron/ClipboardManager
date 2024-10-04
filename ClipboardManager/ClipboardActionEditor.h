@@ -13,10 +13,9 @@ namespace winrt::ClipboardManager::implementation
 {
     struct ClipboardActionEditor : ClipboardActionEditorT<ClipboardActionEditor>, clip::ui::PropertyChangedClass
     {
-        using event_changed_t = winrt::Windows::Foundation::TypedEventHandler<winrt::ClipboardManager::ClipboardActionEditor, winrt::hstring>;
+        using event_changed_t = winrt::Windows::Foundation::TypedEventHandler<winrt::ClipboardManager::ClipboardActionEditor, winrt::Windows::Foundation::IInspectable>;
+        using event_label_changed_t = winrt::Windows::Foundation::TypedEventHandler<winrt::ClipboardManager::ClipboardActionEditor, hstring>;
         using event_is_on_t = winrt::Windows::Foundation::TypedEventHandler<winrt::ClipboardManager::ClipboardActionEditor, bool>;
-        using event_re_changed_t = winrt::Windows::Foundation::TypedEventHandler<winrt::ClipboardManager::ClipboardActionEditor, winrt::Windows::Foundation::IInspectable>;
-        using event_removed_t = winrt::Windows::Foundation::TypedEventHandler<winrt::ClipboardManager::ClipboardActionEditor, winrt::Windows::Foundation::IInspectable>;
 
     public:
         ClipboardActionEditor();
@@ -36,14 +35,13 @@ namespace winrt::ClipboardManager::implementation
 
         winrt::event_token IsOn(const event_is_on_t& handler);
         void IsOn(const winrt::event_token& token);
-        winrt::event_token LabelChanged(const event_changed_t& handler);
-        void LabelChanged(const winrt::event_token& token);
-        winrt::event_token FormatChanged(const event_changed_t& handler);
-        void FormatChanged(const winrt::event_token& token);
-        winrt::event_token RegexChanged(const event_re_changed_t& handler);
-        void RegexChanged(const winrt::event_token& token);
-        winrt::event_token Removed(const event_removed_t& handler);
+        winrt::event_token Removed(const event_changed_t& handler);
         void Removed(const winrt::event_token& token);
+
+        winrt::event_token LabelChanged(const event_label_changed_t& handler);
+        void LabelChanged(const winrt::event_token& token);
+        winrt::event_token Changed(const event_changed_t& handler);
+        void Changed(const winrt::event_token& token);
 
         winrt::async StartTour();
         winrt::Windows::Foundation::IAsyncOperation<bool> Edit();
@@ -89,10 +87,9 @@ namespace winrt::ClipboardManager::implementation
         clip::ui::ListenablePropertyValue<winrt::hstring> _triggerRegexProperty{ std::bind(&ClipboardActionEditor::raisePropertyChanged, this, std::placeholders::_1) };
 
         winrt::event<event_is_on_t> e_isOn{};
-        winrt::event<event_changed_t> e_labelChanged{};
-        winrt::event<event_changed_t> e_formatChanged{};
-        winrt::event<event_re_changed_t> e_regexChanged{};
-        winrt::event<event_removed_t> e_removed{};
+        winrt::event<event_changed_t> e_removed{};
+        winrt::event<event_label_changed_t> e_labelChanged{};
+        winrt::event<event_changed_t> e_changed{};
 
         void useSearchPropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args);
         void ignoreCasePropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args);
