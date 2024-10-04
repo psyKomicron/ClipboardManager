@@ -11,8 +11,12 @@ namespace clip::utils
         {
             resourceLoader = winrt::Windows::ApplicationModel::Resources::ResourceLoader();
         }
-        catch (winrt::hresult_error)
+        catch (winrt::hresult_error err)
         {
+            if (err.code() == 0x80070002)
+            {
+                std::wcerr << L"Failed to create ResourceLoader, 'resources.pri' doesn't exist." << std::endl;
+            }
         }
     }
 
