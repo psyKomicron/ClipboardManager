@@ -37,7 +37,6 @@ namespace clip
         _regex{ regex },
         _enabled{ enabled }
     {
-        //checkFormat();
     }
 
     std::vector<ClipboardTrigger> ClipboardTrigger::loadClipboardTriggers(const std::filesystem::path& userFilePath)
@@ -283,14 +282,10 @@ namespace clip
         catch (std::format_error& formatError)
         {
             const std::string what{ formatError.what() };
-            if (what.compare("Argument not found.") == 0)
-            {
-                auto bracesContent = format.substr(openIndex + 1, (closeIndex - openIndex) - 1);
 
-                return ClipboardTriggerFormatException(FormatExceptionCode::ArgumentNotFound, bracesContent);
-            }
-
-            return ClipboardTriggerFormatException(FormatExceptionCode::InvalidFormat, clip::utils::convert(formatError.what()));
+            return what.compare("Argument not found.") == 0 
+                ? ClipboardTriggerFormatException(FormatExceptionCode::ArgumentNotFound)
+                : ClipboardTriggerFormatException(FormatExceptionCode::InvalidFormat, clip::utils::convert(formatError.what()));
         }
 
         return {};
