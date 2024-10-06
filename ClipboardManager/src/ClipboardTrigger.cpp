@@ -247,36 +247,68 @@ namespace clip
             return ClipboardTriggerFormatException(FormatExceptionCode::EmptyString);
         }
 
-        const size_t& npos = std::wstring::npos;
+        using string_t = std::wstring;
+        size_t openIndex = format.find_first_of(L'{');
+        size_t closeIndex = format.find_first_of(L'}');
 
-        auto openIndex = format.find_first_of(L'{');
-        auto closeIndex = format.find_first_of(L'}');
-
-        if (openIndex == npos && closeIndex == npos)
+        if (openIndex == string_t::npos && closeIndex == string_t::npos)
         {
             // Missing both '{' and '}'
             auto flags = FormatExceptionCode::MissingOpenBraces | FormatExceptionCode::MissingClosingBraces;
             return ClipboardTriggerFormatException(flags);
         }
-        else if (openIndex == npos)
+        else if (openIndex == string_t::npos)
         {
             // Missing '{'
             return ClipboardTriggerFormatException(FormatExceptionCode::MissingOpenBraces);
         }
-        else if (closeIndex == npos)
+        else if (closeIndex == string_t::npos)
         {
             // Missing '}'
             return ClipboardTriggerFormatException(FormatExceptionCode::MissingClosingBraces);
         }
 
-        if (openIndex > closeIndex)
+        while (openIndex != std::string::npos)
         {
-            // }{
-            return ClipboardTriggerFormatException(FormatExceptionCode::BadBraceOrder);
+            closeIndex = format.find_first_of(L'}', openIndex);
+            if (closeIndex != std::string::npos)
+            {
+                if ((closeIndex - ++openIndex) > 0)
+                {
+                    // Check validity of the content between the 2 braces:
+                    auto bracesContent = format.substr(openIndex, closeIndex - openIndex);
+                    try
+                    {
+                        if (std::stoi(bracesContent) > 0)
+                        {
+                            // Invalid argument, braces content should always be 0.
+                            return ClipboardTriggerFormatException(FormatExceptionCode::ArgumentNotFound | FormatExceptionCode::OutOfRangeFormatArgument);
+                        }
+                    }
+                    catch (std::invalid_argument) 
+                    {
+                        // Braces content is not a integral value.
+                        return ClipboardTriggerFormatException(FormatExceptionCode::InvalidFormatArgument);
+                    }
+                }
+            }
+            else
+            {
+                return ClipboardTriggerFormatException(FormatExceptionCode::MissingClosingBraces | FormatExceptionCode::BadBraceOrder);
+            }
+
+            openIndex = format.find_first_of(L'{', closeIndex);
+        }
+
+        closeIndex = format.find_first_of(L'}', ++closeIndex);
+        if (closeIndex != std::string::npos)
+        {
+            return ClipboardTriggerFormatException(FormatExceptionCode::MissingOpenBraces | FormatExceptionCode::BadBraceOrder);
         }
 
         try
         {
+            // Use std's format to check if the format is valid. Previous checks do not account for all possible errors.
             std::ignore = std::vformat(format, std::make_wformat_args(L"ClipboardManager"));
         }
         catch (std::format_error& formatError)
