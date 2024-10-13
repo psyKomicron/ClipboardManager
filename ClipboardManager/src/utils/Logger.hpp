@@ -4,12 +4,12 @@
 
 namespace clip::utils
 {
-    enum class ConsoleColors
+    enum class LogSeverity
     {
-        Yellow,
-        Green,
-        White,
-        Red
+        Debug,
+        Info,
+        Error,
+        None
     };
 
     class Logger
@@ -21,7 +21,7 @@ namespace clip::utils
         void info(const std::wstring& message) const;
         void error(const std::wstring& message) const;
         void error(const std::string& message) const;
-        void print(const std::wstring& message, const clip::utils::ConsoleColors& color = ConsoleColors::White) const;
+        void print(const std::wstring& message, const LogSeverity& severity = LogSeverity::None) const;
 
     private:
         static const bool useColors = false;
