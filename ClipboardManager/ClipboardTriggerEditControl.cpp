@@ -5,6 +5,7 @@
 #endif
 
 #include "src/res/strings.h"
+#include "src/ClipboardTrigger.hpp"
 
 namespace xaml
 {
@@ -125,27 +126,78 @@ namespace winrt::ClipboardManager::implementation
         if (!FormatTextBox().Text().empty())
         {
             auto text = std::wstring(FormatTextBox().Text());
-            auto missingOpener = text.find(L'{') == std::wstring::npos;
-            auto missingCloser = text.find(L'}') == std::wstring::npos;
+            auto trigger = clip::ClipboardTrigger(L"", text, boost::wregex(), false);
 
-            if (missingOpener && missingCloser)
-            { 
-                message = resLoader.getOrAlt(L"StringFormatError_MissingBraces", clip::res::StringFormatError_MissingBraces);
-            }
-            else if (missingOpener)
+            try
             {
-                message = resLoader.getOrAlt(L"StringFormatError_MissingOpener", clip::res::StringFormatError_MissingOpener);
+                trigger.checkFormat();
+                valid = true;
             }
-            else
+            catch (clip::ClipboardTriggerFormatException formatException)
             {
-                message = resLoader.getOrAlt(L"StringFormatError_MissingCloser", clip::res::StringFormatError_MissingCloser);
+                switch (formatException.code())
+                {
+                    case clip::FormatExceptionCode::MissingOpenBraces:
+                        message = resLoader.getOrAlt(L"StringFormatError_MissingOpener", clip::res::StringFormatError_MissingOpener);
+                        break;
+                    case clip::FormatExceptionCode::MissingClosingBraces:
+                        message = resLoader.getOrAlt(L"StringFormatError_MissingCloser", clip::res::StringFormatError_MissingCloser);
+                        break;
+                    case clip::FormatExceptionCode::EmptyString:
+                        message = resLoader.getOrAlt(L"StringFormatError_Empty", clip::res::StringFormatError_Empty);
+                        break;
+                    case clip::FormatExceptionCode::ArgumentNotFound:
+                    {
+                        message = resLoader.getOrAlt(L"StringFormatError_ArgumentNotFound", clip::res::StringFormatError_ArgumentNotFound);
+                        auto argument = formatException.message();
+                        message = std::vformat(message, std::make_wformat_args(argument));
+
+                        break;
+                    }
+
+                    case (clip::FormatExceptionCode::MissingOpenBraces | clip::FormatExceptionCode::MissingClosingBraces):
+                        message = resLoader.getOrAlt(L"StringFormatError_MissingBraces", clip::res::StringFormatError_MissingBraces);
+                        break;
+                    case (clip::FormatExceptionCode::ArgumentNotFound | clip::FormatExceptionCode::OutOfRangeFormatArgument):
+                        message = resLoader.getOrAlt(L"StringFormatError_OutOfRangeArgument", clip::res::StringFormatError_OutOfRangeArgument);
+                        break;
+                    case (clip::FormatExceptionCode::MissingClosingBraces | clip::FormatExceptionCode::BadBraceOrder):
+                        message = resLoader.getOrAlt(L"StringFormatError_OutOfRangeArgumentBraceOrder", clip::res::StringFormatError_OutOfRangeArgumentBraceOrder);
+                        break;
+
+                    case clip::FormatExceptionCode::InvalidFormat:
+                    case clip::FormatExceptionCode::Unknown:
+                    default:
+                        message = resLoader.getOrAlt(L"StringFormatError_InvalidFormat", L"Invalid format string");
+                        break;
+                }
+
+                switch (formatException.code())
+                {
+                    // Warning errors
+                    case clip::FormatExceptionCode::EmptyString:
+                    case (clip::FormatExceptionCode::MissingOpenBraces | clip::FormatExceptionCode::MissingClosingBraces):
+                        visualStateManager.goToState(formatWarningState);
+                        break;
+
+                        // Errors
+                    case clip::FormatExceptionCode::MissingOpenBraces:
+                    case clip::FormatExceptionCode::MissingClosingBraces:
+                    case clip::FormatExceptionCode::BadBraceOrder:
+                    case clip::FormatExceptionCode::ArgumentNotFound:
+                    case clip::FormatExceptionCode::InvalidFormat:
+                    case clip::FormatExceptionCode::Unknown:
+                    default:
+                        valid = false;
+                        visualStateManager.goToState(formatErrorState);
+                        break;
+                }
             }
 
-            valid = !(missingOpener || missingCloser);
-
-            visualStateManager.goToState((text.starts_with(L"https://") || text.starts_with(L"http://")) 
-                ? formatNoWarningState 
-                : formatWarningState);
+            visualStateManager.goToState(
+                (text.starts_with(L"https://") || text.starts_with(L"http://")) 
+                ? formatNoProtocolWarningState 
+                : formatProtocolWarningState);
         }
         else
         {
@@ -168,7 +220,7 @@ namespace winrt::ClipboardManager::implementation
             {
                 // Simply build a boost::regex to see if the text input is valid.
                 // Catch block informs the user about the invalid data.
-                boost::wregex re{ text };
+                std::ignore = boost::wregex(text);
                 return true;
             }
             catch (boost::regex_error regexError)

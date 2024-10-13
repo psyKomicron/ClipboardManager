@@ -53,6 +53,24 @@
                 <VisualState x:Name="FormatNoWarning"/>
                 <VisualState x:Name="FormatWarning">
                     <VisualState.Setters>
+                        <Setter Target="FormatTextBoxBorder.BorderBrush" Value="{ThemeResource SystemFillColorCaution}"/>
+                        <Setter Target="FormatTextBoxBorder.Background">
+                            <Setter.Value>
+                                <SolidColorBrush Color="{ThemeResource SystemFillColorCaution}" Opacity="0.1"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Target="FormatTextBoxBorder.Padding" Value="5,3,5,7"/>
+                        <Setter Target="FormatTextBoxBorder.Margin" Value="-5,-3,-5,-7"/>
+                        <Setter Target="FormatTextBoxErrorIcon.Visibility" Value="Visible"/>
+                        <Setter Target="FormatTextBoxError.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            
+            <VisualStateGroup>
+                <VisualState x:Name="FormatNoProtocolWarning"/>
+                <VisualState x:Name="FormatProtocolWarning">
+                    <VisualState.Setters>
                         <Setter Target="FormatTextBoxWarningBorder.Visibility" Value="Visible"/>
                         <Setter Target="FormatTextBoxWarningBorder.Margin" Value="0,3,0,0"/>
                     </VisualState.Setters>
@@ -98,7 +116,7 @@
 
             <Grid Grid.Row="1" RowSpacing="7">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 

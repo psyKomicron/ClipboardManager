@@ -46,6 +46,8 @@ namespace winrt::ClipboardManager::implementation
         clip::ui::VisualState<ClipboardTriggerEditControl> formatNoErrorState{ L"FormatNoError", 2, false };
         clip::ui::VisualState<ClipboardTriggerEditControl> formatWarningState{ L"FormatWarning", 3, false };
         clip::ui::VisualState<ClipboardTriggerEditControl> formatNoWarningState{ L"FormatNoWarning", 3, false };
+        clip::ui::VisualState<ClipboardTriggerEditControl> formatProtocolWarningState{ L"FormatProtocolWarning", 3, false };
+        clip::ui::VisualState<ClipboardTriggerEditControl> formatNoProtocolWarningState{ L"FormatNoProtocolWarning", 3, false };
 
         clip::ui::ListenablePropertyValue<hstring> _triggerLabel{ std::bind(&ClipboardTriggerEditControl::raisePropertyChanged, this, std::placeholders::_1) };
         clip::ui::ListenablePropertyValue<hstring> _triggerFormat{ std::bind(&ClipboardTriggerEditControl::raisePropertyChanged, this, std::placeholders::_1) };
