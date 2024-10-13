@@ -64,7 +64,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR,
     try
     {
         auto dispatcherQueueController = clip::utils::managed_dispatcher_queue_controller(initIslandApp());
-        
+
         // Perform application initialization:
         auto topLevelWindow = InitInstance(hInstance, nCmdShow);
         HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIPBOARDMANAGER));
@@ -111,17 +111,17 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
     wcex.cbSize = sizeof(WNDCLASSEX);
 
-    wcex.style          = CS_HREDRAW | CS_VREDRAW;
-    wcex.lpfnWndProc    = WndProc;
-    wcex.cbClsExtra     = 0;
-    wcex.cbWndExtra     = 0;
-    wcex.hInstance      = hInstance;
-    wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CLIPBOARDMANAGER));
-    wcex.hCursor        = LoadCursor(nullptr, IDC_ARROW);
-    wcex.hbrBackground  = (HBRUSH)(COLOR_WINDOW+1);
-    wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_CLIPBOARDMANAGER);
-    wcex.lpszClassName  = szWindowClass;
-    wcex.hIconSm        = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
+    wcex.style = CS_HREDRAW | CS_VREDRAW;
+    wcex.lpfnWndProc = WndProc;
+    wcex.cbClsExtra = 0;
+    wcex.cbWndExtra = 0;
+    wcex.hInstance = hInstance;
+    wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CLIPBOARDMANAGER));
+    wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_CLIPBOARDMANAGER);
+    wcex.lpszClassName = szWindowClass;
+    wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
     return RegisterClassExW(&wcex);
 }
@@ -138,19 +138,19 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   // Initialize global strings
-   LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-   LoadStringW(hInstance, IDC_CLIPBOARDMANAGER, szWindowClass, MAX_LOADSTRING);
-   MyRegisterClass(hInstance);
+    // Initialize global strings
+    LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
+    LoadStringW(hInstance, IDC_CLIPBOARDMANAGER, szWindowClass, MAX_LOADSTRING);
+    MyRegisterClass(hInstance);
 
-   HWND hWnd = CreateWindowExW(0, szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, InitialWindowWidth, InitialWindowHeight, nullptr, nullptr, hInstance, nullptr);
-   winrt::check_pointer(hWnd);
+    HWND hWnd = CreateWindowExW(0, szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+                                CW_USEDEFAULT, 0, InitialWindowWidth, InitialWindowHeight, nullptr, nullptr, hInstance, nullptr);
+    winrt::check_pointer(hWnd);
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+    ShowWindow(hWnd, nCmdShow);
+    UpdateWindow(hWnd);
 
-   return hWnd;
+    return hWnd;
 }
 
 //
@@ -213,7 +213,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 default:
                     return DefWindowProc(hWnd, message, wParam, lParam);
             }
-            
+
             break;
         }
 
@@ -232,7 +232,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             DeleteObject(hBrush);
 
             EndPaint(hWnd, &ps);
-            
+
             break;
         }
 
@@ -342,8 +342,10 @@ void createWinUIWindow(clip::utils::WindowInfo* windowInfo, const HWND& windowHa
     // Enable the DesktopWindowXamlSource to be a tab stop.
     SetWindowLong(winrt::GetWindowFromWindowId(windowInfo->desktopWinXamlSrc.SiteBridge().WindowId()), GWL_STYLE, WS_TABSTOP | WS_CHILD | WS_VISIBLE);
 
+    auto appWindow = clip::utils::getCurrentAppWindow(windowHandle);
+
     // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
-    windowInfo->desktopWinXamlSrc.Content(winrt::make<winrt::ClipboardManager::implementation::MainPage>());
+    windowInfo->desktopWinXamlSrc.Content(winrt::make<winrt::ClipboardManager::implementation::MainPage>(appWindow));
 
     clip::Settings settings{};
     int32_t x = settings.get<int32_t>(L"WindowPosX").value_or(10);
@@ -359,7 +361,6 @@ void createWinUIWindow(clip::utils::WindowInfo* windowInfo, const HWND& windowHa
         y = (display.WorkArea().Height / 2) - (height / 2);
     }
 
-    auto appWindow = clip::utils::getCurrentAppWindow(windowHandle);
     appWindow.MoveAndResize({ x, y, width, height });
 
     if (appWindow.TitleBar().IsCustomizationSupported())
@@ -368,16 +369,20 @@ void createWinUIWindow(clip::utils::WindowInfo* windowInfo, const HWND& windowHa
         titleBar.ExtendsContentIntoTitleBar(true);
         titleBar.IconShowOptions(winrt::IconShowOptions::HideIconAndSystemMenu);
 
-        auto&& presenter = appWindow.Presenter().as<winrt::OverlappedPresenter>();
-        presenter.IsMaximizable(false);
-        //presenter.IsMinimizable(false);
+        auto&& presenter = appWindow.Presenter().try_as<winrt::OverlappedPresenter>();
+        if (presenter != nullptr)
+        {
+            presenter.IsMinimizable(
+                settings.get<bool>(L"AllowWindowMinimize").value_or(true));
+            presenter.IsMaximizable(
+                settings.get<bool>(L"AllowWindowMaximize").value_or(false));
+        }
 
-        //titleBar.PreferredHeightOption(winrt::TitleBarHeightOption::Collapsed);
         auto&& resources = winrt::Application::Current().Resources();
-        
+
         appWindow.TitleBar().ButtonBackgroundColor(winrt::Colors::Transparent());
         appWindow.TitleBar().ButtonInactiveBackgroundColor(winrt::Colors::Transparent());
-        
+
         appWindow.TitleBar().ButtonInactiveForegroundColor(
             resources.TryLookup(winrt::box_value(L"AppTitleBarHoverColor")).as<winrt::Windows::UI::Color>());
 
@@ -387,18 +392,15 @@ void createWinUIWindow(clip::utils::WindowInfo* windowInfo, const HWND& windowHa
         appWindow.TitleBar().ButtonPressedBackgroundColor(winrt::Colors::Transparent());
 
         appWindow.TitleBar().ButtonForegroundColor(
-            resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>()
-        );
+            resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>());
         appWindow.TitleBar().ButtonHoverForegroundColor(
-            resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>()
-        );
+            resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>());
         appWindow.TitleBar().ButtonPressedForegroundColor(
-            resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>()
-        );
+            resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>());
     }
 }
 
-void handleWindowActivation(clip::utils::WindowInfo * windowInfo, const bool & inactive)
+void handleWindowActivation(clip::utils::WindowInfo* windowInfo, const bool& inactive)
 {
     if (inactive)
     {
