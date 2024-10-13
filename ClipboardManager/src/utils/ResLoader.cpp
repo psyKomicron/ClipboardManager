@@ -15,7 +15,7 @@ namespace clip::utils
         {
             if (err.code() == 0x80070002)
             {
-                std::wcerr << L"Failed to create ResourceLoader, 'resources.pri' doesn't exist." << std::endl;
+                logger.error(L"Failed to create ResourceLoader, 'resources.pri' doesn't exist.");
             }
         }
     }
@@ -30,7 +30,7 @@ namespace clip::utils
             }
             catch (winrt::hresult_error)
             {
-                std::wcerr << L"'getNamedResource' Failed to instanciate or get string from resources." << std::endl;
+                logger.error(L"'getNamedResource' Failed to instanciate or get string from resources.");
             }
         }
         return {};
