@@ -94,6 +94,9 @@
     <ClInclude Include="src\FormatExceptionCode.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\utils\com_closable_ptr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipboardManager.cpp">
@@ -185,6 +188,7 @@
     </Page>
     <Page Include="RegexTesterControl.xaml" />
     <Page Include="MessagesBar.xaml" />
+    <Page Include="ClipboardHistoryItemView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
