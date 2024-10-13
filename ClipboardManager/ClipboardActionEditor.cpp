@@ -209,9 +209,11 @@ namespace winrt::ClipboardManager::implementation
         visualStateManager.goToEnabledState(_actionEnabledProperty.get());
 
         // Check if the associated trigger is valid.
-        auto trigger = clip::ClipboardTrigger(std::wstring(_triggerLabelProperty.get()), 
+        auto trigger = clip::ClipboardTrigger(
+            std::wstring(_triggerLabelProperty.get()), 
             std::wstring(_triggerFormatProperty.get()), 
             boost::wregex(std::wstring(_triggerRegexProperty.get())), true);
+
         try
         {
             trigger.checkFormat();
