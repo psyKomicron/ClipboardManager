@@ -1,8 +1,11 @@
+import "MainPage.idl";
+
 namespace ClipboardManager
 {
     [default_interface]
     runtimeclass SettingsPage : Microsoft.UI.Xaml.Controls.Page
     {
         SettingsPage();
+        SettingsPage(MainPage mainPage);
     }
 }

@@ -19,14 +19,17 @@ namespace winrt::ClipboardManager::implementation
 {
     struct MainPage : MainPageT<MainPage>
     {
-    public:
+     public:
         MainPage();
+        MainPage(const winrt::Microsoft::UI::Windowing::AppWindow& appWindow);
 
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> Actions();
         void Actions(const winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView>& value);
 
         void AppClosing();
+        void UpdateTitleBar();
 
+        void Page_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e);
         winrt::async Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
         winrt::async LocateUserFileButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::async CreateUserFileButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -42,19 +45,23 @@ namespace winrt::ClipboardManager::implementation
         winrt::async ImportFromClipboardButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::async AddTriggerButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void TestRegexButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void OverlayToggleButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void CommandBarImportButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
-    private:
+     private:
         const clip::utils::Logger logger{ L"MainPage" };
-        const clip::ui::VisualState<MainPage> OpenSaveFileState{ L"CreateNewActions", 0, false };
-        const clip::ui::VisualState<MainPage> ViewActionsState{ L"ViewActions", 0, false };
-        const clip::ui::VisualState<MainPage> DisplayClipboardTriggersState{ L"DisplayClipboardTriggers", 1, false };
-        const clip::ui::VisualState<MainPage> NoClipboardTriggersToDisplayState{ L"NoClipboardTriggersToDisplay", 1, false };
-        const clip::ui::VisualState<MainPage> FirstStartupState{ L"FirstStartup", 2, false };
-        const clip::ui::VisualState<MainPage> NormalStartupState{ L"NormalStartup", 2, true };
-        const clip::ui::VisualState<MainPage> QuickSettingsClosedState{ L"QuickSettingsClosed", 3, true };
-        const clip::ui::VisualState<MainPage> QuickSettingsOpenState{ L"QuickSettingsOpen", 3, false };
+        const clip::ui::VisualState<MainPage> openSaveFileState{ L"CreateNewActions", 0, false };
+        const clip::ui::VisualState<MainPage> viewActionsState{ L"ViewActions", 0, false };
+        const clip::ui::VisualState<MainPage> displayClipboardTriggersState{ L"DisplayClipboardTriggers", 1, false };
+        const clip::ui::VisualState<MainPage> noClipboardTriggersToDisplayState{ L"NoClipboardTriggersToDisplay", 1, false };
+        const clip::ui::VisualState<MainPage> firstStartupState{ L"FirstStartup", 2, false };
+        const clip::ui::VisualState<MainPage> normalStartupState{ L"NormalStartup", 2, true };
+        const clip::ui::VisualState<MainPage> quickSettingsClosedState{ L"QuickSettingsClosed", 3, true };
+        const clip::ui::VisualState<MainPage> quickSettingsOpenState{ L"QuickSettingsOpen", 3, false };
+        const clip::ui::VisualState<MainPage> normalWindowState{ L"NormalWindow", 4, true };
+        const clip::ui::VisualState<MainPage> overlayWindowState{ L"OverlayWindow", 4, false };
 
-        winrt::Microsoft::UI::Windowing::OverlappedPresenter presenter{ nullptr };
+        winrt::Microsoft::UI::Windowing::AppWindow appWindow{ nullptr };
         bool loaded = false;
         clip::ui::VisualStateManager<MainPage> visualStateManager{ *this };
         clip::Settings localSettings{};
