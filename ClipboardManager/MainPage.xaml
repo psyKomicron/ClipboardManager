@@ -9,14 +9,18 @@
     mc:Ignorable="d"
     Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}"
     Loading="Page_Loading"
-    Loaded="Page_Loaded">
+    Loaded="Page_Loaded"
+    SizeChanged="Page_SizeChanged">
 
-    <Grid>
+    <Grid x:Name="RootGrid" BorderThickness="2" CornerRadius="{StaticResource OverlayCornerRadius}">
         <Grid.RowDefinitions>
             <RowDefinition Height="33"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Grid.BorderBrush>
+            <SolidColorBrush x:Name="RootGridBorderBrush" Color="{ThemeResource SystemAccentColor}" Opacity="0"/>
+        </Grid.BorderBrush>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
@@ -69,22 +73,55 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-        
-        <Border 
-            x:Name="MoveBorder"
-            CornerRadius="2" 
-            Height="3"
-            Background="{ThemeResource TextFillColorPrimaryBrush}"
-            MaxWidth="100"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Center"
-            Opacity="0.7"/>
 
-        <!--<InfoBar x:Name="GenericErrorInfoBar"
-                 x:Uid="GenericErrorInfoBar"
-                 Grid.Row="1"
-                 Severity="Error"/>-->
+            <VisualStateGroup>
+                <VisualState x:Name="NormalWindow"/>
+                <VisualState x:Name="OverlayWindow">
+                    <VisualState.Storyboard>
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames 
+                                Storyboard.TargetName="RootGridBorderBrush"
+                                Storyboard.TargetProperty="Opacity"
+                                Duration="0:0:2"
+                                EnableDependentAnimation="True">
+                                <SplineDoubleKeyFrame KeyTime="0:0:1.5" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="1" />
+                                <LinearDoubleKeyFrame KeyTime="0:0:2" Value="0"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState.Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid x:Name="TitleBarGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="OverlayButtonColumn" Width="Auto"/>
+                <ColumnDefinition x:Name="DragBorderColumn" Width="*"/>
+                <ColumnDefinition x:Name="WindowButtonsColumn" Width="45"/>
+            </Grid.ColumnDefinitions>
+
+            <ToggleButton 
+                x:Name="OverlayToggleButton"
+                Style="{StaticResource IconToggleButtonStyle}" 
+                Grid.Column="0"
+                MaxHeight="30"
+                ClickMode="Release"
+                Click="OverlayToggleButton_Click">
+                <FontIcon Glyph="&#xee49;" FontSize="16"/>
+            </ToggleButton>
+            
+            <Border 
+                x:Name="MoveBorder"
+                Grid.ColumnSpan="3"
+                CornerRadius="2" 
+                Height="3"
+                Background="{ThemeResource TextFillColorPrimaryBrush}"
+                MaxWidth="100"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Opacity="0.7"/>
+        </Grid>
+
         <clip:MessagesBar x:Name="MessagesBar" Grid.Row="1"/>
 
         <Pivot x:Name="Pivot" SelectedIndex="3" Grid.Row="2">
@@ -117,20 +154,32 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="7" Margin="0,0,7,5">
-                        <Button Click="TestRegexButton_Click">
-                            <FontIcon Glyph="&#xe943;" FontSize="16"/>
-                        </Button>
-                        <Button x:Name="CommandBarSaveButton" Click="CommandBarSaveButton_Click">
-                            <FontIcon Glyph="&#xe74e;" FontSize="16"/>
-                        </Button>
-                        <Button Click="ReloadTriggersButton_Click">
-                            <FontIcon Glyph="&#xe72c;" FontSize="16"/>
-                        </Button>
-                        <Button Click="AddTriggerButton_Click">
-                            <FontIcon Glyph="&#xe710;" FontSize="16"/>
-                        </Button>
-                    </StackPanel>
+                    <CommandBar Background="Transparent" DefaultLabelPosition="Right">
+                        <AppBarButton 
+                            x:Uid="CommandBarImportButton" 
+                            Icon="OpenFile"
+                            Click="CommandBarImportButton_Click"/>
+                        <AppBarButton 
+                            x:Name="CommandBarSaveButton" 
+                            x:Uid="CommandBarSaveButton" 
+                            Icon="Save" 
+                            Click="CommandBarSaveButton_Click"/>
+                        <AppBarButton 
+                            x:Uid="CommandBarReloadTriggersButton" 
+                            Icon="Refresh"
+                            Click="ReloadTriggersButton_Click"/>
+                        <AppBarButton 
+                            x:Uid="CommandBarAddTriggerButton" 
+                            Icon="Add"
+                            Click="AddTriggerButton_Click"/>
+                        <AppBarButton 
+                            x:Uid="CommandBarTestRegexButton"
+                            Click="TestRegexButton_Click">
+                            <AppBarButton.Icon>
+                                <FontIcon Glyph="&#xe943;"/>
+                            </AppBarButton.Icon>
+                        </AppBarButton>
+                    </CommandBar>
 
                     <TextBlock x:Name="NoClipboardTriggersTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8" Grid.Row="1" x:Load="False" Visibility="Collapsed"/>
                     

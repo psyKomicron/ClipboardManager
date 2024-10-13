@@ -696,4 +696,24 @@ Si vous utilisez plusieurs fois {} indexez les (ex: {0}....{0}).</value>
     <value>Impossible de récupérer l'historique du presse-papier.</value>
     <comment>Warning</comment>
   </data>
+  <data name="CommandBarAddTriggerButton.Label" xml:space="preserve">
+    <value>Ajouter déclencheur</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarImportButton.Label" xml:space="preserve">
+    <value>Importer</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarReloadTriggersButton.Label" xml:space="preserve">
+    <value>Recharger déclencheurs</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarSaveButton.Label" xml:space="preserve">
+    <value>Sauvegarder</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarTestRegexButton.Label" xml:space="preserve">
+    <value>Tester regex</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
 </root>

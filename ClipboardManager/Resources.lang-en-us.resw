@@ -237,9 +237,29 @@
     <value>Clipboard triggers</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="CommandBarAddTriggerButton.Label" xml:space="preserve">
+    <value>Add trigger</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarImportButton.Label" xml:space="preserve">
+    <value>Import</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarReloadTriggersButton.Label" xml:space="preserve">
+    <value>Reload triggers</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarSaveButton.Label" xml:space="preserve">
+    <value>Save</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
   <data name="CommandBarSaveButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Click to save the modifications made to any clipboard trigger</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="CommandBarTestRegexButton.Label" xml:space="preserve">
+    <value>Test regex</value>
+    <comment>MainPage/CommandBar</comment>
   </data>
   <data name="CreateButton.Content" xml:space="preserve">
     <value>Create</value>
