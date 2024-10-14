@@ -716,4 +716,8 @@ Si vous utilisez plusieurs fois {} indexez les (ex: {0}....{0}).</value>
     <value>Tester regex</value>
     <comment>MainPage/CommandBar</comment>
   </data>
+  <data name="EditActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Modifier</value>
+    <comment>ClipboardActionView</comment>
+  </data>
 </root>

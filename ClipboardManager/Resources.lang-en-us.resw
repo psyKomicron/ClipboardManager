@@ -285,6 +285,10 @@
     <value>Short</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="EditActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Edit</value>
+    <comment>ClipboardActionView</comment>
+  </data>
   <data name="EditButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Open a dialog to edit this trigger</value>
     <comment>Teaching tips</comment>
