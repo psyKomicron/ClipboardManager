@@ -933,22 +933,24 @@ namespace winrt::ClipboardManager::implementation
     {
         auto loadClipboardHistory = localSettings.get<bool>(L"ImportClipboardHistory").value_or(false);
 
-        auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
-        auto&& items = clipboardHistory.Items();
-        for (int i = items.Size() - 1; i >= 0; i--)
+        try
         {
-            auto&& item = items.GetAt(i);
-            try
+            auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
+            auto&& items = clipboardHistory.Items();
+            for (int i = items.Size() - 1; i >= 0; i--)
             {
+                auto&& item = items.GetAt(i);
                 auto&& content = item.Content();
                 co_await AddClipboardItem(content, loadClipboardHistory);
-            }
-            catch (hresult_error error)
-            {
-                logger.error(L"Failed to retreive item from clipboard history.");
 
-                MessagesBar().AddWarning(L"Warning_FailedToLoadClipboardHistory", L"Failed to load clipboard history.");
+                throw hresult_error();
             }
+        }
+        catch (hresult_error error)
+        {
+            logger.error(L"Failed to retreive item from clipboard history.");
+
+            MessagesBar().AddWarning(L"Warning_FailedToLoadClipboardHistory", L"Failed to load clipboard history.");
         }
     }
 
