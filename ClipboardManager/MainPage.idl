@@ -6,7 +6,11 @@ namespace ClipboardManager
     runtimeclass MainPage : Microsoft.UI.Xaml.Controls.Page
     {
         MainPage();
+        MainPage(Microsoft.UI.Windowing.AppWindow appWindow);
+
         IObservableVector<ClipboardActionView> Actions;
+
         void AppClosing();
+        void UpdateTitleBar();
     }
 }

@@ -1,4 +1,6 @@
 #pragma once
+#include "src/utils/Logger.hpp"
+
 #include <winrt/Windows.ApplicationModel.Resources.h>
 
 #include <optional>
@@ -14,6 +16,7 @@ namespace clip::utils
         winrt::hstring getOrAlt(const winrt::hstring& name, const winrt::hstring& alt);
 
     private:
+        Logger logger{ L"ResLoader" };
         winrt::Windows::ApplicationModel::Resources::ResourceLoader resourceLoader{ nullptr };
     };
 }

@@ -33,6 +33,9 @@
 #include <ppltasks.h>
 
 #include <iostream>
+#include <chrono>
+
+using namespace std::chrono_literals;
 
 namespace xaml
 {
@@ -59,15 +62,15 @@ namespace winrt::ClipboardManager::implementation
     MainPage::MainPage()
     {
         visualStateManager.initializeStates(
-        {
-            OpenSaveFileState,
-            ViewActionsState,
-            NoClipboardTriggersToDisplayState,
-            FirstStartupState,
-            NormalStartupState,
-            QuickSettingsClosedState,
-            QuickSettingsOpenState
-        });
+            {
+                openSaveFileState,
+                viewActionsState,
+                noClipboardTriggersToDisplayState,
+                firstStartupState,
+                normalStartupState,
+                quickSettingsClosedState,
+                quickSettingsOpenState
+            });
 
         manager.registerActionCallback([this](std::wstring args)
         {
@@ -78,6 +81,11 @@ namespace winrt::ClipboardManager::implementation
         {
             clip::utils::getCurrentAppWindow().Show();
         });
+    }
+
+    MainPage::MainPage(const winrt::Microsoft::UI::Windowing::AppWindow& appWindow) : MainPage()
+    {
+        this->appWindow = appWindow;
     }
 
     win::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> MainPage::Actions()
@@ -125,6 +133,36 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
+    void MainPage::UpdateTitleBar()
+    {
+        auto&& presenter = appWindow.Presenter().try_as<xaml::OverlappedPresenter>();
+        if (presenter)
+        {
+            WindowButtonsColumn().Width(xaml::GridLengthHelper::FromPixels(
+                presenter.IsMinimizable() ? 135 : 45
+            ));
+        }
+    }
+
+
+    void MainPage::Page_SizeChanged(win::IInspectable const&, xaml::SizeChangedEventArgs const&)
+    {
+        std::vector<winrt::Windows::Graphics::RectInt32> dragRectangles{};
+
+        winrt::Windows::Graphics::RectInt32 rect
+        {
+            // X
+            static_cast<int32_t>(OverlayButtonColumn().ActualWidth()),
+            // Y
+            3,
+            // Width
+            static_cast<int32_t>(DragBorderColumn().ActualWidth()),
+            // Height
+            static_cast<int32_t>(TitleBarGrid().ActualHeight())
+        };
+
+        appWindow.TitleBar().SetDragRectangles(dragRectangles);
+    }
 
     winrt::async MainPage::Page_Loading(xaml::FrameworkElement const&, win::IInspectable const&)
     {
@@ -145,7 +183,6 @@ namespace winrt::ClipboardManager::implementation
 
         if (localSettings.get<bool>(L"StartWindowMinimized").value_or(false))
         {
-            auto&& appWindow = clip::utils::getCurrentAppWindow();
             appWindow.Presenter().as<xaml::OverlappedPresenter>().Minimize();
             // TODO: Send toast notification to tell the user the app has started ?
         }
@@ -169,15 +206,15 @@ namespace winrt::ClipboardManager::implementation
 
             DispatcherQueue().TryEnqueue([this]()
             {
-                visualStateManager.goToState(FirstStartupState);
-            });    
+                visualStateManager.goToState(firstStartupState);
+            });
         }
 
         DispatcherQueue().TryEnqueue([this]()
         {
-            visualStateManager.goToState(triggers.empty() 
-                ? NoClipboardTriggersToDisplayState
-                : DisplayClipboardTriggersState);
+            visualStateManager.goToState(triggers.empty()
+                                         ? noClipboardTriggersToDisplayState
+                                         : displayClipboardTriggersState);
         });
     }
 
@@ -197,10 +234,9 @@ namespace winrt::ClipboardManager::implementation
                 editor.IgnoreCase((action.regex().flags() & boost::regex_constants::icase) == boost::regex_constants::icase);
                 editor.UseSearch(action.matchMode() == clip::MatchMode::Search);
 
-                editor.FormatChanged({ this, &MainPage::Editor_FormatChanged });
-                editor.LabelChanged({ this, &MainPage::Editor_LabelChanged });
                 editor.IsOn({ this, &MainPage::Editor_Toggled });
-                editor.RegexChanged({ this, &MainPage::Editor_RegexChanged });
+                editor.LabelChanged({ this, &MainPage::Editor_LabelChanged });
+                editor.Changed({ this, &MainPage::Editor_Changed });
 
                 editor.Removed([=](auto&& sender, auto&&)
                 {
@@ -241,7 +277,7 @@ namespace winrt::ClipboardManager::implementation
         win::FileOpenPicker picker{};
         picker.as<IInitializeWithWindow>()->Initialize(GetActiveWindow());
         picker.FileTypeFilter().Append(L".xml");
-    
+
         auto&& storageFile = co_await picker.PickSingleFileAsync();
         if (storageFile)
         {
@@ -250,7 +286,7 @@ namespace winrt::ClipboardManager::implementation
 
             ReloadTriggers();
 
-            visualStateManager.goToState(ViewActionsState);
+            visualStateManager.goToState(viewActionsState);
         }
     }
 
@@ -270,18 +306,18 @@ namespace winrt::ClipboardManager::implementation
             std::filesystem::path userFilePath{ storageFile.Path().c_str() };
             clip::ClipboardTrigger::initializeSaveFile(userFilePath);
 
-            visualStateManager.goToState(OpenSaveFileState);
+            visualStateManager.goToState(openSaveFileState);
             ReloadTriggers();
         }
     }
 
     void MainPage::StartTourButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
-        visualStateManager.goToState(NormalStartupState);
-        visualStateManager.goToState(QuickSettingsOpenState);
+        visualStateManager.goToState(normalStartupState);
+        visualStateManager.goToState(quickSettingsOpenState);
 
         SettingsPivotTeachingTip().IsOpen(true);
-    
+
         teachingTipIndex = 1;
     }
 
@@ -327,7 +363,7 @@ namespace winrt::ClipboardManager::implementation
             {
                 clipboardActionViews.RemoveAt(0);
             }
-        
+
             Pivot().SelectedIndex(2);
             CommandBarSaveButtonTeachingTip().IsOpen(true);
         }
@@ -352,7 +388,7 @@ namespace winrt::ClipboardManager::implementation
             bool manuallyAddedAction = false;
             if (ClipboardTriggersListView().Items().Size() == 0)
             {
-                visualStateManager.goToState(DisplayClipboardTriggersState);
+                visualStateManager.goToState(displayClipboardTriggersState);
 
                 auto triggerView = make<ClipboardActionEditor>();
                 triggerView.ActionLabel(L"Test trigger");
@@ -369,7 +405,7 @@ namespace winrt::ClipboardManager::implementation
             if (manuallyAddedAction)
             {
                 ClipboardTriggersListView().Items().RemoveAt(0);
-                visualStateManager.goToState(NoClipboardTriggersToDisplayState);
+                visualStateManager.goToState(noClipboardTriggersToDisplayState);
             }
 
             Pivot().SelectedIndex(3);
@@ -378,7 +414,7 @@ namespace winrt::ClipboardManager::implementation
 
     void MainPage::OpenQuickSettingsButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
-        visualStateManager.switchState(QuickSettingsClosedState.group());
+        visualStateManager.switchState(quickSettingsClosedState.group());
     }
 
     void MainPage::ReloadTriggersButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
@@ -396,7 +432,7 @@ namespace winrt::ClipboardManager::implementation
                 clip::ClipboardTrigger::saveClipboardTriggers(triggers, optPath.value());
             }
             catch (std::invalid_argument invalidArgument)
-            {            
+            {
                 MessagesBar().AddMessage(L"ErrorMessage_CannotSaveTriggersFileNotFound", L"Cannot save triggers, the specified user file cannot be found.");
             }
             catch (boost::property_tree::xml_parser_error xmlParserError)
@@ -421,7 +457,7 @@ namespace winrt::ClipboardManager::implementation
         for (auto&& item : clipboardHistory.Items())
         {
             auto&& itemText = co_await item.Content().GetTextAsync();
-        
+
             AddAction(itemText.data(), false);
         }
         // TODO: Notify user that clipboard content has been imported ?
@@ -437,7 +473,7 @@ namespace winrt::ClipboardManager::implementation
             auto format = std::wstring(ClipboardTriggerEditControl().TriggerFormat());
             auto ignoreCase = ClipboardTriggerEditControl().IgnoreCase();
             auto regex = boost::wregex(std::wstring(ClipboardTriggerEditControl().TriggerRegex()),
-                (ignoreCase ? boost::regex_constants::icase : 0u));
+                                       (ignoreCase ? boost::regex_constants::icase : 0u));
             auto useSearch = ClipboardTriggerEditControl().UseSearch();
 
             auto trigger = clip::ClipboardTrigger(label, format, regex, true);
@@ -451,22 +487,22 @@ namespace winrt::ClipboardManager::implementation
             view.ActionRegex(regex.str());
             view.UseSearch(useSearch);
 
-            ClipboardTriggersListView().Items().Append(view);   
+            ClipboardTriggersListView().Items().Append(view);
         }
     }
 
 
     winrt::async MainPage::ClipboardContent_Changed(const win::IInspectable&, const win::IInspectable&)
     {
-        auto clipboardContent = win::Clipboard::GetContent();
+        auto content = win::Clipboard::GetContent();
 
-        if (clipboardContent.Properties().ApplicationName() == L"ClipboardManager")
+        if (content.Properties().ApplicationName() == L"ClipboardManager")
         {
             logger.info(L"Clipboard content changed, but the available format is not text or the application that changed the clipboard content is me.");
             co_return;
         }
 
-        co_await AddClipboardItem(clipboardContent, true);
+        AddClipboardItem(content, true);
     }
 
     void MainPage::Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel)
@@ -483,9 +519,9 @@ namespace winrt::ClipboardManager::implementation
                 for (auto&& clipboardItem : clipboardActionViews)
                 {
                     uint32_t pos = 0;
-                    if (clipboardItem.IndexOf(pos, action.format(), label, action.regex().str(), action.enabled()))
+                    if (clipboardItem.IndexOf(pos, label))
                     {
-                        clipboardItem.EditAction(pos, action.format(), action.label(), action.regex().str(), action.enabled());
+                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), action.enabled());
                     }
                 }
 
@@ -494,47 +530,35 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    void MainPage::Editor_FormatChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldFormat)
+    void MainPage::Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const Windows::Foundation::IInspectable& inspectable)
     {
-        auto format = std::wstring(sender.ActionFormat());
         auto actionLabel = std::wstring(sender.ActionLabel());
+        auto format = std::wstring(sender.ActionFormat());
+        auto newRegex = std::wstring(sender.ActionRegex());
+
+        auto args = inspectable.as<int32_t>();
+        bool ignoreCase = args & (1 << 1);
+        bool useSearch = args & 1;
+        auto flags = ignoreCase ? boost::regex_constants::icase : 0;
 
         for (auto&& action : triggers)
         {
             if (action.label() == actionLabel)
             {
                 action.format(format);
+                action.regex(boost::wregex(newRegex, flags));
+                action.updateMatchMode(useSearch ? clip::MatchMode::Search : clip::MatchMode::Match);
 
                 for (auto&& clipboardItem : clipboardActionViews)
                 {
                     uint32_t pos = 0;
-                    if (clipboardItem.IndexOf(pos, oldFormat, action.label(), action.regex().str(), action.enabled()))
+                    if (clipboardItem.IndexOf(pos, action.label()))
                     {
-                        clipboardItem.EditAction(pos, action.format(), action.label(), action.regex().str(), action.enabled());
+                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), action.enabled());
                     }
                 }
 
                 break;
-            }
-        }
-    }
-
-    void MainPage::Editor_RegexChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::Windows::Foundation::IInspectable& inspectable)
-    {
-        auto args = inspectable.as<int32_t>();
-        auto newRegex = std::wstring(sender.ActionRegex());
-        auto actionLabel = std::wstring(sender.ActionLabel());
-        for (auto&& action : triggers)
-        {
-            if (action.label() == actionLabel)
-            {
-                bool ignoreCase = args & (1 << 1);
-                bool useSearch= args & 1;
-                auto flags = ignoreCase ? boost::regex_constants::icase : 0;
-
-                action.regex(boost::wregex(newRegex, flags));
-
-                action.updateMatchMode(useSearch ? clip::MatchMode::Search : clip::MatchMode::Match);
             }
         }
     }
@@ -549,7 +573,7 @@ namespace winrt::ClipboardManager::implementation
                 for (auto&& view : clipboardActionViews)
                 {
                     uint32_t index = 0;
-                    if (view.IndexOf(index, action.format(), action.label(), action.regex().str(), action.enabled()))
+                    if (view.IndexOf(index, action.label()))
                     {
                         view.IsEnabled(action.enabled());
                     }
@@ -560,9 +584,38 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    void MainPage::TestRegexButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+    void MainPage::TestRegexButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
         TestRegexContentDialog().Open();
+    }
+
+    void MainPage::OverlayToggleButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    {
+        auto&& presenter = appWindow.Presenter().as<xaml::OverlappedPresenter>();
+        if (presenter)
+        {
+            bool toggled = OverlayToggleButton().IsChecked().GetBoolean();
+            if (toggled)
+            {
+                presenter.IsMinimizable(!toggled);
+                presenter.IsMaximizable(!toggled);
+
+                visualStateManager.goToState(overlayWindowState);
+            }
+            else
+            {
+                presenter.IsMinimizable(localSettings.get<bool>(L"AllowWindowMinimize").value_or(true));
+                presenter.IsMaximizable(localSettings.get<bool>(L"AllowWindowMaximize").value_or(false));
+
+                visualStateManager.goToState(normalWindowState);
+            }
+            presenter.IsAlwaysOnTop(toggled);
+        }
+    }
+
+    void MainPage::CommandBarImportButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    {
+        LocateUserFileButton_Click(nullptr, nullptr);
     }
 
 
@@ -602,21 +655,33 @@ namespace winrt::ClipboardManager::implementation
         {
             logger.debug(L"Hot key fired.");
 
-            if (presenter.State() != winrt::OverlappedPresenterState::Restored)
+            auto&& presenter = appWindow.Presenter().try_as<xaml::OverlappedPresenter>();
+            if (presenter)
             {
-                presenter.Restore();
-            }
-            else
-            {
-                presenter.Minimize();
+                if (presenter.State() != winrt::OverlappedPresenterState::Restored)
+                {
+                    presenter.Restore();
+                }
+                else
+                {
+                    presenter.Minimize();
+                }
             }
         });
+
+        auto&& presenter = appWindow.Presenter().try_as<xaml::OverlappedPresenter>();
+        if (presenter)
+        {
+            WindowButtonsColumn().Width(xaml::GridLengthHelper::FromPixels(
+                presenter.IsMinimizable() ? 135 : 45
+            ));
+        }
     }
 
     void MainPage::AddAction(const std::wstring& text, const bool& notify)
     {
-        if (localSettings.get<bool>(L"AddDuplicatedActions").value_or(true) 
-            || clipboardActionViews.Size() == 0 
+        if (localSettings.get<bool>(L"AddDuplicatedActions").value_or(true)
+            || clipboardActionViews.Size() == 0
             || text != clipboardActionViews.GetAt(0).Text())
         {
             auto actionView = winrt::make<ClipboardActionView>(text.c_str());
@@ -632,14 +697,6 @@ namespace winrt::ClipboardManager::implementation
                     {
                         clipboardActionViews.RemoveAt(i);
                     }
-
-                    /*for (uint32_t i = 0; i < clipboardActionViews.Size(); i++)
-                    {
-                        if (sender == clipboardActionViews.GetAt(i))
-                        {
-                            clipboardActionViews.RemoveAt(i);
-                        }
-                    }*/
                 });
 
                 if (notify)
@@ -650,9 +707,11 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    bool MainPage::FindActions(const winrt::ClipboardManager::ClipboardActionView& actionView, std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text)
+    bool MainPage::FindActions(const winrt::ClipboardManager::ClipboardActionView& actionView,
+                               std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text)
     {
         auto matchMode = localSettings.get<clip::MatchMode>(L"TriggerMatchMode");
+
         bool hasMatch = false;
         for (auto&& action : triggers)
         {
@@ -682,9 +741,9 @@ namespace winrt::ClipboardManager::implementation
 
     void MainPage::SendNotification(const std::vector<std::pair<std::wstring, std::wstring>>& buttons)
     {
-        if (!localSettings.get<bool>(L"NotificationsEnabled").value_or(true))
+        if (!localSettings.get<bool>(L"NotificationsEnabled").value_or(true)
+            || SilenceNotificationsToggleButton().IsChecked().GetBoolean())
         {
-            logger.info(L"Not sending notification, notifications are not enabled.");
             return;
         }
 
@@ -693,52 +752,40 @@ namespace winrt::ClipboardManager::implementation
         auto soundType = localSettings.get<clip::notifs::NotificationSoundType>(L"NotificationSoundType").value_or(clip::notifs::NotificationSoundType::Default);
 
         clip::notifs::ToastNotification notif{};
+
+        if (!notif.tryAddButtons(buttons))
+        {
+            notif.addText(std::wstring(
+                resLoader.getOrAlt(L"ToastNotification_TooManyButtons",
+                                   L"Too many triggers matched, open the app to activate the action of your choice")));
+
+            notif.addButton(
+                std::wstring(resLoader.getOrAlt(L"ToastNotification_OpenApp", L"Open app")),
+                L"action=focus");
+        }
+        else
+        {
+            notif.addText(std::wstring(
+                resLoader.getOrAlt(L"ToastNotification_ClickAction",
+                                   L"Click corresponding trigger to activate it")));
+        }
+
         try
         {
-            win::ResourceLoader resLoader{};
-            if (!notif.tryAddButtons(buttons))
-            {
-                notif.addText(std::wstring(resLoader.GetString(L"ToastNotification_TooManyButtons")));
-                notif.addButton(std::wstring(resLoader.GetString(L"ToastNotification_OpenApp")), L"action=focus");
-            }
-            else
-            {
-                notif.addText(std::wstring(resLoader.GetString(L"ToastNotification_ClickAction")));
-            }
-
             notif.send(durationType, scenarioType, soundType);
         }
-        catch (winrt::hresult_error err)
+        catch (hresult_access_denied accessDenied)
         {
-            if (err.code() == 0x80070002)
-            {
-                // Don't forget to rename "ClipboardManager.pri" to "resources.pri".
-                logger.error(L"Failed to load translation file (resources.pri), sending notification without translating the string.");
-
-                if (!notif.tryAddButtons(buttons))
-                {
-                    notif.addText(L"Open app");
-                    notif.addButton(L"Too many triggers matched, open the app to activate the action of your choice", L"action=focus");
-                }
-                else
-                {
-                    notif.addText(L"Activate action");
-                }
-
-                notif.addText(L"Text isn't translated due to app error.");
-                notif.send(durationType, scenarioType, soundType);
-            }
-            else
-            {
-                logger.error(L"Failed to send toast notification. " + std::wstring(err.message()));
-            }
+            MessagesBar().AddWarning(L"ToastNotification_FailedToSendWarning", L"Failed to send toast notification.");
         }
     }
 
     void MainPage::ReloadTriggers()
     {
         auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
-        if (userFilePath.has_value() && clip::utils::pathExists(userFilePath.value()) && LoadTriggers(userFilePath.value()))
+        if (userFilePath.has_value()
+            && clip::utils::pathExists(userFilePath.value())
+            && LoadTriggers(userFilePath.value()))
         {
             try
             {
@@ -756,7 +803,7 @@ namespace winrt::ClipboardManager::implementation
                 }
 
                 ClipboardTriggersListView().Items().Clear();
-                ClipboadTriggersListPivot_Loaded(nullptr, nullptr);    
+                ClipboadTriggersListPivot_Loaded(nullptr, nullptr);
 
                 return;
             }
@@ -766,10 +813,10 @@ namespace winrt::ClipboardManager::implementation
             }
         }
 
-        MessagesBar().AddError(L"ReloadActionsUserFileNotFoundTitle", 
-            L"Failed to reload triggers", 
-            L"ReloadActionsUserFileNotFoundMessage", 
-            L"Actions user file has either been moved/deleted or application settings have been cleared.");
+        MessagesBar().AddError(L"ReloadActionsUserFileNotFoundTitle",
+                               L"Failed to reload triggers",
+                               L"ReloadActionsUserFileNotFoundMessage",
+                               L"Actions user file has either been moved/deleted or application settings have been cleared.");
     }
 
     bool MainPage::LoadTriggers(std::filesystem::path& path)
@@ -798,17 +845,16 @@ namespace winrt::ClipboardManager::implementation
 
             if (showError)
             {
-                // I18N: Invalid trigger.
-                MessagesBar().Add(L"Invalid trigger", 
-                    L"One or more triggers have invalid data, check the triggers page for more information. Invalid triggers:" + invalidTriggers, 
-                    xaml::InfoBarSeverity::Error);
+                MessagesBar().Add(L"Invalid trigger",
+                                  L"One or more triggers have invalid data, check the triggers page for more information. Invalid triggers:" + invalidTriggers,
+                                  xaml::InfoBarSeverity::Error);
             }
             else
             {
                 visualStateManager.goToState(
-                    triggers.empty() 
-                    ? NoClipboardTriggersToDisplayState
-                    : DisplayClipboardTriggersState);
+                    triggers.empty()
+                    ? noClipboardTriggersToDisplayState
+                    : displayClipboardTriggersState);
             }
 
             return true;
@@ -821,17 +867,17 @@ namespace winrt::ClipboardManager::implementation
         }
         catch (std::invalid_argument invalidArgument)
         {
-            MessagesBar().AddError(L"ErrorMessage_TriggersFileNotFound", 
-                L"Triggers file not available or contains invalid data.");
+            MessagesBar().AddError(L"ErrorMessage_TriggersFileNotFound",
+                                   L"Triggers file not available or contains invalid data.");
         }
         catch (boost::property_tree::xml_parser_error xmlParserError)
         {
-            MessagesBar().AddError(L"ErrorMessage_XmlParserError", 
-                L"Triggers file has invalid XML markup data.");
+            MessagesBar().AddError(L"ErrorMessage_XmlParserError",
+                                   L"Triggers file has invalid XML markup data.");
         }
         catch (boost::property_tree::ptree_bad_path badPath)
         {
-            hstring message = clip::utils::getNamedResource(L"ErrorMessage_InvalidTriggersFile").value_or(L"Triggers file has invalid XML markup data.");
+            hstring message = resLoader.getOrAlt(L"ErrorMessage_InvalidTriggersFile", L"Triggers file has invalid XML markup data.");
             hstring content = L"";
 
             auto wpath = badPath.path<boost::property_tree::wpath>();
@@ -840,14 +886,14 @@ namespace winrt::ClipboardManager::implementation
             if (path == L"settings.triggers")
             {
                 // Missing <settings><triggers> node.
-                content = clip::utils::getNamedResource(L"ErrorMessage_MissingTriggersNode")
-                    .value_or(L"XML declaration is missing '<triggers>' node.\nCheck settings for an example of a valid XML declaration.");
+                content = resLoader.getOrAlt(L"ErrorMessage_MissingTriggersNode",
+                                             L"XML declaration is missing '<triggers>' node.\nCheck settings for an example of a valid XML declaration.");
             }
             else if (path == L"settings.actions")
             {
                 // Old version of triggers file.
-                content = clip::utils::getNamedResource(L"ErrorMessage_XmlOldVersion")
-                    .value_or(L"<actions> node has been renamed <triggers> and <action> <actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.");
+                content = resLoader.getOrAlt(L"ErrorMessage_XmlOldVersion",
+                                             L"<actions> node has been renamed <triggers> and <action> <actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.");
             }
             else
             {
@@ -884,19 +930,54 @@ namespace winrt::ClipboardManager::implementation
 
     winrt::async MainPage::LoadClipboardHistory()
     {
-        auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
-        for (auto&& item : clipboardHistory.Items())
+        auto loadClipboardHistory = localSettings.get<bool>(L"ImportClipboardHistory").value_or(false);
+
+        try
+        {
+            auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
+            auto&& items = clipboardHistory.Items();
+            for (int i = items.Size() - 1; i >= 0; i--)
+            {
+                auto&& item = items.GetAt(i);
+                auto&& content = item.Content();
+                co_await AddClipboardItem(content, loadClipboardHistory);
+
+                throw hresult_error();
+            }
+        }
+        catch (hresult_error error)
+        {
+            logger.error(L"Failed to retreive item from clipboard history.");
+
+            MessagesBar().AddWarning(L"Warning_FailedToLoadClipboardHistory", L"Failed to load clipboard history.");
+        }
+    }
+
+    Windows::Foundation::IAsyncOperation<Windows::Media::Ocr::OcrResult> MainPage::RunOcr(Windows::Storage::Streams::IRandomAccessStreamWithContentType& bitmapStream)
+    {
+        auto&& bitmapDecoder = co_await Windows::Graphics::Imaging::BitmapDecoder::CreateAsync(bitmapStream);
+        auto&& softwareBitmap = co_await bitmapDecoder.GetSoftwareBitmapAsync();
+        clip::utils::unique_closable softwareBitmapPtr{ softwareBitmap };
+
+        auto ocrEngine = Windows::Media::Ocr::OcrEngine::TryCreateFromUserProfileLanguages();
+        if (ocrEngine)
         {
             try
             {
-                auto&& content = item.Content();
-                AddClipboardItem(content, false);
+                auto&& ocrResult = co_await ocrEngine.RecognizeAsync(softwareBitmap);
+                co_return ocrResult;
             }
             catch (hresult_error error)
             {
-                logger.error(L"Failed to retreive item from clipboard history.");
+                logger.error(error.message().data());
             }
         }
+        else
+        {
+            logger.error(L"Failed to create OCR engine from user profile languages.");
+        }
+
+        co_return Windows::Media::Ocr::OcrResult(nullptr);
     }
 
     winrt::async MainPage::AddClipboardItem(Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers)
@@ -917,12 +998,103 @@ namespace winrt::ClipboardManager::implementation
                 // Add text/clipboard content to history list:
                 auto view = make<ClipboardHistoryItemView>();
                 view.HostContent(box_value(itemText));
-                ClipboardHistoryListView().Items().Append(view);
+
+                ClipboardHistoryListView().Items().InsertAt(0, view);
             });
         }
-        else
+        else if (localSettings.get<bool>(L"EnableOCR").value_or(false) && content.Contains(win::StandardDataFormats::Bitmap()))
         {
-            logger.info(L"Unrecognized clipboard format (not text).");
+            logger.debug(L"Unregistering app from clipboard changes.");
+            win::Clipboard::ContentChanged(clipboardContentChangedToken);
+
+            try
+            {
+                logger.info(L"*Detected image in clipboard, performing OCR on it*");
+
+                // Get bitmap stream from DataPackageView:
+                auto&& clipboardStream = co_await content.GetBitmapAsync();
+
+                auto&& bitmapStream = co_await clipboardStream.OpenReadAsync();
+                clip::utils::unique_closable<Windows::Storage::Streams::IRandomAccessStream> bitmapStreamCloser{ bitmapStream };
+
+                auto&& ocrResult = co_await RunOcr(bitmapStream);
+                logger.debug(L"OCR result: " + std::wstring(ocrResult.Text().data()));
+
+                // If the OCR found text, run triggers on the text:
+                if (runTriggers && !ocrResult.Text().empty())
+                {
+                    std::wstring string{};
+                    for (auto&& line : ocrResult.Lines())
+                    {
+                        if (string.empty())
+                        {
+                            string += line.Text();
+                        }
+                        else
+                        {
+                            string += L"\n" + line.Text();
+                        }
+                    }
+
+                    DispatcherQueue().TryEnqueue([this, string]()
+                    {
+                        AddAction(string, true);
+                    });
+                }
+
+                try
+                {
+                    logger.debug(L"*Adding clipboard image to display*");
+                    logger.debug(L"Re-opening clipboard stream");
+                    content = win::Clipboard::GetContent();
+                    auto&& clonedClipboardStream = co_await(content.GetBitmapAsync());
+
+                    logger.debug(L"Clipboard bitmap stream reopened.");
+
+                    // Create bitmap from bitmap stream and show it:
+                    DispatcherQueue().TryEnqueue([this, bitmapStream = co_await(clonedClipboardStream.OpenReadAsync()), text = ocrResult.Text()]()
+                    {
+                        xaml::StackPanel panel{};
+                        panel.Spacing(7);
+                        panel.Orientation(xaml::Orientation::Vertical);
+
+                        clip::utils::unique_closable<Windows::Storage::Streams::IRandomAccessStream> bitmapStreamCloser{ bitmapStream };
+
+                        Microsoft::UI::Xaml::Media::Imaging::BitmapImage bitmapImage{};
+                        bitmapImage.SetSourceAsync(bitmapStream);
+
+                        xaml::Image image{};
+                        image.Source(bitmapImage);
+                        image.Height(200);
+
+                        panel.Children().Append(image);
+
+                        xaml::TextBlock textBlock{};
+                        textBlock.TextWrapping(xaml::TextWrapping::Wrap);
+                        textBlock.Text(text);
+
+                        panel.Children().Append(textBlock);
+
+                        auto view = make<ClipboardHistoryItemView>();
+                        view.HostContent(panel);
+
+                        logger.debug(L"Image panel created, displaying it.");
+
+                        ClipboardHistoryListView().Items().InsertAt(0, view);
+                    });
+                }
+                catch (winrt::hresult_error error)
+                {
+                    logger.error(L"Error while working on image stream: " + std::wstring(error.message()));
+                }
+            }
+            catch (...)
+            {
+                logger.error(L"Unknown error while running OCR.");
+            }
+
+            clipboardContentChangedToken = win::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
+            logger.debug(L"Re-registered app for clipboard changes.");
         }
     }
 }

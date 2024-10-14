@@ -206,6 +206,12 @@
                     <ToggleSwitch x:Name="AddDuplicatedActionsToggleSwitch" Toggled="AddDuplicatedActionsToggleSwitch_Toggled"/>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
+
+            <clip:HostControl x:Uid="ImportClipboardHistoryHostControl">
+                <clip:HostControl.HostContent>
+                    <ToggleSwitch x:Name="ImportClipboardHistoryToggleSwitch" Toggled="ImportClipboardHistoryToggleSwitch_Toggled"/>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
             <!--#endregion-->
 
 
@@ -251,13 +257,13 @@
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
                     <clip:HostControl x:Uid="WindowPresenterStyleAllowMinimizeHostControl" CornerRadius="0" Background="{ThemeResource ExpanderHeaderBackground}">
                         <clip:HostControl.HostContent>
-                            <ToggleSwitch x:Name="AllowMinimizeToggleSwitch"/>
+                            <ToggleSwitch x:Name="AllowMinimizeToggleSwitch" Toggled="AllowMinimizeToggleSwitch_Toggled"/>
                         </clip:HostControl.HostContent>
                     </clip:HostControl>
 
                     <clip:HostControl x:Uid="WindowPresenterStyleAllowMaximizeHostControl" CornerRadius="0,0,5,5" Background="{ThemeResource ExpanderHeaderBackground}">
                         <clip:HostControl.HostContent>
-                            <ToggleSwitch x:Name="AllowMaximizeToggleSwitch"/>
+                            <ToggleSwitch x:Name="AllowMaximizeToggleSwitch" Toggled="AllowMaximizeToggleSwitch_Toggled"/>
                         </clip:HostControl.HostContent>
                     </clip:HostControl>
                 </StackPanel>

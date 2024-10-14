@@ -11,10 +11,12 @@ namespace clip::utils
         {
             resourceLoader = winrt::Windows::ApplicationModel::Resources::ResourceLoader();
         }
-        catch (winrt::hresult_error error)
+        catch (winrt::hresult_error err)
         {
-            std::wcout << L"Failed to create instance of winrt::Windows::ApplicationModel::Resources::ResourceLoader: " << error.message().data() << std::endl;
-            OutputDebugStringW(error.message().c_str());
+            if (err.code() == 0x80070002)
+            {
+                logger.error(L"Failed to create ResourceLoader, 'resources.pri' doesn't exist.");
+            }
         }
     }
 
@@ -28,7 +30,7 @@ namespace clip::utils
             }
             catch (winrt::hresult_error)
             {
-                std::wcerr << L"'getNamedResource' Failed to instanciate or get string from resources." << std::endl;
+                logger.error(L"'getNamedResource' Failed to instanciate or get string from resources.");
             }
         }
 

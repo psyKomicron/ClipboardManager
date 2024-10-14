@@ -7,13 +7,16 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    BackgroundSizing="OuterBorderEdge"
     CornerRadius="{StaticResource OverlayCornerRadius}"
+    MinHeight="40"
     Loading="UserControl_Loading">
 
     <Grid x:Name="RootGrid"
           RowSpacing="4"
           Margin="0,3,0,3"
           Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+          BackgroundSizing="OuterBorderEdge"
           BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}" 
           BorderThickness="1"
           CornerRadius="{x:Bind CornerRadius}">
@@ -85,7 +88,6 @@
                 Text="{x:Bind Text}"
                 IsTextSelectionEnabled="True" 
                 Grid.Column="0"
-                MaxHeight="60" 
                 TextWrapping="Wrap" 
                 Grid.Row="0" 
                 Margin="3,5,0,0"
@@ -98,8 +100,7 @@
                 VerticalAlignment="Bottom" 
                 HorizontalAlignment="Center"
                 SelectionMode="None"
-                HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Bottom"
+                IsSwipeEnabled="True"
                 Padding="0">
                 <GridView.ItemContainerTransitions>
                     <TransitionCollection>
@@ -108,10 +109,13 @@
                     </TransitionCollection>
                 </GridView.ItemContainerTransitions>
                 <GridView.Resources>
-                    <Style TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
-                        <Setter Property="MaxWidth" Value="150" />
+                    <Style TargetType="HyperlinkButton" BasedOn="{StaticResource DefaultHyperlinkButtonStyle}">
+                        <Setter Property="MaxWidth" Value="250" />
                         <Setter Property="HorizontalAlignment" Value="Stretch" />
-                        <Setter Property="Padding" Value="15,5" />
+                        <Setter Property="Padding" Value="15,5" /> 
+                    </Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                     </Style>
                     <Style TargetType="GridViewItem" BasedOn="{StaticResource DefaultGridViewItemStyle}">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -120,6 +124,11 @@
                         <Setter Property="Margin" Value="3,0,3,0" />
                     </Style>
                 </GridView.Resources>
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
             </GridView>
 
             <Button x:Name="OpenOptionsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="1" Click="OpenOptionsButton_Click" VerticalAlignment="Top">
@@ -165,7 +174,7 @@
             BorderThickness="1"
             Background="{ThemeResource SubtleFillColorTransparentBrush}"
             CornerRadius="{StaticResource OverlayCornerRadius}"
-            HorizontalAlignment="Stretch">
+            HorizontalAlignment="Right">
             <Grid.ScaleTransition>
                 <Vector3Transition Components="Y" Duration="0:0:3.5"/>
             </Grid.ScaleTransition>
@@ -173,21 +182,29 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
             <Grid.Resources>
                 <Style TargetType="Button" BasedOn="{StaticResource IconButtonStyle}">
                     <Setter Property="Height" Value="NaN" />
-                    <Setter Property="Width" Value="65" />
+                    <Setter Property="Width" Value="55" />
                     <Setter Property="VerticalAlignment" Value="Stretch" />
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
                 </Style>
             </Grid.Resources>
 
-            <Button x:Name="FormatLinkButton" Grid.Column="0" Click="FormatLinkButton_Click" x:Uid="FormatLinkButton">
+            <Button x:Name="FormatLinkButton" Grid.Column="0" Grid.Row="0" Click="FormatLinkButton_Click" x:Uid="FormatLinkButton">
                 <FontIcon Glyph="&#xe71b;" FontSize="16"/>
             </Button>
 
-            <Button x:Name="RemoveActionButton" Grid.Column="1" Click="RemoveActionButton_Click" x:Uid="RemoveActionButton">
+            <Button x:Name="RemoveActionButton" Grid.Column="1" Grid.Row="0" Click="RemoveActionButton_Click" x:Uid="RemoveActionButton">
                 <FontIcon Glyph="&#xe74d;" FontSize="16"/>
+            </Button>
+            
+            <Button x:Name="EditActionButton" Grid.Column="0" Grid.Row="1" Click="EditActionButton_Click" x:Uid="EditActionButton">
+                <FontIcon Glyph="&#xe70f;" FontSize="16"/>
             </Button>
 
             <TeachingTip x:Name="FormatLinkButtonTeachingTip"

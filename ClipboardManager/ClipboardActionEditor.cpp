@@ -117,7 +117,7 @@ namespace winrt::ClipboardManager::implementation
         e_isOn.remove(token);
     }
 
-    winrt::event_token ClipboardActionEditor::LabelChanged(const event_changed_t& handler)
+    winrt::event_token ClipboardActionEditor::LabelChanged(const event_label_changed_t& handler)
     {
         return e_labelChanged.add(handler);
     }
@@ -127,27 +127,17 @@ namespace winrt::ClipboardManager::implementation
         e_labelChanged.remove(token);
     }
 
-    winrt::event_token ClipboardActionEditor::FormatChanged(const event_changed_t& handler)
+    winrt::event_token ClipboardActionEditor::Changed(const event_changed_t& handler)
     {
-        return e_formatChanged.add(handler);
+        return e_changed.add(handler);
     }
 
-    void ClipboardActionEditor::FormatChanged(const winrt::event_token& token)
+    void ClipboardActionEditor::Changed(const winrt::event_token& token)
     {
-        e_formatChanged.remove(token);
+        e_changed.remove(token);
     }
 
-    winrt::event_token winrt::ClipboardManager::implementation::ClipboardActionEditor::RegexChanged(const event_re_changed_t& handler)
-    {
-        return e_regexChanged.add(handler);
-    }
-
-    void winrt::ClipboardManager::implementation::ClipboardActionEditor::RegexChanged(const winrt::event_token& token)
-    {
-        e_regexChanged.remove(token);
-    }
-
-    winrt::event_token ClipboardActionEditor::Removed(const event_removed_t& handler)
+    winrt::event_token ClipboardActionEditor::Removed(const event_changed_t& handler)
     {
         return e_removed.add(handler);
     }
@@ -169,7 +159,7 @@ namespace winrt::ClipboardManager::implementation
         });
     }
 
-    winrt::Windows::Foundation::IAsyncOperation<bool> winrt::ClipboardManager::implementation::ClipboardActionEditor::Edit()
+    winrt::Windows::Foundation::IAsyncOperation<bool> ClipboardActionEditor::Edit()
     {
         TriggerEditControl().TriggerFormat(_triggerFormatProperty.get());
         TriggerEditControl().TriggerLabel(_triggerLabelProperty.get());
@@ -185,24 +175,27 @@ namespace winrt::ClipboardManager::implementation
             winrt::hstring newRegex = TriggerEditControl().TriggerRegex();
 
             // Update new format.
-            winrt::hstring oldFormat = _triggerFormatProperty.get();
             ActionFormat(newFormat);
-            e_formatChanged(*this, oldFormat);
 
             // Update regex.
-            winrt::hstring oldRegex = _triggerRegexProperty.get();
             ActionRegex(newRegex);
 
             // Update matching mode and regex flags.
             _ignoreCaseProperty.set(TriggerEditControl().IgnoreCase());
             _useSearchProperty.set(TriggerEditControl().UseSearch());
+
             auto flags = (static_cast<int32_t>(_ignoreCaseProperty.get()) << 1) | static_cast<int32_t>(_useSearchProperty.get());
-            e_regexChanged(*this, box_value(flags));
+
+            e_changed(*this, box_value(flags));
 
             // Update label.
             winrt::hstring oldLabel = _triggerLabelProperty.get();
-            ActionLabel(newLabel);
-            e_labelChanged(*this, oldLabel);
+            if (oldLabel != newLabel)
+            {
+                ActionLabel(newLabel);
+
+                e_labelChanged(*this, oldLabel);
+            }
         }
 
         co_return result;
@@ -216,9 +209,11 @@ namespace winrt::ClipboardManager::implementation
         visualStateManager.goToEnabledState(_actionEnabledProperty.get());
 
         // Check if the associated trigger is valid.
-        auto trigger = clip::ClipboardTrigger(std::wstring(_triggerLabelProperty.get()), 
+        auto trigger = clip::ClipboardTrigger(
+            std::wstring(_triggerLabelProperty.get()), 
             std::wstring(_triggerFormatProperty.get()), 
             boost::wregex(std::wstring(_triggerRegexProperty.get())), true);
+
         try
         {
             trigger.checkFormat();

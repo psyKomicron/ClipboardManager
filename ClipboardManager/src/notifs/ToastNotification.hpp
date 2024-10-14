@@ -12,14 +12,22 @@ namespace clip::notifs
     public:
         ToastNotification();
 
-        bool notificationsAllowed();
-
         void addText(const std::wstring& text);
         void setTitle(const std::wstring& title);
         void addButton(const std::wstring& content, const std::wstring& tag);
         bool tryAddButtons(const std::vector<std::pair<std::wstring, std::wstring>>& buttons);
 
+        /**
+         * @brief Sends the notification with default duration, scenario and sound.
+         */
         void send();
+        /**
+         * @brief Sends the notification with the specified duration, scenario and sound.
+         * @param durationType 
+         * @param scenarioType 
+         * @param soundType 
+         * @throws winrt::hresult_access_denied
+         */
         void send(const NotificationDurationType& durationType, const NotificationScenarioType& scenarioType, const NotificationSoundType& soundType);
 
     private:

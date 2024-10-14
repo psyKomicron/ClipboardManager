@@ -12,6 +12,7 @@ namespace winrt::ClipboardManager::implementation
 {
     struct ClipboardActionView : ClipboardActionViewT<ClipboardActionView>
     {
+    private:
         using event_removed_t = winrt::Windows::Foundation::TypedEventHandler<winrt::ClipboardManager::ClipboardActionView, winrt::Windows::Foundation::IInspectable>;
         using actions_t = winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::Collections::IVector<winrt::hstring>>;
 
@@ -28,8 +29,8 @@ namespace winrt::ClipboardManager::implementation
         void AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled);
         void AddActions(const winrt::Windows::Foundation::IInspectable& inspectable);
         void AddActions(const actions_t actions);
-        void EditAction(const uint32_t& pos, const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled);
-        bool IndexOf(uint32_t& pos, const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled);
+        void EditAction(const uint32_t& pos, const winrt::hstring& label, const winrt::hstring& format, const winrt::hstring& regex, const bool& enabled);
+        bool IndexOf(uint32_t& pos, const winrt::hstring& label);
 
         winrt::async StartTour();
 
@@ -43,6 +44,7 @@ namespace winrt::ClipboardManager::implementation
         void RootGrid_PointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
         void RootGrid_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
         void RootGrid_PointerReleased(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+        void EditActionButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
     private:
         using VisualState = clip::ui::VisualState<ClipboardActionView>;

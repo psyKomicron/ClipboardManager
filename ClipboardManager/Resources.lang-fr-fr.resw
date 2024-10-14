@@ -117,10 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ActionEnabledToggleSwitchTeachingTip.Subtitle" xml:space="preserve">
-    <value>Active ou désactive ce déclancheur. Un déclancheur désactivé ne sera plus utilisé dans aucune actions.</value>
-    <comment>Teaching tips</comment>
-  </data>
   <data name="ActionEnabledToggleSwitchTeachingTip.Title" xml:space="preserve">
     <value>Etat du déclencheur</value>
     <comment>Teaching tips</comment>
@@ -371,6 +367,14 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Ignorer la capitalisation</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="ActionEnabledToggleSwitchTeachingTip.Subtitle" xml:space="preserve">
+    <value>Active ou désactive ce déclencheur. Un déclencheur désactivé ne sera plus utilisé dans aucune actions.</value>
+    <comment>Teaching tips</comment>
+  </data>
+  <data name="ImportClipboardHistoryHostControl.Header" xml:space="preserve">
+    <value>Importer le contenu du presse-papier</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="ImportFromClipboardButtonToolTipTextBlock.Text" xml:space="preserve">
     <value>Importer le contenu du presse-papier</value>
     <comment>SettingsPage</comment>
@@ -604,28 +608,37 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <comment>MainPage Startup tour</comment>
   </data>
   <data name="StringFormatError_ArgumentNotFound" xml:space="preserve">
-    <value>Argument non trouvé.</value>
+    <value>Argument non trouvé.
+Si vous utilisez plusieurs fois {} indexez les (ex: {0}....{0}).</value>
+    <comment>Error message</comment>
   </data>
   <data name="StringFormatError_Empty" xml:space="preserve">
     <value>La chaine de formattage ne peut être vide.</value>
+    <comment>Error message</comment>
   </data>
   <data name="StringFormatError_MissingBraces" xml:space="preserve">
     <value>La chaine de formattage doit contenir des accolades '{}'.</value>
+    <comment>Error message</comment>
   </data>
   <data name="StringFormatError_MissingCloser" xml:space="preserve">
     <value>La chaine de formattage doit contenir une accolade fermante '}'.</value>
+    <comment>Error message</comment>
   </data>
   <data name="StringFormatError_MissingOpener" xml:space="preserve">
     <value>La chaine de formattage doit contenir une accolade ouvrante '{'.</value>
+    <comment>Error message</comment>
   </data>
   <data name="StringFormatWarning_MissingProtocol" xml:space="preserve">
     <value>Protocole d'url manquand (http/https), l'application utilisera https par défaut.</value>
+    <comment>Error message</comment>
   </data>
   <data name="StringRegexError_EmptyString" xml:space="preserve">
     <value>L'expression régulière ne peut être vide.</value>
+    <comment>Error message</comment>
   </data>
   <data name="StringRegexError_Invalid" xml:space="preserve">
     <value>Regex invalide à la position {}.</value>
+    <comment>Error message</comment>
   </data>
   <data name="TestInputTextBox.Header" xml:space="preserve">
     <value>Texte</value>
@@ -645,6 +658,7 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   </data>
   <data name="TriggerError_FailedToReload" xml:space="preserve">
     <value>Echec lors du rechargement des déclencheurs.</value>
+    <comment>Error message</comment>
   </data>
   <data name="TriggersStorageExpander.Header" xml:space="preserve">
     <value>Fichier déclencheurs presse-papier</value>
@@ -677,5 +691,33 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="WindowStyleHostControl.Header" xml:space="preserve">
     <value>Style de la fenêtre</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="Warning_FailedToLoadClipboardHistory" xml:space="preserve">
+    <value>Impossible de récupérer l'historique du presse-papier.</value>
+    <comment>Warning</comment>
+  </data>
+  <data name="CommandBarAddTriggerButton.Label" xml:space="preserve">
+    <value>Ajouter déclencheur</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarImportButton.Label" xml:space="preserve">
+    <value>Importer</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarReloadTriggersButton.Label" xml:space="preserve">
+    <value>Recharger déclencheurs</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarSaveButton.Label" xml:space="preserve">
+    <value>Sauvegarder</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarTestRegexButton.Label" xml:space="preserve">
+    <value>Tester regex</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="EditActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Modifier</value>
+    <comment>ClipboardActionView</comment>
   </data>
 </root>

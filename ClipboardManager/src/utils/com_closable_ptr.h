@@ -6,21 +6,28 @@
 
 namespace clip::utils
 {
-    /*inline void __stdcall closeIClosable(winrt::Windows::Foundation::IClosable* source)
+    template<typename T>
+    concept Closable = requires(T t)
     {
-        source->Close();
-    }*/
-    
-    inline void __stdcall closeIClosable(winrt::Windows::Foundation::IClosable* source)
-    {
-        source->Close();
-    }
+        static_cast<winrt::Windows::Foundation::IClosable>(t);
+        t.Close();
+    };
 
-    using unique_closable = std::unique_ptr<winrt::Windows::Foundation::IClosable, std::function<void(winrt::Windows::Foundation::IClosable*)>>;
-    
-    /*using unique_closable_call = 
-        wil::unique_com_call<
-        winrt::Windows::Foundation::IClosable, 
-        decltype(&winrt::Windows::Foundation::IClosable::Close), 
-        &winrt::Windows::Foundation::IClosable::Close>;*/
+    template<Closable T>
+    class unique_closable
+    {
+    public:
+        unique_closable(const T& closable) :
+            closable{ closable }
+        {
+        }
+
+        ~unique_closable()
+        {
+            closable.Close();
+        }
+
+    private:
+        T closable{};
+    };
 }

@@ -18,7 +18,7 @@ void clip::DirectoryWatcher::watchDirectoryChanges(std::atomic_flag* waitFlag, i
     watcherRunning = true;
 
     auto handle = FindFirstChangeNotificationW(path.wstring().c_str(), false, FILE_NOTIFY_CHANGE_FILE_NAME);
-    if (handle == INVALID_HANDLE_VALUE)
+    if (handle == INVALID_HANDLE_VALUE || handle == nullptr)
     {
         *retValue = -1;
         runThread = false;

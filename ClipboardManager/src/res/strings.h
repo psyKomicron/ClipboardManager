@@ -12,6 +12,8 @@ namespace clip::res
     res_t StringFormatError_Empty{ L"Format string can't be empty" };
     res_t StringFormatWarning_MissingProtocol{ L"Missing url protocol (https/http), application will default to https" };
     res_t StringFormatError_ArgumentNotFound{ L"Argument not found: {}" };
+    res_t StringFormatError_OutOfRangeArgument{ L"Format argument index is out of bounds. Value between two braces 'x' '{x}' must be 0." };
+    res_t StringFormatError_OutOfRangeArgumentBraceOrder{ L"Format string ends before a closing brace '}' is found." };
     
     res_t StringRegexError_Invalid{ L"Invalid regex at position {}" };
     res_t StringRegexError_EmptyString{ L"Regex string cannot be empty" };

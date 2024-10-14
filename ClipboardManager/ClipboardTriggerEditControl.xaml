@@ -53,7 +53,26 @@
                 <VisualState x:Name="FormatNoWarning"/>
                 <VisualState x:Name="FormatWarning">
                     <VisualState.Setters>
+                        <Setter Target="FormatTextBoxBorder.BorderBrush" Value="{ThemeResource SystemFillColorCaution}"/>
+                        <Setter Target="FormatTextBoxBorder.Background">
+                            <Setter.Value>
+                                <SolidColorBrush Color="{ThemeResource SystemFillColorCaution}" Opacity="0.1"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Target="FormatTextBoxBorder.Padding" Value="5,3,5,7"/>
+                        <Setter Target="FormatTextBoxBorder.Margin" Value="-5,-3,-5,-7"/>
+                        <Setter Target="FormatTextBoxErrorIcon.Visibility" Value="Visible"/>
+                        <Setter Target="FormatTextBoxError.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            
+            <VisualStateGroup>
+                <VisualState x:Name="FormatNoProtocolWarning"/>
+                <VisualState x:Name="FormatProtocolWarning">
+                    <VisualState.Setters>
                         <Setter Target="FormatTextBoxWarningBorder.Visibility" Value="Visible"/>
+                        <Setter Target="FormatTextBoxWarningBorder.Margin" Value="0,3,0,0"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -95,9 +114,9 @@
                 <TextBox x:Uid="LabelTextBox" x:Name="LabelTextBox" VerticalAlignment="Center" Text="{x:Bind TriggerLabel, Mode=TwoWay}" TextChanged="TextBox_TextChanged"/>
             </Border>
 
-            <Grid Grid.Row="1" RowSpacing="3">
+            <Grid Grid.Row="1" RowSpacing="7">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
@@ -132,14 +151,18 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <TextBox x:Name="FormatTextBox" 
+                        <TextBox 
+                            x:Name="FormatTextBox" 
                             x:Uid="FormatTextBox" 
                             Grid.ColumnSpan="2" 
                             Grid.Row="0" 
                             VerticalAlignment="Center" 
+                            TextWrapping="Wrap"
+                            IsSpellCheckEnabled="False"
                             Text="{x:Bind TriggerFormat, Mode=TwoWay}" 
                             TextChanged="TextBox_TextChanged"/>
-                        <FontIcon x:Name="FormatTextBoxErrorIcon"
+                        <FontIcon 
+                            x:Name="FormatTextBoxErrorIcon"
                             Grid.Column="0" 
                             Grid.Row="1" 
                             Visibility="Collapsed"
@@ -153,6 +176,33 @@
                             Grid.Row="1" 
                             VerticalAlignment="Center" 
                             Text="{x:Null}" 
+                            Style="{StaticResource CaptionTextBlockStyle}"/>
+                    </Grid>
+                </Border>
+
+                <Border 
+                    x:Name="FormatTextBoxWarningBorder" 
+                    Background="{ThemeResource SystemFillColorCautionBackgroundBrush}" 
+                    Grid.Row="1" 
+                    Padding="5,6" 
+                    Visibility="Collapsed"
+                    HorizontalAlignment="Stretch"
+                    Margin="20,0,20,0">
+                    <Grid ColumnSpacing="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <FontIcon x:Name="FormatTextBoxWarningIcon"
+                            Grid.Column="0"
+                            Glyph="&#xe7ba;"
+                            FontSize="16" 
+                            VerticalAlignment="Center" 
+                            Foreground="{ThemeResource SystemFillColorCaution}"/>
+                        <TextBlock 
+                            x:Uid="FormatWarningTextBlock" 
+                            Grid.Column="1" 
+                            TextWrapping="Wrap"
                             Style="{StaticResource CaptionTextBlockStyle}"/>
                     </Grid>
                 </Border>
@@ -175,13 +225,16 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBox x:Name="RegexTextBox"
-                                x:Uid="RegexTextBox" 
-                                FontFamily="Consolas"
-                                CharacterSpacing="70"
-                                VerticalAlignment="Center" 
-                                Text="{x:Bind TriggerRegex, Mode=TwoWay}" 
-                                TextChanged="TextBox_TextChanged"/>
+                        <TextBox 
+                            x:Name="RegexTextBox"
+                            x:Uid="RegexTextBox" 
+                            FontFamily="Consolas"
+                            CharacterSpacing="70"
+                            VerticalAlignment="Center" 
+                            TextWrapping="Wrap"
+                            IsSpellCheckEnabled="False"
+                            Text="{x:Bind TriggerRegex, Mode=TwoWay}" 
+                            TextChanged="TextBox_TextChanged"/>
                         <ToggleButton x:Name="RegexIgnoreCaseToggleButton" 
                                 IsChecked="{x:Bind IgnoreCase, Mode=TwoWay}"
                                 Grid.Column="1" 
