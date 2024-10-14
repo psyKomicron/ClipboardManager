@@ -6,6 +6,7 @@
 #include "src/HotKey.hpp"
 #include "src/notifs/ToastNotificationHandler.hpp"
 #include "src/utils/ResLoader.hpp"
+#include "src/ui/VisualStateManager.hpp"
 
 #include <winrt/Windows.Media.Ocr.h>
 #include <winrt/Windows.Storage.Streams.h>
@@ -85,6 +86,7 @@ namespace winrt::ClipboardManager::implementation
         bool LoadTriggers(std::filesystem::path& path);
         void LaunchAction(const std::wstring& url);
         winrt::async LoadClipboardHistory();
+        Windows::Foundation::IAsyncOperation<Windows::Media::Ocr::OcrResult> RunOcr(Windows::Storage::Streams::IRandomAccessStreamWithContentType& bitmapStream);
         winrt::async AddClipboardItem(Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers);
     };
 }

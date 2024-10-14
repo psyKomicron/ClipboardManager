@@ -180,7 +180,7 @@
                     </Grid>
                 </Border>
 
-                <Border 
+                <!--<Border 
                     x:Name="FormatTextBoxWarningBorder" 
                     Background="{ThemeResource SystemFillColorCautionBackgroundBrush}" 
                     Grid.Row="1" 
@@ -205,7 +205,7 @@
                             TextWrapping="Wrap"
                             Style="{StaticResource CaptionTextBlockStyle}"/>
                     </Grid>
-                </Border>
+                </Border>-->
             </Grid>
 
             <Border x:Name="RegexTextBoxBorder" Grid.Row="2" Background="Transparent">

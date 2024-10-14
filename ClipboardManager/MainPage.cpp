@@ -26,6 +26,11 @@
 #include <winrt/Microsoft.Windows.AppNotifications.h>
 #include <winrt/Microsoft.Windows.AppNotifications.Builder.h>
 #include <winrt/Windows.System.h>
+// OCR
+#include <winrt/Windows.Graphics.Imaging.h>
+#include <winrt/Windows.Globalization.h>
+#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
+#include <src/utils/com_closable_ptr.h>
 
 #include <boost/property_tree/xml_parser.hpp>
 
