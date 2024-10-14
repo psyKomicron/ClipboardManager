@@ -17,6 +17,6 @@ namespace clip::utils
 
     private:
         Logger logger{ L"ResLoader" };
-        std::optional<winrt::Windows::ApplicationModel::Resources::ResourceLoader> resourceLoader{};
+        winrt::Windows::ApplicationModel::Resources::ResourceLoader resourceLoader{ nullptr };
     };
 }

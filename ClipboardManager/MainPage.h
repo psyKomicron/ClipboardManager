@@ -5,7 +5,6 @@
 #include "src/ClipboardTrigger.hpp"
 #include "src/HotKey.hpp"
 #include "src/notifs/ToastNotificationHandler.hpp"
-#include "src/ui/VisualStateManager.hpp"
 #include "src/utils/ResLoader.hpp"
 
 #include <winrt/Windows.Media.Ocr.h>
@@ -65,7 +64,7 @@ namespace winrt::ClipboardManager::implementation
         bool loaded = false;
         clip::ui::VisualStateManager<MainPage> visualStateManager{ *this };
         clip::Settings localSettings{};
-        clip::notifs::ToastNotificationHandler& manager = clip::notifs::ToastNotificationHandler::getDefault();
+        clip::notifs::ToastNotificationHandler manager{};
         clip::HotKey activationHotKey{ MOD_ALT, L' ' };
         std::vector<clip::ClipboardTrigger> triggers{};
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
@@ -86,7 +85,6 @@ namespace winrt::ClipboardManager::implementation
         bool LoadTriggers(std::filesystem::path& path);
         void LaunchAction(const std::wstring& url);
         winrt::async LoadClipboardHistory();
-        Windows::Foundation::IAsyncOperation<Windows::Media::Ocr::OcrResult> RunOcr(Windows::Storage::Streams::IRandomAccessStreamWithContentType& bitmapStream);
         winrt::async AddClipboardItem(Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers);
     };
 }

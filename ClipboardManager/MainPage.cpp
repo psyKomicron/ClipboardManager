@@ -26,11 +26,6 @@
 #include <winrt/Microsoft.Windows.AppNotifications.h>
 #include <winrt/Microsoft.Windows.AppNotifications.Builder.h>
 #include <winrt/Windows.System.h>
-// OCR
-#include <winrt/Windows.Graphics.Imaging.h>
-#include <winrt/Windows.Globalization.h>
-#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
-#include <src/utils/com_closable_ptr.h>
 
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -77,18 +72,12 @@ namespace winrt::ClipboardManager::implementation
                 quickSettingsOpenState
             });
 
-        manager.registerAction(L"action", [this](clip::notifs::ToastNotificationAction toastNotificationAction)
+        manager.registerActionCallback([this](std::wstring args)
         {
-            auto params = toastNotificationAction.parameters();
-            auto&& action = toastNotificationAction.action<std::wstring>();
-            auto&& url = params[L"url"];
-
-            logger.debug(std::vformat(L"Action has been clicked: \n\t- {}\n\t- {}", std::make_wformat_args(action, url)));
-
-            LaunchAction(url);
+            LaunchAction(args);
         });
 
-        manager.registerAction(L"", [this](clip::notifs::ToastNotificationAction)
+        manager.registerActivatedCallback([this]()
         {
             clip::utils::getCurrentAppWindow().Show();
         });
@@ -736,7 +725,7 @@ namespace winrt::ClipboardManager::implementation
                 try
                 {
                     auto url = std::vformat(action.format(), std::make_wformat_args(text));
-                    buttons.push_back({ action.label(), std::format(L"open&url={}", url) });
+                    buttons.push_back({ action.label(), url });
                 }
                 catch (std::invalid_argument formatError)
                 {
@@ -921,11 +910,21 @@ namespace winrt::ClipboardManager::implementation
     {
         concurrency::create_task([this, url]() -> void
         {
-            clip::utils::Launcher launcher{};
-            launcher.launch(url).get();
-        }).then([this]()
-        {
-            logger.debug(L"Launcher task finished.");
+            try
+            {
+                clip::utils::Launcher launcher{};
+                launcher.launch(url).get();
+            }
+            catch (hresult_error error)
+            {
+                logger.error(L"Failed to launch url: " + std::wstring(error.message().data()));
+
+                // I18N: Failed to launch url: '{}'
+                DispatcherQueue().TryEnqueue([this, url]()
+                {
+                    MessagesBar().AddError(L"", L"Failed to launch url: '" + url + L"'.");
+                });
+            }
         });
     }
 

@@ -120,6 +120,27 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
+                <Border 
+                    x:Name="FormatTextBoxWarningBorder" 
+                    Background="{ThemeResource SystemFillColorCautionBackgroundBrush}" 
+                    Grid.Row="1" 
+                    Padding="5,6" 
+                    Visibility="Collapsed">
+                    <Grid ColumnSpacing="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <FontIcon x:Name="FormatTextBoxWarningIcon"
+                            Grid.Column="0"
+                            Glyph="&#xe7ba;"
+                            FontSize="16" 
+                            VerticalAlignment="Center" 
+                            Foreground="{ThemeResource SystemFillColorCaution}"/>
+                        <TextBlock x:Uid="FormatWarningTextBlock" Grid.Column="1" TextWrapping="Wrap"/>
+                    </Grid>
+                </Border>
+
                 <Border x:Name="FormatTextBoxBorder" Background="Transparent" Grid.Row="0">
                     <Grid RowSpacing="7" ColumnSpacing="4">
                         <Grid.ColumnDefinitions>

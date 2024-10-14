@@ -6,44 +6,19 @@
 
 namespace clip::notifs
 {
-    class ToastNotificationAction
-    {
-    public:
-        ToastNotificationAction() = default;
-
-        template<typename T>
-        T action();
-
-        template<>
-        std::wstring action()
-        {
-            return _parameters[L"action"];
-        }
-
-        std::map<std::wstring, std::wstring> parameters();
-        void load(std::wstring string);
-
-    private:
-        std::map<std::wstring, std::wstring> _parameters{};
-    };
-
     class ToastNotificationHandler
     {
     public:
-        static ToastNotificationHandler& getDefault();
+        ToastNotificationHandler();
 
-        ToastNotificationHandler(ToastNotificationHandler&&) = delete;
-        ToastNotificationHandler(const ToastNotificationHandler&) = delete;
-        ToastNotificationHandler operator=(ToastNotificationHandler) = delete;
-
-        void registerAction(const std::wstring& actionName, const std::function<void(ToastNotificationAction)>& callback);
+        void registerActionCallback(const std::function<void(std::wstring)>& callback);
+        void registerActivatedCallback(const std::function<void()>& callback);
 
     private:
         clip::utils::Logger logger{ L"ToastNotificationHandler" };
         bool registered = false;
-        std::map<std::wstring, std::function<void(ToastNotificationAction)>> callbackMap{};
-
-        ToastNotificationHandler();
+        std::function<void(std::wstring)> buttonClickedCallback{};
+        std::function<void()> toastClickedCallback{};
 
         void findAction(std::wstring args);
         void initializeCompat();

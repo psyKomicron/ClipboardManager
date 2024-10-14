@@ -22,17 +22,18 @@ namespace clip::utils
 
     std::optional<winrt::hstring> ResLoader::getNamedResource(const winrt::hstring& name)
     {
-        if (resourceLoader.has_value())
+        if (resourceLoader != nullptr)
         {
             try
             {
-                return resourceLoader.value().GetString(name);
+                return resourceLoader.GetString(name);
             }
             catch (winrt::hresult_error)
             {
                 logger.error(L"'getNamedResource' Failed to instanciate or get string from resources.");
             }
         }
+
         return {};
     }
 
