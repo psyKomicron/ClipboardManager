@@ -71,7 +71,6 @@ namespace winrt::ClipboardManager::implementation
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
         size_t teachingTipIndex = 0;
         winrt::event_token clipboardContentChangedToken{};
-        std::mutex mutex{};
         clip::utils::ResLoader resLoader{};
 
         winrt::async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
