@@ -74,10 +74,11 @@ namespace winrt::ClipboardManager::implementation
         try
         {
             trigger.checkFormat();
+            actions.push_back(std::move(trigger));
         }
         catch (clip::ClipboardTriggerFormatException formatException)
         {
-            hstring message{};
+            /*hstring message{};
             switch (formatException.code())
             {
                 case clip::FormatExceptionCode::MissingOpenBraces:
@@ -91,12 +92,10 @@ namespace winrt::ClipboardManager::implementation
                 default:
                     message = resLoader.getOrAlt(L"StringFormatError_InvalidFormat", L"Invalid format string");
                     break;
-            }
+            }*/
 
-            // TODO: Check format clipboard action view.
-            //FormatErrorTextBlock().Text(message);
+            logger.error(L"Check format failed for trigger '" + trigger.label() + L"'.");
         }
-        actions.push_back(std::move(trigger));
     }
 
     void ClipboardActionView::AddActions(const winrt::Windows::Foundation::IInspectable& inspectable)
@@ -125,6 +124,7 @@ namespace winrt::ClipboardManager::implementation
         auto regexString = std::wstring(_regex);
 
         auto& action = actions[pos]; // Semi-blind index access.
+        auto oldLabel = hstring(action.label());
         action.format(format);
         action.label(label);
         action.regex(boost::wregex(regexString));
@@ -132,11 +132,11 @@ namespace winrt::ClipboardManager::implementation
         // Reload triggers:
         for (uint32_t i = 0; i < TriggersGridView().Items().Size(); i++)
         {
-            auto&& item = TriggersGridView().Items().GetAt(i);
-            if (auto button = item.try_as<ui::HyperlinkButton>())
+            auto button = TriggersGridView().Items().GetAt(i).try_as<ui::HyperlinkButton>();
+            if (button && button.Content().as<hstring>() == oldLabel)
             {
                 button.Content(box_value(_label));
-                ui::ToolTipService::SetToolTip(button, box_value(_format));
+                ui::ToolTipService::SetToolTip(button, box_value(std::vformat(_format, std::make_wformat_args(_text))));
 
                 break;
             }
@@ -163,8 +163,7 @@ namespace winrt::ClipboardManager::implementation
 
         RootGridTeachingTip().IsOpen(true);
 
-        auto ptr = &teachingTipsWaitFlag;
-        auto func = [ptr]() -> void
+        auto func = [ptr = &teachingTipsWaitFlag]() -> void
         {
             ptr->wait(false);
             ptr->clear();
@@ -176,6 +175,11 @@ namespace winrt::ClipboardManager::implementation
 
     void ClipboardActionView::UserControl_Loading(ui::FrameworkElement const&, win::IInspectable const&)
     {
+        std::sort(actions.begin(), actions.end(), [](auto&& a, auto&& b) -> bool
+        {
+            return a.label().size() < b.label().size();
+        });
+
         // Create buttons for triggers:
         for (auto&& action : actions)
         {
@@ -288,6 +292,11 @@ namespace winrt::ClipboardManager::implementation
         // TODO: Implement or remove.
     }
 
+    void ClipboardActionView::EditActionButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+    {
+
+    }
+
 
     void ClipboardActionView::AddTriggerButton(clip::ClipboardTrigger& trigger)
     {
@@ -295,11 +304,10 @@ namespace winrt::ClipboardManager::implementation
         hyperlinkButton.Content(box_value(trigger.label()));
         hyperlinkButton.Tag(box_value(trigger.label()));
         hyperlinkButton.Click({ this, &ClipboardActionView::HyperlinkButton_Click });
-        
-        ui::ToolTipService::SetToolTip(hyperlinkButton, box_value(trigger.format()));
 
-        TriggersGridView().Items().Append(hyperlinkButton);
+        ui::ToolTipService::SetToolTip(hyperlinkButton, box_value(std::vformat(trigger.format(), std::make_wformat_args(_text))));
+
+        //TriggersGridView().Items().Append(hyperlinkButton);
+        TriggersGridView().Items().InsertAt(0, hyperlinkButton);
     }
 }
-
-
