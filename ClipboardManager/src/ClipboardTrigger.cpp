@@ -231,20 +231,20 @@ namespace clip
         if (_useRegexMatchResults)
         {
             bool result = false;
-            boost::wcmatch matchResult{};
+            boost::wcmatch matchResults{};
 
             if (_matchMode.value_or(MatchMode::Match) == MatchMode::Match)
             {
-                result = boost::regex_match(text.c_str(), matchResult, _regex);
+                result = boost::regex_match(text.c_str(), matchResults, _regex);
             }
             else
             {
-                result = boost::regex_search(text.c_str(), matchResult, _regex);
+                result = boost::regex_search(text.c_str(), matchResults, _regex);
             }
 
-            if (result && matchResult.size() > 1)
+            if (result && matchResults.size() > 1)
             {
-                auto str = matchResult[1].str();
+                auto str = matchResults[1].str();
                 return std::vformat(_format, std::make_wformat_args(str));
             }
         }
