@@ -10,6 +10,7 @@ namespace ClipboardManager
         Boolean ActionEnabled;
         Boolean IgnoreCase;
         Boolean UseSearch;
+        Boolean UseRegexMatchResults;
 
         event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, Boolean> IsOn;
         event Windows.Foundation.TypedEventHandler<ClipboardActionEditor, IInspectable> Removed;

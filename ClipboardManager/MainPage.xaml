@@ -57,7 +57,7 @@
                     <VisualState.Setters>
                         <Setter Target="ClipboardTriggersListView.Visibility" Value="Collapsed"/>
                         <Setter Target="NoClipboardTriggersTextBlock.Visibility" Value="Visible"/>
-                        <Setter Target="ListView.Visibility" Value="Collapsed"/>
+                        <!--<Setter Target="ListView.Visibility" Value="Collapsed"/>-->
                         <Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>
                         <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>
                     </VisualState.Setters>
@@ -183,7 +183,7 @@
 
                     <TextBlock x:Name="NoClipboardTriggersTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8" Grid.Row="1" x:Load="False" Visibility="Collapsed"/>
                     
-                    <ListView x:Name="ClipboardTriggersListView" Margin="0" Padding="0" SelectionMode="None" Grid.Row="1" AllowDrop="True" CanReorderItems="True">
+                    <ListView x:Name="ClipboardTriggersListView" Margin="0" Padding="0" SelectionMode="None" Grid.Row="1" AllowDrop="True" CanReorderItems="True" Visibility="Visible">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="Padding" Value="7,3,7,7" />

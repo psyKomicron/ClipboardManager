@@ -114,32 +114,12 @@
                 <TextBox x:Uid="LabelTextBox" x:Name="LabelTextBox" VerticalAlignment="Center" Text="{x:Bind TriggerLabel, Mode=TwoWay}" TextChanged="TextBox_TextChanged"/>
             </Border>
 
-            <Grid Grid.Row="1" RowSpacing="7">
+            <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-
-                <Border 
-                    x:Name="FormatTextBoxWarningBorder" 
-                    Background="{ThemeResource SystemFillColorCautionBackgroundBrush}" 
-                    Grid.Row="1" 
-                    Padding="5,6" 
-                    Visibility="Collapsed">
-                    <Grid ColumnSpacing="4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <FontIcon x:Name="FormatTextBoxWarningIcon"
-                            Grid.Column="0"
-                            Glyph="&#xe7ba;"
-                            FontSize="16" 
-                            VerticalAlignment="Center" 
-                            Foreground="{ThemeResource SystemFillColorCaution}"/>
-                        <TextBlock x:Uid="FormatWarningTextBlock" Grid.Column="1" TextWrapping="Wrap"/>
-                    </Grid>
-                </Border>
 
                 <Border x:Name="FormatTextBoxBorder" Background="Transparent" Grid.Row="0">
                     <Grid RowSpacing="7" ColumnSpacing="4">
@@ -180,14 +160,13 @@
                     </Grid>
                 </Border>
 
-                <!--<Border 
+                <Border 
                     x:Name="FormatTextBoxWarningBorder" 
                     Background="{ThemeResource SystemFillColorCautionBackgroundBrush}" 
                     Grid.Row="1" 
                     Padding="5,6" 
-                    Visibility="Collapsed"
-                    HorizontalAlignment="Stretch"
-                    Margin="20,0,20,0">
+                    Margin="0,3,0,0"
+                    Visibility="Collapsed">
                     <Grid ColumnSpacing="4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -199,13 +178,23 @@
                             FontSize="16" 
                             VerticalAlignment="Center" 
                             Foreground="{ThemeResource SystemFillColorCaution}"/>
-                        <TextBlock 
-                            x:Uid="FormatWarningTextBlock" 
-                            Grid.Column="1" 
-                            TextWrapping="Wrap"
-                            Style="{StaticResource CaptionTextBlockStyle}"/>
+                        <TextBlock x:Uid="FormatWarningTextBlock" Grid.Column="1" TextWrapping="Wrap"/>
                     </Grid>
-                </Border>-->
+                </Border>
+
+                <Grid Grid.Row="2" Margin="0,3,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Use regex match results to format" Grid.Column="0" VerticalAlignment="Center"/>
+
+                    <ToggleSwitch 
+                        Style="{StaticResource FlippedToggleSwitchStyle}"
+                        IsOn="{x:Bind UseRegexMatchResults, Mode=TwoWay}"
+                        Grid.Column="1"/>
+                </Grid>
             </Grid>
 
             <Border x:Name="RegexTextBoxBorder" Grid.Row="2" Background="Transparent">

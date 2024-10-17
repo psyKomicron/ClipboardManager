@@ -395,6 +395,10 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Ignore case</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="IgnoreCaseTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ignore case</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
   <data name="ImportClipboardHistoryHostControl.Header" xml:space="preserve">
     <value>Import clipboard</value>
     <comment>SettingsPage</comment>
@@ -692,9 +696,17 @@ If you are using multiple placeholders '{}' index them (ex: {0}...{0}).</value>
     <value>Triggers XML example</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="UseRegexMatchResultsTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Use regex match results</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
   <data name="UserFileHostControl.Header" xml:space="preserve">
     <value>Triggers file</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="UseSearchFontIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Use search</value>
+    <comment>ClipboardActionEditor</comment>
   </data>
   <data name="ViewActionsInfoBar.Message" xml:space="preserve">
     <value>You can view your triggers in the clipboard triggers page.</value>

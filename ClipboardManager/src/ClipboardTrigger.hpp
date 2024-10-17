@@ -55,6 +55,8 @@ namespace clip
         bool enabled() const;
         void enabled(const bool& value);
         std::optional<clip::MatchMode> matchMode() const;
+        bool useRegexMatchResults() const;
+        void useRegexMatchResults(const bool& value);
 
         void updateMatchMode(const MatchMode& mode);
         bool match(const std::wstring& string, const std::optional<MatchMode>& matchMode = {}) const;
@@ -62,20 +64,25 @@ namespace clip
          * @brief Checks the format string of this trigger.
          * @throws clip::ClipboardTriggerFormatException Throws when the format is invalid.
          */
-        void checkFormat();
+        void checkFormat() const;
+        std::wstring formatTrigger(const std::wstring& text) const;
 
         bool operator==(ClipboardTrigger& other);
 
     private:
+        clip::utils::Logger logger{ L"ClipboardTrigger" };
         std::wstring _label{};
         std::wstring _format{};
         boost::wregex _regex{};
         bool _enabled = true;
         std::optional<MatchMode> _matchMode{};
+        bool _useRegexMatchResults = true;
+
+        ClipboardTrigger(boost::property_tree::wptree& triggersNode);
 
         static void firstTimeInitialization(const std::filesystem::path& path, boost::property_tree::wptree tree);
-        //static boost::wregex parseRegexFromXml(boost::property_tree::wptree& options);
-        std::optional<ClipboardTriggerFormatException> checkFormat(const std::wstring& format);
+        std::optional<ClipboardTriggerFormatException> checkFormat(const std::wstring& format) const;
+        void save(boost::property_tree::wptree& triggersNode) const;
     };
 }
 
