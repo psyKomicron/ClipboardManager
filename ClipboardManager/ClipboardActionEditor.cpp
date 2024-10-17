@@ -28,18 +28,21 @@ namespace xaml
 
 namespace winrt::ClipboardManager::implementation
 {
+    // static
+    clip::utils::ResLoader ClipboardActionEditor::resLoader{};
+
     ClipboardActionEditor::ClipboardActionEditor()
     {
         visualStateManager.initializeStates(
             {
-                EnabledState,
-                DisabledState,
-                NoLabelErrorState,
-                LabelErrorState,
-                NoRegexErrorState,
-                RegexErrorState,
-                NoFormatErrorState,
-                FormatErrorState
+                enabledState,
+                disabledState,
+                noLabelErrorState,
+                labelErrorState,
+                noRegexErrorState,
+                regexErrorState,
+                noFormatErrorState,
+                formatErrorState
             });
     }
 
@@ -83,38 +86,54 @@ namespace winrt::ClipboardManager::implementation
         _actionEnabledProperty.set(value);
 
         visualStateManager.goToEnabledState(_actionEnabledProperty.get());
-        e_isOn(*this, _actionEnabledProperty.get());
+        e_enabled(*this, _actionEnabledProperty.get());
     }
 
     bool implementation::ClipboardActionEditor::IgnoreCase() const
     {
-        return _ignoreCaseProperty.get();
+        return _ignoreCaseProperty;
     }
 
     void implementation::ClipboardActionEditor::IgnoreCase(const bool& value)
     {
-        _ignoreCaseProperty.set(value);
+        _ignoreCaseProperty = value;
+
+        visualStateManager.goToState(_ignoreCaseProperty ? ignoreCaseEnabledState : ignoreCaseDisabledState);
     }
 
     bool implementation::ClipboardActionEditor::UseSearch() const
     {
-        return _useSearchProperty.get();
+        return _useSearchProperty;
     }
 
     void implementation::ClipboardActionEditor::UseSearch(const bool& value)
     {
-        _useSearchProperty.set(value);
+        _useSearchProperty = value;
+
+        visualStateManager.goToState(_useSearchProperty ? useSearchEnabledState : useSearchDisabledState);
+    }
+
+    bool ClipboardActionEditor::UseRegexMatchResults() const
+    {
+        return _useRegexMatchResultsProperty;
+    }
+
+    void ClipboardActionEditor::UseRegexMatchResults(const bool& value)
+    {
+        _useRegexMatchResultsProperty = value;
+
+        visualStateManager.goToState(_useRegexMatchResultsProperty ? useRegexMatchResultsEnabledState : useRegexMatchResultsDisabledState);
     }
 
 
     winrt::event_token ClipboardActionEditor::IsOn(const event_is_on_t& handler)
     {
-        return e_isOn.add(handler);
+        return e_enabled.add(handler);
     }
 
     void ClipboardActionEditor::IsOn(const winrt::event_token& token)
     {
-        e_isOn.remove(token);
+        e_enabled.remove(token);
     }
 
     winrt::event_token ClipboardActionEditor::LabelChanged(const event_label_changed_t& handler)
@@ -164,8 +183,9 @@ namespace winrt::ClipboardManager::implementation
         TriggerEditControl().TriggerFormat(_triggerFormatProperty.get());
         TriggerEditControl().TriggerLabel(_triggerLabelProperty.get());
         TriggerEditControl().TriggerRegex(_triggerRegexProperty.get());
-        TriggerEditControl().IgnoreCase(_ignoreCaseProperty.get());
-        TriggerEditControl().UseSearch(_useSearchProperty.get());
+        TriggerEditControl().IgnoreCase(_ignoreCaseProperty);
+        TriggerEditControl().UseSearch(_useSearchProperty);
+        TriggerEditControl().UseRegexMatchResults(_useRegexMatchResultsProperty);
 
         auto result = co_await TriggerEditControl().Edit();
         if (result)
@@ -173,19 +193,20 @@ namespace winrt::ClipboardManager::implementation
             winrt::hstring newFormat = TriggerEditControl().TriggerFormat();
             winrt::hstring newLabel = TriggerEditControl().TriggerLabel();
             winrt::hstring newRegex = TriggerEditControl().TriggerRegex();
+            bool newUseRegexMatchResults = TriggerEditControl().UseRegexMatchResults();
 
             // Update new format.
             ActionFormat(newFormat);
-
+            UseRegexMatchResults(newUseRegexMatchResults);
             // Update regex.
             ActionRegex(newRegex);
-
             // Update matching mode and regex flags.
-            _ignoreCaseProperty.set(TriggerEditControl().IgnoreCase());
-            _useSearchProperty.set(TriggerEditControl().UseSearch());
+            IgnoreCase(TriggerEditControl().IgnoreCase());
+            UseSearch(TriggerEditControl().UseSearch());
 
-            auto flags = (static_cast<int32_t>(_ignoreCaseProperty.get()) << 1) | static_cast<int32_t>(_useSearchProperty.get());
-
+            auto flags = static_cast<int32_t>(_ignoreCaseProperty) << 2 
+                | static_cast<int32_t>(_useSearchProperty) << 1
+                | static_cast<int32_t>(_useRegexMatchResultsProperty);
             e_changed(*this, box_value(flags));
 
             // Update label.
@@ -254,7 +275,7 @@ namespace winrt::ClipboardManager::implementation
                 // Warning errors
                 case clip::FormatExceptionCode::EmptyString:
                 case (clip::FormatExceptionCode::MissingOpenBraces | clip::FormatExceptionCode::MissingClosingBraces):
-                    visualStateManager.goToState(FormatWarningState);
+                    visualStateManager.goToState(formatWarningState);
                     break;
 
                 // Errors
@@ -264,7 +285,7 @@ namespace winrt::ClipboardManager::implementation
                 case clip::FormatExceptionCode::InvalidFormat:
                 case clip::FormatExceptionCode::Unknown:
                 default:
-                    visualStateManager.goToState(FormatErrorState);
+                    visualStateManager.goToState(formatErrorState);
                     break;
             }
 
@@ -285,6 +306,7 @@ namespace winrt::ClipboardManager::implementation
     void ClipboardActionEditor::ActionEnabledToggleSwitch_Toggled(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
     {
         check_loaded(loaded);
+        e_enabled(*this, ActionEnabledToggleSwitch().IsOn());
     }
 
     void ClipboardActionEditor::RootGrid_PointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
@@ -324,18 +346,6 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-
-    void ClipboardActionEditor::useSearchPropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args)
-    {
-        visualStateManager.goToState(_useSearchProperty.get() ? UseSearchEnabledState : UseSearchDisabledState);
-        raisePropertyChanged(args);
-    }
-
-    void ClipboardActionEditor::ignoreCasePropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args)
-    {
-        visualStateManager.goToState(_ignoreCaseProperty.get() ? IgnoreCaseEnabledState : IgnoreCaseDisabledState);
-        raisePropertyChanged(args);
-    }
 
     winrt::Windows::Foundation::IInspectable ClipboardActionEditor::asInspectable()
     {

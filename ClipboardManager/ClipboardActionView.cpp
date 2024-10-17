@@ -34,6 +34,8 @@ namespace win
 
 namespace winrt::ClipboardManager::implementation
 {
+    clip::utils::ResLoader ClipboardActionView::resLoader{};
+
     ClipboardActionView::ClipboardActionView()
     {
         visualStateManager.initializeStates(
@@ -203,8 +205,9 @@ namespace winrt::ClipboardManager::implementation
                 if (label.value() == action.label())
                 {
                     clip::utils::Launcher launcher{};
-                    auto text = std::wstring(_text);
-                    launcher.launch(std::vformat(action.format(), std::make_wformat_args(text)));
+                    launcher.launch(action, std::wstring(_text));
+
+                    break;
                 }
             }
         }
@@ -280,8 +283,7 @@ namespace winrt::ClipboardManager::implementation
             if (actions.size() > 0)
             {
                 auto&& action = actions[0];
-                auto text = std::wstring(_text);
-                launcher.launch(std::vformat(action.format(), std::make_wformat_args(text)));
+                launcher.launch(action, std::wstring(_text));
             }
         }
 

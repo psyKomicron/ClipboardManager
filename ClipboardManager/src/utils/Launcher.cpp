@@ -45,4 +45,9 @@ namespace clip::utils
             }
         }
     }
+
+    winrt::async Launcher::launch(const clip::ClipboardTrigger& trigger, const std::wstring& text)
+    {
+        return launch(trigger.formatTrigger(text));
+    }
 }

@@ -17,7 +17,7 @@
         BorderThickness="1"
         Padding="16,10,16,16"
         CornerRadius="{StaticResource OverlayCornerRadius}"
-        RowSpacing="7"
+        RowSpacing="17"
         PointerEntered="RootGrid_PointerEntered"
         PointerExited="RootGrid_PointerExited">
         <Grid.ColumnDefinitions>
@@ -25,7 +25,6 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -58,20 +57,35 @@
                 </VisualState>
             </VisualStateGroup>
 
-            <VisualStateGroup x:Name="IgnoreCaseStates">
+            <VisualStateGroup>
                 <VisualState x:Name="IgnoreCaseDisabled"/>
                 <VisualState x:Name="IgnoreCaseEnabled">
                     <VisualState.Setters>
+                        <Setter Target="IgnoreCaseTextBlock.Opacity" Value="1"/>
                         <Setter Target="IgnoreCaseTextBlock.Foreground" Value="{ThemeResource AccentFillColorDefaultBrush}"/>
+                        <Setter Target="IgnoreCaseTextBlock.FontWeight" Value="SemiBold"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
 
-            <VisualStateGroup x:Name="UseSearchStates">
+            <VisualStateGroup>
                 <VisualState x:Name="UseSearchDisabled"/>
                 <VisualState x:Name="UseSearchEnabled">
                     <VisualState.Setters>
+                        <Setter Target="UseSearchFontIcon.Opacity" Value="1"/>
                         <Setter Target="UseSearchFontIcon.Foreground" Value="{ThemeResource AccentFillColorDefaultBrush}"/>
+                        <Setter Target="UseSearchFontIcon.FontWeight" Value="SemiBold"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            
+            <VisualStateGroup>
+                <VisualState x:Name="UseRegexMatchResultsDisabled"/>
+                <VisualState x:Name="UseRegexMatchResultsEnabled">
+                    <VisualState.Setters>
+                        <Setter Target="UseRegexMatchResultsTextBlock.Opacity" Value="1"/>
+                        <Setter Target="UseRegexMatchResultsTextBlock.Foreground" Value="{ThemeResource AccentFillColorDefaultBrush}"/>
+                        <Setter Target="UseRegexMatchResultsTextBlock.FontWeight" Value="SemiBold"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -109,43 +123,83 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <!--<Border Grid.ColumnSpan="2" Grid.RowSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Opacity="0.9" BorderBrush="{ThemeResource SystemFillColorCritical}" BorderThickness="2" Background="Transparent" IsHitTestVisible="False" Margin="-16,-10,-16,-16" CornerRadius="{StaticResource ControlCornerRadius}"/>-->
-
         <TextBlock x:Name="ActionLabelTextBlock" Grid.Row="0" Style="{StaticResource BodyStrongTextBlockStyle}" FontSize="20" VerticalAlignment="Center" Text="{x:Bind ActionLabel, Mode=OneWay}"/>
-
-        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+        
+        <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnSpacing="15">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+
             <FontIcon x:Name="FormatErrorIconBackground" x:Load="False" Visibility="Collapsed" Glyph="&#xF136;" Foreground="{ThemeResource InfoBarErrorSeverityIconBackground}" Margin="0,0,4,0"/>
             <FontIcon x:Name="FormatErrorIcon" x:Load="False" Visibility="Collapsed" Glyph="&#xF13D;" Foreground="{ThemeResource InfoBarWarningSeverityIconForeground}" Margin="0,0,4,0"/>
-            <TextBlock x:Name="ActionFormatTextBlock" Grid.Column="1" VerticalAlignment="Center" TextWrapping="Wrap" Text="{x:Bind ActionFormat, Mode=OneWay}"/>
-            <Border x:Name="FormatErrorBorder" x:Load="False" Visibility="Collapsed" Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}" Grid.ColumnSpan="2" Grid.Row="1" Padding="10,14,10,14" CornerRadius="{StaticResource ControlCornerRadius}" Margin="-4,4,-4,0">
+            
+            <TextBlock x:Name="ActionFormatTextBlock" VerticalAlignment="Center" TextWrapping="Wrap" Text="{x:Bind ActionFormat, Mode=OneWay}"/>
+
+            <TextBlock 
+                x:Name="UseRegexMatchResultsTextBlock" 
+                x:Uid="UseRegexMatchResultsTextBlock"
+                Text="( )" 
+                Grid.Column="1" 
+                VerticalAlignment="Center" 
+                HorizontalAlignment="Right" 
+                Opacity="0.5"/>
+            
+            <Border 
+                x:Name="FormatErrorBorder" 
+                x:Load="False" 
+                Visibility="Collapsed" 
+                Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}" 
+                BackgroundSizing="OuterBorderEdge"
+                Grid.Row="1" 
+                Padding="10,14,10,14" 
+                CornerRadius="{StaticResource ControlCornerRadius}" 
+                Margin="-4,4,-4,0">
                 <TextBlock x:Name="FormatErrorTextBlock" TextWrapping="Wrap" VerticalAlignment="Center"/>
             </Border>
         </Grid>
 
-        <Grid Grid.Row="2" Grid.ColumnSpan="2">
+        <Grid Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Center" ColumnSpacing="15">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
+            
             <FontIcon x:Name="RegexErrorIconBackground" x:Load="False" Visibility="Collapsed" Glyph="&#xF136;" Foreground="{ThemeResource InfoBarErrorSeverityIconBackground}" Margin="0,0,4,0"/>
+            
             <FontIcon x:Name="RegexErrorIcon" x:Load="False" Visibility="Collapsed" Glyph="&#xF13D;" Foreground="{ThemeResource InfoBarWarningSeverityIconForeground}" Margin="0,0,4,0"/>
-            <StackPanel Grid.Column="1" Spacing="9" Orientation="Horizontal">
-                <TextBlock x:Name="ActionRegexTextBlock" FontFamily="Consolas" CharacterSpacing="70" VerticalAlignment="Center" TextWrapping="Wrap" Text="{x:Bind ActionRegex, Mode=OneWay}"/>
-                <TextBlock x:Name="IgnoreCaseTextBlock" Text="Aa" VerticalAlignment="Top" Margin="20,0,0,0"/>
-                <FontIcon x:Name="UseSearchFontIcon" Glyph="&#xf78b;" FontSize="16"/>
+
+            <TextBlock 
+                x:Name="ActionRegexTextBlock" 
+                Grid.Column="0"
+                FontFamily="Consolas" 
+                CharacterSpacing="70" 
+                VerticalAlignment="Center" 
+                TextWrapping="Wrap" 
+                Text="{x:Bind ActionRegex, Mode=OneWay}"/>
+
+            <StackPanel Grid.Column="1" MinWidth="30" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="16" Orientation="Horizontal">
+                <TextBlock 
+                    x:Name="IgnoreCaseTextBlock" 
+                    x:Uid="IgnoreCaseTextBlock" 
+                    Text="Aa"
+                    Opacity="0.5"/>
+                <FontIcon 
+                    x:Name="UseSearchFontIcon" 
+                    x:Uid="UseSearchFontIcon" 
+                    Glyph="&#xf78b;" 
+                    FontSize="16"
+                    Opacity="0.5"/>
             </StackPanel>
+
             <Border x:Name="RegexErrorBorder" x:Load="False" Visibility="Collapsed" Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}" Grid.ColumnSpan="2" Grid.Row="1" Padding="10,14,10,14" CornerRadius="{StaticResource ControlCornerRadius}" Margin="-4,4,-4,0">
                 <TextBlock x:Name="RegexErrorTextBlock" TextWrapping="Wrap" VerticalAlignment="Center"/>
             </Border>
@@ -164,8 +218,6 @@
                 <FontIcon FontSize="15" Glyph="&#xe70f;"/>
             </Button>
         </StackPanel>
-
-        <InfoBar x:Name="InfoBar" Grid.ColumnSpan="2" Grid.Row="3"/>
 
         <local:ClipboardTriggerEditControl x:Name="TriggerEditControl"/>
         

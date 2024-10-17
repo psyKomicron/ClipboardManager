@@ -720,4 +720,16 @@ Si vous utilisez plusieurs fois {} indexez les (ex: {0}....{0}).</value>
     <value>Modifier</value>
     <comment>ClipboardActionView</comment>
   </data>
+  <data name="IgnoreCaseTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ignorer la casse</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
+  <data name="UseRegexMatchResultsTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Utiliser le resultat du match regex</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
+  <data name="UseSearchFontIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Utiliser le mode recherche</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
 </root>

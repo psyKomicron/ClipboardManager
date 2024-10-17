@@ -15,6 +15,8 @@ namespace xaml
 
 namespace winrt::ClipboardManager::implementation
 {
+    clip::utils::ResLoader ClipboardTriggerEditControl::resLoader{};
+
     ClipboardTriggerEditControl::ClipboardTriggerEditControl()
     {
         visualStateManager.initializeStates(
@@ -78,6 +80,17 @@ namespace winrt::ClipboardManager::implementation
         _useSearch.set(value);
     }
 
+    bool ClipboardTriggerEditControl::UseRegexMatchResults() const
+    {
+        return _useRegexMatchResults.get();
+    }
+
+    void ClipboardTriggerEditControl::UseRegexMatchResults(const bool& value)
+    {
+        // I love doing twice the same thing.
+        _useRegexMatchResults.set(value);
+    }
+
 
     winrt::Windows::Foundation::IAsyncOperation<bool> ClipboardTriggerEditControl::Edit()
     {
@@ -92,7 +105,7 @@ namespace winrt::ClipboardManager::implementation
         CheckInput();
     }
 
-    void ClipboardTriggerEditControl::TextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e)
+    void ClipboardTriggerEditControl::TextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, xaml::Controls::TextChangedEventArgs const&)
     {
         CheckInput();
     }

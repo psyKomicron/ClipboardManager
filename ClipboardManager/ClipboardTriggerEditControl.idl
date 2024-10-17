@@ -10,6 +10,7 @@ namespace ClipboardManager
         String TriggerRegex;
         Boolean IgnoreCase;
         Boolean UseSearch;
+        Boolean UseRegexMatchResults;
 
         Windows.Foundation.IAsyncOperation<Boolean> Edit();
     }

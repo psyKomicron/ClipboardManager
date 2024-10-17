@@ -54,10 +54,11 @@ namespace winrt::ClipboardManager::implementation
         const VisualState PointerOverState{ L"PointerOver", 1, false };
         const VisualState PointerPressedState{ L"PointerPressed", 1, false };
 
+        static clip::utils::ResLoader resLoader;
+
         std::atomic_flag teachingTipsWaitFlag{};
         clip::utils::Logger logger{ L"ClipboardActionView" };
         winrt::hstring _text{};
-        clip::utils::ResLoader resLoader{};
         std::vector<clip::ClipboardTrigger> actions{};
         clip::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
 
