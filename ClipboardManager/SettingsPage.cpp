@@ -71,6 +71,8 @@ namespace winrt::ClipboardManager::implementation
         // Window style:
         AllowMaximizeToggleSwitch().IsOn(settings.get<bool>(L"AllowWindowMaximize").value_or(false));
         AllowMinimizeToggleSwitch().IsOn(settings.get<bool>(L"AllowWindowMinimize").value_or(true));
+
+        UserFilePathTextBlock().Text(settings.get<hstring>(L"UserFilePath").value_or(L""));
     }
 
     void SettingsPage::Page_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)
@@ -222,7 +224,7 @@ namespace winrt::ClipboardManager::implementation
 
     void SettingsPage::TriggersStorageExpander_Expanding(xaml::Controls::Expander const&, xaml::Controls::ExpanderExpandingEventArgs const&)
     {
-        UserFilePathTextBlock().Text(settings.get<hstring>(L"UserFilePath").value_or(L""));
+        
     }
 
     winrt::async SettingsPage::LocateButton_Clicked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
