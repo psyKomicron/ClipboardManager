@@ -732,4 +732,16 @@ Si vous utilisez plusieurs fois {} indexez les (ex: {0}....{0}).</value>
     <value>Utiliser le mode recherche</value>
     <comment>ClipboardActionEditor</comment>
   </data>
+  <data name="ActionEnabledToggleSwitch.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Activer/désactiver</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
+  <data name="EditButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Modifier</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
+  <data name="RemoveButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Supprimer</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
 </root>

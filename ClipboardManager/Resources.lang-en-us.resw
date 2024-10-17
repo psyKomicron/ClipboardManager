@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ActionEnabledToggleSwitch.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Enable/disable trigger</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
   <data name="ActionEnabledToggleSwitchTeachingTip.Subtitle" xml:space="preserve">
     <value>Enable or disable the trigger. A disabled trigger will not be used in any action</value>
     <comment>Teaching tips</comment>
@@ -288,6 +292,10 @@
   <data name="EditActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Edit</value>
     <comment>ClipboardActionView</comment>
+  </data>
+  <data name="EditButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Edit</value>
+    <comment>ClipboardActionEditor</comment>
   </data>
   <data name="EditButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Open a dialog to edit this trigger</value>
@@ -574,6 +582,10 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="RemoveActionButtonTeachingTip.Title" xml:space="preserve">
     <value>Remove</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="RemoveButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove</value>
+    <comment>ClipboardActionEditor</comment>
   </data>
   <data name="RemoveButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Remove and delete trigger</value>
