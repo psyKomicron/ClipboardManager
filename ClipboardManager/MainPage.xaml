@@ -91,6 +91,31 @@
                     </VisualState.Storyboard>
                 </VisualState>
             </VisualStateGroup>
+
+            <VisualStateGroup>
+                <VisualState x:Name="Under1000"/>
+                <VisualState x:Name="Over1000">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames
+                            Storyboard.TargetName="ClipboardTriggersListView"
+                            Storyboard.TargetProperty="Opacity"
+                            EnableDependentAnimation="True">
+                            <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                            <DiscreteDoubleKeyFrame KeyTime="0:0:0.6" Value="0"/>
+                            <!--<DiscreteDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>-->
+                            <LinearDoubleKeyFrame KeyTime="0:0:1.3" Value="1"/>
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+
+                    <VisualState.Setters>
+                        <Setter Target="ClipboardTriggersListView.Layout">
+                            <Setter.Value>
+                                <UniformGridLayout ItemsJustification="Start" MinItemHeight="210" MinItemWidth="450" MinColumnSpacing="5" MinRowSpacing="5"/>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
         <Grid x:Name="TitleBarGrid">
@@ -140,19 +165,28 @@
                     <FontIcon x:Name="ClipboardHistoryPivot" Glyph="&#xe823;" FontSize="16"/>
                 </PivotItem.Header>
 
-                <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="0"/>
+                <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="0" Padding="0">
+                    <ListView.Resources>
+                        <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                            <Setter Property="Padding" Value="4,0,4,0" />
+                        </Style>
+                    </ListView.Resources>
+                </ListView>
             </PivotItem>
 
             <PivotItem Padding="0" Margin="0" Loaded="ClipboadTriggersListPivot_Loaded">
                 <PivotItem.Header>
-                    <FontIcon x:Name="ClipboardTriggersPivot" Glyph="&#xf0e3;" FontSize="16"/>
+                    <FontIcon x:Name="ClipboardTriggersPivot" Glyph="&#xe945;" FontSize="16"/>
                 </PivotItem.Header>
 
-                <Grid>
+                <Grid x:Name="TriggersPivotGrid">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+                    <Grid.Transitions>
+                        <RepositionThemeTransition/>
+                    </Grid.Transitions>
 
                     <CommandBar Background="Transparent" DefaultLabelPosition="Right">
                         <AppBarButton 
@@ -182,14 +216,19 @@
                     </CommandBar>
 
                     <TextBlock x:Name="NoClipboardTriggersTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8" Grid.Row="1" x:Load="False" Visibility="Collapsed"/>
-                    
-                    <ListView x:Name="ClipboardTriggersListView" Margin="0" Padding="0" SelectionMode="None" Grid.Row="1" AllowDrop="True" CanReorderItems="True" Visibility="Visible">
-                        <ListView.Resources>
-                            <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
-                                <Setter Property="Padding" Value="7,3,7,7" />
-                            </Style>
-                        </ListView.Resources>
-                    </ListView>
+
+                    <ScrollViewer Grid.Row="1" HorizontalAlignment="Stretch" Padding="4,4,4,7">
+                        <ScrollViewer.OpacityTransition>
+                            <ScalarTransition Duration="0:0:0.381"/>
+                        </ScrollViewer.OpacityTransition>
+                        <ItemsRepeater
+                            x:Name="ClipboardTriggersListView"
+                            ItemsSource="{x:Bind ClipboardTriggers}">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Orientation="Vertical" Spacing="7"/>
+                            </ItemsRepeater.Layout>
+                        </ItemsRepeater>
+                    </ScrollViewer>
 
                     <clip:RegexTesterControl x:Name="TestRegexContentDialog" Grid.RowSpan="2"/>
                     <clip:ClipboardTriggerEditControl x:Name="ClipboardTriggerEditControl" Grid.RowSpan="2"/>

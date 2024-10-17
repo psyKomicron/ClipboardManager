@@ -1,4 +1,5 @@
 import "ClipboardActionView.idl";
+import "ClipboardActionEditor.idl";
 
 namespace ClipboardManager
 {
@@ -9,8 +10,10 @@ namespace ClipboardManager
         MainPage(Microsoft.UI.Windowing.AppWindow appWindow);
 
         IObservableVector<ClipboardActionView> Actions;
+        IObservableVector<ClipboardActionEditor> ClipboardTriggers;
 
         void AppClosing();
         void UpdateTitleBar();
+        void EXITSIZEMOVE();
     }
 }

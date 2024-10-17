@@ -103,6 +103,16 @@ namespace winrt::ClipboardManager::implementation
         clipboardActionViews = value;
     }
 
+    winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionEditor> MainPage::ClipboardTriggers()
+    {
+        return clipboardTriggerViews;
+    }
+
+    void MainPage::ClipboardTriggers(const winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionEditor>& value)
+    {
+        clipboardTriggerViews = value;
+    }
+
     void MainPage::AppClosing()
     {
         win::Clipboard::ContentChanged(clipboardContentChangedToken);
@@ -147,6 +157,11 @@ namespace winrt::ClipboardManager::implementation
                 presenter.IsMinimizable() ? 135 : 45
             ));
         }
+    }
+
+    void MainPage::EXITSIZEMOVE()
+    {
+        //visualStateManager.goToState(appWindow.Size().Width < 930 ? under1kState : over1kState);
     }
 
 
@@ -198,27 +213,37 @@ namespace winrt::ClipboardManager::implementation
     winrt::async MainPage::Page_Loaded(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
         Restore();
-        loaded = true;
-        clipboardContentChangedToken = win::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
 
-        co_await resume_background();
+        loaded = true;
+        
+        clipboardContentChangedToken = win::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
 
         if (!localSettings.get<bool>(L"FirstStartup").has_value())
         {
             localSettings.insert(L"FirstStartup", false);
 
-            DispatcherQueue().TryEnqueue([this]()
-            {
-                visualStateManager.goToState(firstStartupState);
-            });
+            visualStateManager.goToState(firstStartupState);
         }
 
-        DispatcherQueue().TryEnqueue([this]()
+        visualStateManager.goToState(triggers.empty() ? noClipboardTriggersToDisplayState : displayClipboardTriggersState);
+
+        visualStateManager.goToState(appWindow.Size().Width < 930 ? under1kState : over1kState);
+        appWindow.Changed([&](auto, xaml::AppWindowChangedEventArgs args)
         {
-            visualStateManager.goToState(triggers.empty()
-                                         ? noClipboardTriggersToDisplayState
-                                         : displayClipboardTriggersState);
+            if (args.DidSizeChange())
+            {
+                if (appWindow.Size().Width < 930)
+                {
+                    visualStateManager.goToState(under1kState);
+                }
+                else if (appWindow.Size().Width > 930 && !over1kState.active())
+                {
+                    visualStateManager.goToState(over1kState);
+                }
+            }
         });
+
+        co_return;
     }
 
     void MainPage::ClipboadTriggersListPivot_Loaded(win::IInspectable const&, win::IInspectable const&)
@@ -254,18 +279,18 @@ namespace winrt::ClipboardManager::implementation
                         }
                     }
 
-                    for (uint32_t i = 0; i < ClipboardTriggersListView().Items().Size(); i++)
+                    for (uint32_t i = 0; i < clipboardTriggerViews.Size(); i++)
                     {
-                        auto view = ClipboardTriggersListView().Items().GetAt(i).try_as<ClipboardManager::ClipboardActionEditor>();
+                        auto view = clipboardTriggerViews.GetAt(i).try_as<ClipboardManager::ClipboardActionEditor>();
                         if (view && view.ActionLabel() == label)
                         {
-                            ClipboardTriggersListView().Items().RemoveAt(i);
+                            clipboardTriggerViews.RemoveAt(i);
                             break;
                         }
                     }
                 });
 
-                ClipboardTriggersListView().Items().Append(triggerViewer);
+                clipboardTriggerViews.Append(triggerViewer);
             }
 
             visualStateManager.goToState(displayClipboardTriggersState);
@@ -385,7 +410,7 @@ namespace winrt::ClipboardManager::implementation
         else
         {
             bool manuallyAddedAction = false;
-            if (ClipboardTriggersListView().Items().Size() == 0)
+            if (clipboardTriggerViews.Size() == 0)
             {
                 visualStateManager.goToState(displayClipboardTriggersState);
 
@@ -395,15 +420,15 @@ namespace winrt::ClipboardManager::implementation
                 triggerView.ActionRegex(L".+");
                 triggerView.ActionEnabled(true);
 
-                ClipboardTriggersListView().Items().InsertAt(0, triggerView);
+                clipboardTriggerViews.InsertAt(0, triggerView);
                 manuallyAddedAction = true;
             }
 
-            co_await ClipboardTriggersListView().Items().GetAt(0).as<winrt::ClipboardManager::ClipboardActionEditor>().StartTour();
+            co_await clipboardTriggerViews.GetAt(0).as<winrt::ClipboardManager::ClipboardActionEditor>().StartTour();
 
             if (manuallyAddedAction)
             {
-                ClipboardTriggersListView().Items().RemoveAt(0);
+                clipboardTriggerViews.RemoveAt(0);
                 visualStateManager.goToState(noClipboardTriggersToDisplayState);
             }
 
@@ -487,7 +512,7 @@ namespace winrt::ClipboardManager::implementation
             view.UseSearch(useSearch);
             view.ActionEnabled(true);
 
-            ClipboardTriggersListView().Items().Append(view);
+            clipboardTriggerViews.Append(view);
         }
     }
 
@@ -803,7 +828,7 @@ namespace winrt::ClipboardManager::implementation
                     AddAction(view.data(), false);
                 }
 
-                ClipboardTriggersListView().Items().Clear();
+                clipboardTriggerViews.Clear();
                 ClipboadTriggersListPivot_Loaded(nullptr, nullptr);
 
                 return;
@@ -993,7 +1018,9 @@ namespace winrt::ClipboardManager::implementation
 
                 // Add text/clipboard content to history list:
                 auto view = make<ClipboardHistoryItemView>();
-                view.HostContent(box_value(itemText));
+                auto textBlock = xaml::TextBlock();
+                textBlock.Text(itemText);
+                view.HostContent(box_value(textBlock));
 
                 ClipboardHistoryListView().Items().InsertAt(0, view);
             });
