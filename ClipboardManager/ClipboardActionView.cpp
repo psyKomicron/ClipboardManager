@@ -222,9 +222,9 @@ namespace winrt::ClipboardManager::implementation
         if (actions.size() == 1)
         {
             win::DataPackage dataPackage{};
-            auto text = std::wstring(_text);
-            dataPackage.SetText(std::vformat(actions[0].format(), std::make_wformat_args(text)));
+            dataPackage.SetText(actions[0].formatTrigger(std::wstring(_text)));
             dataPackage.Properties().ApplicationName(L"ClipboardManager");
+
             win::Clipboard::SetContent(dataPackage);
         }
     }
@@ -307,9 +307,8 @@ namespace winrt::ClipboardManager::implementation
         hyperlinkButton.Tag(box_value(trigger.label()));
         hyperlinkButton.Click({ this, &ClipboardActionView::HyperlinkButton_Click });
 
-        ui::ToolTipService::SetToolTip(hyperlinkButton, box_value(std::vformat(trigger.format(), std::make_wformat_args(_text))));
+        ui::ToolTipService::SetToolTip(hyperlinkButton, box_value(trigger.formatTrigger(std::wstring(_text))));
 
-        //TriggersGridView().Items().Append(hyperlinkButton);
         TriggersGridView().Items().InsertAt(0, hyperlinkButton);
     }
 }
