@@ -25,9 +25,12 @@ namespace winrt::ClipboardManager::implementation
 
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> Actions();
         void Actions(const winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView>& value);
+        winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionEditor> ClipboardTriggers();
+        void ClipboardTriggers(const winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionEditor>& value);
 
         void AppClosing();
         void UpdateTitleBar();
+        void EXITSIZEMOVE();
 
         void Page_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e);
         winrt::async Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
@@ -60,6 +63,8 @@ namespace winrt::ClipboardManager::implementation
         const clip::ui::VisualState<MainPage> quickSettingsOpenState{ L"QuickSettingsOpen", 3, false };
         const clip::ui::VisualState<MainPage> normalWindowState{ L"NormalWindow", 4, true };
         const clip::ui::VisualState<MainPage> overlayWindowState{ L"OverlayWindow", 4, false };
+        const clip::ui::VisualState<MainPage> under1kState{ L"Under1000", 5, true };
+        const clip::ui::VisualState<MainPage> over1kState{ L"Over1000", 5, false };
 
         winrt::Microsoft::UI::Windowing::AppWindow appWindow{ nullptr };
         bool loaded = false;
@@ -69,6 +74,7 @@ namespace winrt::ClipboardManager::implementation
         clip::HotKey activationHotKey{ MOD_ALT, L' ' };
         std::vector<clip::ClipboardTrigger> triggers{};
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
+        winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionEditor> clipboardTriggerViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionEditor>();
         size_t teachingTipIndex = 0;
         winrt::event_token clipboardContentChangedToken{};
         clip::utils::ResLoader resLoader{};

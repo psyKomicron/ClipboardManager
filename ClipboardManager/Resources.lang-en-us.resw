@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ActionEnabledToggleSwitch.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Enable/disable trigger</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
   <data name="ActionEnabledToggleSwitchTeachingTip.Subtitle" xml:space="preserve">
     <value>Enable or disable the trigger. A disabled trigger will not be used in any action</value>
     <comment>Teaching tips</comment>
@@ -289,6 +293,10 @@
     <value>Edit</value>
     <comment>ClipboardActionView</comment>
   </data>
+  <data name="EditButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Edit</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
   <data name="EditButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Open a dialog to edit this trigger</value>
     <comment>Teaching tips</comment>
@@ -394,6 +402,10 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="IgnoreCaseHostControl.Header" xml:space="preserve">
     <value>Ignore case</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="IgnoreCaseTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ignore case</value>
+    <comment>ClipboardActionEditor</comment>
   </data>
   <data name="ImportClipboardHistoryHostControl.Header" xml:space="preserve">
     <value>Import clipboard</value>
@@ -571,6 +583,10 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Remove</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="RemoveButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
   <data name="RemoveButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Remove and delete trigger</value>
     <comment>Teaching tips</comment>
@@ -692,9 +708,17 @@ If you are using multiple placeholders '{}' index them (ex: {0}...{0}).</value>
     <value>Triggers XML example</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="UseRegexMatchResultsTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Use regex match results</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
   <data name="UserFileHostControl.Header" xml:space="preserve">
     <value>Triggers file</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="UseSearchFontIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Use search</value>
+    <comment>ClipboardActionEditor</comment>
   </data>
   <data name="ViewActionsInfoBar.Message" xml:space="preserve">
     <value>You can view your triggers in the clipboard triggers page.</value>

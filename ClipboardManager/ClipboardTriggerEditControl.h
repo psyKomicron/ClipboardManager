@@ -15,18 +15,16 @@ namespace winrt::ClipboardManager::implementation
 
         winrt::hstring TriggerLabel() const;
         void TriggerLabel(const winrt::hstring& value);
-
         winrt::hstring TriggerFormat() const;
         void TriggerFormat(const winrt::hstring& value);
-
         winrt::hstring TriggerRegex() const;
         void TriggerRegex(const winrt::hstring& value);
-
         bool IgnoreCase() const;
         void IgnoreCase(const bool& value);
-
         bool UseSearch() const;
         void UseSearch(const bool& value);
+        bool UseRegexMatchResults() const;
+        void UseRegexMatchResults(const bool& value);
 
         winrt::Windows::Foundation::IAsyncOperation<bool> Edit();
 
@@ -34,7 +32,7 @@ namespace winrt::ClipboardManager::implementation
         void EditDialog_Opened(winrt::Microsoft::UI::Xaml::Controls::ContentDialog const& sender, winrt::Microsoft::UI::Xaml::Controls::ContentDialogOpenedEventArgs const& args);
 
     private:
-        clip::utils::ResLoader resLoader{};
+        static clip::utils::ResLoader resLoader;
         clip::utils::Logger logger{ L"ClipboardTriggerEditControl" };
 
         clip::ui::VisualStateManager<ClipboardTriggerEditControl> visualStateManager{ *this };
@@ -54,6 +52,7 @@ namespace winrt::ClipboardManager::implementation
         clip::ui::ListenablePropertyValue<hstring> _triggerRegex{ std::bind(&ClipboardTriggerEditControl::raisePropertyChanged, this, std::placeholders::_1) };
         clip::ui::ListenablePropertyValue<bool> _ignoreCase{ std::bind(&ClipboardTriggerEditControl::raisePropertyChanged, this, std::placeholders::_1) };
         clip::ui::ListenablePropertyValue<bool> _useSearch{ std::bind(&ClipboardTriggerEditControl::raisePropertyChanged, this, std::placeholders::_1) };
+        clip::ui::ListenablePropertyValue<bool> _useRegexMatchResults{ std::bind(&ClipboardTriggerEditControl::raisePropertyChanged, this, std::placeholders::_1) };
 
         // Inherited via PropertyChangedClass
         winrt::Windows::Foundation::IInspectable asInspectable() override;

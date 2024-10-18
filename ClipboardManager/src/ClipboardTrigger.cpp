@@ -39,6 +39,31 @@ namespace clip
     {
     }
 
+    ClipboardTrigger::ClipboardTrigger(boost::property_tree::wptree& node)
+    {
+        _label = node.get_child(L"label").data();
+        _enabled = node.get_child(L"enabled").data().compare(L"true") == 0;
+
+        auto&& formatNode = node.get_child(L"format");
+        _format = formatNode.data();
+        auto&& useRegexMatchResultsAttribute = formatNode.get_child_optional(L"<xmlattr>.useRegexMatchResults");
+        _useRegexMatchResults = useRegexMatchResultsAttribute.has_value() && useRegexMatchResultsAttribute.value().get_value(false);
+
+        auto&& regexNode = node.get_child(L"re");
+        auto&& ignoreCaseAttribute = regexNode.get_child_optional(L"<xmlattr>.ignoreCase");
+        auto&& modeAttribute = regexNode.get_child_optional(L"<xmlattr>.mode");
+        
+        bool ignoreCase = ignoreCaseAttribute.has_value() && ignoreCaseAttribute.value().get_value(false);
+        auto flags = ignoreCase ? boost::regex_constants::icase : boost::regex_constants::normal;
+        _regex = boost::wregex(regexNode.data(), flags);
+
+        if (modeAttribute.has_value())
+        {
+            bool useSearch = modeAttribute.get().data() == L"search";
+            _matchMode = useSearch ? MatchMode::Search : MatchMode::Match;
+        }
+    }
+
     std::vector<ClipboardTrigger> ClipboardTrigger::loadClipboardTriggers(const std::filesystem::path& userFilePath)
     {
         if (utils::pathExists(userFilePath))
@@ -53,28 +78,8 @@ namespace clip
                 for (auto&& child : tree.get_child(L"settings.triggers"))
                 {
                     auto&& node = child.second;
-                    auto&& url = node.get_child(L"format").data();
-                    auto&& label = node.get_child(L"label").data();
-                    auto&& enabled = node.get_child(L"enabled").data().compare(L"true") == 0;
 
-                    auto&& regexNode = node.get_child(L"re");
-                    auto&& ignoreCaseAttribute = regexNode.get_child_optional(L"<xmlattr>.ignoreCase");
-                    auto&& modeAttribute = regexNode.get_child_optional(L"<xmlattr>.mode");
-
-                    bool ignoreCase = ignoreCaseAttribute.has_value() && (ignoreCaseAttribute.get().data() == L"1" || ignoreCaseAttribute.get().data() == L"true");
-                    auto flags = ignoreCase ? boost::regex_constants::icase : boost::regex_constants::normal;
-                    
-                    std::optional<MatchMode> triggerMatchMode{};
-                    if (modeAttribute.has_value())
-                    {
-                        bool useSearch = modeAttribute.get().data() == L"search";
-                        triggerMatchMode = useSearch ? MatchMode::Search : MatchMode::Match;
-                    }
-                
-                    auto clipboardTrigger = ClipboardTrigger(label, url, boost::wregex(regexNode.data(), flags), enabled);
-                    clipboardTrigger._matchMode = triggerMatchMode;
-
-                    urls.push_back(std::move(clipboardTrigger));
+                    urls.push_back(std::move(ClipboardTrigger(node)));
                 }
             }
             catch (const boost::property_tree::xml_parser_error& parserError)
@@ -109,22 +114,12 @@ namespace clip
             if (settingsNode.has_value())
             {
                 settingsNode.value().erase(L"triggers");
-            
                 auto&& triggersNode = tree.put(L"settings.triggers", L"");
 
                 for (auto&& trigger : triggersList)
                 {
                     auto&& triggerNode = triggersNode.add(L"trigger", L"");
-
-                    auto&& re = triggerNode.add(L"re", trigger.regex().str());
-
-                    auto flags = trigger._regex.flags();
-                    re.add(L"<xmlattr>.ignoreCase", ((flags & boost::regex_constants::icase) == boost::regex_constants::icase ? L"true" : L"false"));
-                    re.add(L"<xmlattr>.mode", (trigger._matchMode == MatchMode::Match ? L"match" : L"search"));
-
-                    triggerNode.add(L"format", trigger.format());
-                    triggerNode.add(L"label", trigger.label());
-                    triggerNode.add(L"enabled", trigger.enabled());
+                    trigger.save(triggerNode);
                 }
 
                 boost::property_tree::write_xml(userFilePath.string(), tree);
@@ -196,6 +191,17 @@ namespace clip
         return _matchMode;
     }
 
+    bool ClipboardTrigger::useRegexMatchResults() const
+    {
+        return _useRegexMatchResults;
+    }
+
+    void ClipboardTrigger::useRegexMatchResults(const bool& value)
+    {
+        _useRegexMatchResults = value;
+    }
+
+
     void ClipboardTrigger::updateMatchMode(const MatchMode& mode)
     {
         _matchMode = mode;
@@ -211,13 +217,39 @@ namespace clip
             || (matchMode == MatchMode::Search && boost::regex_search(string, _regex));
     }
 
-    void ClipboardTrigger::checkFormat()
+    void ClipboardTrigger::checkFormat() const
     {
         auto optional = checkFormat(_format);
         if (optional.has_value())
         {
             throw optional.value();
         }
+    }
+
+    std::wstring ClipboardTrigger::formatTrigger(const std::wstring_view& stringView) const
+    {
+        if (_useRegexMatchResults)
+        {
+            bool result = false;
+            boost::wcmatch matchResults{};
+
+            if (_matchMode.value_or(MatchMode::Match) == MatchMode::Match)
+            {
+                result = boost::regex_match(stringView.data(), matchResults, _regex);
+            }
+            else
+            {
+                result = boost::regex_search(stringView.data(), matchResults, _regex);
+            }
+
+            if (result && matchResults.size() > 1)
+            {
+                auto str = matchResults[1].str();
+                return std::vformat(_format, std::make_wformat_args(str));
+            }
+        }
+
+        return std::vformat(_format, std::make_wformat_args(stringView));
     }
 
     bool ClipboardTrigger::operator==(ClipboardTrigger& other)
@@ -240,7 +272,7 @@ namespace clip
         boost::property_tree::write_xml(path.string(), tree);
     }
 
-    std::optional<ClipboardTriggerFormatException> ClipboardTrigger::checkFormat(const std::wstring& format)
+    std::optional<ClipboardTriggerFormatException> ClipboardTrigger::checkFormat(const std::wstring& format) const
     {
         if (format.empty())
         {
@@ -321,5 +353,19 @@ namespace clip
         }
 
         return {};
+    }
+
+    void ClipboardTrigger::save(boost::property_tree::wptree& triggerNode) const
+    {
+        triggerNode.add(L"label", _label);
+        triggerNode.add(L"enabled", _enabled);
+
+        auto flags = _regex.flags();
+        auto&& reNode = triggerNode.add(L"re", _regex.str());
+        reNode.add(L"<xmlattr>.ignoreCase", ((flags & boost::regex_constants::icase) == boost::regex_constants::icase ? L"true" : L"false"));
+        reNode.add(L"<xmlattr>.mode", (_matchMode == MatchMode::Match ? L"match" : L"search"));
+
+        auto&& formatNode = triggerNode.add(L"format", _format);
+        formatNode.add(L"<xmlattr>.useRegexMatchResults", _useRegexMatchResults);
     }
 }

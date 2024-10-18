@@ -279,6 +279,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
+        case WM_EXITSIZEMOVE:
+        {
+            auto&& mainPage = windowInfo->desktopWinXamlSrc.Content().try_as<winrt::ClipboardManager::MainPage>();
+            if (mainPage)
+            {
+                mainPage.EXITSIZEMOVE();
+            }
+
+            break;
+        }
+
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
     }
