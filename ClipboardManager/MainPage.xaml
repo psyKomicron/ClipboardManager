@@ -110,9 +110,15 @@
                     <VisualState.Setters>
                         <Setter Target="ClipboardTriggersListView.Layout">
                             <Setter.Value>
-                                <UniformGridLayout ItemsJustification="Start" MinItemHeight="210" MinItemWidth="450" MinColumnSpacing="5" MinRowSpacing="5"/>
+                                <UniformGridLayout 
+                                    ItemsJustification="Center" 
+                                    MinItemHeight="210" 
+                                    MinItemWidth="450" 
+                                    MinColumnSpacing="5" 
+                                    MinRowSpacing="5"/>
                             </Setter.Value>
                         </Setter>
+                        <Setter Target="ClipboardTriggersListView.HorizontalAlignment" Value="Center"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

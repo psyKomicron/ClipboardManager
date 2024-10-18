@@ -546,7 +546,8 @@ namespace winrt::ClipboardManager::implementation
                     uint32_t pos = 0;
                     if (clipboardItem.IndexOf(pos, label))
                     {
-                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), action.enabled());
+                        clipboardItem.EditAction(pos, action.label(), action.format(), 
+                                                 action.regex().str(), action.enabled(), action.useRegexMatchResults());
                     }
                 }
 
@@ -583,7 +584,7 @@ namespace winrt::ClipboardManager::implementation
                     uint32_t pos = 0;
                     if (clipboardItem.IndexOf(pos, action.label()))
                     {
-                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), action.enabled());
+                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), action.enabled(), action.useRegexMatchResults());
                     }
                 }
 

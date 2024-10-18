@@ -29,7 +29,8 @@ namespace winrt::ClipboardManager::implementation
         void AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled);
         void AddActions(const winrt::Windows::Foundation::IInspectable& inspectable);
         void AddActions(const actions_t actions);
-        void EditAction(const uint32_t& pos, const winrt::hstring& label, const winrt::hstring& format, const winrt::hstring& regex, const bool& enabled);
+        void EditAction(const uint32_t& pos, const winrt::hstring& label, const winrt::hstring& format, 
+                        const winrt::hstring& regex, const bool& enabled, const bool& useRegexMatchResults);
         bool IndexOf(uint32_t& pos, const winrt::hstring& label);
 
         winrt::async StartTour();

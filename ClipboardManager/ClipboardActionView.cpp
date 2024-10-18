@@ -119,7 +119,8 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    void ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hstring& _label, const winrt::hstring& _format, const winrt::hstring& _regex, const bool& _enabled)
+    void ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hstring& _label, const winrt::hstring& _format, 
+                                         const winrt::hstring& _regex, const bool& _enabled, const bool& useRegexMatchResults)
     {
         auto label = std::wstring(_label);
         auto format = std::wstring(_format);
@@ -130,6 +131,7 @@ namespace winrt::ClipboardManager::implementation
         action.format(format);
         action.label(label);
         action.regex(boost::wregex(regexString));
+        action.useRegexMatchResults(useRegexMatchResults);
 
         // Reload triggers:
         for (uint32_t i = 0; i < TriggersGridView().Items().Size(); i++)
@@ -138,7 +140,7 @@ namespace winrt::ClipboardManager::implementation
             if (button && button.Content().as<hstring>() == oldLabel)
             {
                 button.Content(box_value(_label));
-                ui::ToolTipService::SetToolTip(button, box_value(std::vformat(_format, std::make_wformat_args(_text))));
+                ui::ToolTipService::SetToolTip(button, box_value(action.formatTrigger(_text)));
 
                 break;
             }
@@ -222,7 +224,7 @@ namespace winrt::ClipboardManager::implementation
         if (actions.size() == 1)
         {
             win::DataPackage dataPackage{};
-            dataPackage.SetText(actions[0].formatTrigger(std::wstring(_text)));
+            dataPackage.SetText(actions[0].formatTrigger(_text));
             dataPackage.Properties().ApplicationName(L"ClipboardManager");
 
             win::Clipboard::SetContent(dataPackage);
@@ -307,7 +309,7 @@ namespace winrt::ClipboardManager::implementation
         hyperlinkButton.Tag(box_value(trigger.label()));
         hyperlinkButton.Click({ this, &ClipboardActionView::HyperlinkButton_Click });
 
-        ui::ToolTipService::SetToolTip(hyperlinkButton, box_value(trigger.formatTrigger(std::wstring(_text))));
+        ui::ToolTipService::SetToolTip(hyperlinkButton, box_value(trigger.formatTrigger(_text)));
 
         TriggersGridView().Items().InsertAt(0, hyperlinkButton);
     }

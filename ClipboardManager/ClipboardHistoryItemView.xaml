@@ -15,11 +15,6 @@
         BorderThickness="1" 
         Padding="7,5" 
         Margin="0,3,0,3">
-        <Grid.Transitions>
-            <TransitionCollection>
-                <RepositionThemeTransition/>
-            </TransitionCollection>
-        </Grid.Transitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>

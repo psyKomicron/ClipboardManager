@@ -226,7 +226,7 @@ namespace clip
         }
     }
 
-    std::wstring ClipboardTrigger::formatTrigger(const std::wstring& text) const
+    std::wstring ClipboardTrigger::formatTrigger(const std::wstring_view& stringView) const
     {
         if (_useRegexMatchResults)
         {
@@ -235,11 +235,11 @@ namespace clip
 
             if (_matchMode.value_or(MatchMode::Match) == MatchMode::Match)
             {
-                result = boost::regex_match(text.c_str(), matchResults, _regex);
+                result = boost::regex_match(stringView.data(), matchResults, _regex);
             }
             else
             {
-                result = boost::regex_search(text.c_str(), matchResults, _regex);
+                result = boost::regex_search(stringView.data(), matchResults, _regex);
             }
 
             if (result && matchResults.size() > 1)
@@ -249,7 +249,7 @@ namespace clip
             }
         }
 
-        return std::vformat(_format, std::make_wformat_args(text));
+        return std::vformat(_format, std::make_wformat_args(stringView));
     }
 
     bool ClipboardTrigger::operator==(ClipboardTrigger& other)
