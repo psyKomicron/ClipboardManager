@@ -7,6 +7,7 @@
 #include "src/notifs/ToastNotificationHandler.hpp"
 #include "src/utils/ResLoader.hpp"
 #include "src/ui/VisualStateManager.hpp"
+#include "src/FileWatcher.hpp"
 
 #include <winrt/Windows.Media.Ocr.h>
 #include <winrt/Windows.Storage.Streams.h>
@@ -66,23 +67,25 @@ namespace winrt::ClipboardManager::implementation
         const clip::ui::VisualState<MainPage> under1kState{ L"Under1000", 5, true };
         const clip::ui::VisualState<MainPage> over1kState{ L"Over1000", 5, false };
 
-        winrt::Microsoft::UI::Windowing::AppWindow appWindow{ nullptr };
         bool loaded = false;
-        clip::ui::VisualStateManager<MainPage> visualStateManager{ *this };
+        size_t teachingTipIndex = 0;
         clip::Settings localSettings{};
-        clip::notifs::ToastNotificationHandler manager{};
+        clip::FileWatcher watcher{ std::bind(&MainPage::FileWatcher_Changed, this) };
         clip::HotKey activationHotKey{ MOD_ALT, L' ' };
+        clip::ui::VisualStateManager<MainPage> visualStateManager{ *this };
+        clip::notifs::ToastNotificationHandler manager{};
+        clip::utils::ResLoader resLoader{};
         std::vector<clip::ClipboardTrigger> triggers{};
+        winrt::Microsoft::UI::Windowing::AppWindow appWindow{ nullptr };
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionEditor> clipboardTriggerViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionEditor>();
-        size_t teachingTipIndex = 0;
         winrt::event_token clipboardContentChangedToken{};
-        clip::utils::ResLoader resLoader{};
 
         winrt::async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
         void Editor_Toggled(const winrt::ClipboardManager::ClipboardActionEditor& sender, const bool& isOn);
         void Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const Windows::Foundation::IInspectable& oldFormat);
         void Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel);
+        void FileWatcher_Changed();
 
         void Restore();
         void AddAction(const std::wstring& text, const bool& notify);
