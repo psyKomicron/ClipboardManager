@@ -173,6 +173,7 @@
       <DependentUpon>MessagesBar.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="src\murmur\MurmurHash3.hpp" />
     <ClInclude Include="src\utils\AppVersion.hpp" />
     <ClInclude Include="ClipboardActionEditor.h">
       <DependentUpon>ClipboardActionEditor.xaml</DependentUpon>
@@ -209,7 +210,7 @@
       <DependentUpon>ClipboardActionView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="src\DirectoryWatcher.hpp" />
+    <ClInclude Include="src\FileWatcher.hpp" />
     <ClInclude Include="MainPage.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -273,7 +274,7 @@
       <DependentUpon>ClipboardActionView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="src\DirectoryWatcher.cpp" />
+    <ClCompile Include="src\FileWatcher.cpp" />
     <ClCompile Include="MainPage.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>

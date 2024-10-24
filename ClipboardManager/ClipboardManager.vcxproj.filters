@@ -36,7 +36,7 @@
     <ClInclude Include="src\Settings.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\DirectoryWatcher.hpp">
+    <ClInclude Include="src\FileWatcher.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ClipboardTrigger.hpp">
@@ -97,6 +97,9 @@
     <ClInclude Include="src\utils\com_closable_ptr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\murmur\MurmurHash3.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ClipboardManager.cpp">
@@ -111,7 +114,7 @@
     <ClCompile Include="src\utils\helpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\DirectoryWatcher.cpp">
+    <ClCompile Include="src\FileWatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ClipboardTrigger.cpp">
