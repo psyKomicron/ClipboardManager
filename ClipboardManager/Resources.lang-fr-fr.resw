@@ -744,4 +744,8 @@ Si vous utilisez plusieurs fois {} indexez les (ex: {0}....{0}).</value>
     <value>Supprimer</value>
     <comment>ClipboardActionEditor</comment>
   </data>
+  <data name="EnableFileWatchingHostControl.Header" xml:space="preserve">
+    <value>Activer la surveillance du fichier</value>
+    <comment>SettingsPage</comment>
+  </data>
 </root>
