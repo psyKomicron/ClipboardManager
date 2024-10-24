@@ -286,6 +286,11 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
+    void SettingsPage::EnableFileWatchingToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, xaml::RoutedEventArgs const&)
+    {
+        updateSetting(sender, L"EnableTriggerFileWatching");
+    }
+
 
     void SettingsPage::updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key)
     {

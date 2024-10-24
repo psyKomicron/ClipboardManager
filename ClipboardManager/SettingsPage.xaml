@@ -274,6 +274,12 @@
             <!--#region Storage -->
             <TextBlock x:Uid="HeaderStorageTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
 
+            <clip:HostControl x:Uid="EnableFileWatchingHostControl" Background="{ThemeResource ExpanderHeaderBackground}">
+                <clip:HostControl.HostContent>
+                    <ToggleSwitch x:Name="EnableFileWatchingToggleSwitch" Toggled="EnableFileWatchingToggleSwitch_Toggled" Style="{StaticResource FlippedToggleSwitchStyle}"/>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
+            
             <clip:HostControl x:Uid="UserFileHostControl" Background="{ThemeResource ExpanderHeaderBackground}">
                 <clip:HostControl.HostContent>
                     <Button x:Uid="LocateButton" Click="LocateButton_Clicked"/>
