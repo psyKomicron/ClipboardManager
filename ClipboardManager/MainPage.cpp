@@ -529,6 +529,7 @@ namespace winrt::ClipboardManager::implementation
             view.ActionRegex(regex.str());
             view.UseSearch(useSearch);
             view.ActionEnabled(true);
+            view.UseRegexMatchResults(useRegexMatchResults);
 
             clipboardTriggerViews.Append(view);
         }
@@ -814,8 +815,7 @@ namespace winrt::ClipboardManager::implementation
             notif.addText(std::wstring(resLoader.getOrAlt(L"ToastNotification_TooManyButtons",
                                                           L"Too many triggers matched, open the app to activate the action of your choice")));
 
-            notif.addButton(std::wstring(resLoader.getOrAlt(L"ToastNotification_OpenApp", L"Open app")), 
-                            L"action=focus");
+            notif.addButton(std::wstring(resLoader.getOrAlt(L"ToastNotification_OpenApp", L"Open app")), L"");
         }
         else
         {
