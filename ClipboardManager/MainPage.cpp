@@ -243,7 +243,25 @@ namespace winrt::ClipboardManager::implementation
             }
         });
 
-        co_return;
+        co_await winrt::resume_background();
+
+        try
+        {
+            auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
+            if (userFilePath.has_value() && localSettings.get<bool>(L"EnableTriggerFileWatching").value_or(false))
+            {
+                watcher.startWatching(userFilePath.value());
+            }
+        }
+        catch (std::wstring message)
+        {
+            logger.error(message);
+        }
+        catch (std::invalid_argument invalidArg)
+        {
+            // Path doesn't exist.
+            logger.error(L"Path '" + watcher.path().wstring() + L"' doesn't exist.");
+        }
     }
 
     void MainPage::ClipboadTriggersListPivot_Loaded(win::IInspectable const&, win::IInspectable const&)
@@ -554,6 +572,14 @@ namespace winrt::ClipboardManager::implementation
                 break;
             }
         }
+    }
+
+    void MainPage::FileWatcher_Changed()
+    {
+        DispatcherQueue().TryEnqueue([&]()
+        {
+            ReloadTriggers();
+        });
     }
 
     void MainPage::Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const Windows::Foundation::IInspectable& inspectable)
@@ -870,21 +896,21 @@ namespace winrt::ClipboardManager::implementation
 
             if (showError)
             {
+                // I18N:
                 MessagesBar().Add(L"Invalid trigger",
                                   L"One or more triggers have invalid data, check the triggers page for more information. Invalid triggers:" + invalidTriggers,
                                   xaml::InfoBarSeverity::Error);
             }
             else
             {
-                visualStateManager.goToState(triggers.empty()
-                                             ? noClipboardTriggersToDisplayState
-                                             : displayClipboardTriggersState);
+                visualStateManager.goToState(triggers.empty() ? noClipboardTriggersToDisplayState : displayClipboardTriggersState);
             }
 
             return true;
         }
         catch (clip::ClipboardTriggerFormatException formatExcept)
         {
+            // I18N:
             MessagesBar().AddError(L"", L"One trigger doesn't respect the valid format syntax.");
 
             triggers.clear();
@@ -946,6 +972,7 @@ namespace winrt::ClipboardManager::implementation
                 // I18N: Failed to launch url: '{}'
                 DispatcherQueue().TryEnqueue([this, url]()
                 {
+                    // I18N:
                     MessagesBar().AddError(L"", L"Failed to launch url: '" + url + L"'.");
                 });
             }

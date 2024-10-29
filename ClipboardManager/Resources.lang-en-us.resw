@@ -313,6 +313,10 @@
     <value>Cancel</value>
     <comment>ClipboardActionEditor</comment>
   </data>
+  <data name="EnableFileWatchingHostControl.Header" xml:space="preserve">
+    <value>Enable file watching</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="ErrorMessage_CannotSaveTriggersFileNotFound" xml:space="preserve">
     <value>Failed to save triggers file.</value>
     <comment>Error message</comment>
