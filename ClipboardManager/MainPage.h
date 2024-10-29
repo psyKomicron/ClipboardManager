@@ -14,7 +14,6 @@
 
 #include <vector>
 #include <filesystem>
-#include <mutex>
 
 namespace winrt::ClipboardManager::implementation
 {
@@ -31,7 +30,6 @@ namespace winrt::ClipboardManager::implementation
 
         void AppClosing();
         void UpdateTitleBar();
-        void EXITSIZEMOVE();
 
         void Page_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e);
         winrt::async Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
@@ -39,6 +37,7 @@ namespace winrt::ClipboardManager::implementation
         winrt::async CreateUserFileButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void ClipboadTriggersListPivot_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
         winrt::async Page_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        winrt::async ClipboardHistoryListView_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
         void StartTourButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::async TeachingTip_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
         winrt::async TeachingTip2_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
@@ -68,6 +67,7 @@ namespace winrt::ClipboardManager::implementation
         const clip::ui::VisualState<MainPage> over1kState{ L"Over1000", 5, false };
 
         bool loaded = false;
+        bool updated = false;
         size_t teachingTipIndex = 0;
         clip::Settings localSettings{};
         clip::FileWatcher watcher{ std::bind(&MainPage::FileWatcher_Changed, this) };
@@ -97,6 +97,7 @@ namespace winrt::ClipboardManager::implementation
         winrt::async LoadClipboardHistory();
         Windows::Foundation::IAsyncOperation<Windows::Media::Ocr::OcrResult> RunOcr(Windows::Storage::Streams::IRandomAccessStreamWithContentType& bitmapStream);
         winrt::async AddClipboardItem(Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers);
+        void LoadUserFile(const std::filesystem::path& path);
     };
 }
 

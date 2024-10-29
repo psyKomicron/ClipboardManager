@@ -14,6 +14,5 @@ namespace ClipboardManager
 
         void AppClosing();
         void UpdateTitleBar();
-        void EXITSIZEMOVE();
     }
 }

@@ -57,7 +57,6 @@
                     <VisualState.Setters>
                         <Setter Target="ClipboardTriggersListView.Visibility" Value="Collapsed"/>
                         <Setter Target="NoClipboardTriggersTextBlock.Visibility" Value="Visible"/>
-                        <!--<Setter Target="ListView.Visibility" Value="Collapsed"/>-->
                         <Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>
                         <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>
                     </VisualState.Setters>
@@ -171,7 +170,7 @@
                     <FontIcon x:Name="ClipboardHistoryPivot" Glyph="&#xe823;" FontSize="16"/>
                 </PivotItem.Header>
 
-                <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="0" Padding="0">
+                <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="0" Padding="0" Loading="ClipboardHistoryListView_Loading">
                     <ListView.Resources>
                         <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                             <Setter Property="Padding" Value="4,0,4,0" />
