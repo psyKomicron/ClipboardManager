@@ -291,6 +291,11 @@ namespace winrt::ClipboardManager::implementation
         updateSetting(sender, L"EnableTriggerFileWatching");
     }
 
+    void SettingsPage::EnableOCRToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, xaml::RoutedEventArgs const&)
+    {
+        updateSetting(sender, L"EnableOCR");
+    }
+
 
     void SettingsPage::updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key)
     {
