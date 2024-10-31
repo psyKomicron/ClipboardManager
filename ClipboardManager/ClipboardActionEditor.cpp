@@ -85,7 +85,7 @@ namespace winrt::ClipboardManager::implementation
     {
         _actionEnabledProperty.set(value);
 
-        visualStateManager.goToEnabledState(_actionEnabledProperty.get());
+        visualStateManager.goToStateEnabled(_actionEnabledProperty.get());
         e_enabled(*this, _actionEnabledProperty.get());
     }
 
@@ -227,7 +227,7 @@ namespace winrt::ClipboardManager::implementation
     {
         loaded = true;
 
-        visualStateManager.goToEnabledState(_actionEnabledProperty.get());
+        visualStateManager.goToStateEnabled(_actionEnabledProperty.get());
 
         // Check if the associated trigger is valid.
         auto trigger = clip::ClipboardTrigger(

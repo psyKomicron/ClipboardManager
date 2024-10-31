@@ -226,20 +226,20 @@ namespace clip
         }
     }
 
-    std::wstring ClipboardTrigger::formatTrigger(const std::wstring_view& stringView) const
+    std::wstring ClipboardTrigger::formatTrigger(const std::wstring& string) const
     {
         if (_useRegexMatchResults)
         {
             bool result = false;
-            boost::wcmatch matchResults{};
+            boost::wsmatch matchResults{};
 
             if (_matchMode.value_or(MatchMode::Match) == MatchMode::Match)
             {
-                result = boost::regex_match(stringView.data(), matchResults, _regex);
+                result = boost::regex_match(string, matchResults, _regex);
             }
             else
             {
-                result = boost::regex_search(stringView.data(), matchResults, _regex);
+                result = boost::regex_search(string, matchResults, _regex);
             }
 
             if (result && matchResults.size() > 1)
@@ -247,9 +247,13 @@ namespace clip
                 auto str = matchResults[1].str();
                 return std::vformat(_format, std::make_wformat_args(str));
             }
+
+#ifdef _DEBUG
+            logger.info(L"Failed to format string with regex match results.");
+#endif
         }
 
-        return std::vformat(_format, std::make_wformat_args(stringView));
+        return std::vformat(_format, std::make_wformat_args(string));
     }
 
     bool ClipboardTrigger::operator==(ClipboardTrigger& other)

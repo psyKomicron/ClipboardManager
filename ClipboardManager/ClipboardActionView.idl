@@ -11,7 +11,6 @@ namespace ClipboardManager
         event Windows.Foundation.TypedEventHandler<ClipboardActionView, IInspectable> Removed;
 
         void AddAction(String format, String label, String regex, Boolean enabled);
-        void AddActions(IInspectable actions);
         void EditAction(UInt32 pos, String format, String label, String regex, Boolean enabled, Boolean useRegexMatchResults);
         Boolean IndexOf(out UInt32 pos, String label);
 

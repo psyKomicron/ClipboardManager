@@ -14,8 +14,6 @@
 #define IDR_MAINFRAME                   128
 #define IDC_STATIC                      -1
 
-#define APP_VERSION                     L"1.2.0"
-
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED

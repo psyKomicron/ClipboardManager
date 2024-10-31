@@ -57,8 +57,9 @@ namespace winrt::ClipboardManager::implementation
         const clip::ui::VisualState<MainPage> viewActionsState{ L"ViewActions", 0, false };
         const clip::ui::VisualState<MainPage> displayClipboardTriggersState{ L"DisplayClipboardTriggers", 1, false };
         const clip::ui::VisualState<MainPage> noClipboardTriggersToDisplayState{ L"NoClipboardTriggersToDisplay", 1, false };
-        const clip::ui::VisualState<MainPage> firstStartupState{ L"FirstStartup", 2, false };
         const clip::ui::VisualState<MainPage> normalStartupState{ L"NormalStartup", 2, true };
+        const clip::ui::VisualState<MainPage> firstStartupState{ L"FirstStartup", 2, false };
+        const clip::ui::VisualState<MainPage> applicationUpdatedState{ L"ApplicationUpdated", 2, false };
         const clip::ui::VisualState<MainPage> quickSettingsClosedState{ L"QuickSettingsClosed", 3, true };
         const clip::ui::VisualState<MainPage> quickSettingsOpenState{ L"QuickSettingsOpen", 3, false };
         const clip::ui::VisualState<MainPage> normalWindowState{ L"NormalWindow", 4, true };
@@ -97,7 +98,9 @@ namespace winrt::ClipboardManager::implementation
         winrt::async LoadClipboardHistory();
         Windows::Foundation::IAsyncOperation<Windows::Media::Ocr::OcrResult> RunOcr(Windows::Storage::Streams::IRandomAccessStreamWithContentType& bitmapStream);
         winrt::async AddClipboardItem(Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers);
-        void LoadUserFile(const std::filesystem::path& path);
+        bool LoadUserFile(const std::filesystem::path& path);
+        void CreateTriggerViews();
+
     };
 }
 
