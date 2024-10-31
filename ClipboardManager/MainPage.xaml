@@ -44,9 +44,13 @@
                 <VisualState x:Name="NormalStartup"/>
                 <VisualState x:Name="FirstStartup">
                     <VisualState.Setters>
-                        <Setter Target="StartTourInfoBar.Visibility" Value="Visible"/>
                         <Setter Target="StartTourInfoBar.IsOpen" Value="True"/>
                         <Setter Target="ListView.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="UpdatedStartup">
+                    <VisualState.Setters>
+                        <Setter Target="ApplicationUpdatedInfoBar.IsOpen" Value="True"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -57,7 +61,6 @@
                     <VisualState.Setters>
                         <Setter Target="ClipboardTriggersListView.Visibility" Value="Collapsed"/>
                         <Setter Target="NoClipboardTriggersTextBlock.Visibility" Value="Visible"/>
-                        <!--<Setter Target="ListView.Visibility" Value="Collapsed"/>-->
                         <Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>
                         <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>
                     </VisualState.Setters>
@@ -89,6 +92,37 @@
                             </DoubleAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState.Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup>
+                <VisualState x:Name="Under1000"/>
+                <VisualState x:Name="Over1000">
+                    <Storyboard>
+                        <DoubleAnimationUsingKeyFrames
+                            Storyboard.TargetName="ClipboardTriggersListView"
+                            Storyboard.TargetProperty="Opacity"
+                            EnableDependentAnimation="True">
+                            <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
+                            <DiscreteDoubleKeyFrame KeyTime="0:0:0.6" Value="0"/>
+                            <!--<DiscreteDoubleKeyFrame KeyTime="0:0:0.2" Value="0"/>-->
+                            <LinearDoubleKeyFrame KeyTime="0:0:1.3" Value="1"/>
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+
+                    <VisualState.Setters>
+                        <Setter Target="ClipboardTriggersListView.Layout">
+                            <Setter.Value>
+                                <UniformGridLayout 
+                                    ItemsJustification="Center" 
+                                    MinItemHeight="210" 
+                                    MinItemWidth="450" 
+                                    MinColumnSpacing="5" 
+                                    MinRowSpacing="5"/>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Target="ClipboardTriggersListView.HorizontalAlignment" Value="Center"/>
+                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
@@ -140,19 +174,28 @@
                     <FontIcon x:Name="ClipboardHistoryPivot" Glyph="&#xe823;" FontSize="16"/>
                 </PivotItem.Header>
 
-                <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="0"/>
+                <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="0" Padding="0" Loading="ClipboardHistoryListView_Loading">
+                    <ListView.Resources>
+                        <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                            <Setter Property="Padding" Value="4,0,4,0" />
+                        </Style>
+                    </ListView.Resources>
+                </ListView>
             </PivotItem>
 
             <PivotItem Padding="0" Margin="0" Loaded="ClipboadTriggersListPivot_Loaded">
                 <PivotItem.Header>
-                    <FontIcon x:Name="ClipboardTriggersPivot" Glyph="&#xf0e3;" FontSize="16"/>
+                    <FontIcon x:Name="ClipboardTriggersPivot" Glyph="&#xe945;" FontSize="16"/>
                 </PivotItem.Header>
 
-                <Grid>
+                <Grid x:Name="TriggersPivotGrid">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+                    <Grid.Transitions>
+                        <RepositionThemeTransition/>
+                    </Grid.Transitions>
 
                     <CommandBar Background="Transparent" DefaultLabelPosition="Right">
                         <AppBarButton 
@@ -182,14 +225,19 @@
                     </CommandBar>
 
                     <TextBlock x:Name="NoClipboardTriggersTextBlock" x:Uid="NoClipboardActionsTextBlock" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Opacity="0.8" Grid.Row="1" x:Load="False" Visibility="Collapsed"/>
-                    
-                    <ListView x:Name="ClipboardTriggersListView" Margin="0" Padding="0" SelectionMode="None" Grid.Row="1" AllowDrop="True" CanReorderItems="True" Visibility="Visible">
-                        <ListView.Resources>
-                            <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
-                                <Setter Property="Padding" Value="7,3,7,7" />
-                            </Style>
-                        </ListView.Resources>
-                    </ListView>
+
+                    <ScrollViewer Grid.Row="1" HorizontalAlignment="Stretch" Padding="4,4,4,7">
+                        <ScrollViewer.OpacityTransition>
+                            <ScalarTransition Duration="0:0:0.381"/>
+                        </ScrollViewer.OpacityTransition>
+                        <ItemsRepeater
+                            x:Name="ClipboardTriggersListView"
+                            ItemsSource="{x:Bind ClipboardTriggers}">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Orientation="Vertical" Spacing="7"/>
+                            </ItemsRepeater.Layout>
+                        </ItemsRepeater>
+                    </ScrollViewer>
 
                     <clip:RegexTesterControl x:Name="TestRegexContentDialog" Grid.RowSpan="2"/>
                     <clip:ClipboardTriggerEditControl x:Name="ClipboardTriggerEditControl" Grid.RowSpan="2"/>
@@ -224,12 +272,11 @@
                     </Grid.ChildrenTransitions>
 
                     <StackPanel Grid.Row="0" Spacing="3" HorizontalAlignment="Stretch" Orientation="Vertical">
-                        <InfoBar x:Name="NoClipboardActionsInfoBar"
+                        <InfoBar 
+                            x:Name="NoClipboardActionsInfoBar"
                             x:Uid="NoClipboardActionsInfoBar"
                             x:Load="False"
-                            Visibility="Collapsed"
-                            Severity="Error" 
-                            Grid.Row="0"
+                            Severity="Warning" 
                             IsClosable="False">
                             <InfoBar.Content>
                                 <Grid Padding="0,0,5,5" ColumnSpacing="10" ColumnDefinitions="1*,1*">
@@ -238,31 +285,41 @@
                                 </Grid>
                             </InfoBar.Content>
                         </InfoBar>
-                        
-                        <InfoBar x:Name="CreateActionsInfoBar"
+
+                        <InfoBar 
+                            x:Name="ApplicationUpdatedInfoBar"
+                            x:Uid="ApplicationUpdatedInfoBar"
+                            x:Load="False"
+                            Severity="Warning">
+                            <InfoBar.Content>
+                                <Grid Padding="0,0,5,5" ColumnSpacing="10" ColumnDefinitions="1*,1*">
+                                    <HyperlinkButton Grid.Column="0" x:Uid="LocateButton" HorizontalAlignment="Stretch" Click="LocateUserFileButton_Click"/>
+                                    <HyperlinkButton Grid.Column="1" x:Uid="CreateButton" HorizontalAlignment="Stretch" Click="CreateUserFileButton_Click"/>
+                                </Grid>
+                            </InfoBar.Content>
+                        </InfoBar>
+
+                        <InfoBar 
+                            x:Name="CreateActionsInfoBar"
                             x:Uid="OpenSaveFileInfoBar"
                             x:Load="False"
-                            Visibility="Collapsed"
-                            Severity="Success" 
-                            Grid.Row="0">
+                            Severity="Success">
                             <InfoBar.Content>
                                 <HyperlinkButton x:Uid="CreateActionsButton" IsEnabled="False" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5"/>
                             </InfoBar.Content>
                         </InfoBar>
 
-                        <InfoBar x:Name="ViewActionsInfoBar"
+                        <InfoBar 
+                            x:Name="ViewActionsInfoBar"
                             x:Uid="ViewActionsInfoBar"
                             x:Load="False"
-                            Visibility="Collapsed"
-                            Severity="Success" 
-                            Grid.Row="0"/>
+                            Severity="Success"/>
 
-                        <InfoBar x:Name="StartTourInfoBar"
-                                 x:Uid="StartTourInfoBar"
-                                 Visibility="Collapsed"
-                                 x:Load="False"
-                                 Severity="Informational"
-                                 Grid.Row="0">
+                        <InfoBar 
+                            x:Name="StartTourInfoBar"
+                            x:Uid="StartTourInfoBar"
+                            x:Load="False"
+                            Severity="Informational">
                             <InfoBar.Content>
                                 <Button x:Uid="StartTourButton" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5" Click="StartTourButton_Click"/>
                             </InfoBar.Content>

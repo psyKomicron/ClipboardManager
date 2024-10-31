@@ -29,7 +29,8 @@ namespace winrt::ClipboardManager::implementation
         void AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled);
         void AddActions(const winrt::Windows::Foundation::IInspectable& inspectable);
         void AddActions(const actions_t actions);
-        void EditAction(const uint32_t& pos, const winrt::hstring& label, const winrt::hstring& format, const winrt::hstring& regex, const bool& enabled);
+        void EditAction(const uint32_t& pos, const winrt::hstring& label, const winrt::hstring& format, 
+                        const winrt::hstring& regex, const bool& enabled, const bool& useRegexMatchResults);
         bool IndexOf(uint32_t& pos, const winrt::hstring& label);
 
         winrt::async StartTour();
@@ -59,7 +60,7 @@ namespace winrt::ClipboardManager::implementation
         std::atomic_flag teachingTipsWaitFlag{};
         clip::utils::Logger logger{ L"ClipboardActionView" };
         winrt::hstring _text{};
-        std::vector<clip::ClipboardTrigger> actions{};
+        std::vector<clip::ClipboardTrigger> triggers{};
         clip::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
 
         winrt::event<event_removed_t> e_removed{};

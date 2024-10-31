@@ -29,7 +29,6 @@ namespace clip
     {
         if (args.empty())
         {
-            // TODO: Call the "toast activated" callback.
             toastClickedCallback();
         }
         else

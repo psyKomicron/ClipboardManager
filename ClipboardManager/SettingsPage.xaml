@@ -212,6 +212,12 @@
                     <ToggleSwitch x:Name="ImportClipboardHistoryToggleSwitch" Toggled="ImportClipboardHistoryToggleSwitch_Toggled"/>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
+
+            <clip:HostControl x:Uid="EnableOCRHostControl">
+                <clip:HostControl.HostContent>
+                    <ToggleSwitch x:Name="EnableOCRToggleSwitch" Style="{StaticResource FlippedToggleSwitchStyle}" Toggled="EnableOCRToggleSwitch_Toggled"/>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
             <!--#endregion-->
 
 
@@ -274,97 +280,104 @@
             <!--#region Storage -->
             <TextBlock x:Uid="HeaderStorageTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
 
-            <Expander x:Uid="TriggersStorageExpander" Style="{StaticResource ExpanderListStyle}" Background="Transparent" Expanding="TriggersStorageExpander_Expanding">
-                <StackPanel>
-                    <clip:HostControl x:Uid="UserFileHostControl" Background="{ThemeResource ExpanderHeaderBackground}" CornerRadius="0">
-                        <clip:HostControl.HostContent>
-                            <Button x:Uid="LocateButton" Click="LocateButton_Clicked"/>
-                        </clip:HostControl.HostContent>
-                    </clip:HostControl>
+            <clip:HostControl x:Uid="EnableFileWatchingHostControl" Background="{ThemeResource ExpanderHeaderBackground}">
+                <clip:HostControl.HostContent>
+                    <ToggleSwitch x:Name="EnableFileWatchingToggleSwitch" Toggled="EnableFileWatchingToggleSwitch_Toggled" Style="{StaticResource FlippedToggleSwitchStyle}"/>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
+            
+            <clip:HostControl x:Uid="UserFileHostControl" Background="{ThemeResource ExpanderHeaderBackground}">
+                <clip:HostControl.HostContent>
+                    <Button x:Uid="LocateButton" Click="LocateButton_Clicked"/>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
 
-                    <clip:HostControl CornerRadius="0">
-                        <clip:HostControl.Header>
-                            <Grid RowSpacing="4" Padding="0,7">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock x:Uid="CreateExampleFileHostControl" Grid.Row="0"/>
-                                <TextBlock x:Name="UserFilePathTextBlock" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="1" Opacity="0.6"/>
-                            </Grid>
-                        </clip:HostControl.Header>
-                        <clip:HostControl.HostContent>
-                            <StackPanel Orientation="Horizontal" Spacing="3">
-                                <Button 
-                                    x:Uid="CreateExampleTriggersFileButtton" 
-                                    MinWidth="100"
-                                    Click="CreateExampleTriggersFileButton_Click"/>
-                                <Button 
-                                    x:Uid="OverwriteExampleTriggersFileButtton" 
-                                    MinWidth="100"
-                                    Click="OverwriteExampleTriggersFileButton_Click"/>
-                            </StackPanel>
-                        </clip:HostControl.HostContent>
-                    </clip:HostControl>
-
-                    <StackPanel Orientation="Vertical" Background="{ThemeResource ExpanderHeaderBackground}" CornerRadius="0,0,5,5" BorderThickness="1">
-                        <clip:HostControl x:Uid="TriggersXmlExampleHostControl" CornerRadius="0" BorderThickness="0" Background="Transparent"/>
-                        <StackPanel HorizontalAlignment="Stretch" Spacing="2" Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
-                            <Border Background="{ThemeResource ExpanderContentBackground}" Padding="7,10">
-                                <RichTextBlock FontFamily="Cascadia Code">
-                                    <Paragraph FontFamily="{StaticResource ContentControlThemeFontFamily}" Margin="10,0,0,10">Valid XML declaration</Paragraph>
-
-                                    <Paragraph Foreground="LightBlue">&lt;settings&gt;</Paragraph>
-                                    <Paragraph Foreground="LightBlue" TextIndent="20">&lt;triggers&gt;</Paragraph>
-
-                                    <Paragraph Foreground="LightBlue" TextIndent="40">&lt;trigger&gt;</Paragraph>
-
-                                    <Paragraph Foreground="LightBlue" TextIndent="60">
-                                        <Run>&lt;re&gt;</Run>
-                                        <Run>&lt;/re&gt;</Run>
-                                    </Paragraph>
-
-                                    <Paragraph Foreground="DarkGreen" TextIndent="60" Margin="0,10,0,0">
-                                        // Valid values: any text.
-                                    </Paragraph>
-                                    <Paragraph Foreground="DarkGreen" TextIndent="60">
-                                        // Remark: {} is the symbol used to insert the content matching this trigger into the string of format.
-                                    </Paragraph>
-                                    <Paragraph Foreground="DarkGreen" TextIndent="80">
-                                        //- example-url.com/search?={} + eleiko = example-url.com/search?=eleiko
-                                    </Paragraph>
-                                    <Paragraph Foreground="LightBlue" TextIndent="60">
-                                        <Run>&lt;format&gt;</Run>
-                                        <Run Foreground="{StaticResource TextFillColorPrimaryBrush}">example-url.com/search?={}</Run>
-                                        <Run>&lt;/format&gt;</Run>
-                                    </Paragraph>
-
-                                    <Paragraph Foreground="DarkGreen" TextIndent="60" Margin="0,10,0,0">
-                                        // Valid values: any text
-                                    </Paragraph>
-                                    <Paragraph Foreground="LightBlue" TextIndent="60">
-                                        <Run>&lt;label&gt;</Run>
-                                        <Run Foreground="{StaticResource TextFillColorPrimaryBrush}">Example</Run>
-                                        <Run>&lt;/label&gt;</Run>
-                                    </Paragraph>
-
-                                    <Paragraph Foreground="DarkGreen" TextIndent="60" Margin="0,10,0,0">
-                                        // Valid values: true,1
-                                    </Paragraph>
-                                    <Paragraph Foreground="LightBlue" TextIndent="60">
-                                        <Run>&lt;enabled&gt;</Run>
-                                        <Run Foreground="{StaticResource TextFillColorPrimaryBrush}">true</Run>
-                                        <Run>&lt;/enabled&gt;</Run>
-                                    </Paragraph>
-
-                                    <Paragraph Foreground="LightBlue" TextIndent="40">&lt;/trigger&gt;</Paragraph>
-
-                                    <Paragraph Foreground="LightBlue" TextIndent="20">&lt;/triggers&gt;</Paragraph>
-                                    <Paragraph Foreground="LightBlue">&lt;/settings&gt;</Paragraph>
-                                </RichTextBlock>
-                            </Border>
-                        </StackPanel>
+            <clip:HostControl>
+                <clip:HostControl.Header>
+                    <Grid RowSpacing="4" Padding="0,7">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Uid="CreateExampleFileHostControl" Grid.Row="0"/>
+                        <TextBlock 
+                            x:Name="UserFilePathTextBlock" 
+                            x:Uid="UserFilePathTextBlock" 
+                            Style="{StaticResource CaptionTextBlockStyle}" 
+                            Grid.Row="1" 
+                            Opacity="0.6"
+                            FontStyle="Italic"/>
+                    </Grid>
+                </clip:HostControl.Header>
+                <clip:HostControl.HostContent>
+                    <StackPanel Orientation="Horizontal" Spacing="3">
+                        <Button 
+                            x:Uid="CreateExampleTriggersFileButtton" 
+                            MinWidth="100"
+                            Click="CreateExampleTriggersFileButton_Click"/>
+                        <Button 
+                            x:Uid="OverwriteExampleTriggersFileButtton" 
+                            MinWidth="100"
+                            Click="OverwriteExampleTriggersFileButton_Click"/>
                     </StackPanel>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
+
+            <Expander x:Uid="TriggersXmlExampleHostControl" Style="{StaticResource ExpanderListStyle}" Background="Transparent" Expanding="TriggersStorageExpander_Expanding">
+                <StackPanel HorizontalAlignment="Stretch" Spacing="2" Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
+                    <Border Background="{ThemeResource ExpanderContentBackground}" Padding="7,10">
+                        <RichTextBlock FontFamily="Cascadia Code">
+                            <Paragraph FontFamily="{StaticResource ContentControlThemeFontFamily}" Margin="10,0,0,10">Valid XML declaration</Paragraph>
+
+                            <Paragraph Foreground="LightBlue">&lt;settings&gt;</Paragraph>
+                            <Paragraph Foreground="LightBlue" TextIndent="20">&lt;triggers&gt;</Paragraph>
+
+                            <Paragraph Foreground="LightBlue" TextIndent="40">&lt;trigger&gt;</Paragraph>
+
+                            <Paragraph Foreground="LightBlue" TextIndent="60">
+                                <Run>&lt;re&gt;</Run>
+                                <Run>&lt;/re&gt;</Run>
+                            </Paragraph>
+
+                            <Paragraph Foreground="DarkGreen" TextIndent="60" Margin="0,10,0,0">
+                                // Valid values: any text.
+                            </Paragraph>
+                            <Paragraph Foreground="DarkGreen" TextIndent="60">
+                                // Remark: {} is the symbol used to insert the content matching this trigger into the string of format.
+                            </Paragraph>
+                            <Paragraph Foreground="DarkGreen" TextIndent="80">
+                                //- example-url.com/search?={} + eleiko = example-url.com/search?=eleiko
+                            </Paragraph>
+                            <Paragraph Foreground="LightBlue" TextIndent="60">
+                                <Run>&lt;format&gt;</Run>
+                                <Run Foreground="{StaticResource TextFillColorPrimaryBrush}">example-url.com/search?={}</Run>
+                                <Run>&lt;/format&gt;</Run>
+                            </Paragraph>
+
+                            <Paragraph Foreground="DarkGreen" TextIndent="60" Margin="0,10,0,0">
+                                // Valid values: any text
+                            </Paragraph>
+                            <Paragraph Foreground="LightBlue" TextIndent="60">
+                                <Run>&lt;label&gt;</Run>
+                                <Run Foreground="{StaticResource TextFillColorPrimaryBrush}">Example</Run>
+                                <Run>&lt;/label&gt;</Run>
+                            </Paragraph>
+
+                            <Paragraph Foreground="DarkGreen" TextIndent="60" Margin="0,10,0,0">
+                                // Valid values: true,1
+                            </Paragraph>
+                            <Paragraph Foreground="LightBlue" TextIndent="60">
+                                <Run>&lt;enabled&gt;</Run>
+                                <Run Foreground="{StaticResource TextFillColorPrimaryBrush}">true</Run>
+                                <Run>&lt;/enabled&gt;</Run>
+                            </Paragraph>
+
+                            <Paragraph Foreground="LightBlue" TextIndent="40">&lt;/trigger&gt;</Paragraph>
+
+                            <Paragraph Foreground="LightBlue" TextIndent="20">&lt;/triggers&gt;</Paragraph>
+                            <Paragraph Foreground="LightBlue">&lt;/settings&gt;</Paragraph>
+                        </RichTextBlock>
+                    </Border>
                 </StackPanel>
             </Expander>
 

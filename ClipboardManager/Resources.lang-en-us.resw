@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ActionEnabledToggleSwitch.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Enable/disable trigger</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
   <data name="ActionEnabledToggleSwitchTeachingTip.Subtitle" xml:space="preserve">
     <value>Enable or disable the trigger. A disabled trigger will not be used in any action</value>
     <comment>Teaching tips</comment>
@@ -164,6 +168,15 @@
   <data name="AllowNotificationsHostControl.Header" xml:space="preserve">
     <value>Allow notifications</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="ApplicationUpdatedInfoBar.Message" xml:space="preserve">
+    <value>ClipboardManager has been updated, to prevent any conflicts from the previous version settings have been cleared.
+You will need to locate your user file and reapply your settings.</value>
+    <comment>MainPage InfoBar</comment>
+  </data>
+  <data name="ApplicationUpdatedInfoBar.Title" xml:space="preserve">
+    <value>Application has received a major update</value>
+    <comment>MainPage InfoBar</comment>
   </data>
   <data name="ApplicationVersionHostControl.Header" xml:space="preserve">
     <value>Application version</value>
@@ -289,6 +302,10 @@
     <value>Edit</value>
     <comment>ClipboardActionView</comment>
   </data>
+  <data name="EditButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Edit</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
   <data name="EditButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Open a dialog to edit this trigger</value>
     <comment>Teaching tips</comment>
@@ -304,6 +321,14 @@
   <data name="EditDialog.SecondaryButtonText" xml:space="preserve">
     <value>Cancel</value>
     <comment>ClipboardActionEditor</comment>
+  </data>
+  <data name="EnableFileWatchingHostControl.Header" xml:space="preserve">
+    <value>Enable file watching</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="EnableOCRHostControl.Header" xml:space="preserve">
+    <value>Enable OCR</value>
+    <comment>SettingsPage</comment>
   </data>
   <data name="ErrorMessage_CannotSaveTriggersFileNotFound" xml:space="preserve">
     <value>Failed to save triggers file.</value>
@@ -575,6 +600,10 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Remove</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="RemoveButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
   <data name="RemoveButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Remove and delete trigger</value>
     <comment>Teaching tips</comment>
@@ -626,6 +655,10 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="StartTourButton.Content" xml:space="preserve">
     <value>Start tour</value>
     <comment>MainPage Startup tour</comment>
+  </data>
+  <data name="StartTourButton.MaxWidth" xml:space="preserve">
+    <value>150</value>
+    <comment>MainPage</comment>
   </data>
   <data name="StartTourInfoBar.Message" xml:space="preserve">
     <value>Start a short guided tour of the application</value>
@@ -702,6 +735,10 @@ If you are using multiple placeholders '{}' index them (ex: {0}...{0}).</value>
   </data>
   <data name="UserFileHostControl.Header" xml:space="preserve">
     <value>Triggers file</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="UserFilePathTextBlock.Text" xml:space="preserve">
+    <value>No path saved</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="UseSearchFontIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">

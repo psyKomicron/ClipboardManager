@@ -99,13 +99,25 @@ namespace clip::ui
     {
         try
         {
-            xaml::VisualStateManager::GoToState(control, state, useTransitions);
+            std::optional<bool> alreadyActive{};
+
             if (_visualStates.contains(state.group()))
             {
                 for (VisualState<T>& visualState : _visualStates[state.group()])
                 {
-                    visualState.active(visualState == state);
+                    bool same = visualState == state;
+                    if (same)
+                    {
+                        alreadyActive = visualState.active();
+                    }
+
+                    visualState.active(same);
                 }
+            }
+
+            if (!alreadyActive.value_or(false))
+            {
+                xaml::VisualStateManager::GoToState(control, state, useTransitions);
             }
 #ifdef LOG_VISUALSTATEMANAGER
             logger.debug(std::format(L"Activated state '{}'", std::wstring(state.name())));
@@ -137,7 +149,7 @@ namespace clip::ui
     }
 
     template<typename T>
-    inline void VisualStateManager<T>::goToEnabledState(const bool& enabled, const bool& useTransitions) const
+    inline void VisualStateManager<T>::goToStateEnabled(const bool& enabled, const bool& useTransitions) const
     {
 #ifdef LOG_VISUALSTATEMANAGER
         if (!xaml::VisualStateManager::GoToState(control, enabled ? L"Normal" : L"Disabled", useTransitions))

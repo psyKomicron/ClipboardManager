@@ -15,11 +15,6 @@
         BorderThickness="1" 
         Padding="7,5" 
         Margin="0,3,0,3">
-        <Grid.Transitions>
-            <TransitionCollection>
-                <RepositionThemeTransition/>
-            </TransitionCollection>
-        </Grid.Transitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
@@ -27,20 +22,21 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid.Resources>
-            <Style TargetType="TextBlock">
-                <Setter Property="IsTextSelectionEnabled" Value="True"/>
-            </Style>
-        </Grid.Resources>
 
-        <ContentPresenter Content="{x:Bind HostContent}" Grid.Column="0" MaxHeight="500"/>
+        <ContentPresenter Content="{x:Bind HostContent}" Grid.Column="0" MaxHeight="500" TextWrapping="Wrap">
+            <ContentPresenter.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="IsTextSelectionEnabled" Value="True"/>
+                </Style>
+            </ContentPresenter.Resources>
+        </ContentPresenter>
 
-        <StackPanel Grid.Column="1" Grid.RowSpan="2" Orientation="Vertical" Spacing="5">
+        <StackPanel Grid.Column="1" Grid.RowSpan="2" Orientation="Vertical" Spacing="5" Margin="0,0,8,0">
             <Button Style="{StaticResource IconButtonStyle}">
-                <FontIcon Glyph="&#xe8c8;" FontSize="14"/>
+                <FontIcon Glyph="&#xe8c8;" FontSize="16"/>
             </Button>
             <Button Style="{StaticResource IconButtonStyle}">
-                <FontIcon Glyph="&#xe718;" FontSize="14"/>
+                <FontIcon Glyph="&#xe718;" FontSize="16"/>
             </Button>
         </StackPanel>
     </Grid>

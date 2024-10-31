@@ -10,46 +10,57 @@
 std::atomic_size_t clip::utils::Logger::maxClassNameLength = 0;
 
 clip::utils::Logger::Logger(const std::wstring& className) :
-    className{ className } {
+    className{ className }
+{
 }
 
-void clip::utils::Logger::debug(const std::wstring& message) const {
+void clip::utils::Logger::debug(const std::wstring& message) const
+{
 #ifdef _DEBUG
     print(message, LogSeverity::Debug);
 #endif // _DEBUG
 }
 
-void clip::utils::Logger::info(const std::wstring& message) const {
+void clip::utils::Logger::info(const std::wstring& message) const
+{
     print(message, LogSeverity::Info);
 }
 
-void clip::utils::Logger::error(const std::wstring& message) const {
+void clip::utils::Logger::error(const std::wstring& message) const
+{
     print(message, LogSeverity::Error);
 }
 
-void clip::utils::Logger::error(const std::string& message) const {
+void clip::utils::Logger::error(const std::string& message) const
+{
     print(clip::utils::convert(message), LogSeverity::Error);
 }
 
-void clip::utils::Logger::print(const std::wstring& message, const LogSeverity& severity) const {
-    if (maxClassNameLength < className.size()) {
+void clip::utils::Logger::print(const std::wstring& message, const LogSeverity& severity) const
+{
+    if (maxClassNameLength < className.size())
+    {
         maxClassNameLength = className.size();
     }
 
     auto&& formattedName = formatClassName(className);
 
-    switch (severity) {
-        case LogSeverity::Debug: {
+    switch (severity)
+    {
+        case LogSeverity::Debug:
+        {
             std::wcout << formattedName << L"  DEBUG:  " << message << std::endl;
             break;
         }
 
-        case LogSeverity::Info: {
+        case LogSeverity::Info:
+        {
             std::wcout << formattedName << L"  INFO:   " << message << std::endl;
             break;
         }
 
-        case LogSeverity::Error: {
+        case LogSeverity::Error:
+        {
             std::wcout << formattedName << L"  ERROR:  " << message << std::endl;
             break;
         }
@@ -61,7 +72,8 @@ void clip::utils::Logger::print(const std::wstring& message, const LogSeverity& 
     }
 }
 
-std::wstring clip::utils::Logger::formatClassName(const std::wstring& className) const {
+std::wstring clip::utils::Logger::formatClassName(const std::wstring& className) const
+{
     const std::wstring padding = std::wstring(maxClassNameLength - className.size(), L' ');
 
     auto&& formattedName = std::vformat(L"[{}]{}", std::make_wformat_args(

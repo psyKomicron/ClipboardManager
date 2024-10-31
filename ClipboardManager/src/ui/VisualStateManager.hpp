@@ -44,7 +44,7 @@ namespace clip::ui
         void initializeStates(const std::vector<VisualState<T>>& states);
         void goToState(const VisualState<T>& state, const bool& useTransitions = true);
         void switchState(int32_t group, const bool& useTransitions = true);
-        void goToEnabledState(const bool& enabled, const bool& useTransitions = true) const;
+        void goToStateEnabled(const bool& enabled, const bool& useTransitions = true) const;
 
     private:
         xaml::Controls::Control control{ nullptr };

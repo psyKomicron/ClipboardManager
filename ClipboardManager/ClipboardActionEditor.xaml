@@ -206,15 +206,32 @@
         </Grid>
 
         <StackPanel Orientation="Horizontal" Spacing="3" Grid.Column="1">
-            <ToggleSwitch x:Name="ActionEnabledToggleSwitch" Grid.Column="1" Grid.Row="1" Toggled="ActionEnabledToggleSwitch_Toggled" Style="{StaticResource FlippedToggleSwitchStyle}" OnContent="{x:Null}" OffContent="{x:Null}" IsOn="{x:Bind ActionEnabled, Mode=TwoWay}"/>
+            <ToggleSwitch 
+                x:Name="ActionEnabledToggleSwitch" 
+                x:Uid="ActionEnabledToggleSwitch" 
+                Grid.Column="1" 
+                Grid.Row="1" 
+                Style="{StaticResource FlippedToggleSwitchStyle}" 
+                OnContent="{x:Null}" 
+                OffContent="{x:Null}" 
+                IsOn="{x:Bind ActionEnabled, Mode=TwoWay}"
+                Toggled="ActionEnabledToggleSwitch_Toggled"/>
 
             <Border Background="{ThemeResource MenuFlyoutSeparatorThemeBrush}" Width="2" VerticalAlignment="Stretch" CornerRadius="1" Margin="6,0,3,0" MaxHeight="30"/>
 
-            <Button x:Name="RemoveButton" Click="RemoveButton_Click" Style="{StaticResource IconButtonStyle}">
+            <Button 
+                x:Name="RemoveButton" 
+                x:Uid="RemoveButton" 
+                Style="{StaticResource IconButtonStyle}"
+                Click="RemoveButton_Click">
                 <FontIcon FontSize="15" Glyph="&#xe74d;"/>
             </Button>
 
-            <Button x:Name="EditButton" Click="EditButton_Click" Style="{StaticResource IconButtonStyle}">
+            <Button 
+                x:Name="EditButton" 
+                x:Uid="EditButton" 
+                Style="{StaticResource IconButtonStyle}"
+                Click="EditButton_Click">
                 <FontIcon FontSize="15" Glyph="&#xe70f;"/>
             </Button>
         </StackPanel>
