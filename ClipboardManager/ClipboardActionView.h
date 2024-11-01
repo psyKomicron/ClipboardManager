@@ -26,11 +26,12 @@ namespace winrt::ClipboardManager::implementation
         winrt::event_token Removed(const event_removed_t& handler);
         void Removed(const winrt::event_token& token);
 
-        void AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled);
-        void AddActions(const winrt::Windows::Foundation::IInspectable& inspectable);
-        void AddActions(const actions_t actions);
+        void AddAction(const winrt::hstring& label, const winrt::hstring& format,
+                       const winrt::hstring& regex, const bool& enabled, const bool& useRegexMatchResults,
+                       const bool& ignoreCase);
         void EditAction(const uint32_t& pos, const winrt::hstring& label, const winrt::hstring& format, 
-                        const winrt::hstring& regex, const bool& enabled, const bool& useRegexMatchResults);
+                        const winrt::hstring& regex, const bool& enabled, const bool& useRegexMatchResults,
+                        const bool& ignoreCase);
         bool IndexOf(uint32_t& pos, const winrt::hstring& label);
 
         winrt::async StartTour();

@@ -342,7 +342,7 @@ namespace winrt::ClipboardManager::implementation
                 manuallyAddedAction = true;
 
                 auto actionView = winrt::make<ClipboardActionView>(L"Clipboard content that matches a trigger");
-                actionView.AddAction(L"{}", L"Trigger", L"", true);
+                actionView.AddAction(L"{}", L"Trigger", L"", true, false, false);
 
                 clipboardActionViews.InsertAt(0, actionView);
             }
@@ -513,8 +513,8 @@ namespace winrt::ClipboardManager::implementation
                     uint32_t pos = 0;
                     if (clipboardItem.IndexOf(pos, label))
                     {
-                        clipboardItem.EditAction(pos, action.label(), action.format(), 
-                                                 action.regex().str(), action.enabled(), action.useRegexMatchResults());
+                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), action.enabled(), 
+                                                 action.useRegexMatchResults(), action.regex().flags() & boost::regex_constants::icase);
                     }
                 }
 
@@ -559,7 +559,8 @@ namespace winrt::ClipboardManager::implementation
                     uint32_t pos = 0;
                     if (clipboardItem.IndexOf(pos, action.label()))
                     {
-                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), action.enabled(), action.useRegexMatchResults());
+                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), 
+                                                 action.enabled(), action.useRegexMatchResults(), ignoreCase);
                     }
                 }
 
@@ -708,7 +709,8 @@ namespace winrt::ClipboardManager::implementation
                 hasMatch = true;
 
                 // TODO: When i add triggers, only enabled triggers will be added yet they can be enabled or disabled later. What do if.
-                actionView.AddAction(trigger.format(), trigger.label(), trigger.regex().str(), true);
+                actionView.AddAction(trigger.label(), trigger.format(), trigger.regex().str(), true, 
+                                     trigger.useRegexMatchResults(), trigger.regex().flags() & boost::regex_constants::icase);
 
                 try
                 {
@@ -1165,12 +1167,12 @@ namespace winrt::ClipboardManager::implementation
             triggerViewer.LabelChanged({ this, &MainPage::Editor_LabelChanged });
             triggerViewer.Changed({ this, &MainPage::Editor_Changed });
 
-            triggerViewer.Removed([&](auto&& sender, auto&&)
+            triggerViewer.Removed([this](auto&& sender, auto&&)
             {
                 auto&& label = sender.ActionLabel();
                 for (size_t i = 0; i < triggers.size(); i++)
                 {
-                    if (trigger.label() == label)
+                    if (triggers[i].label() == label)
                     {
                         triggers.erase(triggers.begin() + i);
                         break;
