@@ -43,7 +43,6 @@
                 <VisualState x:Name="FirstStartup">
                     <VisualState.Setters>
                         <Setter Target="StartTourInfoBar.IsOpen" Value="True"/>
-                        <Setter Target="ListView.Visibility" Value="Visible"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="UpdatedStartup">
