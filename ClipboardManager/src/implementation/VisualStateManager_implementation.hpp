@@ -149,7 +149,7 @@ namespace clip::ui
     }
 
     template<typename T>
-    inline void VisualStateManager<T>::goToEnabledState(const bool& enabled, const bool& useTransitions) const
+    inline void VisualStateManager<T>::goToStateEnabled(const bool& enabled, const bool& useTransitions) const
     {
 #ifdef LOG_VISUALSTATEMANAGER
         if (!xaml::VisualStateManager::GoToState(control, enabled ? L"Normal" : L"Disabled", useTransitions))

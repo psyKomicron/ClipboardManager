@@ -300,7 +300,13 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <TextBlock x:Uid="CreateExampleFileHostControl" Grid.Row="0"/>
-                        <TextBlock x:Name="UserFilePathTextBlock" Style="{StaticResource CaptionTextBlockStyle}" Grid.Row="1" Opacity="0.6"/>
+                        <TextBlock 
+                            x:Name="UserFilePathTextBlock" 
+                            x:Uid="UserFilePathTextBlock" 
+                            Style="{StaticResource CaptionTextBlockStyle}" 
+                            Grid.Row="1" 
+                            Opacity="0.6"
+                            FontStyle="Italic"/>
                     </Grid>
                 </clip:HostControl.Header>
                 <clip:HostControl.HostContent>

@@ -8,7 +8,7 @@
 #include "src/utils/helpers.hpp"
 #include "src/notifs/NotificationTypes.hpp"
 #include "src/ClipboardTrigger.hpp"
-#include "Resource.h"
+#include "src/utils/AppVersion.hpp"
 
 #include <winrt/Microsoft.UI.Xaml.Controls.h>
 #include <winrt/Windows.Storage.Pickers.h>
@@ -37,7 +37,8 @@ namespace winrt::ClipboardManager::implementation
 
     void SettingsPage::Page_Loading(winrt::FrameworkElement const&, winrt::IInspectable const&)
     {
-        ApplicationVersionHostControl().HostContent(box_value(APP_VERSION));
+        clip::utils::AppVersion appVersion{};
+        ApplicationVersionHostControl().HostContent(box_value(appVersion.versionString() + L"  " + L'"' + appVersion.name() + L'"'));
 
         // Application:
         clip::utils::StartupTask startupTask{};
@@ -72,7 +73,12 @@ namespace winrt::ClipboardManager::implementation
         AllowMaximizeToggleSwitch().IsOn(settings.get<bool>(L"AllowWindowMaximize").value_or(false));
         AllowMinimizeToggleSwitch().IsOn(settings.get<bool>(L"AllowWindowMinimize").value_or(true));
 
-        UserFilePathTextBlock().Text(settings.get<hstring>(L"UserFilePath").value_or(L""));
+        auto userFilePath = settings.get<hstring>(L"UserFilePath");
+        if (userFilePath.has_value())
+        {
+            UserFilePathTextBlock().Text(userFilePath.value());
+            UserFilePathTextBlock().FontStyle(Windows::UI::Text::FontStyle::Normal);
+        }
     }
 
     void SettingsPage::Page_Loaded(winrt::IInspectable const&, winrt::RoutedEventArgs const&)

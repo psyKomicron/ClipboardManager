@@ -44,9 +44,13 @@
                 <VisualState x:Name="NormalStartup"/>
                 <VisualState x:Name="FirstStartup">
                     <VisualState.Setters>
-                        <Setter Target="StartTourInfoBar.Visibility" Value="Visible"/>
                         <Setter Target="StartTourInfoBar.IsOpen" Value="True"/>
                         <Setter Target="ListView.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="UpdatedStartup">
+                    <VisualState.Setters>
+                        <Setter Target="ApplicationUpdatedInfoBar.IsOpen" Value="True"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -57,7 +61,6 @@
                     <VisualState.Setters>
                         <Setter Target="ClipboardTriggersListView.Visibility" Value="Collapsed"/>
                         <Setter Target="NoClipboardTriggersTextBlock.Visibility" Value="Visible"/>
-                        <!--<Setter Target="ListView.Visibility" Value="Collapsed"/>-->
                         <Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>
                         <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>
                     </VisualState.Setters>
@@ -171,7 +174,7 @@
                     <FontIcon x:Name="ClipboardHistoryPivot" Glyph="&#xe823;" FontSize="16"/>
                 </PivotItem.Header>
 
-                <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="0" Padding="0">
+                <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="0" Padding="0" Loading="ClipboardHistoryListView_Loading">
                     <ListView.Resources>
                         <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                             <Setter Property="Padding" Value="4,0,4,0" />
@@ -269,12 +272,11 @@
                     </Grid.ChildrenTransitions>
 
                     <StackPanel Grid.Row="0" Spacing="3" HorizontalAlignment="Stretch" Orientation="Vertical">
-                        <InfoBar x:Name="NoClipboardActionsInfoBar"
+                        <InfoBar 
+                            x:Name="NoClipboardActionsInfoBar"
                             x:Uid="NoClipboardActionsInfoBar"
                             x:Load="False"
-                            Visibility="Collapsed"
-                            Severity="Error" 
-                            Grid.Row="0"
+                            Severity="Warning" 
                             IsClosable="False">
                             <InfoBar.Content>
                                 <Grid Padding="0,0,5,5" ColumnSpacing="10" ColumnDefinitions="1*,1*">
@@ -283,31 +285,41 @@
                                 </Grid>
                             </InfoBar.Content>
                         </InfoBar>
-                        
-                        <InfoBar x:Name="CreateActionsInfoBar"
+
+                        <InfoBar 
+                            x:Name="ApplicationUpdatedInfoBar"
+                            x:Uid="ApplicationUpdatedInfoBar"
+                            x:Load="False"
+                            Severity="Warning">
+                            <InfoBar.Content>
+                                <Grid Padding="0,0,5,5" ColumnSpacing="10" ColumnDefinitions="1*,1*">
+                                    <HyperlinkButton Grid.Column="0" x:Uid="LocateButton" HorizontalAlignment="Stretch" Click="LocateUserFileButton_Click"/>
+                                    <HyperlinkButton Grid.Column="1" x:Uid="CreateButton" HorizontalAlignment="Stretch" Click="CreateUserFileButton_Click"/>
+                                </Grid>
+                            </InfoBar.Content>
+                        </InfoBar>
+
+                        <InfoBar 
+                            x:Name="CreateActionsInfoBar"
                             x:Uid="OpenSaveFileInfoBar"
                             x:Load="False"
-                            Visibility="Collapsed"
-                            Severity="Success" 
-                            Grid.Row="0">
+                            Severity="Success">
                             <InfoBar.Content>
                                 <HyperlinkButton x:Uid="CreateActionsButton" IsEnabled="False" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5"/>
                             </InfoBar.Content>
                         </InfoBar>
 
-                        <InfoBar x:Name="ViewActionsInfoBar"
+                        <InfoBar 
+                            x:Name="ViewActionsInfoBar"
                             x:Uid="ViewActionsInfoBar"
                             x:Load="False"
-                            Visibility="Collapsed"
-                            Severity="Success" 
-                            Grid.Row="0"/>
+                            Severity="Success"/>
 
-                        <InfoBar x:Name="StartTourInfoBar"
-                                 x:Uid="StartTourInfoBar"
-                                 Visibility="Collapsed"
-                                 x:Load="False"
-                                 Severity="Informational"
-                                 Grid.Row="0">
+                        <InfoBar 
+                            x:Name="StartTourInfoBar"
+                            x:Uid="StartTourInfoBar"
+                            x:Load="False"
+                            Severity="Informational">
                             <InfoBar.Content>
                                 <Button x:Uid="StartTourButton" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5" Click="StartTourButton_Click"/>
                             </InfoBar.Content>

@@ -34,10 +34,10 @@ void impl::HostControl::HostContent(const winrt::Windows::Foundation::IInspectab
 
 void impl::HostControl::UserControl_IsEnabledChanged(winrt::IInspectable const&, winrt::DependencyPropertyChangedEventArgs const& e)
 {
-    visualStateManager.goToEnabledState(e.NewValue().as<bool>());
+    visualStateManager.goToStateEnabled(e.NewValue().as<bool>());
 }
 
 void impl::HostControl::UserControl_Loaded(winrt::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
-    visualStateManager.goToEnabledState(IsEnabled());
+    visualStateManager.goToStateEnabled(IsEnabled());
 }

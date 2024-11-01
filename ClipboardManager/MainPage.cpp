@@ -159,11 +159,6 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    void MainPage::EXITSIZEMOVE()
-    {
-        //visualStateManager.goToState(appWindow.Size().Width < 930 ? under1kState : over1kState);
-    }
-
 
     void MainPage::Page_SizeChanged(win::IInspectable const&, xaml::SizeChangedEventArgs const&)
     {
@@ -188,15 +183,20 @@ namespace winrt::ClipboardManager::implementation
     {
         loaded = false;
 
-        clip::utils::AppVersion appVersion{ APP_VERSION };
-        clip::utils::AppVersion currentAppVersion{ localSettings.get<std::wstring>(L"CurrentAppVersion").value_or(APP_VERSION) };
-        if (appVersion.compare(currentAppVersion))
+        auto&& appVersionSetting = localSettings.get<std::wstring>(L"CurrentAppVersion");
+        if (appVersionSetting.has_value())
         {
-            logger.info(L"Application has been updated, clearing settings and removing startup task.");
+            clip::utils::AppVersion appVersion{ APP_VERSION };
+            clip::utils::AppVersion storedAppVersion{ appVersionSetting.value() };
+            if (appVersion.compare(storedAppVersion))
+            {
+                logger.info(L"Application has been updated, clearing settings and removing startup task.");
 
-            localSettings.clear();
+                localSettings.clear();
+                clip::notifs::toasts::compat::DesktopNotificationManagerCompat::Uninstall();
 
-            clip::notifs::toasts::compat::DesktopNotificationManagerCompat::Uninstall();
+                updated = true;
+            }
         }
 
         localSettings.insert(L"CurrentAppVersion", APP_VERSION);
@@ -204,30 +204,16 @@ namespace winrt::ClipboardManager::implementation
         if (localSettings.get<bool>(L"StartWindowMinimized").value_or(false))
         {
             appWindow.Presenter().as<xaml::OverlappedPresenter>().Minimize();
-            // TODO: Send toast notification to tell the user the app has started ?
         }
 
-        co_await LoadClipboardHistory();
+        co_return;
     }
 
     winrt::async MainPage::Page_Loaded(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
         Restore();
 
-        loaded = true;
-        
         clipboardContentChangedToken = win::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
-
-        if (!localSettings.get<bool>(L"FirstStartup").has_value())
-        {
-            localSettings.insert(L"FirstStartup", false);
-
-            visualStateManager.goToState(firstStartupState);
-        }
-
-        visualStateManager.goToState(triggers.empty() ? noClipboardTriggersToDisplayState : displayClipboardTriggersState);
-
-        visualStateManager.goToState(appWindow.Size().Width < 930 ? under1kState : over1kState);
         appWindow.Changed([&](auto, xaml::AppWindowChangedEventArgs args)
         {
             if (args.DidSizeChange())
@@ -243,76 +229,37 @@ namespace winrt::ClipboardManager::implementation
             }
         });
 
-        co_await winrt::resume_background();
+        visualStateManager.goToState(appWindow.Size().Width < 930 ? under1kState : over1kState);
+        
+        if (!localSettings.get<bool>(L"FirstStartup").has_value() && !updated)
+        {
+            localSettings.insert(L"FirstStartup", false);
+            visualStateManager.goToState(firstStartupState);
+        }
 
-        try
+        if (updated)
         {
-            auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
-            if (userFilePath.has_value() && localSettings.get<bool>(L"EnableTriggerFileWatching").value_or(false))
-            {
-                watcher.startWatching(userFilePath.value());
-            }
+            visualStateManager.goToState(applicationUpdatedState);
         }
-        catch (std::wstring message)
+
+        if (!localSettings.get<std::wstring>(L"UserFilePath").has_value())
         {
-            logger.error(message);
+            visualStateManager.goToState(noClipboardTriggersToDisplayState);
         }
-        catch (std::invalid_argument invalidArg)
-        {
-            // Path doesn't exist.
-            logger.error(L"Path '" + watcher.path().wstring() + L"' doesn't exist.");
-        }
+
+        loaded = true;
+
+        co_return;
     }
 
     void MainPage::ClipboadTriggersListPivot_Loaded(win::IInspectable const&, win::IInspectable const&)
     {
-        if (!triggers.empty())
-        {
-            logger.debug(std::format(L"*Creating {} triggers views*", triggers.size()));
+        //CreateTriggerViews();
+    }
 
-            for (auto&& action : triggers)
-            {
-                auto triggerViewer = make<ClipboardManager::implementation::ClipboardActionEditor>();
-                triggerViewer.ActionFormat(action.format());
-                triggerViewer.ActionLabel(action.label());
-                triggerViewer.ActionRegex(action.regex().str());
-                triggerViewer.ActionEnabled(action.enabled());
-                triggerViewer.IgnoreCase((action.regex().flags() & boost::regex_constants::icase) == boost::regex_constants::icase);
-                triggerViewer.UseSearch(action.matchMode() == clip::MatchMode::Search);
-                triggerViewer.UseRegexMatchResults(action.useRegexMatchResults());
-
-                triggerViewer.IsOn({ this, &MainPage::Editor_Toggled });
-                triggerViewer.LabelChanged({ this, &MainPage::Editor_LabelChanged });
-                triggerViewer.Changed({ this, &MainPage::Editor_Changed });
-
-                triggerViewer.Removed([&](auto&& sender, auto&&)
-                {
-                    auto&& label = triggerViewer.ActionLabel();
-                    for (size_t i = 0; i < triggers.size(); i++)
-                    {
-                        if (action.label() == label)
-                        {
-                            triggers.erase(triggers.begin() + i);
-                            break;
-                        }
-                    }
-
-                    for (uint32_t i = 0; i < clipboardTriggerViews.Size(); i++)
-                    {
-                        auto view = clipboardTriggerViews.GetAt(i).try_as<ClipboardManager::ClipboardActionEditor>();
-                        if (view && view.ActionLabel() == label)
-                        {
-                            clipboardTriggerViews.RemoveAt(i);
-                            break;
-                        }
-                    }
-                });
-
-                clipboardTriggerViews.Append(triggerViewer);
-            }
-
-            visualStateManager.goToState(displayClipboardTriggersState);
-        }
+    winrt::async MainPage::ClipboardHistoryListView_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args)
+    {
+        co_await LoadClipboardHistory();
     }
 
     winrt::async MainPage::LocateUserFileButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
@@ -324,11 +271,12 @@ namespace winrt::ClipboardManager::implementation
         auto&& storageFile = co_await picker.PickSingleFileAsync();
         if (storageFile)
         {
-            localSettings.insert(L"UserFilePath", std::filesystem::path(storageFile.Path().c_str()));
-
-            ReloadTriggers();
-
-            visualStateManager.goToState(viewActionsState);
+            auto&& path = std::filesystem::path(storageFile.Path().data());
+            localSettings.insert(L"UserFilePath", path);
+            if (LoadUserFile(path))
+            {
+                visualStateManager.goToState(viewActionsState);
+            }
         }
     }
 
@@ -679,33 +627,18 @@ namespace winrt::ClipboardManager::implementation
     void MainPage::Restore()
     {
         // Load triggers:
-        auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
-        if (userFilePath.has_value() && clip::utils::pathExists(userFilePath.value()))
-        {
-            LoadTriggers(userFilePath.value());
-
-            try
-            {
-                boost::property_tree::wptree tree{};
-                boost::property_tree::read_xml(userFilePath.value().string(), tree);
-                for (auto&& historyItem : tree.get_child(L"settings.history"))
-                {
-                    AddAction(historyItem.second.data(), false);
-                }
-            }
-            catch (const boost::property_tree::ptree_bad_path badPath)
-            {
-                logger.debug(L"Failed to retreive history from user file: " + clip::utils::convert(badPath.what()));
-            }
-        }
+        LoadUserFile(L"");
 
         // Get activation hot key (shortcut that brings the app window to the foreground):
         auto&& map = localSettings.get<std::map<std::wstring, clip::reg_types>>(L"ActivationHotKey");
         if (!map.empty())
         {
-            auto key = std::get<std::wstring>(map[L"Key"])[0];
+            auto key = std::get<std::wstring>(map[L"Key"]);
             auto mod = std::get<uint32_t>(map[L"Mod"]);
-            activationHotKey = clip::HotKey(mod, key);
+            if (key.size() == 1)
+            {
+                activationHotKey = clip::HotKey(mod, key[0]);
+            }
         }
 
         activationHotKey.startListening([this]()
@@ -729,9 +662,7 @@ namespace winrt::ClipboardManager::implementation
         auto&& presenter = appWindow.Presenter().try_as<xaml::OverlappedPresenter>();
         if (presenter)
         {
-            WindowButtonsColumn().Width(xaml::GridLengthHelper::FromPixels(
-                presenter.IsMinimizable() ? 135 : 45
-            ));
+            WindowButtonsColumn().Width(xaml::GridLengthHelper::FromPixels(presenter.IsMinimizable() ? 135 : 45));
         }
     }
 
@@ -813,7 +744,7 @@ namespace winrt::ClipboardManager::implementation
         if (!notif.tryAddButtons(buttons))
         {
             notif.addText(std::wstring(resLoader.getOrAlt(L"ToastNotification_TooManyButtons",
-                                                          L"Too many triggers matched, open the app to activate the action of your choice")));
+                                                          L"Too many triggers matched, open the app to activate the trigger of your choice")));
 
             notif.addButton(std::wstring(resLoader.getOrAlt(L"ToastNotification_OpenApp", L"Open app")), L"");
         }
@@ -837,7 +768,7 @@ namespace winrt::ClipboardManager::implementation
     {
         auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
         if (userFilePath.has_value()
-            && clip::utils::pathExists(userFilePath.value())
+            && std::filesystem::exists(userFilePath.value())
             && LoadTriggers(userFilePath.value()))
         {
             try
@@ -869,7 +800,7 @@ namespace winrt::ClipboardManager::implementation
         MessagesBar().AddError(L"ReloadActionsUserFileNotFoundTitle",
                                L"Failed to reload triggers",
                                L"ReloadActionsUserFileNotFoundMessage",
-                               L"Actions user file has either been moved/deleted or application settings have been cleared.");
+                               L"Triggers user file has either been moved/deleted or application settings have been cleared.");
     }
 
     bool MainPage::LoadTriggers(std::filesystem::path& path)
@@ -908,13 +839,6 @@ namespace winrt::ClipboardManager::implementation
 
             return true;
         }
-        catch (clip::ClipboardTriggerFormatException formatExcept)
-        {
-            // I18N:
-            MessagesBar().AddError(L"", L"One trigger doesn't respect the valid format syntax.");
-
-            triggers.clear();
-        }
         catch (std::invalid_argument invalidArgument)
         {
             MessagesBar().AddError(L"ErrorMessage_TriggersFileNotFound",
@@ -943,7 +867,7 @@ namespace winrt::ClipboardManager::implementation
             {
                 // Old version of triggers file.
                 content = resLoader.getOrAlt(L"ErrorMessage_XmlOldVersion",
-                                             L"<actions> node has been renamed <triggers> and <action> <actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.");
+                                             L"<actions> node has been renamed <triggers> and <trigger> <actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.");
             }
             else
             {
@@ -981,17 +905,17 @@ namespace winrt::ClipboardManager::implementation
 
     winrt::async MainPage::LoadClipboardHistory()
     {
-        auto loadClipboardHistory = localSettings.get<bool>(L"ImportClipboardHistory").value_or(false);
-
         try
         {
+            bool importClipboardHistory = localSettings.get<bool>(L"ImportClipboardHistory").value_or(false);
+
             auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
             auto&& items = clipboardHistory.Items();
             for (int i = items.Size() - 1; i >= 0; i--)
             {
                 auto&& item = items.GetAt(i);
                 auto&& content = item.Content();
-                co_await AddClipboardItem(content, loadClipboardHistory);
+                co_await AddClipboardItem(content, importClipboardHistory);
             }
         }
         catch (hresult_error error)
@@ -1147,5 +1071,126 @@ namespace winrt::ClipboardManager::implementation
             clipboardContentChangedToken = win::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
             logger.debug(L"Re-registered app for clipboard changes.");
         }
+    }
+
+    bool MainPage::LoadUserFile(const std::filesystem::path& path)
+    {
+        bool triggersLoaded = false;
+
+        std::optional<std::filesystem::path> userFilePath{};
+        if (path.empty())
+        {
+            userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
+        }
+        else
+        {
+            userFilePath = path;
+        }
+
+        if (userFilePath.has_value() && clip::utils::pathExists(userFilePath.value()))
+        {
+            if (LoadTriggers(userFilePath.value()))
+            {
+                if (clipboardTriggerViews.Size() == 0)
+                {
+                    clipboardTriggerViews.Clear();
+                }
+                
+                try
+                {
+                    CreateTriggerViews();
+                    triggersLoaded = true;
+                }
+                catch (hresult_error error)
+                {
+                    logger.error(std::format(L"Error @ LoadUserFile: {}", error.message().data()));
+                }
+            }
+            else
+            {
+                logger.info(L"Failed to load triggers.");
+            }
+
+            // Load history:
+            try
+            {
+                boost::property_tree::wptree tree{};
+                boost::property_tree::read_xml(userFilePath.value().string(), tree);
+                for (auto&& historyItem : tree.get_child(L"settings.history"))
+                {
+                    AddAction(historyItem.second.data(), false);
+                }
+            }
+            catch (const boost::property_tree::ptree_bad_path badPath)
+            {
+                logger.debug(L"Failed to retreive history from user file: " + clip::utils::convert(badPath.what()));
+            }
+
+            // Enable file watcher:
+            try
+            {
+                if (localSettings.get<bool>(L"EnableTriggerFileWatching").value_or(false))
+                {
+                    watcher.startWatching(userFilePath.value());
+                }
+            }
+            catch (std::wstring message)
+            {
+                logger.error(message);
+            }
+            catch (std::invalid_argument invalidArg)
+            {
+                // Path doesn't exist.
+                logger.error(L"Path '" + watcher.path().wstring() + L"' doesn't exist.");
+            }
+        }
+
+        return triggersLoaded;
+    }
+
+    void MainPage::CreateTriggerViews()
+    {
+        for (auto&& trigger : triggers)
+        {
+            auto triggerViewer = make<ClipboardManager::implementation::ClipboardActionEditor>();
+            triggerViewer.ActionFormat(trigger.format());
+            triggerViewer.ActionLabel(trigger.label());
+            triggerViewer.ActionRegex(trigger.regex().str());
+            triggerViewer.ActionEnabled(trigger.enabled());
+            triggerViewer.IgnoreCase((trigger.regex().flags() & boost::regex_constants::icase) == boost::regex_constants::icase);
+            triggerViewer.UseSearch(trigger.matchMode() == clip::MatchMode::Search);
+            triggerViewer.UseRegexMatchResults(trigger.useRegexMatchResults());
+
+            triggerViewer.IsOn({ this, &MainPage::Editor_Toggled });
+            triggerViewer.LabelChanged({ this, &MainPage::Editor_LabelChanged });
+            triggerViewer.Changed({ this, &MainPage::Editor_Changed });
+
+            triggerViewer.Removed([&](auto&& sender, auto&&)
+            {
+                auto&& label = sender.ActionLabel();
+                for (size_t i = 0; i < triggers.size(); i++)
+                {
+                    if (trigger.label() == label)
+                    {
+                        triggers.erase(triggers.begin() + i);
+                        break;
+                    }
+                }
+
+                for (uint32_t i = 0; i < clipboardTriggerViews.Size(); i++)
+                {
+                    auto view = clipboardTriggerViews.GetAt(i).try_as<ClipboardManager::ClipboardActionEditor>();
+                    if (view && view.ActionLabel() == label)
+                    {
+                        clipboardTriggerViews.RemoveAt(i);
+                        break;
+                    }
+                }
+            });
+
+            clipboardTriggerViews.Append(triggerViewer);
+        }
+
+        visualStateManager.goToState(!triggers.empty() ? displayClipboardTriggersState : noClipboardTriggersToDisplayState);
     }
 }

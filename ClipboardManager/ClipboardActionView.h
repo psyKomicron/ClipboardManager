@@ -60,7 +60,7 @@ namespace winrt::ClipboardManager::implementation
         std::atomic_flag teachingTipsWaitFlag{};
         clip::utils::Logger logger{ L"ClipboardActionView" };
         winrt::hstring _text{};
-        std::vector<clip::ClipboardTrigger> actions{};
+        std::vector<clip::ClipboardTrigger> triggers{};
         clip::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
 
         winrt::event<event_removed_t> e_removed{};
