@@ -1167,12 +1167,12 @@ namespace winrt::ClipboardManager::implementation
             triggerViewer.LabelChanged({ this, &MainPage::Editor_LabelChanged });
             triggerViewer.Changed({ this, &MainPage::Editor_Changed });
 
-            triggerViewer.Removed([&](auto&& sender, auto&&)
+            triggerViewer.Removed([this](auto&& sender, auto&&)
             {
                 auto&& label = sender.ActionLabel();
                 for (size_t i = 0; i < triggers.size(); i++)
                 {
-                    if (trigger.label() == label)
+                    if (triggers[i].label() == label)
                     {
                         triggers.erase(triggers.begin() + i);
                         break;
