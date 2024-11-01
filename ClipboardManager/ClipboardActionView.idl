@@ -10,8 +10,9 @@ namespace ClipboardManager
 
         event Windows.Foundation.TypedEventHandler<ClipboardActionView, IInspectable> Removed;
 
-        void AddAction(String format, String label, String regex, Boolean enabled);
-        void EditAction(UInt32 pos, String format, String label, String regex, Boolean enabled, Boolean useRegexMatchResults);
+        void AddAction( String label, String format, String regex, Boolean enabled, Boolean useRegexMatchResults, Boolean ignoreCase);
+        void EditAction(UInt32 pos, 
+                        String format, String label, String regex, Boolean enabled, Boolean useRegexMatchResults, Boolean ignoreCase);
         Boolean IndexOf(out UInt32 pos, String label);
 
         Windows.Foundation.IAsyncAction StartTour();

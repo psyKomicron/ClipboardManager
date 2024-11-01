@@ -70,9 +70,16 @@ namespace winrt::ClipboardManager::implementation
         e_removed.remove(token);
     }
 
-    void ClipboardActionView::AddAction(const winrt::hstring& format, const winrt::hstring& label, const winrt::hstring& regex, const bool& enabled)
+    void ClipboardActionView::AddAction(const winrt::hstring& label, const winrt::hstring& format, const winrt::hstring& regex, 
+                                        const bool& enabled, const bool& useRegexMatchResults, const bool& ignoreCase)
     {
-        auto trigger = clip::ClipboardTrigger(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), enabled);
+        auto trigger = clip::ClipboardTrigger(
+            std::wstring(label), 
+            std::wstring(format), 
+            boost::wregex(std::wstring(regex), ignoreCase ? boost::regex_constants::icase : boost::regex_constants::basic), 
+            enabled);
+        trigger.useRegexMatchResults(useRegexMatchResults);
+
         try
         {
             trigger.checkFormat();
@@ -100,28 +107,8 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    void ClipboardActionView::AddActions(const winrt::Windows::Foundation::IInspectable& inspectable)
-    {
-        AddActions(inspectable.as<win::IVector<win::IVector<winrt::hstring>>>());
-    }
-
-    void ClipboardActionView::AddActions(const actions_t actions)
-    {
-        for (auto&& action : actions)
-        {
-            auto label = action.GetAt(0);
-            auto format = action.GetAt(1);
-            auto regex = action.GetAt(2);
-            //auto ignoreCase = action.
-
-            this->triggers.push_back(
-                clip::ClipboardTrigger(std::wstring(label), std::wstring(format), boost::wregex(std::wstring(regex)), true)
-            );
-        }
-    }
-
-    void ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hstring& _label, const winrt::hstring& _format, 
-                                         const winrt::hstring& _regex, const bool& _enabled, const bool& useRegexMatchResults)
+    void ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hstring& _label, const winrt::hstring& _format, const winrt::hstring& _regex, 
+                                         const bool& _enabled, const bool& useRegexMatchResults, const bool& ignoreCase)
     {
         auto label = std::wstring(_label);
         auto format = std::wstring(_format);
