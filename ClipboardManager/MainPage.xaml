@@ -26,14 +26,12 @@
             <VisualStateGroup>
                 <VisualState x:Name="CreateNewActions">
                     <VisualState.Setters>
-                        <Setter Target="ListView.Visibility" Value="Collapsed"/>
                         <Setter Target="CreateActionsInfoBar.Visibility" Value="Visible"/>
                         <Setter Target="CreateActionsInfoBar.IsOpen" Value="True"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ViewActions">
                     <VisualState.Setters>
-                        <Setter Target="ListView.Visibility" Value="Collapsed"/>
                         <Setter Target="ViewActionsInfoBar.Visibility" Value="Visible"/>
                         <Setter Target="ViewActionsInfoBar.IsOpen" Value="True"/>
                     </VisualState.Setters>
@@ -411,7 +409,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <ListView x:Name="ListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2" AllowDrop="True" CanReorderItems="True">
+                    <ListView x:Name="ActionsListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2" AllowDrop="True" CanReorderItems="True">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="Padding" Value="0" />
@@ -422,7 +420,7 @@
                     <!--#region TeachingTips -->
                     <TeachingTip x:Name="ListViewTeachingTip" 
                                  x:Uid="ListViewTeachingTip"
-                                 Target="{x:Bind ListView}" 
+                                 Target="{x:Bind ActionsListView}" 
                                  PreferredPlacement="Center"
                                  ActionButtonClick="TeachingTip_CloseButtonClick">
                         <TeachingTip.ActionButtonContent>
