@@ -11,6 +11,7 @@
 #include "src/utils/Launcher.hpp"
 #include "src/utils/AppVersion.hpp"
 #include "src/utils/StartupTask.hpp"
+#include "src/murmur/MurmurHash3.hpp"
 #include "src/notifs/ToastNotification.hpp"
 #include "src/notifs/win_toasts.hpp"
 #include "src/notifs/NotificationTypes.hpp"
@@ -39,6 +40,8 @@
 
 #include <iostream>
 #include <chrono>
+#include <sstream>
+#include <random>
 
 using namespace std::chrono_literals;
 
@@ -483,6 +486,40 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
+    void MainPage::TestRegexButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    {
+        TestRegexContentDialog().Open();
+    }
+
+    void MainPage::OverlayToggleButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    {
+        auto&& presenter = appWindow.Presenter().as<xaml::OverlappedPresenter>();
+        if (presenter)
+        {
+            bool toggled = OverlayToggleButton().IsChecked().GetBoolean();
+            if (toggled)
+            {
+                presenter.IsMinimizable(!toggled);
+                presenter.IsMaximizable(!toggled);
+
+                visualStateManager.goToState(overlayWindowState);
+            }
+            else
+            {
+                presenter.IsMinimizable(localSettings.get<bool>(L"AllowWindowMinimize").value_or(true));
+                presenter.IsMaximizable(localSettings.get<bool>(L"AllowWindowMaximize").value_or(false));
+
+                visualStateManager.goToState(normalWindowState);
+            }
+            presenter.IsAlwaysOnTop(toggled);
+        }
+    }
+
+    void MainPage::CommandBarImportButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    {
+        LocateUserFileButton_Click(nullptr, nullptr);
+    }
+
 
     winrt::async MainPage::ClipboardContent_Changed(const win::IInspectable&, const win::IInspectable&)
     {
@@ -588,40 +625,6 @@ namespace winrt::ClipboardManager::implementation
                 action.enabled(isOn);
             }
         }
-    }
-
-    void MainPage::TestRegexButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
-    {
-        TestRegexContentDialog().Open();
-    }
-
-    void MainPage::OverlayToggleButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
-    {
-        auto&& presenter = appWindow.Presenter().as<xaml::OverlappedPresenter>();
-        if (presenter)
-        {
-            bool toggled = OverlayToggleButton().IsChecked().GetBoolean();
-            if (toggled)
-            {
-                presenter.IsMinimizable(!toggled);
-                presenter.IsMaximizable(!toggled);
-
-                visualStateManager.goToState(overlayWindowState);
-            }
-            else
-            {
-                presenter.IsMinimizable(localSettings.get<bool>(L"AllowWindowMinimize").value_or(true));
-                presenter.IsMaximizable(localSettings.get<bool>(L"AllowWindowMaximize").value_or(false));
-
-                visualStateManager.goToState(normalWindowState);
-            }
-            presenter.IsAlwaysOnTop(toggled);
-        }
-    }
-
-    void MainPage::CommandBarImportButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
-    {
-        LocateUserFileButton_Click(nullptr, nullptr);
     }
 
 
@@ -931,16 +934,18 @@ namespace winrt::ClipboardManager::implementation
     Windows::Foundation::IAsyncOperation<Windows::Media::Ocr::OcrResult> MainPage::RunOcr(Windows::Storage::Streams::IRandomAccessStreamWithContentType& bitmapStream)
     {
         auto&& bitmapDecoder = co_await Windows::Graphics::Imaging::BitmapDecoder::CreateAsync(bitmapStream);
+
+        bitmapDecoder = co_await Windows::Graphics::Imaging::BitmapDecoder::CreateAsync(bitmapStream);
         auto&& softwareBitmap = co_await bitmapDecoder.GetSoftwareBitmapAsync();
         clip::utils::unique_closable softwareBitmapPtr{ softwareBitmap };
 
+        Windows::Media::Ocr::OcrResult ocrResult{ nullptr };
         auto ocrEngine = Windows::Media::Ocr::OcrEngine::TryCreateFromUserProfileLanguages();
         if (ocrEngine)
         {
             try
             {
-                auto&& ocrResult = co_await ocrEngine.RecognizeAsync(softwareBitmap);
-                co_return ocrResult;
+                ocrResult = co_await ocrEngine.RecognizeAsync(softwareBitmap);
             }
             catch (hresult_error error)
             {
@@ -952,32 +957,61 @@ namespace winrt::ClipboardManager::implementation
             logger.error(L"Failed to create OCR engine from user profile languages.");
         }
 
-        co_return Windows::Media::Ocr::OcrResult(nullptr);
+        /*static clip::murmur::hash_result lastHash{};
+        const clip::murmur::MurmurHash3 murmurHash{};
+        auto&& pixelData = co_await bitmapDecoder.GetPixelDataAsync();
+        auto&& sourcePixels = pixelData.DetachPixelData();
+
+        std::vector<uint8_t> pixels{};
+        pixels.reserve(sourcePixels.size());
+        for (size_t i = 0; i < sourcePixels.size(); i++)
+        {
+            pixels.push_back(sourcePixels[i]);
+        }
+
+        auto hash = murmurHash.hash<uint8_t>(pixels, 0);
+        if (lastHash != hash)
+        {
+            logger.debug(std::format(L"Same hash as before ({},{})", hash.first, hash.second));
+        }
+        lastHash = hash;*/
+
+        co_return ocrResult;
     }
 
-    winrt::async MainPage::AddClipboardItem(Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers)
+    winrt::async MainPage::AddClipboardItem(Windows::ApplicationModel::DataTransfer::DataPackageView content, const bool& runTriggers)
     {
+        const clip::murmur::MurmurHash3 murmurHash{};
+
         if (content.Contains(win::StandardDataFormats::Text()))
         {
+            static clip::murmur::hash_result lastHash{};
+
             auto&& itemText = co_await content.GetTextAsync();
 
-            DispatcherQueue().TryEnqueue([this, itemText, runTriggers]()
+            std::stringstream stringStream{ clip::utils::convert(std::wstring(itemText)) };
+            auto hash = murmurHash.hash(stringStream, 0);
+            if (hash != lastHash)
             {
-                // Run triggers on the text:
-                if (runTriggers)
+                lastHash = hash;
+                DispatcherQueue().TryEnqueue([this, itemText, runTriggers]()
                 {
-                    auto&& text = std::wstring(itemText);
-                    AddAction(text, true);
-                }
+                    // Run triggers on the text:
+                    if (runTriggers)
+                    {
+                        auto&& text = std::wstring(itemText);
+                        AddAction(text, true);
+                    }
 
-                // Add text/clipboard content to history list:
-                auto view = make<ClipboardHistoryItemView>();
-                auto textBlock = xaml::TextBlock();
-                textBlock.Text(itemText);
-                view.HostContent(box_value(textBlock));
+                    auto view = make<ClipboardHistoryItemView>();
+                    auto textBlock = xaml::TextBlock();
+                    textBlock.TextWrapping(xaml::TextWrapping::Wrap);
+                    textBlock.Text(itemText);
+                    view.HostContent(box_value(textBlock));
+                    ClipboardHistoryListView().Items().InsertAt(0, view);
+                });
+            }
 
-                ClipboardHistoryListView().Items().InsertAt(0, view);
-            });
         }
         else if (localSettings.get<bool>(L"EnableOCR").value_or(false) && content.Contains(win::StandardDataFormats::Bitmap()))
         {
@@ -988,9 +1022,13 @@ namespace winrt::ClipboardManager::implementation
             {
                 logger.info(L"*Detected image in clipboard, performing OCR on it*");
 
+                if (runTriggers)
+                {
+                    content = win::Clipboard::GetContent();
+                }
+
                 // Get bitmap stream from DataPackageView:
                 auto&& clipboardStream = co_await content.GetBitmapAsync();
-
                 auto&& bitmapStream = co_await clipboardStream.OpenReadAsync();
                 clip::utils::unique_closable<Windows::Storage::Streams::IRandomAccessStream> bitmapStreamCloser{ bitmapStream };
 
@@ -1003,14 +1041,7 @@ namespace winrt::ClipboardManager::implementation
                     std::wstring string{};
                     for (auto&& line : ocrResult.Lines())
                     {
-                        if (string.empty())
-                        {
-                            string += line.Text();
-                        }
-                        else
-                        {
-                            string += L"\n" + line.Text();
-                        }
+                        string += (string.empty() ? L"" : L"\n") + line.Text();
                     }
 
                     DispatcherQueue().TryEnqueue([this, string]()
@@ -1021,11 +1052,9 @@ namespace winrt::ClipboardManager::implementation
 
                 try
                 {
-                    logger.debug(L"*Adding clipboard image to display*");
-                    logger.debug(L"Re-opening clipboard stream");
+                    logger.debug(L"*Adding clipboard image to display*\nRe-opening clipboard stream");
                     content = win::Clipboard::GetContent();
                     auto&& clonedClipboardStream = co_await(content.GetBitmapAsync());
-
                     logger.debug(L"Clipboard bitmap stream reopened.");
 
                     // Create bitmap from bitmap stream and show it:
