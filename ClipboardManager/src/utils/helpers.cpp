@@ -12,88 +12,104 @@
 #include <format>
 #include <string>
 #include <iostream>
+#include <locale>
+#include <codecvt>
 
-winrt::Microsoft::UI::Windowing::AppWindow clip::utils::getCurrentAppWindow()
+
+namespace clip::utils
 {
-    auto hwnd = GetActiveWindow();
-    return getCurrentAppWindow(hwnd);
-}
-
-winrt::Microsoft::UI::Windowing::AppWindow clip::utils::getCurrentAppWindow(const HWND& hwnd)
-{
-    return winrt::Microsoft::UI::Windowing::AppWindow::GetFromWindowId(winrt::Microsoft::UI::GetWindowIdFromWindow(hwnd));
-}
-
-bool clip::utils::pathExists(const std::filesystem::path& path)
-{
-    return PathFileExistsW(path.wstring().c_str());
-}
-
-clip::utils::managed_file_handle clip::utils::createFile(const std::filesystem::path& path)
-{
-    auto handle = CreateFileW(path.wstring().c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW, 0, nullptr);
-
-    if (handle == INVALID_HANDLE_VALUE)
+    winrt::Microsoft::UI::Windowing::AppWindow getCurrentAppWindow()
     {
-        throw std::runtime_error(std::format("Failed to create file: '{}'", path.string()));
+        auto hwnd = GetActiveWindow();
+        return getCurrentAppWindow(hwnd);
     }
 
-    return clip::utils::managed_file_handle(handle);
-}
+    winrt::Microsoft::UI::Windowing::AppWindow getCurrentAppWindow(const HWND& hwnd)
+    {
+        return winrt::Microsoft::UI::Windowing::AppWindow::GetFromWindowId(winrt::Microsoft::UI::GetWindowIdFromWindow(hwnd));
+    }
 
-void clip::utils::createDirectory(const std::filesystem::path& path)
-{
-    if (!CreateDirectoryW(path.wstring().c_str(), nullptr))
+    bool pathExists(const std::filesystem::path& path)
     {
-        throw std::runtime_error(std::format("Failed to create directory (CreateDirectoryW returned false): '{}'", path.string()));
+        return PathFileExistsW(path.wstring().c_str());
     }
-}
 
-std::optional<std::filesystem::path> clip::utils::tryGetKnownFolderPath(const GUID& knownFolderId)
-{
-    wchar_t* pWstr = nullptr;
-    if (SHGetKnownFolderPath(FOLDERID_Documents, KF_FLAG_DEFAULT, nullptr, &pWstr) == S_OK && pWstr != nullptr)
+    managed_file_handle createFile(const std::filesystem::path& path)
     {
-        // RAII pWstr.
-        std::unique_ptr<wchar_t, std::function<void(void*)>> ptr{ pWstr, CoTaskMemFree };
-        return std::filesystem::path(pWstr);
-    }
-    else
-    {
-        return std::optional<std::filesystem::path>();
-    }
-}
+        auto handle = CreateFileW(path.wstring().c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW, 0, nullptr);
 
-std::optional<winrt::hstring> clip::utils::getNamedResource(const winrt::hstring& name)
-{
-    try
-    {
-        winrt::Windows::ApplicationModel::Resources::ResourceLoader resLoader{};
-        return resLoader.GetString(name);
-    }
-    catch (winrt::hresult_error)
-    {
-        std::wcerr << L"'getNamedResource' Failed to instanciate or get string from resources." << std::endl;
-        return {};
-    }
-}
+        if (handle == INVALID_HANDLE_VALUE)
+        {
+            throw std::runtime_error(std::format("Failed to create file: '{}'", path.string()));
+        }
 
-clip::utils::WindowInfo* clip::utils::getWindowInfo(const HWND& windowHandle)
-{
-    return reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(windowHandle, GWLP_USERDATA));
-}
-
-std::wstring clip::utils::convert(const std::string& string)
-{
-    std::wstring wstring{};
-    wstring.resize(string.size(), L'\0');
-    if (MultiByteToWideChar(CP_UTF8, 0, string.c_str(), string.size(), &wstring[0], string.size()) > 0)
-    {
-        return wstring;
+        return managed_file_handle(handle);
     }
-    else
+
+    void createDirectory(const std::filesystem::path& path)
     {
-        return std::wstring();
+        if (!CreateDirectoryW(path.wstring().c_str(), nullptr))
+        {
+            throw std::runtime_error(std::format("Failed to create directory (CreateDirectoryW returned false): '{}'", path.string()));
+        }
+    }
+
+    std::optional<std::filesystem::path> tryGetKnownFolderPath(const GUID& knownFolderId)
+    {
+        wchar_t* pWstr = nullptr;
+        if (SHGetKnownFolderPath(FOLDERID_Documents, KF_FLAG_DEFAULT, nullptr, &pWstr) == S_OK && pWstr != nullptr)
+        {
+            // RAII pWstr.
+            std::unique_ptr<wchar_t, std::function<void(void*)>> ptr{ pWstr, CoTaskMemFree };
+            return std::filesystem::path(pWstr);
+        }
+        else
+        {
+            return std::optional<std::filesystem::path>();
+        }
+    }
+
+    std::optional<winrt::hstring> getNamedResource(const winrt::hstring& name)
+    {
+        try
+        {
+            winrt::Windows::ApplicationModel::Resources::ResourceLoader resLoader{};
+            return resLoader.GetString(name);
+        }
+        catch (winrt::hresult_error)
+        {
+            std::wcerr << L"'getNamedResource' Failed to instanciate or get string from resources." << std::endl;
+            return {};
+        }
+    }
+
+    WindowInfo* getWindowInfo(const HWND& windowHandle)
+    {
+        return reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(windowHandle, GWLP_USERDATA));
+    }
+
+    std::wstring convert(const std::string& string)
+    {
+        std::wstring wstring{};
+        wstring.resize(string.size(), L'\0');
+        if (MultiByteToWideChar(CP_UTF8, 0, string.c_str(), string.size(), &wstring[0], string.size()) > 0)
+        {
+            return wstring;
+        }
+        else
+        {
+            return std::wstring();
+        }
+    }
+
+    std::string convert(const std::wstring& wstring)
+    {
+        std::string string{};
+        string.resize(wstring.size());
+
+        return WideCharToMultiByte(CP_UTF8, 0, wstring.c_str(), wstring.size(), &string[0], string.size(), NULL, NULL) > 0
+            ? string
+            : std::string();
     }
 }
 

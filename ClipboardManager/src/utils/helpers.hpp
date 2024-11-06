@@ -124,4 +124,5 @@ namespace clip::utils
     WindowInfo* getWindowInfo(const HWND& windowHandle);
 
     std::wstring convert(const std::string& string);
+    std::string convert(const std::wstring& string);
 }
