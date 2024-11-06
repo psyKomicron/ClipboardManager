@@ -175,6 +175,7 @@
       <DependentUpon>MessagesBar.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="src\implementation\murmurhash3_implementation.hpp" />
     <ClInclude Include="src\murmur\MurmurHash3.hpp" />
     <ClInclude Include="src\utils\AppVersion.hpp" />
     <ClInclude Include="ClipboardActionEditor.h">
