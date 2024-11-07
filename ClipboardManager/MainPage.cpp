@@ -931,63 +931,6 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    Windows::Foundation::IAsyncOperation<Windows::Media::Ocr::OcrResult> MainPage::RunOcr(Windows::Storage::Streams::IRandomAccessStreamWithContentType& bitmapStream)
-    {
-#define ENABLE_OCR
-
-        Windows::Media::Ocr::OcrResult ocrResult{ nullptr };
-        auto&& bitmapDecoder = co_await Windows::Graphics::Imaging::BitmapDecoder::CreateAsync(bitmapStream);
-
-        auto&& pixelData = co_await bitmapDecoder.GetPixelDataAsync();
-        auto&& sourcePixels = pixelData.DetachPixelData();
-        std::vector<uint8_t> pixels{};
-        pixels.reserve(sourcePixels.size());
-        for (size_t i = 0; i < sourcePixels.size(); i++)
-        {
-            pixels.push_back(sourcePixels[i]);
-        }
-
-        bool runOcr = false;
-        {
-            std::unique_lock lock{ ocrMutex };
-            static clip::murmur::hash_result lastHash{};
-            const clip::murmur::MurmurHash3 murmurHash{};
-            auto hash = murmurHash.hash<uint8_t>(pixels, 0);
-            runOcr = lastHash != hash;
-
-            logger.debug(std::format(L"last hash: {},{} | new hash: {},{}", lastHash.first, lastHash.second, hash.first, hash.second));
-
-            lastHash = hash;
-        }
-
-        if (runOcr)
-        {
-#ifdef ENABLE_OCR
-            auto&& softwareBitmap = co_await bitmapDecoder.GetSoftwareBitmapAsync();
-            clip::utils::unique_closable softwareBitmapPtr{ &softwareBitmap };
-
-            auto ocrEngine = Windows::Media::Ocr::OcrEngine::TryCreateFromUserProfileLanguages();
-            if (ocrEngine)
-            {
-                try
-                {
-                    ocrResult = co_await ocrEngine.RecognizeAsync(softwareBitmap);
-                }
-                catch (hresult_error& error)
-                {
-                    logger.error(error.message().data());
-                }
-            }
-            else
-            {
-                logger.error(L"Failed to create OCR engine from user profile languages.");
-            }
-#endif
-        }
-
-        co_return ocrResult;
-    }
-
     winrt::async MainPage::AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers)
     {
         const clip::murmur::MurmurHash3 murmurHash{};
@@ -1024,75 +967,29 @@ namespace winrt::ClipboardManager::implementation
         }
         else if (content.Contains(win::StandardDataFormats::Bitmap()))
         {
-            if (runTriggers && localSettings.get<bool>(L"EnableOCR").value_or(false))
+            try
             {
-                logger.info(L"*Detected image in clipboard, performing OCR on it*");
+                Microsoft::UI::Xaml::Media::Imaging::BitmapImage bitmapImage{};
+                auto view = make<ClipboardHistoryItemView>();
+                xaml::Image image{};
+                //image.Height(200);
+                image.Source(bitmapImage);
+                view.HostContent(image);
+                ClipboardHistoryListView().Items().InsertAt(0, view);
 
-                try
+                // Get bitmap stream from DataPackageView:
+                auto&& clipboardStream = co_await content.GetBitmapAsync();
+                if (clipboardStream)
                 {
-                    // Get bitmap stream from DataPackageView:
-                    auto&& clipboardStream = co_await content.GetBitmapAsync();
                     auto&& bitmapStream = co_await clipboardStream.OpenReadAsync();
                     clip::utils::unique_closable bitmapStreamCloser{ &bitmapStream };
-
-                    auto&& ocrResult = co_await RunOcr(bitmapStream);
-                    if (ocrResult)
-                    {
-                        logger.debug(L"OCR result: " + std::wstring(ocrResult.Text().data()));
-
-                        // If the OCR found text, run triggers on the text:
-                        if (!ocrResult.Text().empty())
-                        {
-                            std::wstring string{};
-                            for (auto&& line : ocrResult.Lines())
-                            {
-                                string += (string.empty() ? L"" : L"\n") + line.Text();
-                            }
-
-                            DispatcherQueue().TryEnqueue([this, string]()
-                            {
-                                AddAction(string, true);
-                            });
-                        }
-                    }
-                }
-                catch (const winrt::hresult_error& err)
-                {
-                    logger.error(L"Error while running OCR: " + std::wstring(err.message()));
+                    // Create bitmap from bitmap stream and show it:
+                    bitmapImage.SetSourceAsync(bitmapStream);
                 }
             }
-            else
+            catch (winrt::hresult_error error)
             {
-                try
-                {
-                    Microsoft::UI::Xaml::Media::Imaging::BitmapImage bitmapImage{};
-                    auto view = make<ClipboardHistoryItemView>();
-                    xaml::Image image{};
-                    //image.Height(200);
-                    image.Source(bitmapImage);
-                    view.HostContent(image);
-                    ClipboardHistoryListView().Items().InsertAt(0, view);
-
-                    // Get bitmap stream from DataPackageView:
-                    auto&& clipboardStream = co_await content.GetBitmapAsync();
-                    if (clipboardStream)
-                    {
-                        auto&& bitmapStream = co_await clipboardStream.OpenReadAsync();
-                        clip::utils::unique_closable bitmapStreamCloser{ &bitmapStream };
-                        // Create bitmap from bitmap stream and show it:
-                        bitmapImage.SetSourceAsync(bitmapStream);
-
-                        logger.debug(L"Image panel created, displaying it.");
-                    }
-                }
-                catch (winrt::hresult_error error)
-                {
-                    logger.error(L"Error while using image stream for UI: " + std::wstring(error.message()));
-                }
-                /*catch (...)
-                {
-                    logger.error(L"Unknown error while running OCR.");
-                }*/
+                logger.error(L"Error while using image stream for UI: " + std::wstring(error.message()));
             }
         }
     }
