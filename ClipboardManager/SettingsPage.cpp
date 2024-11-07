@@ -116,6 +116,7 @@ namespace winrt::ClipboardManager::implementation
 
     void SettingsPage::EnableListeningToggleSwitch_Toggled(winrt::IInspectable const& s, xaml::RoutedEventArgs const&)
     {
+        check_loaded(loaded);
         NotificationsExpander().IsEnabled(NotificationsToggleSwitch().IsOn());
 
         check_loaded(loaded);
@@ -261,6 +262,7 @@ namespace winrt::ClipboardManager::implementation
 
     void SettingsPage::AllowMinimizeToggleSwitch_Toggled(Windows::Foundation::IInspectable const& sender, xaml::RoutedEventArgs const&)
     {
+        check_loaded(loaded);
         updateSetting(sender, L"AllowWindowMinimize");
 
         auto&& appWindow = clip::utils::getCurrentAppWindow();
@@ -278,6 +280,7 @@ namespace winrt::ClipboardManager::implementation
 
     void SettingsPage::AllowMaximizeToggleSwitch_Toggled(Windows::Foundation::IInspectable const& sender, xaml::RoutedEventArgs const&)
     {
+        check_loaded(loaded);
         updateSetting(sender, L"AllowWindowMaximize");
 
         auto&& appWindow = clip::utils::getCurrentAppWindow();
@@ -294,12 +297,8 @@ namespace winrt::ClipboardManager::implementation
 
     void SettingsPage::EnableFileWatchingToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, xaml::RoutedEventArgs const&)
     {
+        check_loaded(loaded);
         updateSetting(sender, L"EnableTriggerFileWatching");
-    }
-
-    void SettingsPage::EnableOCRToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, xaml::RoutedEventArgs const&)
-    {
-        updateSetting(sender, L"EnableOCR");
     }
 
 

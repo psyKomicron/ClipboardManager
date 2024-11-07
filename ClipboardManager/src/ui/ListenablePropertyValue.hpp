@@ -54,7 +54,7 @@ namespace clip::ui
                 boost::cmatch match{};
 
                 std::ignore = boost::regex_match(callerLocation.function_name(), match, functionExtractor);
-                winrt::hstring functionName{ clip::utils::convert(match[2]) };
+                winrt::hstring functionName{ clip::utils::to_wstring(match[2]) };
 
                 _propName = functionName;
 

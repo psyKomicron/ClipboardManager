@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "FileWatcher.hpp"
 
-#include "src/murmur/MurmurHash3.hpp"
-
 #include <Windows.h>
 
 #include <functional>
@@ -35,7 +33,7 @@ namespace clip
             throw std::runtime_error("Opening stream");   
         }
 
-        lastHash = clip::murmur::MurmurHash3_x64_128(stream, 0);
+        lastHash = hasher.hash(stream);
 
         std::atomic_flag waitFlag{};
         int retValue = 0;
@@ -60,7 +58,7 @@ namespace clip
         std::ifstream stream{ _path, std::ios::binary };
         if (stream.is_open())
         {
-            auto hash = clip::murmur::MurmurHash3_x64_128(stream, 0);
+            auto hash = hasher.hash(stream);
 
             if (hash != lastHash)
             {

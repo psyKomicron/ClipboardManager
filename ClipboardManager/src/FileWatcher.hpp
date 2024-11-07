@@ -5,6 +5,8 @@
 #include <thread>
 #include <functional>
 
+#include "src/murmur/MurmurHash3.hpp"
+
 namespace clip
 {
     class FileWatcher
@@ -24,6 +26,7 @@ namespace clip
         std::function<void()> eventCallback{};
         std::pair<uint64_t, uint64_t> lastHash{};
         std::filesystem::path _path{};
+        const clip::murmur::MurmurHash3 hasher{};
 
         void findChanges();
         void watchDirectoryChanges(std::atomic_flag* waitFlag, int* retValue);

@@ -33,7 +33,7 @@ void clip::utils::Logger::error(const std::wstring& message) const
 
 void clip::utils::Logger::error(const std::string& message) const
 {
-    print(clip::utils::convert(message), LogSeverity::Error);
+    print(clip::utils::to_wstring(message), LogSeverity::Error);
 }
 
 void clip::utils::Logger::print(const std::wstring& message, const LogSeverity& severity) const
