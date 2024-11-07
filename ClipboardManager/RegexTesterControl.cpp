@@ -125,7 +125,7 @@ namespace winrt::ClipboardManager::implementation
             catch (boost::regex_error regexError)
             {
                 visualStateManager.goToState(errorState);
-                ErrorGrid().Message(clip::utils::convert(regexError.what()));
+                ErrorGrid().Message(clip::utils::to_wstring(regexError.what()));
 
                 /*uint32_t index = 0;
                 if (MatchTextBlockParagraph().Inlines().IndexOf(run, index))
