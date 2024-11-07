@@ -97,7 +97,7 @@ namespace winrt::ClipboardManager::implementation
         void LaunchAction(const std::wstring& url);
         winrt::async LoadClipboardHistory();
         Windows::Foundation::IAsyncOperation<Windows::Media::Ocr::OcrResult> RunOcr(Windows::Storage::Streams::IRandomAccessStreamWithContentType& bitmapStream);
-        winrt::async AddClipboardItem(Windows::ApplicationModel::DataTransfer::DataPackageView content, const bool& runTriggers);
+        winrt::async AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers);
         bool LoadUserFile(const std::filesystem::path& path);
         void CreateTriggerViews();
 
