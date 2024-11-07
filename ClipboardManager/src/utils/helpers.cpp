@@ -88,7 +88,7 @@ namespace clip::utils
         return reinterpret_cast<WindowInfo*>(::GetWindowLongPtr(windowHandle, GWLP_USERDATA));
     }
 
-    std::wstring convert(const std::string& string)
+    std::wstring to_wstring(const std::string& string)
     {
         std::wstring wstring{};
         wstring.resize(string.size(), L'\0');
@@ -102,7 +102,7 @@ namespace clip::utils
         }
     }
 
-    std::string convert(const std::wstring& wstring)
+    std::string to_string(const std::wstring& wstring)
     {
         std::string string{};
         string.resize(wstring.size());
@@ -171,7 +171,7 @@ namespace clip::utils
         const boost::regex functionExtractor{ R"(void __cdecl ([A-z]*::)*([A-z]*)\(.*\))" };
         boost::cmatch match{};
         std::ignore = boost::regex_match(sourceLocation.function_name(), match, functionExtractor);
-        std::wstring functionName = clip::utils::convert(match[2]);
+        std::wstring functionName = clip::utils::to_wstring(match[2]);
 
         return functionName;
     }

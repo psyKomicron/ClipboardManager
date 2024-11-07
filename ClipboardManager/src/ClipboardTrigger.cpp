@@ -353,7 +353,7 @@ namespace clip
 
             return what.compare("Argument not found.") == 0 
                 ? ClipboardTriggerFormatException(FormatExceptionCode::ArgumentNotFound)
-                : ClipboardTriggerFormatException(FormatExceptionCode::InvalidFormat, clip::utils::convert(formatError.what()));
+                : ClipboardTriggerFormatException(FormatExceptionCode::InvalidFormat, clip::utils::to_wstring(formatError.what()));
         }
 
         return {};
