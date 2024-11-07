@@ -43,8 +43,6 @@
 #include <sstream>
 #include <random>
 
-using namespace std::chrono_literals;
-
 namespace xaml
 {
     using namespace winrt::Microsoft::UI::Xaml;
@@ -931,36 +929,39 @@ namespace winrt::ClipboardManager::implementation
 
     winrt::async MainPage::AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers)
     {
-        const clip::murmur::MurmurHash3 murmurHash{};
+        using namespace std::literals;
+        static std::chrono::system_clock::time_point lastEntry{};
+        auto&& now = std::chrono::system_clock::now();
+        auto elapsed = (now - lastEntry);
+        lastEntry = now;
+
+        if (elapsed < 150ms)
+        {
+            logger.info(L"Not adding clipboard item - Duplicate event.");
+            co_return;
+        }
 
         if (content.Contains(win::StandardDataFormats::Text()))
         {
             auto&& itemText = co_await content.GetTextAsync();
             if (!itemText.empty())
             {
-                std::stringstream stringStream{ clip::utils::to_string(std::wstring(itemText)) };
-                static clip::murmur::hash_result lastHash{};
-                auto hash = murmurHash.hash(stringStream, 0);
-                if (hash != lastHash)
+                DispatcherQueue().TryEnqueue([this, itemText, runTriggers]()
                 {
-                    lastHash = hash;
-                    DispatcherQueue().TryEnqueue([this, itemText, runTriggers]()
+                    // Run triggers on the text:
+                    if (runTriggers)
                     {
-                        // Run triggers on the text:
-                        if (runTriggers)
-                        {
-                            auto&& text = std::wstring(itemText);
-                            AddAction(text, true);
-                        }
+                        auto&& text = std::wstring(itemText);
+                        AddAction(text, true);
+                    }
 
-                        auto view = make<ClipboardHistoryItemView>();
-                        auto textBlock = xaml::TextBlock();
-                        textBlock.TextWrapping(xaml::TextWrapping::Wrap);
-                        textBlock.Text(itemText);
-                        view.HostContent(box_value(textBlock));
-                        ClipboardHistoryListView().Items().InsertAt(0, view);
-                    });
-                }
+                    auto view = make<ClipboardHistoryItemView>();
+                    auto textBlock = xaml::TextBlock();
+                    textBlock.TextWrapping(xaml::TextWrapping::Wrap);
+                    textBlock.Text(itemText);
+                    view.HostContent(box_value(textBlock));
+                    ClipboardHistoryListView().Items().InsertAt(0, view);
+                });
             }
         }
         else if (content.Contains(win::StandardDataFormats::Bitmap()))
