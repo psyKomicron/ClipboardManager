@@ -7,27 +7,27 @@
 namespace clip::utils
 {
     template<typename T>
-    concept Closable = requires(T t)
+    concept is_closable = requires(T t)
     {
-        static_cast<winrt::Windows::Foundation::IClosable>(t);
+        //static_cast<winrt::Windows::Foundation::IClosable>(t);
         t.Close();
     };
 
-    template<Closable T>
+    template<is_closable T>
     class unique_closable
     {
     public:
-        unique_closable(const T& closable) :
+        unique_closable(T* closable) :
             closable{ closable }
         {
         }
 
         ~unique_closable()
         {
-            closable.Close();
+            closable->Close();
         }
 
     private:
-        T closable{};
+        T* closable{};
     };
 }
