@@ -212,12 +212,6 @@
                     <ToggleSwitch x:Name="ImportClipboardHistoryToggleSwitch" Toggled="ImportClipboardHistoryToggleSwitch_Toggled"/>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
-
-            <clip:HostControl x:Uid="EnableOCRHostControl">
-                <clip:HostControl.HostContent>
-                    <ToggleSwitch x:Name="EnableOCRToggleSwitch" Style="{StaticResource FlippedToggleSwitchStyle}" Toggled="EnableOCRToggleSwitch_Toggled"/>
-                </clip:HostControl.HostContent>
-            </clip:HostControl>
             <!--#endregion-->
 
 

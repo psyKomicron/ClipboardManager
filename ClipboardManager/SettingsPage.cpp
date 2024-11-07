@@ -53,7 +53,6 @@ namespace winrt::ClipboardManager::implementation
         selectComboBoxItem(RegexModeComboBox(), settings.get<int32_t>(L"TriggerMatchMode").value_or(0));
         AddDuplicatedActionsToggleSwitch().IsOn(settings.get<bool>(L"AddDuplicatedActions").value_or(true));
         ImportClipboardHistoryToggleSwitch().IsOn(settings.get<bool>(L"ImportClipboardHistory").value_or(false));
-        EnableOCRToggleSwitch().IsOn(settings.get<bool>(L"EnableOCR").value_or(false));
 
         // Notifications:
         auto durationType = settings.get<clip::notifs::NotificationDurationType>(L"NotificationDurationType").value_or(clip::notifs::NotificationDurationType::Default);
@@ -300,12 +299,6 @@ namespace winrt::ClipboardManager::implementation
     {
         check_loaded(loaded);
         updateSetting(sender, L"EnableTriggerFileWatching");
-    }
-
-    void SettingsPage::EnableOCRToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, xaml::RoutedEventArgs const&)
-    {
-        check_loaded(loaded);
-        updateSetting(sender, L"EnableOCR");
     }
 
 
