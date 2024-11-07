@@ -925,8 +925,6 @@ namespace winrt::ClipboardManager::implementation
         }
         catch (hresult_error error)
         {
-            logger.error(L"Failed to retreive item from clipboard history.");
-
             MessagesBar().AddWarning(L"Warning_FailedToLoadClipboardHistory", L"Failed to load clipboard history.");
         }
     }
