@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <filesystem>
+#include <mutex>
 
 namespace winrt::ClipboardManager::implementation
 {
@@ -81,6 +82,7 @@ namespace winrt::ClipboardManager::implementation
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionEditor> clipboardTriggerViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionEditor>();
         winrt::event_token clipboardContentChangedToken{};
+        std::mutex ocrMutex{};
 
         winrt::async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
         void Editor_Toggled(const winrt::ClipboardManager::ClipboardActionEditor& sender, const bool& isOn);

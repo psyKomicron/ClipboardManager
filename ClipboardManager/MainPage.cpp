@@ -933,37 +933,13 @@ namespace winrt::ClipboardManager::implementation
 
     Windows::Foundation::IAsyncOperation<Windows::Media::Ocr::OcrResult> MainPage::RunOcr(Windows::Storage::Streams::IRandomAccessStreamWithContentType& bitmapStream)
     {
+#define ENABLE_OCR
+
         Windows::Media::Ocr::OcrResult ocrResult{ nullptr };
         auto&& bitmapDecoder = co_await Windows::Graphics::Imaging::BitmapDecoder::CreateAsync(bitmapStream);
 
-#define ENABLE_OCR
-#ifdef ENABLE_OCR
-        auto&& softwareBitmap = co_await bitmapDecoder.GetSoftwareBitmapAsync();
-        clip::utils::unique_closable softwareBitmapPtr{ &softwareBitmap };
-
-        auto ocrEngine = Windows::Media::Ocr::OcrEngine::TryCreateFromUserProfileLanguages();
-        if (ocrEngine)
-        {
-            try
-            {
-                ocrResult = co_await ocrEngine.RecognizeAsync(softwareBitmap);
-            }
-            catch (hresult_error& error)
-            {
-                logger.error(error.message().data());
-            }
-        }
-        else
-        {
-            logger.error(L"Failed to create OCR engine from user profile languages.");
-        }
-#endif
-
-        static clip::murmur::hash_result lastHash{};
-        const clip::murmur::MurmurHash3 murmurHash{};
         auto&& pixelData = co_await bitmapDecoder.GetPixelDataAsync();
         auto&& sourcePixels = pixelData.DetachPixelData();
-
         std::vector<uint8_t> pixels{};
         pixels.reserve(sourcePixels.size());
         for (size_t i = 0; i < sourcePixels.size(); i++)
@@ -971,12 +947,43 @@ namespace winrt::ClipboardManager::implementation
             pixels.push_back(sourcePixels[i]);
         }
 
-        auto hash = murmurHash.hash<uint8_t>(pixels, 0);
-        if (lastHash != hash)
+        bool runOcr = false;
         {
-            logger.debug(std::format(L"Same hash as before ({},{})", hash.first, hash.second));
+            std::unique_lock lock{ ocrMutex };
+            static clip::murmur::hash_result lastHash{};
+            const clip::murmur::MurmurHash3 murmurHash{};
+            auto hash = murmurHash.hash<uint8_t>(pixels, 0);
+            runOcr = lastHash != hash;
+
+            logger.debug(std::format(L"last hash: {},{} | new hash: {},{}", lastHash.first, lastHash.second, hash.first, hash.second));
+
+            lastHash = hash;
         }
-        lastHash = hash;
+
+        if (runOcr)
+        {
+#ifdef ENABLE_OCR
+            auto&& softwareBitmap = co_await bitmapDecoder.GetSoftwareBitmapAsync();
+            clip::utils::unique_closable softwareBitmapPtr{ &softwareBitmap };
+
+            auto ocrEngine = Windows::Media::Ocr::OcrEngine::TryCreateFromUserProfileLanguages();
+            if (ocrEngine)
+            {
+                try
+                {
+                    ocrResult = co_await ocrEngine.RecognizeAsync(softwareBitmap);
+                }
+                catch (hresult_error& error)
+                {
+                    logger.error(error.message().data());
+                }
+            }
+            else
+            {
+                logger.error(L"Failed to create OCR engine from user profile languages.");
+            }
+#endif
+        }
 
         co_return ocrResult;
     }
@@ -987,33 +994,33 @@ namespace winrt::ClipboardManager::implementation
 
         if (content.Contains(win::StandardDataFormats::Text()))
         {
-            static clip::murmur::hash_result lastHash{};
-
             auto&& itemText = co_await content.GetTextAsync();
-
-            std::stringstream stringStream{ clip::utils::to_string(std::wstring(itemText)) };
-            auto hash = murmurHash.hash(stringStream, 0);
-            if (hash != lastHash)
+            if (!itemText.empty())
             {
-                lastHash = hash;
-                DispatcherQueue().TryEnqueue([this, itemText, runTriggers]()
+                std::stringstream stringStream{ clip::utils::to_string(std::wstring(itemText)) };
+                static clip::murmur::hash_result lastHash{};
+                auto hash = murmurHash.hash(stringStream, 0);
+                if (hash != lastHash)
                 {
-                    // Run triggers on the text:
-                    if (runTriggers)
+                    lastHash = hash;
+                    DispatcherQueue().TryEnqueue([this, itemText, runTriggers]()
                     {
-                        auto&& text = std::wstring(itemText);
-                        AddAction(text, true);
-                    }
+                        // Run triggers on the text:
+                        if (runTriggers)
+                        {
+                            auto&& text = std::wstring(itemText);
+                            AddAction(text, true);
+                        }
 
-                    auto view = make<ClipboardHistoryItemView>();
-                    auto textBlock = xaml::TextBlock();
-                    textBlock.TextWrapping(xaml::TextWrapping::Wrap);
-                    textBlock.Text(itemText);
-                    view.HostContent(box_value(textBlock));
-                    ClipboardHistoryListView().Items().InsertAt(0, view);
-                });
+                        auto view = make<ClipboardHistoryItemView>();
+                        auto textBlock = xaml::TextBlock();
+                        textBlock.TextWrapping(xaml::TextWrapping::Wrap);
+                        textBlock.Text(itemText);
+                        view.HostContent(box_value(textBlock));
+                        ClipboardHistoryListView().Items().InsertAt(0, view);
+                    });
+                }
             }
-
         }
         else if (content.Contains(win::StandardDataFormats::Bitmap()))
         {
@@ -1062,7 +1069,7 @@ namespace winrt::ClipboardManager::implementation
                     auto view = make<ClipboardHistoryItemView>();
                     xaml::Image image{};
                     //image.Height(200);
-                    //image.Source(bitmapImage);
+                    image.Source(bitmapImage);
                     view.HostContent(image);
                     ClipboardHistoryListView().Items().InsertAt(0, view);
 
@@ -1072,10 +1079,8 @@ namespace winrt::ClipboardManager::implementation
                     {
                         auto&& bitmapStream = co_await clipboardStream.OpenReadAsync();
                         clip::utils::unique_closable bitmapStreamCloser{ &bitmapStream };
-
                         // Create bitmap from bitmap stream and show it:
                         bitmapImage.SetSourceAsync(bitmapStream);
-                        bitmapStream.Close();
 
                         logger.debug(L"Image panel created, displaying it.");
                     }
