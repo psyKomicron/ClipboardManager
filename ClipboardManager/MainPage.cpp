@@ -934,10 +934,9 @@ namespace winrt::ClipboardManager::implementation
         auto&& now = std::chrono::system_clock::now();
         auto elapsed = (now - lastEntry);
         lastEntry = now;
-
         if (elapsed < 150ms)
         {
-            logger.info(L"Not adding clipboard item - Duplicate event.");
+            logger.info(L"Duplicate clipboard event.");
             co_return;
         }
 
