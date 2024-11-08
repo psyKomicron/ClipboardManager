@@ -54,7 +54,6 @@ namespace clip
 
     void FileWatcher::findChanges()
     {
-        // TODO: Implement.
         std::ifstream stream{ _path, std::ios::binary };
         if (stream.is_open())
         {
