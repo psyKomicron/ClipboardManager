@@ -1,8 +1,8 @@
 #pragma once
 #include <string>
 
-constexpr const wchar_t* APP_VERSION = L"1.2.3";
-constexpr const wchar_t* APP_VERSION_NAME = L"Mangrove";
+constexpr const wchar_t* APP_VERSION = L"1.3.0";
+constexpr const wchar_t* APP_VERSION_NAME = L"Pin";
 
 namespace clip::utils
 {
