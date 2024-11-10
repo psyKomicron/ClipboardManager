@@ -23,6 +23,7 @@ namespace winrt::ClipboardManager::implementation
      public:
         MainPage();
         MainPage(const winrt::Microsoft::UI::Windowing::AppWindow& appWindow);
+        ~MainPage();
 
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> Actions();
         void Actions(const winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView>& value);
@@ -38,7 +39,6 @@ namespace winrt::ClipboardManager::implementation
         winrt::async CreateUserFileButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void ClipboadTriggersListPivot_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
         winrt::async Page_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        winrt::async ClipboardHistoryListView_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
         void StartTourButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::async TeachingTip_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
         winrt::async TeachingTip2_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
@@ -96,10 +96,9 @@ namespace winrt::ClipboardManager::implementation
         void ReloadTriggers();
         bool LoadTriggers(std::filesystem::path& path);
         void LaunchAction(const std::wstring& url);
-        winrt::async LoadClipboardHistory();
-        winrt::async AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers);
+        winrt::async AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& notify);
         bool LoadUserFile(const std::filesystem::path& path);
-        void CreateTriggerViews();
+        void ShowTriggerViews();
     };
 }
 

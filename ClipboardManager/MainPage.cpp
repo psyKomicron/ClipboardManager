@@ -11,14 +11,13 @@
 #include "src/utils/Launcher.hpp"
 #include "src/utils/AppVersion.hpp"
 #include "src/utils/StartupTask.hpp"
-#include "src/murmur/MurmurHash3.hpp"
+#include "src/utils/unique_closable.hpp"
 #include "src/notifs/ToastNotification.hpp"
 #include "src/notifs/win_toasts.hpp"
 #include "src/notifs/NotificationTypes.hpp"
 
 #include "ClipboardActionView.h"
 #include "ClipboardActionEditor.h"
-#include "ClipboardHistoryItemView.h"
 
 #include <winrt/Windows.ApplicationModel.h>
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
@@ -27,11 +26,6 @@
 #include <winrt/Microsoft.Windows.AppNotifications.h>
 #include <winrt/Microsoft.Windows.AppNotifications.Builder.h>
 #include <winrt/Windows.System.h>
-// OCR
-#include <winrt/Windows.Graphics.Imaging.h>
-#include <winrt/Windows.Globalization.h>
-#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
-#include <src/utils/com_closable_ptr.h>
 
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -41,7 +35,6 @@
 #include <iostream>
 #include <chrono>
 #include <sstream>
-#include <random>
 
 namespace xaml
 {
@@ -94,6 +87,11 @@ namespace winrt::ClipboardManager::implementation
         this->appWindow = appWindow;
     }
 
+    MainPage::~MainPage()
+    {
+        win::Clipboard::ContentChanged(clipboardContentChangedToken);
+    }
+
     win::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> MainPage::Actions()
     {
         return clipboardActionViews;
@@ -116,8 +114,6 @@ namespace winrt::ClipboardManager::implementation
 
     void MainPage::AppClosing()
     {
-        win::Clipboard::ContentChanged(clipboardContentChangedToken);
-
         auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
 
         if (userFilePath.has_value())
@@ -258,11 +254,6 @@ namespace winrt::ClipboardManager::implementation
         //CreateTriggerViews();
     }
 
-    winrt::async MainPage::ClipboardHistoryListView_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args)
-    {
-        co_await LoadClipboardHistory();
-    }
-
     winrt::async MainPage::LocateUserFileButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
         win::FileOpenPicker picker{};
@@ -317,7 +308,6 @@ namespace winrt::ClipboardManager::implementation
         static std::vector<xaml::TeachingTip> teachingTips
         {
             SettingsPivotTeachingTip(),
-            ClipboardHistoryPivotTeachingTip(),
             ClipboardTriggersPivotTeachingTip(),
             ClipboardActionsPivotTeachingTip(),
             OpenQuickSettingsButtonTeachingTip(),
@@ -437,20 +427,27 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    void MainPage::ClearActionsButton_Click(win::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+    void MainPage::ClearActionsButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const& e)
     {
         clipboardActionViews.Clear();
     }
 
-    winrt::async MainPage::ImportFromClipboardButton_Click(win::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+    winrt::async MainPage::ImportFromClipboardButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const& e)
     {
-        auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
-        for (auto&& item : clipboardHistory.Items())
+        try
         {
-            auto&& itemText = co_await item.Content().GetTextAsync();
-
-            AddAction(itemText.data(), false);
+            auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
+            for (auto&& item : clipboardHistory.Items())
+            {
+                auto&& content = item.Content();
+                co_await AddClipboardItem(content, false);
+            }
         }
+        catch (hresult_error error)
+        {
+            MessagesBar().AddWarning(L"Warning_FailedToLoadClipboardHistory", L"Failed to load clipboard history.");
+        }
+
         // TODO: Notify user that clipboard content has been imported ?
     }
 
@@ -566,7 +563,7 @@ namespace winrt::ClipboardManager::implementation
         });
     }
 
-    void MainPage::Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const Windows::Foundation::IInspectable& inspectable)
+    void MainPage::Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const win::IInspectable& inspectable)
     {
         auto actionLabel = std::wstring(sender.ActionLabel());
         auto format = std::wstring(sender.ActionFormat());
@@ -906,35 +903,14 @@ namespace winrt::ClipboardManager::implementation
         });
     }
 
-    winrt::async MainPage::LoadClipboardHistory()
-    {
-        try
-        {
-            bool importClipboardHistory = localSettings.get<bool>(L"ImportClipboardHistory").value_or(false);
-
-            auto&& clipboardHistory = co_await win::Clipboard::GetHistoryItemsAsync();
-            auto&& items = clipboardHistory.Items();
-            for (int i = items.Size() - 1; i >= 0; i--)
-            {
-                auto&& item = items.GetAt(i);
-                auto&& content = item.Content();
-                co_await AddClipboardItem(content, importClipboardHistory);
-            }
-        }
-        catch (hresult_error error)
-        {
-            MessagesBar().AddWarning(L"Warning_FailedToLoadClipboardHistory", L"Failed to load clipboard history.");
-        }
-    }
-
-    winrt::async MainPage::AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& runTriggers)
+    winrt::async MainPage::AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& notify)
     {
         using namespace std::literals;
         static std::chrono::system_clock::time_point lastEntry{};
         auto&& now = std::chrono::system_clock::now();
         auto elapsed = (now - lastEntry);
         lastEntry = now;
-        if (elapsed < 150ms)
+        if (elapsed < 50ms)
         {
             logger.info(L"Duplicate clipboard event.");
             co_return;
@@ -945,49 +921,11 @@ namespace winrt::ClipboardManager::implementation
             auto&& itemText = co_await content.GetTextAsync();
             if (!itemText.empty())
             {
-                DispatcherQueue().TryEnqueue([this, itemText, runTriggers]()
+                DispatcherQueue().TryEnqueue([this, text = std::wstring(itemText), notify]()
                 {
                     // Run triggers on the text:
-                    if (runTriggers)
-                    {
-                        auto&& text = std::wstring(itemText);
-                        AddAction(text, true);
-                    }
-
-                    auto view = make<ClipboardHistoryItemView>();
-                    auto textBlock = xaml::TextBlock();
-                    textBlock.TextWrapping(xaml::TextWrapping::Wrap);
-                    textBlock.Text(itemText);
-                    view.HostContent(box_value(textBlock));
-                    ClipboardHistoryListView().Items().InsertAt(0, view);
+                    AddAction(text, notify);
                 });
-            }
-        }
-        else if (content.Contains(win::StandardDataFormats::Bitmap()))
-        {
-            try
-            {
-                Microsoft::UI::Xaml::Media::Imaging::BitmapImage bitmapImage{};
-                auto view = make<ClipboardHistoryItemView>();
-                xaml::Image image{};
-                //image.Height(200);
-                image.Source(bitmapImage);
-                view.HostContent(image);
-                ClipboardHistoryListView().Items().InsertAt(0, view);
-
-                // Get bitmap stream from DataPackageView:
-                auto&& clipboardStream = co_await content.GetBitmapAsync();
-                if (clipboardStream)
-                {
-                    auto&& bitmapStream = co_await clipboardStream.OpenReadAsync();
-                    clip::utils::unique_closable bitmapStreamCloser{ &bitmapStream };
-                    // Create bitmap from bitmap stream and show it:
-                    bitmapImage.SetSourceAsync(bitmapStream);
-                }
-            }
-            catch (winrt::hresult_error error)
-            {
-                logger.error(L"Error while using image stream for UI: " + std::wstring(error.message()));
             }
         }
     }
@@ -1017,7 +955,7 @@ namespace winrt::ClipboardManager::implementation
                 
                 try
                 {
-                    CreateTriggerViews();
+                    ShowTriggerViews();
                     triggersLoaded = true;
                 }
                 catch (hresult_error error)
@@ -1067,7 +1005,7 @@ namespace winrt::ClipboardManager::implementation
         return triggersLoaded;
     }
 
-    void MainPage::CreateTriggerViews()
+    void MainPage::ShowTriggerViews()
     {
         for (auto&& trigger : triggers)
         {

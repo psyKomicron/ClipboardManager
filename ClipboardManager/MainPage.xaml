@@ -155,7 +155,7 @@
 
         <clip:MessagesBar x:Name="MessagesBar" Grid.Row="1"/>
 
-        <Pivot x:Name="Pivot" SelectedIndex="3" Grid.Row="2">
+        <Pivot x:Name="Pivot" SelectedIndex="2" Grid.Row="2">
             <PivotItem Margin="0" Padding="5,3,5,0">
                 <PivotItem.Header>
                     <FontIcon x:Name="SettingsPivot" Glyph="&#xe713;" FontSize="16"/>
@@ -164,20 +164,6 @@
                 <Frame>
                     <clip:SettingsPage/>
                 </Frame>
-            </PivotItem>
-
-            <PivotItem Margin="0" Padding="0">
-                <PivotItem.Header>
-                    <FontIcon x:Name="ClipboardHistoryPivot" Glyph="&#xe823;" FontSize="16"/>
-                </PivotItem.Header>
-
-                <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="0" Padding="0" Loading="ClipboardHistoryListView_Loading">
-                    <ListView.Resources>
-                        <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
-                            <Setter Property="Padding" Value="4,0,4,0" />
-                        </Style>
-                    </ListView.Resources>
-                </ListView>
             </PivotItem>
 
             <PivotItem Padding="0" Margin="0" Loaded="ClipboadTriggersListPivot_Loaded">
@@ -471,15 +457,6 @@
         <TeachingTip x:Name="SettingsPivotTeachingTip" 
                      x:Uid="SettingsPivotTeachingTip"
                      Target="{x:Bind SettingsPivot}"
-                     ActionButtonClick="TeachingTip_CloseButtonClick">
-            <TeachingTip.ActionButtonContent>
-                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-            </TeachingTip.ActionButtonContent>
-        </TeachingTip>
-
-        <TeachingTip x:Name="ClipboardHistoryPivotTeachingTip" 
-                     x:Uid="ClipboardHistoryPivotTeachingTip"
-                     Target="{x:Bind ClipboardHistoryPivot}"
                      ActionButtonClick="TeachingTip_CloseButtonClick">
             <TeachingTip.ActionButtonContent>
                 <FontIcon Glyph="&#xe72a;" FontSize="14"/>
