@@ -36,5 +36,10 @@ namespace clip
 
         void listener();
     };
+
+    enum class HotKeyModifiers
+    {
+        // TODO:
+    };
 }
 

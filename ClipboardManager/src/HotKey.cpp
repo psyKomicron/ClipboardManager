@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "HotKey.hpp"
-// TODO: Find a better implementation using std::jthread.
+
+#include "src/utils/helpers.hpp"
 
 namespace clip
 {
@@ -21,21 +22,25 @@ namespace clip
         keyboardListenerThread = std::jthread(&HotKey::listener, this);
         flag.wait(false);
         flag.clear();
+
+        if (!hotKeyRegistered)
+        {
+            throw std::invalid_argument("Failed to register hotkey.");
+        }
     }
 
     void HotKey::stopListening()
     {
+        if (listening)
+        {
+            PostThreadMessageW(id, WM_QUIT, 0, 0);
+            std::ignore = keyboardListenerThread.request_stop();
+        }
+
         if (hotKeyRegistered)
         {
             UnregisterHotKey(nullptr, id);
         }
-
-        if (flag.test())
-        {
-            PostThreadMessageW(id, WM_QUIT, 0, 0);
-        }
-
-        std::ignore = keyboardListenerThread.request_stop();
     }
 
     void HotKey::editHotKey(const uint32_t& modifier_, const wchar_t& key_)
@@ -94,7 +99,8 @@ namespace clip
         }
         else
         {
-            logger.error(L"Failed to register hotkey.");
+            auto lastError = GetLastError();
+            logger.error(L"Failed to register hotkey: " + clip::utils::to_wstring(std::system_category().message(lastError)));
         }
 
         listening = false;
