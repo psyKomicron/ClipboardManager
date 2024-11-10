@@ -94,7 +94,7 @@
     <ClInclude Include="src\FormatExceptionCode.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\com_closable_ptr.h">
+    <ClInclude Include="src\utils\unique_closable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\murmur\MurmurHash3.hpp">
@@ -194,7 +194,6 @@
     </Page>
     <Page Include="RegexTesterControl.xaml" />
     <Page Include="MessagesBar.xaml" />
-    <Page Include="ClipboardHistoryItemView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

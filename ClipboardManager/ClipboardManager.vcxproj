@@ -166,10 +166,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ClipboardHistoryItemView.h">
-      <DependentUpon>ClipboardHistoryItemView.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="src\FormatExceptionCode.hpp" />
     <ClInclude Include="MessagesBar.h">
       <DependentUpon>MessagesBar.xaml</DependentUpon>
@@ -195,7 +191,7 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="src\implementation\VisualStateManager_implementation.hpp" />
-    <ClInclude Include="src\utils\com_closable_ptr.h" />
+    <ClInclude Include="src\utils\unique_closable.hpp" />
     <ClInclude Include="src\utils\ResLoader.hpp" />
     <ClInclude Include="src\ui\ListenablePropertyValue.hpp" />
     <ClInclude Include="src\utils\Launcher.hpp" />
@@ -236,10 +232,6 @@
     <ClInclude Include="src\notifs\ToastNotificationHandler.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ClipboardHistoryItemView.cpp">
-      <DependentUpon>ClipboardHistoryItemView.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="src\FormatExceptionCode.cpp" />
     <ClCompile Include="MessagesBar.cpp">
       <DependentUpon>MessagesBar.xaml</DependentUpon>
@@ -333,10 +325,6 @@
       <DependentUpon>ClipboardActionView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="ClipboardHistoryItemView.idl">
-      <DependentUpon>ClipboardHistoryItemView.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Midl>
     <Midl Include="HostControl.idl">
       <DependentUpon>HostControl.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -367,9 +355,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="ClipboardActionView.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ClipboardHistoryItemView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="HostControl.xaml">
