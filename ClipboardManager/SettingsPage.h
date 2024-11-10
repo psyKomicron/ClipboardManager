@@ -38,10 +38,16 @@ namespace winrt::ClipboardManager::implementation
         void AllowMinimizeToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void AllowMaximizeToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void EnableFileWatchingToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void SaveWindowShortcutButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        winrt::async DoubleAnimation_Completed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
 
     private:
-        const clip::ui::VisualState<SettingsPage> ClearSettingsDefaultState{ L"ClearSettingsDefault", 0, true };
-        const clip::ui::VisualState<SettingsPage> ClearSettingsShowIconState{ L"ClearSettingsShowIcon", 0, false };
+        const clip::ui::VisualState<SettingsPage> clearSettingsDefaultState{ L"ClearSettingsDefault", 0, true };
+        const clip::ui::VisualState<SettingsPage> clearSettingsShowIconState{ L"ClearSettingsShowIcon", 0, false };
+        const clip::ui::VisualState<SettingsPage> testWindowShortcutDefaultState{ L"TestWindowShortcutDefault", 1, true };
+        const clip::ui::VisualState<SettingsPage> testWindowShortcutState{ L"TestWindowShortcut", 1, false };
+        const clip::ui::VisualState<SettingsPage> testWindowShortcutOkState{ L"TestWindowShortcutOk", 1, false };
+        const clip::ui::VisualState<SettingsPage> testWindowShortcutNokState{ L"TestWindowShortcutNok", 1, false };
         clip::Settings settings{};
         bool loaded = false;
         clip::utils::Logger logger{ L"SettingsPage" };

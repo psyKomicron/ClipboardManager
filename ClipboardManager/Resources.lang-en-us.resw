@@ -624,6 +624,10 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Save matching results</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="SaveWindowShortcutButton.Content" xml:space="preserve">
+    <value>Save</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="SettingsOtherLinksTextBlock.Text" xml:space="preserve">
     <value>Other links</value>
     <comment>SettingsPage</comment>
@@ -763,6 +767,10 @@ If you are using multiple placeholders '{}' index them (ex: {0}...{0}).</value>
   </data>
   <data name="WindowPresenterStyleAllowMinimizeHostControl.Header" xml:space="preserve">
     <value>Window can minimize</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="WindowShortcutHostControl.Header" xml:space="preserve">
+    <value>Show window shortcut</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="WindowStyleHostControl.Header" xml:space="preserve">

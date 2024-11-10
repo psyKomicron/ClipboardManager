@@ -769,4 +769,12 @@ Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramè
     <value>L'application a recu une mise à jour majeure</value>
     <comment>MainPage InfoBar</comment>
   </data>
+  <data name="WindowShortcutHostControl.Header" xml:space="preserve">
+    <value>Raccourci clavier pour afficher la fenêtre</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="SaveWindowShortcutButton.Content" xml:space="preserve">
+    <value>Sauvegarder</value>
+    <comment>SettingsPage</comment>
+  </data>
 </root>
