@@ -9,7 +9,6 @@ namespace clip::utils
     template<typename T>
     concept is_closable = requires(T t)
     {
-        //static_cast<winrt::Windows::Foundation::IClosable>(t);
         t.Close();
     };
 
