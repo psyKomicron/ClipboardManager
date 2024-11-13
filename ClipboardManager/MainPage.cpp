@@ -26,6 +26,8 @@
 #include <winrt/Microsoft.Windows.AppNotifications.h>
 #include <winrt/Microsoft.Windows.AppNotifications.Builder.h>
 #include <winrt/Windows.System.h>
+#include <microsoft.ui.xaml.window.h>
+#include <winrt/Microsoft.UI.Interop.h>
 
 #include <boost/property_tree/xml_parser.hpp>
 
@@ -112,6 +114,16 @@ namespace winrt::ClipboardManager::implementation
         clipboardTriggerViews = value;
     }
 
+    bool MainPage::OverlayEnabled() const
+    {
+        return overlayEnabled.get();
+    }
+
+    void MainPage::OverlayEnabled(const bool& value)
+    {
+        overlayEnabled.set(value);
+    }
+
     void MainPage::AppClosing()
     {
         auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
@@ -153,6 +165,19 @@ namespace winrt::ClipboardManager::implementation
             WindowButtonsColumn().Width(xaml::GridLengthHelper::FromPixels(
                 presenter.IsMinimizable() ? 135 : 45
             ));
+        }
+    }
+
+    void MainPage::ReceiveWindowMessage(const uint64_t& message, const uint64_t& param)
+    {
+        switch (message)
+        {
+            case WM_ACTIVATE:
+                if (LOWORD(param) == WA_INACTIVE && overlayEnabled.get())
+                {
+                    appWindow.Hide();
+                }
+                break;
         }
     }
 
@@ -211,7 +236,7 @@ namespace winrt::ClipboardManager::implementation
         Restore();
 
         clipboardContentChangedToken = win::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
-        appWindow.Changed([&](auto, xaml::AppWindowChangedEventArgs args)
+        appWindow.Changed([this](auto, xaml::AppWindowChangedEventArgs args)
         {
             if (args.DidSizeChange())
             {
@@ -228,15 +253,14 @@ namespace winrt::ClipboardManager::implementation
 
         visualStateManager.goToState(appWindow.Size().Width < 930 ? under1kState : over1kState);
         
-        if (!localSettings.get<bool>(L"FirstStartup").has_value() && !updated)
-        {
-            localSettings.insert(L"FirstStartup", false);
-            visualStateManager.goToState(firstStartupState);
-        }
-
         if (updated)
         {
             visualStateManager.goToState(applicationUpdatedState);
+        }
+        else if (!localSettings.get<bool>(L"FirstStartup").has_value())
+        {
+            localSettings.insert(L"FirstStartup", false);
+            visualStateManager.goToState(firstStartupState);
         }
 
         if (!localSettings.get<std::wstring>(L"UserFilePath").has_value())
@@ -496,6 +520,8 @@ namespace winrt::ClipboardManager::implementation
             {
                 presenter.IsMinimizable(!toggled);
                 presenter.IsMaximizable(!toggled);
+                presenter.IsResizable(localSettings.get<bool>(L"OverlayIsResizable").value_or(true));
+                appWindow.IsShownInSwitchers(localSettings.get<bool>(L"OverlayShownInSwitchers").value_or(true));
 
                 visualStateManager.goToState(overlayWindowState);
             }
@@ -503,6 +529,8 @@ namespace winrt::ClipboardManager::implementation
             {
                 presenter.IsMinimizable(localSettings.get<bool>(L"AllowWindowMinimize").value_or(true));
                 presenter.IsMaximizable(localSettings.get<bool>(L"AllowWindowMaximize").value_or(false));
+                presenter.IsResizable(true);
+                appWindow.IsShownInSwitchers(true);
 
                 visualStateManager.goToState(normalWindowState);
             }
@@ -640,23 +668,22 @@ namespace winrt::ClipboardManager::implementation
             }
         }
 
-        activationHotKey.startListening([this]()
+        try
         {
-            logger.debug(L"Hot key fired.");
-
-            auto&& presenter = appWindow.Presenter().try_as<xaml::OverlappedPresenter>();
-            if (presenter)
+            activationHotKey.startListening([this]()
             {
-                if (presenter.State() != winrt::OverlappedPresenterState::Restored)
+                appWindow.Show();
+                if (!SetForegroundWindow(GetWindowFromWindowId(appWindow.Id())))
                 {
-                    presenter.Restore();
+                    std::wstring message = clip::utils::to_wstring(std::system_category().message(GetLastError()));
+                    logger.error(std::vformat(L"SetForegroundWindow failed: ", std::make_wformat_args(message)));
                 }
-                else
-                {
-                    presenter.Minimize();
-                }
-            }
-        });
+            });
+        }
+        catch (std::invalid_argument)
+        {
+            logger.error(L"HotKey invalid argument error.");
+        }
 
         auto&& presenter = appWindow.Presenter().try_as<xaml::OverlappedPresenter>();
         if (presenter)
@@ -1049,5 +1076,38 @@ namespace winrt::ClipboardManager::implementation
         }
 
         visualStateManager.goToState(!triggers.empty() ? displayClipboardTriggersState : noClipboardTriggersToDisplayState);
+    }
+
+    Windows::Foundation::IInspectable MainPage::asInspectable()
+    {
+        return *this;
+    }
+
+    void MainPage::OverlayEnabled_Changed(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args)
+    {
+        auto&& presenter = appWindow.Presenter().as<xaml::OverlappedPresenter>();
+        if (presenter)
+        {
+            bool toggled = OverlayToggleButton().IsChecked().GetBoolean();
+            if (toggled)
+            {
+                presenter.IsMinimizable(!toggled);
+                presenter.IsMaximizable(!toggled);
+                presenter.IsResizable(localSettings.get<bool>(L"OverlayIsResizable").value_or(true));
+                appWindow.IsShownInSwitchers(localSettings.get<bool>(L"OverlayShownInSwitchers").value_or(true));
+
+                visualStateManager.goToState(overlayWindowState);
+            }
+            else
+            {
+                presenter.IsMinimizable(localSettings.get<bool>(L"AllowWindowMinimize").value_or(true));
+                presenter.IsMaximizable(localSettings.get<bool>(L"AllowWindowMaximize").value_or(false));
+                presenter.IsResizable(true);
+                appWindow.IsShownInSwitchers(true);
+
+                visualStateManager.goToState(normalWindowState);
+            }
+            presenter.IsAlwaysOnTop(toggled);
+        }
     }
 }

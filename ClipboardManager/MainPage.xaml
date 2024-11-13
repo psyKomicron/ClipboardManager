@@ -136,8 +136,7 @@
                 Style="{StaticResource IconToggleButtonStyle}" 
                 Grid.Column="0"
                 MaxHeight="30"
-                ClickMode="Release"
-                Click="OverlayToggleButton_Click">
+                IsChecked="{x:Bind OverlayEnabled, Mode=TwoWay}">
                 <FontIcon Glyph="&#xee49;" FontSize="16"/>
             </ToggleButton>
             

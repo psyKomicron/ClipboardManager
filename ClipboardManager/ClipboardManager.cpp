@@ -198,6 +198,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             assert(windowInfo != nullptr);
 
             handleWindowActivation(windowInfo, LOWORD(wParam) == WA_INACTIVE);
+
+            if (windowInfo != nullptr && windowInfo->desktopWinXamlSrc != nullptr)
+            {
+                auto&& content = windowInfo->desktopWinXamlSrc.Content();
+                if (content != nullptr)
+                {
+                    auto&& mainPage = content.try_as<winrt::ClipboardManager::MainPage>();
+                    if (mainPage)
+                    {
+                        mainPage.ReceiveWindowMessage(message, wParam);
+                    }
+                }
+            }
             break;
         }
 
@@ -282,6 +295,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
     }
+
     return 0;
 }
 #pragma endregion

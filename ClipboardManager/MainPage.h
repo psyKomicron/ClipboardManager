@@ -3,11 +3,12 @@
 
 #include "src/Settings.hpp"
 #include "src/ClipboardTrigger.hpp"
+#include "src/FileWatcher.hpp"
 #include "src/HotKey.hpp"
 #include "src/notifs/ToastNotificationHandler.hpp"
 #include "src/utils/ResLoader.hpp"
 #include "src/ui/VisualStateManager.hpp"
-#include "src/FileWatcher.hpp"
+#include "src/ui/ListenablePropertyValue.hpp"
 
 #include <winrt/Windows.Media.Ocr.h>
 #include <winrt/Windows.Storage.Streams.h>
@@ -18,7 +19,7 @@
 
 namespace winrt::ClipboardManager::implementation
 {
-    struct MainPage : MainPageT<MainPage>
+    struct MainPage : MainPageT<MainPage>, clip::ui::PropertyChangedClass
     {
      public:
         MainPage();
@@ -29,9 +30,12 @@ namespace winrt::ClipboardManager::implementation
         void Actions(const winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView>& value);
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionEditor> ClipboardTriggers();
         void ClipboardTriggers(const winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionEditor>& value);
+        bool OverlayEnabled() const;
+        void OverlayEnabled(const bool& value);
 
         void AppClosing();
         void UpdateTitleBar();
+        void ReceiveWindowMessage(const uint64_t& message, const uint64_t& param);
 
         void Page_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e);
         winrt::async Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
@@ -70,20 +74,22 @@ namespace winrt::ClipboardManager::implementation
 
         bool loaded = false;
         bool updated = false;
+        bool windowHidden = false;
         size_t teachingTipIndex = 0;
         clip::Settings localSettings{};
         clip::FileWatcher watcher{ std::bind(&MainPage::FileWatcher_Changed, this) };
-        clip::HotKey activationHotKey{ MOD_ALT, L' ' };
+        clip::HotKey activationHotKey{ MOD_CONTROL, L' ' };
         clip::ui::VisualStateManager<MainPage> visualStateManager{ *this };
         clip::notifs::ToastNotificationHandler manager{};
         clip::utils::ResLoader resLoader{};
         std::vector<clip::ClipboardTrigger> triggers{};
-        winrt::Microsoft::UI::Windowing::AppWindow appWindow{ nullptr };
-        winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionView> clipboardActionViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionView>();
-        winrt::Windows::Foundation::Collections::IObservableVector<winrt::ClipboardManager::ClipboardActionEditor> clipboardTriggerViews = winrt::single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionEditor>();
-        winrt::event_token clipboardContentChangedToken{};
+        Microsoft::UI::Windowing::AppWindow appWindow{ nullptr };
+        Windows::Foundation::Collections::IObservableVector<ClipboardManager::ClipboardActionView> clipboardActionViews = single_threaded_observable_vector<ClipboardManager::ClipboardActionView>();
+        Windows::Foundation::Collections::IObservableVector<ClipboardManager::ClipboardActionEditor> clipboardTriggerViews = single_threaded_observable_vector<winrt::ClipboardManager::ClipboardActionEditor>();
+        event_token clipboardContentChangedToken{};
+        clip::ui::ListenablePropertyValue<bool> overlayEnabled{ std::bind(&MainPage::OverlayEnabled_Changed, this, std::placeholders::_1) };
 
-        winrt::async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
+        async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
         void Editor_Toggled(const winrt::ClipboardManager::ClipboardActionEditor& sender, const bool& isOn);
         void Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const Windows::Foundation::IInspectable& oldFormat);
         void Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel);
@@ -96,9 +102,13 @@ namespace winrt::ClipboardManager::implementation
         void ReloadTriggers();
         bool LoadTriggers(std::filesystem::path& path);
         void LaunchAction(const std::wstring& url);
-        winrt::async AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& notify);
+        async AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& notify);
         bool LoadUserFile(const std::filesystem::path& path);
         void ShowTriggerViews();
+
+        // Inherited via PropertyChangedClass
+        Windows::Foundation::IInspectable asInspectable() override;
+        void OverlayEnabled_Changed(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args);
     };
 }
 
