@@ -16,12 +16,11 @@ namespace clip
         ~HotKey();
 
         void startListening(const callback_t& callback);
-        void stopListening();
         void editHotKey(const uint32_t& modifier, const wchar_t& key);
 
         void wait();
 
-        HotKey& operator=(HotKey&& left) noexcept;
+        HotKey& operator=(HotKey&& left);
 
     private:
         const clip::utils::Logger logger{ L"HotKey" };
@@ -34,6 +33,7 @@ namespace clip
         std::atomic_flag flag{};
         callback_t callback{};
 
+        void stopListening();
         void listener();
     };
 

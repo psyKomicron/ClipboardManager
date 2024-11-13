@@ -29,20 +29,6 @@ namespace clip
         }
     }
 
-    void HotKey::stopListening()
-    {
-        if (listening)
-        {
-            PostThreadMessageW(id, WM_QUIT, 0, 0);
-            std::ignore = keyboardListenerThread.request_stop();
-        }
-
-        if (hotKeyRegistered)
-        {
-            UnregisterHotKey(nullptr, id);
-        }
-    }
-
     void HotKey::editHotKey(const uint32_t& modifier_, const wchar_t& key_)
     {
         stopListening();
@@ -57,7 +43,7 @@ namespace clip
         flag.clear();
     }
 
-    HotKey& HotKey::operator=(HotKey&& left) noexcept
+    HotKey& HotKey::operator=(HotKey&& left)
     {
         modifier = left.modifier;
         key = left.key;
@@ -75,6 +61,20 @@ namespace clip
     }
 
 
+    void HotKey::stopListening()
+    {
+        if (hotKeyRegistered)
+        {
+            UnregisterHotKey(nullptr, id);
+        }
+
+        if (listening)
+        {
+            PostThreadMessageW(id, WM_QUIT, 0, 0);
+            std::ignore = keyboardListenerThread.request_stop();
+        }
+    }
+
     void HotKey::listener()
     {
         listening = true;
@@ -88,6 +88,8 @@ namespace clip
             hotKeyRegistered = true;
             flag.notify_all();
 
+            logger.info(std::format(L"(id {}) Hot key registered.", threadId));
+
             MSG message{};
             while (GetMessageW(&message, reinterpret_cast<HWND>(-1), 0, 0))
             {
@@ -99,8 +101,9 @@ namespace clip
         }
         else
         {
-            auto lastError = GetLastError();
-            logger.error(L"Failed to register hotkey: " + clip::utils::to_wstring(std::system_category().message(lastError)));
+            unsigned long lastError = GetLastError();
+            std::wstring message = clip::utils::to_wstring(std::system_category().message(lastError));
+            logger.error(std::vformat(L"(id {}) Failed to register hotkey: {}", std::make_wformat_args(threadId, message)));
         }
 
         listening = false;
