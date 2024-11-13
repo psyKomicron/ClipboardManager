@@ -84,6 +84,8 @@
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="WindowShortcutProgressRingFontIcon" Storyboard.TargetProperty="Opacity" Completed="DoubleAnimation_Completed">
                             <DiscreteDoubleKeyFrame KeyTime="0:0:0.8" Value="0"/>
                             <LinearDoubleKeyFrame KeyTime="0:0:1.0" Value="1"/>
+                            <LinearDoubleKeyFrame KeyTime="0:0:3.0" Value="1"/>
+                            <LinearDoubleKeyFrame KeyTime="0:0:3.2" Value="0"/>
                         </DoubleAnimationUsingKeyFrames>
 
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WindowShortcutProgressRing" Storyboard.TargetProperty="Visibility">
@@ -92,6 +94,7 @@
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
+                
                 <VisualState x:Name="TestWindowShortcutNok">
                     <VisualState.Setters>
                         <Setter Target="WindowShortcutProgressRing.IsIndeterminate" Value="False"/>
@@ -336,15 +339,27 @@
                         </clip:HostControl.HostContent>
                     </clip:HostControl>
 
-                    <clip:HostControl x:Uid="WindowPresenterStyleAllowMaximizeHostControl" CornerRadius="0,0,5,5" Background="{ThemeResource ExpanderHeaderBackground}">
+                    <clip:HostControl x:Uid="WindowPresenterStyleAllowMaximizeHostControl" CornerRadius="0" Background="{ThemeResource ExpanderHeaderBackground}">
                         <clip:HostControl.HostContent>
                             <ToggleSwitch x:Name="AllowMaximizeToggleSwitch" Toggled="AllowMaximizeToggleSwitch_Toggled"/>
+                        </clip:HostControl.HostContent>
+                    </clip:HostControl>
+
+                    <clip:HostControl x:Uid="WindowPresenterOverlayResizableHostControl" CornerRadius="0" Background="{ThemeResource ExpanderHeaderBackground}">
+                        <clip:HostControl.HostContent>
+                            <ToggleSwitch x:Name="OverlayResizableToggleSwitch" Toggled="OverlayResizableToggleSwitch_Toggled"/>
+                        </clip:HostControl.HostContent>
+                    </clip:HostControl>
+
+                    <clip:HostControl x:Uid="WindowPresenterOverlayShownInSwitcherHostControl" CornerRadius="0,0,5,5" Background="{ThemeResource ExpanderHeaderBackground}">
+                        <clip:HostControl.HostContent>
+                            <ToggleSwitch x:Name="OverlayShownInSwitcherToggleSwitch" Toggled="OverlayShownInSwitcherToggleSwitch_Toggled"/>
                         </clip:HostControl.HostContent>
                     </clip:HostControl>
                 </StackPanel>
             </Expander>
 
-            <Expander Style="{StaticResource ExpanderStyle}">
+            <Expander IsEnabled="False" Style="{StaticResource ExpanderStyle}">
                 <Expander.Header>
                     <clip:HostControl x:Uid="WindowShortcutHostControl" Background="Transparent" BorderThickness="0" Padding="0">
                         <clip:HostControl.HostContent>
@@ -379,6 +394,9 @@
 
                     <Button x:Name="SaveWindowShortcutButton" Grid.Column="1" HorizontalAlignment="Center" Margin="0,0,10,0" Click="SaveWindowShortcutButton_Click">
                         <Grid>
+                            <Grid.Transitions>
+                                <RepositionThemeTransition/>
+                            </Grid.Transitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>

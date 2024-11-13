@@ -761,6 +761,14 @@ If you are using multiple placeholders '{}' index them (ex: {0}...{0}).</value>
     <value>Failed to load clipboard history</value>
     <comment>Warning</comment>
   </data>
+  <data name="WindowPresenterOverlayResizableHostControl.Header" xml:space="preserve">
+    <value>Overlay can be resized</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="WindowPresenterOverlayShownInSwitcherHostControl.Header" xml:space="preserve">
+    <value>Overlay is shown in switchers (Alt + Tab/Super + Tab)</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="WindowPresenterStyleAllowMaximizeHostControl.Header" xml:space="preserve">
     <value>Window can maximize</value>
     <comment>SettingsPage</comment>

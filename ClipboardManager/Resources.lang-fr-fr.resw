@@ -777,4 +777,12 @@ Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramè
     <value>Sauvegarder</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="WindowPresenterOverlayResizableHostControl.Header" xml:space="preserve">
+    <value>Redimensionnement autorisé (mode compact)</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="WindowPresenterOverlayShownInSwitcherHostControl.Header" xml:space="preserve">
+    <value>Afficher dans les représentations système (ALT + TAB) (mode compact)</value>
+    <comment>SettingsPage</comment>
+  </data>
 </root>

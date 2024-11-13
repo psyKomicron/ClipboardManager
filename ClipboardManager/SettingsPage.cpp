@@ -75,6 +75,8 @@ namespace winrt::ClipboardManager::implementation
         // Window style:
         AllowMaximizeToggleSwitch().IsOn(settings.get<bool>(L"AllowWindowMaximize").value_or(false));
         AllowMinimizeToggleSwitch().IsOn(settings.get<bool>(L"AllowWindowMinimize").value_or(true));
+        OverlayResizableToggleSwitch().IsOn(settings.get<bool>(L"OverlayIsResizable").value_or(true));
+        OverlayShownInSwitcherToggleSwitch().IsOn(settings.get<bool>(L"OverlayShownInSwitchers").value_or(true));
 
         auto userFilePath = settings.get<hstring>(L"UserFilePath");
         if (userFilePath.has_value())
@@ -322,7 +324,7 @@ namespace winrt::ClipboardManager::implementation
         {
             auto selectedModifier = ModifierComboBox().SelectedIndex();
             auto selectedKey = KeyTextBox().Text();
-            if (selectedModifier > 0 && !selectedKey.empty())
+            if (selectedModifier >= 0 && !selectedKey.empty())
             {
                 uint32_t modifiers = 0;
                 switch (selectedModifier)
@@ -347,22 +349,27 @@ namespace winrt::ClipboardManager::implementation
         }
         catch (std::invalid_argument& invalidArg)
         {
+            logger.error(L"HotKey - Invalid argument.");
         }
 
         visualStateManager.goToState(success ? testWindowShortcutOkState : testWindowShortcutNokState);
     }
 
-    winrt::async SettingsPage::DoubleAnimation_Completed(win::IInspectable const&, win::IInspectable const&)
+    void SettingsPage::DoubleAnimation_Completed(win::IInspectable const&, win::IInspectable const&)
     {
-        logger.debug(L"Animation completed, waiting a bit and resetting the visual state.");
+        visualStateManager.goToState(testWindowShortcutDefaultState);
+    }
 
-        using namespace std::chrono_literals;
-        co_await 750ms;
+    void SettingsPage::OverlayResizableToggleSwitch_Toggled(win::IInspectable const& sender, xaml::RoutedEventArgs const&)
+    {
+        check_loaded(loaded);
+        updateSetting(sender, L"OverlayIsResizable");
+    }
 
-        DispatcherQueue().TryEnqueue([this]()
-        {
-            visualStateManager.goToState(testWindowShortcutDefaultState);
-        });
+    void SettingsPage::OverlayShownInSwitcherToggleSwitch_Toggled(win::IInspectable const& sender, xaml::RoutedEventArgs const&)
+    {
+        check_loaded(loaded);
+        updateSetting(sender, L"OverlayShownInSwitchers");
     }
 
 
