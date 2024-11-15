@@ -225,7 +225,15 @@ namespace winrt::ClipboardManager::implementation
 
         if (localSettings.get<bool>(L"StartWindowMinimized").value_or(false))
         {
-            appWindow.Presenter().as<xaml::OverlappedPresenter>().Minimize();
+            if (localSettings.get<bool>(L"HideAppWindow").value_or(false))
+            {
+                overlayEnabled.set(true);
+                appWindow.Hide();
+            }
+            else
+            {
+                appWindow.Presenter().as<xaml::OverlappedPresenter>().Minimize();
+            }
         }
 
         co_return;
@@ -512,35 +520,20 @@ namespace winrt::ClipboardManager::implementation
 
     void MainPage::OverlayToggleButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
-        auto&& presenter = appWindow.Presenter().as<xaml::OverlappedPresenter>();
-        if (presenter)
+        if (localSettings.get<bool>(L"ShowOverlayWarningMessage").value_or(true))
         {
-            bool toggled = OverlayToggleButton().IsChecked().GetBoolean();
-            if (toggled)
-            {
-                presenter.IsMinimizable(!toggled);
-                presenter.IsMaximizable(!toggled);
-                presenter.IsResizable(localSettings.get<bool>(L"OverlayIsResizable").value_or(true));
-                appWindow.IsShownInSwitchers(localSettings.get<bool>(L"OverlayShownInSwitchers").value_or(true));
-
-                visualStateManager.goToState(overlayWindowState);
-            }
-            else
-            {
-                presenter.IsMinimizable(localSettings.get<bool>(L"AllowWindowMinimize").value_or(true));
-                presenter.IsMaximizable(localSettings.get<bool>(L"AllowWindowMaximize").value_or(false));
-                presenter.IsResizable(true);
-                appWindow.IsShownInSwitchers(true);
-
-                visualStateManager.goToState(normalWindowState);
-            }
-            presenter.IsAlwaysOnTop(toggled);
+            OverlayToggleButtonTeachingTip().IsOpen(true);
         }
     }
 
     void MainPage::CommandBarImportButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
         LocateUserFileButton_Click(nullptr, nullptr);
+    }
+
+    void MainPage::OverlayPopupShowWarningCheckBox_Click(win::IInspectable const& sender, xaml::RoutedEventArgs const& e)
+    {
+        localSettings.insert(L"ShowOverlayWarningMessage", sender.as<xaml::Controls::CheckBox>().IsChecked().GetBoolean());
     }
 
 
@@ -1088,13 +1081,13 @@ namespace winrt::ClipboardManager::implementation
         auto&& presenter = appWindow.Presenter().as<xaml::OverlappedPresenter>();
         if (presenter)
         {
-            bool toggled = OverlayToggleButton().IsChecked().GetBoolean();
-            if (toggled)
+            if (overlayEnabled.get())
             {
-                presenter.IsMinimizable(!toggled);
-                presenter.IsMaximizable(!toggled);
+                presenter.IsMinimizable(!overlayEnabled.get());
+                presenter.IsMaximizable(!overlayEnabled.get());
                 presenter.IsResizable(localSettings.get<bool>(L"OverlayIsResizable").value_or(true));
                 appWindow.IsShownInSwitchers(localSettings.get<bool>(L"OverlayShownInSwitchers").value_or(true));
+                appWindow.TitleBar().PreferredHeightOption(Microsoft::UI::Windowing::TitleBarHeightOption::Collapsed);
 
                 visualStateManager.goToState(overlayWindowState);
             }
@@ -1104,10 +1097,17 @@ namespace winrt::ClipboardManager::implementation
                 presenter.IsMaximizable(localSettings.get<bool>(L"AllowWindowMaximize").value_or(false));
                 presenter.IsResizable(true);
                 appWindow.IsShownInSwitchers(true);
+                appWindow.TitleBar().PreferredHeightOption(Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
 
                 visualStateManager.goToState(normalWindowState);
             }
-            presenter.IsAlwaysOnTop(toggled);
+            presenter.IsAlwaysOnTop(overlayEnabled.get());
         }
+        else
+        {
+            logger.error(L"Cannot inspect appWindow's presenter as OverlappedPresenter.");
+        }
+
+        raisePropertyChanged(args);
     }
 }

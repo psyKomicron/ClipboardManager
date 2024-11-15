@@ -55,6 +55,7 @@ namespace winrt::ClipboardManager::implementation
         void TestRegexButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void OverlayToggleButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void CommandBarImportButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void OverlayPopupShowWarningCheckBox_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
      private:
         const clip::utils::Logger logger{ L"MainPage" };
@@ -108,6 +109,7 @@ namespace winrt::ClipboardManager::implementation
 
         // Inherited via PropertyChangedClass
         Windows::Foundation::IInspectable asInspectable() override;
+
         void OverlayEnabled_Changed(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args);
     };
 }

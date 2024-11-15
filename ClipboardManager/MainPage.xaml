@@ -82,13 +82,17 @@
                             <DoubleAnimationUsingKeyFrames 
                                 Storyboard.TargetName="RootGridBorderBrush"
                                 Storyboard.TargetProperty="Opacity"
-                                Duration="0:0:2"
+                                Duration="0:0:0.8"
                                 EnableDependentAnimation="True">
-                                <SplineDoubleKeyFrame KeyTime="0:0:1.5" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="1" />
-                                <LinearDoubleKeyFrame KeyTime="0:0:2" Value="0"/>
+                                <SplineDoubleKeyFrame KeyTime="0:0:0.5" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="0.7" />
+                                <LinearDoubleKeyFrame KeyTime="0:0:0.8" Value="0"/>
                             </DoubleAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState.Storyboard>
+
+                    <VisualState.Setters>
+                        <Setter Target="OverlayToggleButtonContent.Glyph" Value="&#xee47;"/>
+                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
 
@@ -136,9 +140,41 @@
                 Style="{StaticResource IconToggleButtonStyle}" 
                 Grid.Column="0"
                 MaxHeight="30"
-                IsChecked="{x:Bind OverlayEnabled, Mode=TwoWay}">
-                <FontIcon Glyph="&#xee49;" FontSize="16"/>
+                IsChecked="{x:Bind OverlayEnabled, Mode=TwoWay}"
+                Checked="OverlayToggleButton_Click">
+                <FontIcon x:Name="OverlayToggleButtonContent" Glyph="&#xee49;" FontSize="16"/>
             </ToggleButton>
+            <TeachingTip x:Name="OverlayToggleButtonTeachingTip" Target="{x:Bind OverlayToggleButton}">
+                <StackPanel Orientation="Vertical" Spacing="7">
+                    <TextBlock x:Uid="OverlayPopupTitleTextBlock" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="Wrap"/>
+                    <TextBlock x:Uid="OverlayPopupContentTextBlock" TextWrapping="Wrap"/>
+                    <TextBlock x:Uid="ShowWindowShortcutTextBlock" TextWrapping="Wrap" Margin="0,7,0,0"/>
+                    <StackPanel Orientation="Horizontal" Spacing="7" HorizontalAlignment="Center">
+                        <StackPanel.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorBaseBrush}" />
+                                <Setter Property="Padding" Value="10,8" />
+                                <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                            <Style x:Key="ShortcutTextBlockStyle" TargetType="TextBlock">
+                                <Setter Property="TextWrapping" Value="Wrap" />
+                                <Setter Property="FontFamily" Value="Consolas" />
+                                <Setter Property="CharacterSpacing" Value="70" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <Border>
+                            <TextBlock Text="CTRL" Style="{StaticResource ShortcutTextBlockStyle}"/>
+                        </Border>
+                        <TextBlock Text="+" VerticalAlignment="Center"/>
+                        <Border>
+                            <TextBlock Text="SPACE" Style="{StaticResource ShortcutTextBlockStyle}"/>
+                        </Border>
+                    </StackPanel>
+                    <CheckBox x:Uid="OverlayPopupShowWarningCheckBox" IsChecked="True" Margin="0,7,0,0" Click="OverlayPopupShowWarningCheckBox_Click"/>
+                </StackPanel>
+            </TeachingTip>
             
             <Border 
                 x:Name="MoveBorder"
