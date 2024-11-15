@@ -49,6 +49,7 @@ namespace winrt::ClipboardManager::implementation
 
         SaveMatchingResultsToggleSwitch().IsOn(settings.get<bool>(L"SaveMatchingResults").value_or(false));
         StartMinimizedToggleSwitch().IsOn(settings.get<bool>(L"StartWindowMinimized").value_or(false));
+        HideAppWindowToggleSwitch().IsOn(settings.get<bool>(L"HideAppWindow").value_or(false));
         NotificationsToggleSwitch().IsOn(settings.get<bool>(L"NotificationsEnabled").value_or(true));
 
         // Formatting & matching:
