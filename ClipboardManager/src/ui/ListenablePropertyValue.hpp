@@ -5,10 +5,6 @@
 
 #include <boost/regex.hpp>
 
-#ifdef _DEBUG
-#include <iostream>
-#endif
-
 namespace clip::ui
 {
     template<typename T>

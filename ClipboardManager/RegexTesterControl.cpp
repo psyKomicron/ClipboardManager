@@ -4,10 +4,6 @@
 #include "RegexTesterControl.g.cpp"
 #endif
 
-#ifdef _DEBUG
-#include <iostream>
-#endif
-
 #include <src/utils/helpers.hpp>
 
 #include <boost/regex.hpp>
