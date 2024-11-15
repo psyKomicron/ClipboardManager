@@ -785,4 +785,21 @@ Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramè
     <value>Afficher dans les représentations système (ALT + TAB) (mode compact)</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="OverlayPopupContentTextBlock.Text" xml:space="preserve">
+    <value>Le mode de superposition a été activé, la fenêtre de l'application ne s'affichera plus dans la barre des tâches ou dans les vues du sytème.
+Utilisez le raccourci clavier pour afficher la fenêtre.</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="OverlayPopupShowWarningCheckBox.Content" xml:space="preserve">
+    <value>Afficher l'avertissement à chaque fois</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="OverlayPopupTitleTextBlock.Text" xml:space="preserve">
+    <value>Mode superposition</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="ShowWindowShortcutTextBlock.Text" xml:space="preserve">
+    <value>Raccourci clavier pour afficher la fenêtre</value>
+    <comment>MainPage</comment>
+  </data>
 </root>

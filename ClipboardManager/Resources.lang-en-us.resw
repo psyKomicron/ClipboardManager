@@ -544,6 +544,18 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Save file successfully created !</value>
     <comment>MainPage</comment>
   </data>
+  <data name="OverlayPopupContentTextBlock.Text" xml:space="preserve">
+    <value>Overlay mode has been enabled, the application's window won't be shown in the task bar or in system views. To show the window hit the "show window" shortcut.</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="OverlayPopupShowWarningCheckBox.Content" xml:space="preserve">
+    <value>Show warning every time</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="OverlayPopupTitleTextBlock.Text" xml:space="preserve">
+    <value>Overlay mode</value>
+    <comment>MainPage</comment>
+  </data>
   <data name="OverwriteExampleTriggersFileButtton.Content" xml:space="preserve">
     <value>Overwrite</value>
     <comment>SettingsPage</comment>
@@ -639,6 +651,10 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="SettingsPivotTeachingTip.Title" xml:space="preserve">
     <value>Settings</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="ShowWindowShortcutTextBlock.Text" xml:space="preserve">
+    <value>Current show window shortcut</value>
+    <comment>MainPage</comment>
   </data>
   <data name="SilenceNotificationsToggleButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Quickly enable or disable notifications</value>
