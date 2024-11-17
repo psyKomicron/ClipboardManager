@@ -5,6 +5,8 @@
 
 #include <boost/regex.hpp>
 
+#define BIND(func) std::bind(func, this, std::placeholders::_1)
+
 namespace clip::ui
 {
     template<typename T>
@@ -13,29 +15,35 @@ namespace clip::ui
         t(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(L""));
     };
 
-    template<typename T, PropertyChangedRaisable Ty = std::function<void(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs)>>
+    template<typename _Elem, PropertyChangedRaisable _Func = std::function<void(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs)>>
     class ListenablePropertyValue
     {
     public:
-        ListenablePropertyValue(const Ty& callback) :
+        ListenablePropertyValue(const _Func& callback) :
             _callback{ callback }
         {
         }
 
-        T get() const
+        ListenablePropertyValue(const _Func& callback, const _Elem& value) :
+            _callback{ callback },
+            value{ value }
+        {
+        }
+
+        _Elem get() const
         {
             return value;
         }
 
-        void set(const T& newValue, std::source_location callerLocation = std::source_location::current())
+        void set(const _Elem& newValue, std::source_location callerLocation = std::source_location::current())
         {
             value = newValue;
             _callback(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs(getPropertyName(callerLocation)));
         }
 
     private:
-        T value{};
-        Ty _callback;
+        _Elem value{};
+        _Func _callback;
         std::optional<winrt::hstring> _propName{};
 
         winrt::hstring getPropertyName(std::source_location callerLocation)
