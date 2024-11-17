@@ -307,6 +307,7 @@
       <SubType>Designer</SubType>
     </PRIResource>
     <PRIResource Include="Resources.lang-fr-fr.resw" />
+    <PRIResource Include="Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <!-- Island-support: Needed to run Markup Compiler on App.xaml and make the generated files -->
