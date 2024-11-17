@@ -182,6 +182,580 @@ namespace winrt::ClipboardManager::implementation
     }
 
 
+    winrt::async MainPage::ClipboardContent_Changed(const win::IInspectable&, const win::IInspectable&)
+    {
+        using namespace std::literals;
+        static std::chrono::system_clock::time_point lastEntry{};
+        auto&& now = std::chrono::system_clock::now();
+        auto elapsed = (now - lastEntry);
+        lastEntry = now;
+        if (elapsed < 50ms)
+        {
+            logger.info(L"Duplicate clipboard event.");
+            co_return;
+        }
+
+        auto content = win::Clipboard::GetContent();
+        if (content.Properties().ApplicationName() == L"ClipboardManager")
+        {
+            logger.info(L"Clipboard content changed, but the available format is not text or the application that changed the clipboard content is me.");
+            co_return;
+        }
+
+        AddClipboardItem(content, true);
+    }
+
+    void MainPage::Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel)
+    {
+        auto label = std::wstring(oldLabel);
+        auto newLabel = std::wstring(sender.ActionLabel());
+
+        for (auto&& action : triggers)
+        {
+            if (action.label() == label)
+            {
+                action.label(newLabel);
+
+                for (auto&& clipboardItem : clipboardActionViews)
+                {
+                    uint32_t pos = 0;
+                    if (clipboardItem.IndexOf(pos, label))
+                    {
+                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), action.enabled(), 
+                                                 action.useRegexMatchResults(), action.regex().flags() & boost::regex_constants::icase);
+                    }
+                }
+
+                break;
+            }
+        }
+    }
+
+    void MainPage::FileWatcher_Changed()
+    {
+        DispatcherQueue().TryEnqueue([&]()
+        {
+            ReloadTriggers();
+        });
+    }
+
+    void MainPage::Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const win::IInspectable& inspectable)
+    {
+        auto actionLabel = std::wstring(sender.ActionLabel());
+        auto format = std::wstring(sender.ActionFormat());
+        auto newRegex = std::wstring(sender.ActionRegex());
+
+        auto flags = inspectable.as<int32_t>();
+        bool ignoreCase = flags & (1 << 2);
+        bool useSearch = flags & (1 << 1);
+        bool useRegexMatchResults = flags & 1;
+
+        auto regexFlags = ignoreCase ? boost::regex_constants::icase : 0;
+
+        for (auto&& action : triggers)
+        {
+            if (action.label() == actionLabel)
+            {
+                action.format(format);
+                action.regex(boost::wregex(newRegex, regexFlags));
+                action.updateMatchMode(useSearch ? clip::MatchMode::Search : clip::MatchMode::Match);
+                action.useRegexMatchResults(useRegexMatchResults);
+
+                // Edit on every action the trigger:
+                for (auto&& clipboardItem : clipboardActionViews)
+                {
+                    uint32_t pos = 0;
+                    if (clipboardItem.IndexOf(pos, action.label()))
+                    {
+                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), 
+                                                 action.enabled(), action.useRegexMatchResults(), ignoreCase);
+                    }
+                }
+
+                break;
+            }
+        }
+    }
+
+    void MainPage::Editor_Toggled(const winrt::ClipboardManager::ClipboardActionEditor& sender, const bool& isOn)
+    {
+        auto actionLabel = std::wstring(sender.ActionLabel());
+        for (auto&& action : triggers)
+        {
+            if (action.label() == actionLabel)
+            {
+                for (auto&& view : clipboardActionViews)
+                {
+                    uint32_t index = 0;
+                    if (view.IndexOf(index, action.label()))
+                    {
+                        view.IsEnabled(action.enabled());
+                    }
+                }
+
+                action.enabled(isOn);
+            }
+        }
+    }
+
+
+    void MainPage::Restore()
+    {
+        // Load triggers:
+        LoadUserFile(L"");
+
+        // Get activation hot key (shortcut that brings the app window to the foreground):
+        auto&& map = localSettings.get<std::map<std::wstring, clip::reg_types>>(L"ActivationHotKey");
+        if (!map.empty())
+        {
+            auto key = std::get<std::wstring>(map[L"Key"]);
+            auto mod = std::get<uint32_t>(map[L"Mod"]);
+            if (key.size() == 1)
+            {
+                activationHotKey = clip::HotKey(mod, key[0]);
+            }
+        }
+
+        try
+        {
+            activationHotKey.startListening([this]()
+            {
+                appWindow.Show();
+                if (!SetForegroundWindow(GetWindowFromWindowId(appWindow.Id())))
+                {
+                    std::wstring message = clip::utils::to_wstring(std::system_category().message(GetLastError()));
+                    logger.error(std::vformat(L"SetForegroundWindow failed: ", std::make_wformat_args(message)));
+                }
+            });
+        }
+        catch (std::invalid_argument)
+        {
+            logger.error(L"HotKey invalid argument error.");
+        }
+
+        auto&& presenter = appWindow.Presenter().try_as<xaml::OverlappedPresenter>();
+        if (presenter)
+        {
+            WindowButtonsColumn().Width(xaml::GridLengthHelper::FromPixels(presenter.IsMinimizable() ? 135 : 45));
+        }
+    }
+
+    void MainPage::AddAction(const std::wstring& text, const bool& notify)
+    {
+        if (localSettings.get<bool>(L"AddDuplicatedActions").value_or(true)
+            || clipboardActionViews.Size() == 0
+            || text != clipboardActionViews.GetAt(0).Text())
+        {
+            auto actionView = winrt::make<ClipboardActionView>(text.c_str());
+
+            std::vector<std::pair<std::wstring, std::wstring>> buttons{};
+            if (FindActions(actionView, buttons, text))
+            {
+                clipboardActionViews.InsertAt(0, actionView);
+                actionView.Removed([this](auto&& sender, auto&&)
+                {
+                    uint32_t i = 0;
+                    if (clipboardActionViews.IndexOf(sender, i))
+                    {
+                        clipboardActionViews.RemoveAt(i);
+                    }
+                });
+
+                if (notify)
+                {
+                    SendNotification(buttons);
+                }
+            }
+        }
+    }
+
+    bool MainPage::FindActions(const winrt::ClipboardManager::ClipboardActionView& actionView,
+                               std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text)
+    {
+        auto matchMode = localSettings.get<clip::MatchMode>(L"TriggerMatchMode");
+
+        bool hasMatch = false;
+        for (auto&& trigger : triggers)
+        {
+            if (trigger.enabled() && trigger.match(text, matchMode))
+            {
+                hasMatch = true;
+
+                // TODO: When i add triggers, only enabled triggers will be added yet they can be enabled or disabled later. What do if.
+                actionView.AddAction(trigger.label(), trigger.format(), trigger.regex().str(), true, 
+                                     trigger.useRegexMatchResults(), trigger.regex().flags() & boost::regex_constants::icase);
+
+                try
+                {
+                    auto url = trigger.formatTrigger(text);
+                    buttons.push_back({ trigger.label(), url });
+                }
+                catch (std::invalid_argument formatError)
+                {
+                    logger.error(clip::utils::to_wstring(formatError.what()));
+
+                    MessagesBar().AddWarning(L"", L"Failed to create format for trigger " + trigger.label());
+                }
+            }
+        }
+
+        return hasMatch;
+    }
+
+    void MainPage::SendNotification(const std::vector<std::pair<std::wstring, std::wstring>>& buttons)
+    {
+        if (!localSettings.get<bool>(L"NotificationsEnabled").value_or(true)
+            || SilenceNotificationsToggleButton().IsChecked().GetBoolean())
+        {
+            return;
+        }
+
+        auto durationType = localSettings.get<clip::notifs::NotificationDurationType>(L"NotificationDurationType").value_or(clip::notifs::NotificationDurationType::Default);
+        auto scenarioType = localSettings.get<clip::notifs::NotificationScenarioType>(L"NotificationScenarioType").value_or(clip::notifs::NotificationScenarioType::Default);
+        auto soundType = localSettings.get<clip::notifs::NotificationSoundType>(L"NotificationSoundType").value_or(clip::notifs::NotificationSoundType::Default);
+
+        clip::notifs::ToastNotification notif{};
+
+        if (!notif.tryAddButtons(buttons))
+        {
+            notif.addText(std::wstring(resLoader.getOrAlt(L"ToastNotification_TooManyButtons",
+                                                          L"Too many triggers matched, open the app to activate the trigger of your choice")));
+
+            notif.addButton(std::wstring(resLoader.getOrAlt(L"ToastNotification_OpenApp", L"Open app")), L"");
+        }
+        else
+        {
+            notif.addText(std::wstring(resLoader.getOrAlt(L"ToastNotification_ClickAction", 
+                                                          L"Click corresponding trigger to activate it")));
+        }
+
+        try
+        {
+            notif.send(durationType, scenarioType, soundType);
+        }
+        catch (hresult_access_denied accessDenied)
+        {
+            MessagesBar().AddWarning(L"ToastNotification_FailedToSendWarning", L"Failed to send toast notification.");
+        }
+    }
+
+    void MainPage::ReloadTriggers()
+    {
+        auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
+        if (userFilePath.has_value()
+            && std::filesystem::exists(userFilePath.value())
+            && LoadTriggers(userFilePath.value()))
+        {
+            try
+            {
+                clipboardTriggerViews.Clear();
+                CreateTriggerViews();
+
+                // Get the text of any actions that have been created then use 
+                // AddAction to re-create the actions with the new triggers.
+                auto vector = std::vector<winrt::hstring>();
+                for (auto&& view : clipboardActionViews)
+                {
+                    vector.push_back(view.Text());
+                }
+                clipboardActionViews.Clear();
+                for (auto&& view : vector)
+                {
+                    AddAction(view.data(), false);
+                }
+
+                return; // Explicit return to not reach "error state" and show an error message to the user.
+            }
+            catch (...)
+            {
+                logger.error(L"Failed to reload triggers.");
+            }
+        }
+
+        MessagesBar().AddError(L"ReloadActionsUserFileNotFoundTitle",
+                               L"Failed to reload triggers",
+                               L"ReloadActionsUserFileNotFoundMessage",
+                               L"Triggers user file has either been moved/deleted or application settings have been cleared.");
+    }
+
+    bool MainPage::LoadTriggers(std::filesystem::path& path)
+    {
+        try
+        {
+            triggers = clip::ClipboardTrigger::loadClipboardTriggers(path);
+
+            bool showError = false;
+            std::wstring invalidTriggers{};
+            for (auto&& trigger : triggers)
+            {
+                try
+                {
+                    trigger.checkFormat();
+                }
+                catch (clip::ClipboardTriggerFormatException formatExcept)
+                {
+                    logger.error(std::format(L"Trigger '{}' has an invalid format.", trigger.label()));
+                    showError = true;
+                    invalidTriggers += L"\n" + trigger.label();
+                }
+            }
+
+            if (showError)
+            {
+                // I18N:
+                MessagesBar().Add(L"Invalid trigger",
+                                  L"One or more triggers have invalid data, check the triggers page for more information. Invalid triggers:" + invalidTriggers,
+                                  xaml::InfoBarSeverity::Error);
+            }
+            else
+            {
+                visualStateManager.goToState(triggers.empty() ? noClipboardTriggersToDisplayState : displayClipboardTriggersState);
+            }
+
+            return true;
+        }
+        catch (std::invalid_argument invalidArgument)
+        {
+            MessagesBar().AddError(L"ErrorMessage_TriggersFileNotFound",
+                                   L"Triggers file not available or contains invalid data.");
+        }
+        catch (boost::property_tree::xml_parser_error xmlParserError)
+        {
+            MessagesBar().AddError(L"ErrorMessage_XmlParserError",
+                                   L"Triggers file has invalid XML markup data.");
+        }
+        catch (boost::property_tree::ptree_bad_path badPath)
+        {
+            hstring message = resLoader.getOrAlt(L"ErrorMessage_InvalidTriggersFile", L"Triggers file has invalid XML markup data.");
+            hstring content = L"";
+
+            auto wpath = badPath.path<boost::property_tree::wpath>();
+            auto path = clip::utils::to_wstring(wpath.dump());
+
+            if (path == L"settings.triggers")
+            {
+                // Missing <settings><triggers> node.
+                content = resLoader.getOrAlt(L"ErrorMessage_MissingTriggersNode",
+                                             L"XML declaration is missing '<triggers>' node.\nCheck settings for an example of a valid XML declaration.");
+            }
+            else if (path == L"settings.actions")
+            {
+                // Old version of triggers file.
+                content = resLoader.getOrAlt(L"ErrorMessage_XmlOldVersion",
+                                             L"<actions> node has been renamed <triggers> and <trigger> <actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.");
+            }
+            else
+            {
+                content = L"Path not found: '" + hstring(path) + L"'";
+            }
+
+            MessagesBar().Add(message, content, xaml::InfoBarSeverity::Error);
+        }
+
+        return false;
+    }
+
+    void MainPage::LaunchAction(const std::wstring& url)
+    {
+        concurrency::create_task([this, url]() -> void
+        {
+            try
+            {
+                clip::utils::Launcher launcher{};
+                launcher.launch(url).get();
+            }
+            catch (hresult_error error)
+            {
+                logger.error(L"Failed to launch url: " + std::wstring(error.message().data()));
+
+                // I18N: Failed to launch url: '{}'
+                DispatcherQueue().TryEnqueue([this, url]()
+                {
+                    // I18N:
+                    MessagesBar().AddError(L"", L"Failed to launch url: '" + url + L"'.");
+                });
+            }
+        });
+    }
+
+    winrt::async MainPage::AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& notify)
+    {
+        if (content.Contains(win::StandardDataFormats::Text()))
+        {
+            auto&& itemText = co_await content.GetTextAsync();
+            if (!itemText.empty())
+            {
+                DispatcherQueue().TryEnqueue([this, text = std::wstring(itemText), notify]()
+                {
+                    // Run triggers on the text:
+                    AddAction(text, notify);
+                });
+            }
+        }
+    }
+
+    bool MainPage::LoadUserFile(const std::filesystem::path& path)
+    {
+        bool triggersLoaded = false;
+
+        std::optional<std::filesystem::path> userFilePath{};
+        if (path.empty())
+        {
+            userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
+        }
+        else
+        {
+            userFilePath = path;
+        }
+
+        if (userFilePath.has_value() && clip::utils::pathExists(userFilePath.value()))
+        {
+            if (LoadTriggers(userFilePath.value()))
+            {
+                if (clipboardTriggerViews.Size() == 0)
+                {
+                    clipboardTriggerViews.Clear();
+                }
+                
+                try
+                {
+                    CreateTriggerViews();
+                    triggersLoaded = true;
+                }
+                catch (hresult_error error)
+                {
+                    logger.error(std::format(L"Error @ LoadUserFile: {}", error.message().data()));
+                }
+            }
+            else
+            {
+                logger.info(L"Failed to load triggers.");
+            }
+
+            // Load history:
+            try
+            {
+                boost::property_tree::wptree tree{};
+                boost::property_tree::read_xml(userFilePath.value().string(), tree);
+                for (auto&& historyItem : tree.get_child(L"settings.history"))
+                {
+                    AddAction(historyItem.second.data(), false);
+                }
+            }
+            catch (const boost::property_tree::ptree_bad_path badPath)
+            {
+                logger.debug(L"Failed to retreive history from user file: " + clip::utils::to_wstring(badPath.what()));
+            }
+
+            // Enable file watcher:
+            try
+            {
+                if (localSettings.get<bool>(L"EnableTriggerFileWatching").value_or(false))
+                {
+                    watcher.startWatching(userFilePath.value());
+                }
+            }
+            catch (std::wstring message)
+            {
+                logger.error(message);
+            }
+            catch (std::invalid_argument invalidArg)
+            {
+                // Path doesn't exist.
+                logger.error(L"Path '" + watcher.path().wstring() + L"' doesn't exist.");
+            }
+        }
+
+        return triggersLoaded;
+    }
+
+    void MainPage::CreateTriggerViews()
+    {
+        for (auto&& trigger : triggers)
+        {
+            auto triggerViewer = make<ClipboardManager::implementation::ClipboardActionEditor>();
+            triggerViewer.ActionFormat(trigger.format());
+            triggerViewer.ActionLabel(trigger.label());
+            triggerViewer.ActionRegex(trigger.regex().str());
+            triggerViewer.ActionEnabled(trigger.enabled());
+            triggerViewer.IgnoreCase((trigger.regex().flags() & boost::regex_constants::icase) == boost::regex_constants::icase);
+            triggerViewer.UseSearch(trigger.matchMode() == clip::MatchMode::Search);
+            triggerViewer.UseRegexMatchResults(trigger.useRegexMatchResults());
+
+            triggerViewer.IsOn({ this, &MainPage::Editor_Toggled });
+            triggerViewer.LabelChanged({ this, &MainPage::Editor_LabelChanged });
+            triggerViewer.Changed({ this, &MainPage::Editor_Changed });
+
+            triggerViewer.Removed([this](auto&& sender, auto&&)
+            {
+                auto&& label = sender.ActionLabel();
+                for (size_t i = 0; i < triggers.size(); i++)
+                {
+                    if (triggers[i].label() == label)
+                    {
+                        triggers.erase(triggers.begin() + i);
+                        break;
+                    }
+                }
+
+                for (uint32_t i = 0; i < clipboardTriggerViews.Size(); i++)
+                {
+                    auto view = clipboardTriggerViews.GetAt(i).try_as<ClipboardManager::ClipboardActionEditor>();
+                    if (view && view.ActionLabel() == label)
+                    {
+                        clipboardTriggerViews.RemoveAt(i);
+                        break;
+                    }
+                }
+            });
+
+            clipboardTriggerViews.Append(triggerViewer);
+        }
+
+        visualStateManager.goToState(!triggers.empty() ? displayClipboardTriggersState : noClipboardTriggersToDisplayState);
+    }
+
+    Windows::Foundation::IInspectable MainPage::asInspectable()
+    {
+        return *this;
+    }
+
+    void MainPage::OverlayEnabled_Changed(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args)
+    {
+        auto&& presenter = appWindow.Presenter().as<xaml::OverlappedPresenter>();
+        if (presenter)
+        {
+            if (overlayEnabled.get())
+            {
+                presenter.IsMinimizable(!overlayEnabled.get());
+                presenter.IsMaximizable(!overlayEnabled.get());
+                presenter.IsResizable(localSettings.get<bool>(L"OverlayIsResizable").value_or(true));
+                appWindow.IsShownInSwitchers(localSettings.get<bool>(L"OverlayShownInSwitchers").value_or(true));
+                appWindow.TitleBar().PreferredHeightOption(Microsoft::UI::Windowing::TitleBarHeightOption::Collapsed);
+
+                visualStateManager.goToState(overlayWindowState);
+            }
+            else
+            {
+                presenter.IsMinimizable(localSettings.get<bool>(L"AllowWindowMinimize").value_or(true));
+                presenter.IsMaximizable(localSettings.get<bool>(L"AllowWindowMaximize").value_or(false));
+                presenter.IsResizable(true);
+                appWindow.IsShownInSwitchers(true);
+                appWindow.TitleBar().PreferredHeightOption(Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
+
+                visualStateManager.goToState(normalWindowState);
+            }
+            presenter.IsAlwaysOnTop(overlayEnabled.get());
+        }
+        else
+        {
+            logger.error(L"Cannot inspect appWindow's presenter as OverlappedPresenter.");
+        }
+
+        raisePropertyChanged(args);
+    }
+
+
     void MainPage::Page_SizeChanged(win::IInspectable const&, xaml::SizeChangedEventArgs const&)
     {
         std::vector<winrt::Windows::Graphics::RectInt32> dragRectangles{};
@@ -260,7 +834,7 @@ namespace winrt::ClipboardManager::implementation
         });
 
         visualStateManager.goToState(appWindow.Size().Width < 930 ? under1kState : over1kState);
-        
+
         if (updated)
         {
             visualStateManager.goToState(applicationUpdatedState);
@@ -534,580 +1108,5 @@ namespace winrt::ClipboardManager::implementation
     void MainPage::OverlayPopupShowWarningCheckBox_Click(win::IInspectable const& sender, xaml::RoutedEventArgs const& e)
     {
         localSettings.insert(L"ShowOverlayWarningMessage", sender.as<xaml::Controls::CheckBox>().IsChecked().GetBoolean());
-    }
-
-
-    winrt::async MainPage::ClipboardContent_Changed(const win::IInspectable&, const win::IInspectable&)
-    {
-        auto content = win::Clipboard::GetContent();
-
-        if (content.Properties().ApplicationName() == L"ClipboardManager")
-        {
-            logger.info(L"Clipboard content changed, but the available format is not text or the application that changed the clipboard content is me.");
-            co_return;
-        }
-
-        AddClipboardItem(content, true);
-    }
-
-    void MainPage::Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel)
-    {
-        auto label = std::wstring(oldLabel);
-        auto newLabel = std::wstring(sender.ActionLabel());
-
-        for (auto&& action : triggers)
-        {
-            if (action.label() == label)
-            {
-                action.label(newLabel);
-
-                for (auto&& clipboardItem : clipboardActionViews)
-                {
-                    uint32_t pos = 0;
-                    if (clipboardItem.IndexOf(pos, label))
-                    {
-                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), action.enabled(), 
-                                                 action.useRegexMatchResults(), action.regex().flags() & boost::regex_constants::icase);
-                    }
-                }
-
-                break;
-            }
-        }
-    }
-
-    void MainPage::FileWatcher_Changed()
-    {
-        DispatcherQueue().TryEnqueue([&]()
-        {
-            ReloadTriggers();
-        });
-    }
-
-    void MainPage::Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const win::IInspectable& inspectable)
-    {
-        auto actionLabel = std::wstring(sender.ActionLabel());
-        auto format = std::wstring(sender.ActionFormat());
-        auto newRegex = std::wstring(sender.ActionRegex());
-
-        auto flags = inspectable.as<int32_t>();
-        bool ignoreCase = flags & (1 << 2);
-        bool useSearch = flags & (1 << 1);
-        bool useRegexMatchResults = flags & 1;
-
-        auto regexFlags = ignoreCase ? boost::regex_constants::icase : 0;
-
-        for (auto&& action : triggers)
-        {
-            if (action.label() == actionLabel)
-            {
-                action.format(format);
-                action.regex(boost::wregex(newRegex, regexFlags));
-                action.updateMatchMode(useSearch ? clip::MatchMode::Search : clip::MatchMode::Match);
-                action.useRegexMatchResults(useRegexMatchResults);
-
-                // Edit on every action the trigger:
-                for (auto&& clipboardItem : clipboardActionViews)
-                {
-                    uint32_t pos = 0;
-                    if (clipboardItem.IndexOf(pos, action.label()))
-                    {
-                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), 
-                                                 action.enabled(), action.useRegexMatchResults(), ignoreCase);
-                    }
-                }
-
-                break;
-            }
-        }
-    }
-
-    void MainPage::Editor_Toggled(const winrt::ClipboardManager::ClipboardActionEditor& sender, const bool& isOn)
-    {
-        auto actionLabel = std::wstring(sender.ActionLabel());
-        for (auto&& action : triggers)
-        {
-            if (action.label() == actionLabel)
-            {
-                for (auto&& view : clipboardActionViews)
-                {
-                    uint32_t index = 0;
-                    if (view.IndexOf(index, action.label()))
-                    {
-                        view.IsEnabled(action.enabled());
-                    }
-                }
-
-                action.enabled(isOn);
-            }
-        }
-    }
-
-
-    void MainPage::Restore()
-    {
-        // Load triggers:
-        LoadUserFile(L"");
-
-        // Get activation hot key (shortcut that brings the app window to the foreground):
-        auto&& map = localSettings.get<std::map<std::wstring, clip::reg_types>>(L"ActivationHotKey");
-        if (!map.empty())
-        {
-            auto key = std::get<std::wstring>(map[L"Key"]);
-            auto mod = std::get<uint32_t>(map[L"Mod"]);
-            if (key.size() == 1)
-            {
-                activationHotKey = clip::HotKey(mod, key[0]);
-            }
-        }
-
-        try
-        {
-            activationHotKey.startListening([this]()
-            {
-                appWindow.Show();
-                if (!SetForegroundWindow(GetWindowFromWindowId(appWindow.Id())))
-                {
-                    std::wstring message = clip::utils::to_wstring(std::system_category().message(GetLastError()));
-                    logger.error(std::vformat(L"SetForegroundWindow failed: ", std::make_wformat_args(message)));
-                }
-            });
-        }
-        catch (std::invalid_argument)
-        {
-            logger.error(L"HotKey invalid argument error.");
-        }
-
-        auto&& presenter = appWindow.Presenter().try_as<xaml::OverlappedPresenter>();
-        if (presenter)
-        {
-            WindowButtonsColumn().Width(xaml::GridLengthHelper::FromPixels(presenter.IsMinimizable() ? 135 : 45));
-        }
-    }
-
-    void MainPage::AddAction(const std::wstring& text, const bool& notify)
-    {
-        if (localSettings.get<bool>(L"AddDuplicatedActions").value_or(true)
-            || clipboardActionViews.Size() == 0
-            || text != clipboardActionViews.GetAt(0).Text())
-        {
-            auto actionView = winrt::make<ClipboardActionView>(text.c_str());
-
-            std::vector<std::pair<std::wstring, std::wstring>> buttons{};
-            if (FindActions(actionView, buttons, text))
-            {
-                clipboardActionViews.InsertAt(0, actionView);
-                actionView.Removed([this](auto&& sender, auto&&)
-                {
-                    uint32_t i = 0;
-                    if (clipboardActionViews.IndexOf(sender, i))
-                    {
-                        clipboardActionViews.RemoveAt(i);
-                    }
-                });
-
-                if (notify)
-                {
-                    SendNotification(buttons);
-                }
-            }
-        }
-    }
-
-    bool MainPage::FindActions(const winrt::ClipboardManager::ClipboardActionView& actionView,
-                               std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text)
-    {
-        auto matchMode = localSettings.get<clip::MatchMode>(L"TriggerMatchMode");
-
-        bool hasMatch = false;
-        for (auto&& trigger : triggers)
-        {
-            if (trigger.enabled() && trigger.match(text, matchMode))
-            {
-                hasMatch = true;
-
-                // TODO: When i add triggers, only enabled triggers will be added yet they can be enabled or disabled later. What do if.
-                actionView.AddAction(trigger.label(), trigger.format(), trigger.regex().str(), true, 
-                                     trigger.useRegexMatchResults(), trigger.regex().flags() & boost::regex_constants::icase);
-
-                try
-                {
-                    auto url = trigger.formatTrigger(text);
-                    buttons.push_back({ trigger.label(), url });
-                }
-                catch (std::invalid_argument formatError)
-                {
-                    logger.error(clip::utils::to_wstring(formatError.what()));
-
-                    MessagesBar().AddWarning(L"", L"Failed to create format for trigger " + trigger.label());
-                }
-            }
-        }
-
-        return hasMatch;
-    }
-
-    void MainPage::SendNotification(const std::vector<std::pair<std::wstring, std::wstring>>& buttons)
-    {
-        if (!localSettings.get<bool>(L"NotificationsEnabled").value_or(true)
-            || SilenceNotificationsToggleButton().IsChecked().GetBoolean())
-        {
-            return;
-        }
-
-        auto durationType = localSettings.get<clip::notifs::NotificationDurationType>(L"NotificationDurationType").value_or(clip::notifs::NotificationDurationType::Default);
-        auto scenarioType = localSettings.get<clip::notifs::NotificationScenarioType>(L"NotificationScenarioType").value_or(clip::notifs::NotificationScenarioType::Default);
-        auto soundType = localSettings.get<clip::notifs::NotificationSoundType>(L"NotificationSoundType").value_or(clip::notifs::NotificationSoundType::Default);
-
-        clip::notifs::ToastNotification notif{};
-
-        if (!notif.tryAddButtons(buttons))
-        {
-            notif.addText(std::wstring(resLoader.getOrAlt(L"ToastNotification_TooManyButtons",
-                                                          L"Too many triggers matched, open the app to activate the trigger of your choice")));
-
-            notif.addButton(std::wstring(resLoader.getOrAlt(L"ToastNotification_OpenApp", L"Open app")), L"");
-        }
-        else
-        {
-            notif.addText(std::wstring(resLoader.getOrAlt(L"ToastNotification_ClickAction", 
-                                                          L"Click corresponding trigger to activate it")));
-        }
-
-        try
-        {
-            notif.send(durationType, scenarioType, soundType);
-        }
-        catch (hresult_access_denied accessDenied)
-        {
-            MessagesBar().AddWarning(L"ToastNotification_FailedToSendWarning", L"Failed to send toast notification.");
-        }
-    }
-
-    void MainPage::ReloadTriggers()
-    {
-        auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
-        if (userFilePath.has_value()
-            && std::filesystem::exists(userFilePath.value())
-            && LoadTriggers(userFilePath.value()))
-        {
-            try
-            {
-                auto vector = winrt::single_threaded_observable_vector<winrt::hstring>();
-                for (auto&& view : clipboardActionViews)
-                {
-                    vector.Append(view.Text());
-                }
-
-                clipboardActionViews.Clear();
-
-                for (auto&& view : vector)
-                {
-                    AddAction(view.data(), false);
-                }
-
-                clipboardTriggerViews.Clear();
-                ClipboadTriggersListPivot_Loaded(nullptr, nullptr);
-
-                return;
-            }
-            catch (...)
-            {
-                logger.error(L"Failed to reload triggers.");
-            }
-        }
-
-        MessagesBar().AddError(L"ReloadActionsUserFileNotFoundTitle",
-                               L"Failed to reload triggers",
-                               L"ReloadActionsUserFileNotFoundMessage",
-                               L"Triggers user file has either been moved/deleted or application settings have been cleared.");
-    }
-
-    bool MainPage::LoadTriggers(std::filesystem::path& path)
-    {
-        try
-        {
-            triggers = clip::ClipboardTrigger::loadClipboardTriggers(path);
-
-            bool showError = false;
-            std::wstring invalidTriggers{};
-            for (auto&& trigger : triggers)
-            {
-                try
-                {
-                    trigger.checkFormat();
-                }
-                catch (clip::ClipboardTriggerFormatException formatExcept)
-                {
-                    logger.error(std::format(L"Trigger '{}' has an invalid format.", trigger.label()));
-                    showError = true;
-                    invalidTriggers += L"\n" + trigger.label();
-                }
-            }
-
-            if (showError)
-            {
-                // I18N:
-                MessagesBar().Add(L"Invalid trigger",
-                                  L"One or more triggers have invalid data, check the triggers page for more information. Invalid triggers:" + invalidTriggers,
-                                  xaml::InfoBarSeverity::Error);
-            }
-            else
-            {
-                visualStateManager.goToState(triggers.empty() ? noClipboardTriggersToDisplayState : displayClipboardTriggersState);
-            }
-
-            return true;
-        }
-        catch (std::invalid_argument invalidArgument)
-        {
-            MessagesBar().AddError(L"ErrorMessage_TriggersFileNotFound",
-                                   L"Triggers file not available or contains invalid data.");
-        }
-        catch (boost::property_tree::xml_parser_error xmlParserError)
-        {
-            MessagesBar().AddError(L"ErrorMessage_XmlParserError",
-                                   L"Triggers file has invalid XML markup data.");
-        }
-        catch (boost::property_tree::ptree_bad_path badPath)
-        {
-            hstring message = resLoader.getOrAlt(L"ErrorMessage_InvalidTriggersFile", L"Triggers file has invalid XML markup data.");
-            hstring content = L"";
-
-            auto wpath = badPath.path<boost::property_tree::wpath>();
-            auto path = clip::utils::to_wstring(wpath.dump());
-
-            if (path == L"settings.triggers")
-            {
-                // Missing <settings><triggers> node.
-                content = resLoader.getOrAlt(L"ErrorMessage_MissingTriggersNode",
-                                             L"XML declaration is missing '<triggers>' node.\nCheck settings for an example of a valid XML declaration.");
-            }
-            else if (path == L"settings.actions")
-            {
-                // Old version of triggers file.
-                content = resLoader.getOrAlt(L"ErrorMessage_XmlOldVersion",
-                                             L"<actions> node has been renamed <triggers> and <trigger> <actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.");
-            }
-            else
-            {
-                content = L"Path not found: '" + hstring(path) + L"'";
-            }
-
-            MessagesBar().Add(message, content, xaml::InfoBarSeverity::Error);
-        }
-
-        return false;
-    }
-
-    void MainPage::LaunchAction(const std::wstring& url)
-    {
-        concurrency::create_task([this, url]() -> void
-        {
-            try
-            {
-                clip::utils::Launcher launcher{};
-                launcher.launch(url).get();
-            }
-            catch (hresult_error error)
-            {
-                logger.error(L"Failed to launch url: " + std::wstring(error.message().data()));
-
-                // I18N: Failed to launch url: '{}'
-                DispatcherQueue().TryEnqueue([this, url]()
-                {
-                    // I18N:
-                    MessagesBar().AddError(L"", L"Failed to launch url: '" + url + L"'.");
-                });
-            }
-        });
-    }
-
-    winrt::async MainPage::AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& notify)
-    {
-        using namespace std::literals;
-        static std::chrono::system_clock::time_point lastEntry{};
-        auto&& now = std::chrono::system_clock::now();
-        auto elapsed = (now - lastEntry);
-        lastEntry = now;
-        if (elapsed < 50ms)
-        {
-            logger.info(L"Duplicate clipboard event.");
-            co_return;
-        }
-
-        if (content.Contains(win::StandardDataFormats::Text()))
-        {
-            auto&& itemText = co_await content.GetTextAsync();
-            if (!itemText.empty())
-            {
-                DispatcherQueue().TryEnqueue([this, text = std::wstring(itemText), notify]()
-                {
-                    // Run triggers on the text:
-                    AddAction(text, notify);
-                });
-            }
-        }
-    }
-
-    bool MainPage::LoadUserFile(const std::filesystem::path& path)
-    {
-        bool triggersLoaded = false;
-
-        std::optional<std::filesystem::path> userFilePath{};
-        if (path.empty())
-        {
-            userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
-        }
-        else
-        {
-            userFilePath = path;
-        }
-
-        if (userFilePath.has_value() && clip::utils::pathExists(userFilePath.value()))
-        {
-            if (LoadTriggers(userFilePath.value()))
-            {
-                if (clipboardTriggerViews.Size() == 0)
-                {
-                    clipboardTriggerViews.Clear();
-                }
-                
-                try
-                {
-                    ShowTriggerViews();
-                    triggersLoaded = true;
-                }
-                catch (hresult_error error)
-                {
-                    logger.error(std::format(L"Error @ LoadUserFile: {}", error.message().data()));
-                }
-            }
-            else
-            {
-                logger.info(L"Failed to load triggers.");
-            }
-
-            // Load history:
-            try
-            {
-                boost::property_tree::wptree tree{};
-                boost::property_tree::read_xml(userFilePath.value().string(), tree);
-                for (auto&& historyItem : tree.get_child(L"settings.history"))
-                {
-                    AddAction(historyItem.second.data(), false);
-                }
-            }
-            catch (const boost::property_tree::ptree_bad_path badPath)
-            {
-                logger.debug(L"Failed to retreive history from user file: " + clip::utils::to_wstring(badPath.what()));
-            }
-
-            // Enable file watcher:
-            try
-            {
-                if (localSettings.get<bool>(L"EnableTriggerFileWatching").value_or(false))
-                {
-                    watcher.startWatching(userFilePath.value());
-                }
-            }
-            catch (std::wstring message)
-            {
-                logger.error(message);
-            }
-            catch (std::invalid_argument invalidArg)
-            {
-                // Path doesn't exist.
-                logger.error(L"Path '" + watcher.path().wstring() + L"' doesn't exist.");
-            }
-        }
-
-        return triggersLoaded;
-    }
-
-    void MainPage::ShowTriggerViews()
-    {
-        for (auto&& trigger : triggers)
-        {
-            auto triggerViewer = make<ClipboardManager::implementation::ClipboardActionEditor>();
-            triggerViewer.ActionFormat(trigger.format());
-            triggerViewer.ActionLabel(trigger.label());
-            triggerViewer.ActionRegex(trigger.regex().str());
-            triggerViewer.ActionEnabled(trigger.enabled());
-            triggerViewer.IgnoreCase((trigger.regex().flags() & boost::regex_constants::icase) == boost::regex_constants::icase);
-            triggerViewer.UseSearch(trigger.matchMode() == clip::MatchMode::Search);
-            triggerViewer.UseRegexMatchResults(trigger.useRegexMatchResults());
-
-            triggerViewer.IsOn({ this, &MainPage::Editor_Toggled });
-            triggerViewer.LabelChanged({ this, &MainPage::Editor_LabelChanged });
-            triggerViewer.Changed({ this, &MainPage::Editor_Changed });
-
-            triggerViewer.Removed([this](auto&& sender, auto&&)
-            {
-                auto&& label = sender.ActionLabel();
-                for (size_t i = 0; i < triggers.size(); i++)
-                {
-                    if (triggers[i].label() == label)
-                    {
-                        triggers.erase(triggers.begin() + i);
-                        break;
-                    }
-                }
-
-                for (uint32_t i = 0; i < clipboardTriggerViews.Size(); i++)
-                {
-                    auto view = clipboardTriggerViews.GetAt(i).try_as<ClipboardManager::ClipboardActionEditor>();
-                    if (view && view.ActionLabel() == label)
-                    {
-                        clipboardTriggerViews.RemoveAt(i);
-                        break;
-                    }
-                }
-            });
-
-            clipboardTriggerViews.Append(triggerViewer);
-        }
-
-        visualStateManager.goToState(!triggers.empty() ? displayClipboardTriggersState : noClipboardTriggersToDisplayState);
-    }
-
-    Windows::Foundation::IInspectable MainPage::asInspectable()
-    {
-        return *this;
-    }
-
-    void MainPage::OverlayEnabled_Changed(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args)
-    {
-        auto&& presenter = appWindow.Presenter().as<xaml::OverlappedPresenter>();
-        if (presenter)
-        {
-            if (overlayEnabled.get())
-            {
-                presenter.IsMinimizable(!overlayEnabled.get());
-                presenter.IsMaximizable(!overlayEnabled.get());
-                presenter.IsResizable(localSettings.get<bool>(L"OverlayIsResizable").value_or(true));
-                appWindow.IsShownInSwitchers(localSettings.get<bool>(L"OverlayShownInSwitchers").value_or(true));
-                appWindow.TitleBar().PreferredHeightOption(Microsoft::UI::Windowing::TitleBarHeightOption::Collapsed);
-
-                visualStateManager.goToState(overlayWindowState);
-            }
-            else
-            {
-                presenter.IsMinimizable(localSettings.get<bool>(L"AllowWindowMinimize").value_or(true));
-                presenter.IsMaximizable(localSettings.get<bool>(L"AllowWindowMaximize").value_or(false));
-                presenter.IsResizable(true);
-                appWindow.IsShownInSwitchers(true);
-                appWindow.TitleBar().PreferredHeightOption(Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
-
-                visualStateManager.goToState(normalWindowState);
-            }
-            presenter.IsAlwaysOnTop(overlayEnabled.get());
-        }
-        else
-        {
-            logger.error(L"Cannot inspect appWindow's presenter as OverlappedPresenter.");
-        }
-
-        raisePropertyChanged(args);
     }
 }

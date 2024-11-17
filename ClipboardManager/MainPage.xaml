@@ -251,6 +251,9 @@
                         <ItemsRepeater
                             x:Name="ClipboardTriggersListView"
                             ItemsSource="{x:Bind ClipboardTriggers}">
+                            <ItemsRepeater.Transitions>
+                                <AddDeleteThemeTransition/>
+                            </ItemsRepeater.Transitions>
                             <ItemsRepeater.Layout>
                                 <StackLayout Orientation="Vertical" Spacing="7"/>
                             </ItemsRepeater.Layout>
