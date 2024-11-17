@@ -47,12 +47,12 @@ namespace winrt::ClipboardManager::implementation
         clip::ui::VisualState<ClipboardTriggerEditControl> formatProtocolWarningState{ L"FormatProtocolWarning", 3, false };
         clip::ui::VisualState<ClipboardTriggerEditControl> formatNoProtocolWarningState{ L"FormatNoProtocolWarning", 3, false };
 
-        clip::ui::ListenablePropertyValue<hstring> _triggerLabel{ std::bind(&ClipboardTriggerEditControl::raisePropertyChanged, this, std::placeholders::_1) };
-        clip::ui::ListenablePropertyValue<hstring> _triggerFormat{ std::bind(&ClipboardTriggerEditControl::raisePropertyChanged, this, std::placeholders::_1) };
-        clip::ui::ListenablePropertyValue<hstring> _triggerRegex{ std::bind(&ClipboardTriggerEditControl::raisePropertyChanged, this, std::placeholders::_1) };
-        clip::ui::ListenablePropertyValue<bool> _ignoreCase{ std::bind(&ClipboardTriggerEditControl::raisePropertyChanged, this, std::placeholders::_1) };
-        clip::ui::ListenablePropertyValue<bool> _useSearch{ std::bind(&ClipboardTriggerEditControl::raisePropertyChanged, this, std::placeholders::_1) };
-        clip::ui::ListenablePropertyValue<bool> _useRegexMatchResults{ std::bind(&ClipboardTriggerEditControl::raisePropertyChanged, this, std::placeholders::_1) };
+        clip::ui::ListenablePropertyValue<hstring> _triggerLabel{ BIND(&ClipboardTriggerEditControl::raisePropertyChanged) };
+        clip::ui::ListenablePropertyValue<hstring> _triggerFormat{ BIND(&ClipboardTriggerEditControl::raisePropertyChanged) };
+        clip::ui::ListenablePropertyValue<hstring> _triggerRegex{ BIND(&ClipboardTriggerEditControl::raisePropertyChanged) };
+        clip::ui::ListenablePropertyValue<bool> _ignoreCase{ BIND(&ClipboardTriggerEditControl::raisePropertyChanged) };
+        clip::ui::ListenablePropertyValue<bool> _useSearch{ BIND(&ClipboardTriggerEditControl::raisePropertyChanged) };
+        clip::ui::ListenablePropertyValue<bool> _useRegexMatchResults{ BIND(&ClipboardTriggerEditControl::raisePropertyChanged), true };
 
         // Inherited via PropertyChangedClass
         winrt::Windows::Foundation::IInspectable asInspectable() override;
