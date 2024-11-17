@@ -43,36 +43,45 @@
 
             <ScrollViewer Grid.Row="1">
                 <StackPanel Spacing="30">
-                    <TextBox x:Name="TestInputTextBox" x:Uid="TestInputTextBox" TextChanged="TestInputTextBox_TextChanged" />
+                    <Grid RowSpacing="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBox x:Name="FormatTextBox" Header="Format" TextChanged="FormatTextBox_TextChanged"/>
+                        <InfoBar x:Name="FormatErrorInfoBar" Grid.Row="1" Severity="Error" IsClosable="False"/>
+                        <ToggleButton x:Name="UseRegexMatchResultsToggleButton" Grid.Row="2" Content="Use regex match results" Click="ToggleButton_Click"/>
+                    </Grid>
 
-                    <StackPanel Spacing="5">
-                        <InfoBar x:Name="ErrorGrid" x:Load="False" Visibility="Collapsed" Severity="Error" IsClosable="False"/>
+                    <Grid RowSpacing="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                        <Grid RowSpacing="5">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
+                        <TextBox x:Name="RegexTextBox" x:Uid="RegexTextBox" Header="Regex input" TextChanged="RegexTextBox_TextChanged"/>
+                        
+                        <InfoBar x:Name="ErrorGrid" x:Load="False" Visibility="Collapsed" Severity="Error" IsClosable="False" Grid.Row="1"/>
 
-                            <TextBox x:Name="RegexTextBox" x:Uid="RegexTextBox" Header="Regex input" TextChanged="RegexTextBox_TextChanged"/>
+                        <StackPanel Orientation="Horizontal" Spacing="12" Grid.Row="2">
+                            <ToggleButton x:Name="RegexIgnoreCaseToggleButton" Click="ToggleButton_Click">
+                                <StackPanel Orientation="Horizontal" Spacing="7">
+                                    <TextBlock Text="Aa"/>
+                                    <TextBlock x:Uid="RegexIgnoreCaseTextBlock"/>
+                                </StackPanel>
+                            </ToggleButton>
+                            <ToggleButton x:Name="RegexModeToggleButton" Click="ToggleButton_Click">
+                                <StackPanel Orientation="Horizontal" Spacing="7">
+                                    <FontIcon Glyph="&#xf78b;" FontSize="16"/>
+                                    <TextBlock x:Uid="RegexModeTextBlock"/>
+                                </StackPanel>
+                            </ToggleButton>
+                        </StackPanel>
+                    </Grid>
 
-                            <StackPanel Orientation="Horizontal" Spacing="12" Grid.Row="1">
-                                <ToggleButton x:Name="RegexIgnoreCaseToggleButton" Click="ToggleButton_Click">
-                                    <StackPanel Orientation="Horizontal" Spacing="7">
-                                        <TextBlock Text="Aa"/>
-                                        <TextBlock x:Uid="RegexIgnoreCaseTextBlock"/>
-                                    </StackPanel>
-                                </ToggleButton>
-                                <ToggleButton x:Name="RegexModeToggleButton" Click="ToggleButton_Click">
-                                    <StackPanel Orientation="Horizontal" Spacing="7">
-                                        <FontIcon Glyph="&#xf78b;" FontSize="16"/>
-                                        <TextBlock x:Uid="RegexModeTextBlock"/>
-                                    </StackPanel>
-                                </ToggleButton>
-                            </StackPanel>
-                        </Grid>
-                    </StackPanel>
+                    <TextBox x:Name="TestInputTextBox" x:Uid="TestInputTextBox" TextChanged="TestInputTextBox_TextChanged"/>
 
                     <Border Padding="10,20" Background="#1C1C1C" MinHeight="60" CornerRadius="{StaticResource OverlayCornerRadius}">
                         <RichTextBlock x:Name="MatchTextBlock" CharacterSpacing="50" FontFamily="Consolas" FontSize="16" VerticalAlignment="Center" TextWrapping="Wrap">
