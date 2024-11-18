@@ -366,6 +366,10 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="MadeByTextBlock.Text" xml:space="preserve">
     <value />
   </data>
+  <data name="NextTeachingTipTextBlock.Text" xml:space="preserve">
+    <value>Next</value>
+    <comment>App.xaml</comment>
+  </data>
   <data name="NoClipboardActionsInfoBar.Title" xml:space="preserve">
     <value />
   </data>

@@ -448,6 +448,9 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Made by psyKomicron</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="NextTeachingTipTextBlock.Text" xml:space="preserve">
+    <value>Next</value>
+  </data>
   <data name="NoClipboardActionsInfoBar.Title" xml:space="preserve">
     <value>No clipboard triggers have been created, please create at least one action to use clipboard actions.</value>
     <comment>MainPage</comment>

@@ -432,94 +432,77 @@
                         </StackPanel>
                     </Grid>
 
-                    <ListView x:Name="ActionsListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2" AllowDrop="True" CanReorderItems="True">
+                    <ListView 
+                        x:Name="ActionsListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2" AllowDrop="True" CanReorderItems="True">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="Padding" Value="0" />
                             </Style>
                         </ListView.Resources>
                     </ListView>
-
-                    <!--#region TeachingTips -->
-                    <TeachingTip x:Name="ListViewTeachingTip" 
-                                 x:Uid="ListViewTeachingTip"
-                                 Target="{x:Bind ActionsListView}" 
-                                 PreferredPlacement="Center"
-                                 ActionButtonClick="TeachingTip_CloseButtonClick">
-                        <TeachingTip.ActionButtonContent>
-                            <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-                        </TeachingTip.ActionButtonContent>
-                    </TeachingTip>
-
-                    <TeachingTip x:Name="OpenQuickSettingsButtonTeachingTip"
-                                 x:Uid="OpenQuickSettingsButtonTeachingTip"
-                                 Target="{x:Bind OpenQuickSettingsButton}"
-                                 ActionButtonClick="TeachingTip_CloseButtonClick">
-                        <TeachingTip.ActionButtonContent>
-                            <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-                        </TeachingTip.ActionButtonContent>
-                    </TeachingTip>
-                    
-                    <TeachingTip x:Name="ReloadActionsButtonTeachingTip"
-                                 x:Uid="ReloadActionsButtonTeachingTip"
-                                 Target="{x:Bind ReloadTriggersButton}"
-                                 ActionButtonClick="TeachingTip_CloseButtonClick">
-                        <TeachingTip.ActionButtonContent>
-                            <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-                        </TeachingTip.ActionButtonContent>
-                    </TeachingTip>
-
-                    <TeachingTip x:Name="SilenceNotificationsToggleButtonTeachingTip"
-                                 x:Uid="SilenceNotificationsToggleButtonTeachingTip"
-                                 Target="{x:Bind SilenceNotificationsToggleButton}"
-                                 ActionButtonClick="TeachingTip_CloseButtonClick">
-                        <TeachingTip.ActionButtonContent>
-                            <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-                        </TeachingTip.ActionButtonContent>
-                    </TeachingTip>
-
-                    <TeachingTip x:Name="HistoryToggleButtonTeachingTip"
-                                 x:Uid="HistoryToggleButtonTeachingTip"
-                                 Target="{x:Bind HistoryToggleButton}"
-                                 ActionButtonClick="TeachingTip_CloseButtonClick">
-                        <TeachingTip.ActionButtonContent>
-                            <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-                        </TeachingTip.ActionButtonContent>
-                    </TeachingTip>
-                    <!--#endregion-->
                 </Grid>
             </PivotItem>
         </Pivot>
 
         <!--#region TeachingTips -->
-        <TeachingTip x:Name="SettingsPivotTeachingTip" 
-                     x:Uid="SettingsPivotTeachingTip"
-                     Target="{x:Bind SettingsPivot}"
-                     ActionButtonClick="TeachingTip_CloseButtonClick">
-            <TeachingTip.ActionButtonContent>
-                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-            </TeachingTip.ActionButtonContent>
-        </TeachingTip>
+        <TeachingTip 
+            x:Name="ListViewTeachingTip" 
+            x:Uid="ListViewTeachingTip"
+            Style="{StaticResource AppTeachingTip}"
+            Target="{x:Bind ActionsListView}" 
+            PreferredPlacement="Center"
+            ActionButtonClick="TeachingTip_CloseButtonClick"/>
 
-        <TeachingTip x:Name="ClipboardTriggersPivotTeachingTip" 
-                     x:Uid="ClipboardTriggersPivotTeachingTip"
-                     Target="{x:Bind ClipboardTriggersPivot}"
-                     ActionButtonClick="TeachingTip_CloseButtonClick">
-            <TeachingTip.ActionButtonContent>
-                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-            </TeachingTip.ActionButtonContent>
-        </TeachingTip>
+        <TeachingTip 
+            x:Name="OpenQuickSettingsButtonTeachingTip"
+            x:Uid="OpenQuickSettingsButtonTeachingTip"
+            Style="{StaticResource AppTeachingTip}"
+            Target="{x:Bind OpenQuickSettingsButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick"/>
 
-        <TeachingTip x:Name="ClipboardActionsPivotTeachingTip" 
-                     x:Uid="ClipboardActionsPivotTeachingTip"
-                     Target="{x:Bind ClipboardActionsPivot}"
-                     ShouldConstrainToRootBounds="False"
-                     PreferredPlacement="BottomRight"
-                     ActionButtonClick="TeachingTip_CloseButtonClick">
-            <TeachingTip.ActionButtonContent>
-                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-            </TeachingTip.ActionButtonContent>
-        </TeachingTip>
+        <TeachingTip 
+            x:Name="ReloadActionsButtonTeachingTip"
+            x:Uid="ReloadActionsButtonTeachingTip"
+            Style="{StaticResource AppTeachingTip}"
+            Target="{x:Bind ReloadTriggersButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick"/>
+
+        <TeachingTip 
+            x:Name="SilenceNotificationsToggleButtonTeachingTip"
+            x:Uid="SilenceNotificationsToggleButtonTeachingTip"
+            Style="{StaticResource AppTeachingTip}"
+            Target="{x:Bind SilenceNotificationsToggleButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick"/>
+
+        <TeachingTip 
+            x:Name="HistoryToggleButtonTeachingTip"
+            x:Uid="HistoryToggleButtonTeachingTip"
+            Style="{StaticResource AppTeachingTip}"
+            Target="{x:Bind HistoryToggleButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick"/>
+        
+        <TeachingTip 
+            x:Name="SettingsPivotTeachingTip" 
+            x:Uid="SettingsPivotTeachingTip"
+            Style="{StaticResource AppTeachingTip}"
+            Target="{x:Bind SettingsPivot}"
+            ActionButtonClick="TeachingTip_CloseButtonClick"/>
+
+        <TeachingTip 
+            x:Name="ClipboardTriggersPivotTeachingTip" 
+            x:Uid="ClipboardTriggersPivotTeachingTip"
+            Style="{StaticResource AppTeachingTip}"
+            Target="{x:Bind ClipboardTriggersPivot}"
+            ActionButtonClick="TeachingTip_CloseButtonClick"/>
+
+        <TeachingTip 
+            x:Name="ClipboardActionsPivotTeachingTip" 
+            x:Uid="ClipboardActionsPivotTeachingTip"
+            Style="{StaticResource AppTeachingTip}"
+            Target="{x:Bind ClipboardActionsPivot}"
+            ShouldConstrainToRootBounds="False"
+            PreferredPlacement="BottomRight"
+            ActionButtonClick="TeachingTip_CloseButtonClick"/>
         <!--#endregion-->
     </Grid>
     

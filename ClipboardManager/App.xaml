@@ -511,6 +511,22 @@
                 <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}"/>
             </Style>
 
+            <Style x:Key="AppTeachingTip" TargetType="TeachingTip">
+                <Setter Property="ActionButtonContent">
+                    <Setter.Value>
+                        <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                            <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                        </Grid>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
                     <Color x:Key="ButtonForegroundColor">White</Color>
