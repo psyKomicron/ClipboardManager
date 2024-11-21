@@ -73,15 +73,16 @@ namespace winrt::ClipboardManager::implementation
     void ClipboardActionView::AddAction(const winrt::hstring& label, const winrt::hstring& format, const winrt::hstring& regex, 
                                         const bool& enabled, const bool& useRegexMatchResults, const bool& ignoreCase)
     {
-        auto trigger = clip::ClipboardTrigger(
-            std::wstring(label), 
-            std::wstring(format), 
-            boost::wregex(std::wstring(regex), ignoreCase ? boost::regex_constants::icase : boost::regex_constants::basic), 
-            enabled);
-        trigger.useRegexMatchResults(useRegexMatchResults);
 
         try
         {
+            auto trigger = clip::ClipboardTrigger(
+                std::wstring(label), 
+                std::wstring(format), 
+                boost::wregex(std::wstring(regex), ignoreCase ? boost::regex_constants::icase : boost::regex_constants::basic), 
+                enabled);
+            trigger.useRegexMatchResults(useRegexMatchResults);
+
             trigger.checkFormat();
             triggers.push_back(std::move(trigger));
         }
@@ -103,7 +104,7 @@ namespace winrt::ClipboardManager::implementation
                     break;
             }*/
 
-            logger.error(L"Check format failed for trigger '" + trigger.label() + L"'.");
+            logger.error(L"Check format failed for trigger '" + std::wstring(label) + L"'.");
         }
     }
 
@@ -234,7 +235,8 @@ namespace winrt::ClipboardManager::implementation
             ActionsGridViewTeachingTip(),
             OpenOptionsButtonTeachingTip(),
             FormatLinkButtonTeachingTip(),
-            RemoveActionButtonTeachingTip()
+            RemoveActionButtonTeachingTip(),
+            EditActionButtonTeachingTip()
         };
 
         if (teachingTipIndex < teachingTips.size())
