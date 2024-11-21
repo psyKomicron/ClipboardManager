@@ -194,6 +194,9 @@ Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramè
     <value>Chaine exécutable</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="ClearActionsButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Vide la liste d'actions.</value>
+  </data>
   <data name="ClearActionsButtonToolTipTextBlock.Text" xml:space="preserve">
     <value>Vider la liste d'actions</value>
     <comment>SettingsPage</comment>
@@ -246,13 +249,31 @@ Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramè
     <value>Ajouter déclencheur</value>
     <comment>MainPage/CommandBar</comment>
   </data>
+  <data name="CommandBarAddTriggerButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Ouvre une fenêtre pour créer un nouveau déclencheur.</value>
+  </data>
+  <data name="CommandBarAddTriggerButtonTeachingTip.Title" xml:space="preserve">
+    <value>Ajouter un déclencheur</value>
+  </data>
   <data name="CommandBarImportButton.Label" xml:space="preserve">
     <value>Importer</value>
     <comment>MainPage/CommandBar</comment>
   </data>
+  <data name="CommandBarImportButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Cliquer pour ouvrir une fenêtre de dialogue de l'explorateur de fichier afin de choisir et importer un fichier de configuration utilisateur (fichier des déclencheurs).</value>
+  </data>
+  <data name="CommandBarImportButtonTeachingTip.Title" xml:space="preserve">
+    <value>Importer le presse-papier</value>
+  </data>
   <data name="CommandBarReloadTriggersButton.Label" xml:space="preserve">
     <value>Recharger déclencheurs</value>
     <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarReloadTriggersButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Force l'application a recharger le fichier des déclencheurs.</value>
+  </data>
+  <data name="CommandBarReloadTriggersButtonTeachingTip.Title" xml:space="preserve">
+    <value>Rafraichir les déclencheurs</value>
   </data>
   <data name="CommandBarSaveButton.Label" xml:space="preserve">
     <value>Sauvegarder</value>
@@ -262,9 +283,18 @@ Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramè
     <value>Sauvergarder les modifications faites aux déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="CommandBarSaveButtonTeachingTip.Title" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
   <data name="CommandBarTestRegexButton.Label" xml:space="preserve">
-    <value>Tester trigger</value>
+    <value>Tester un déclencheur</value>
     <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarTestRegexButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Ouvre une popup ou il est possible de créer et tester un déclencheur. Très utile pour debug un déclencheur défaillant.</value>
+  </data>
+  <data name="CommandBarTestRegexButtonTeachingTip.Title" xml:space="preserve">
+    <value>Tester un déclencheur</value>
   </data>
   <data name="CreateButton.Content" xml:space="preserve">
     <value>Créer</value>
@@ -293,6 +323,12 @@ Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramè
   <data name="EditActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Modifier</value>
     <comment>ClipboardActionView</comment>
+  </data>
+  <data name="EditActionButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Modifier le texte</value>
+  </data>
+  <data name="EditActionButtonTeachingTip.Title" xml:space="preserve">
+    <value>Modifier</value>
   </data>
   <data name="EditButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Modifier</value>
@@ -415,6 +451,12 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="IgnoreCaseTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Ignorer la casse</value>
     <comment>ClipboardActionEditor</comment>
+  </data>
+  <data name="ImportClipboardButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Charge l'historique du presse papier, si le texte déclenche une action sera créée.</value>
+  </data>
+  <data name="ImportClipboardButtonTeachingTip.Title" xml:space="preserve">
+    <value>Importer le presse-papier</value>
   </data>
   <data name="ImportClipboardHistoryHostControl.Header" xml:space="preserve">
     <value>Importer le contenu du presse-papier</value>

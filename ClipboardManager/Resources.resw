@@ -175,6 +175,9 @@ You will need to locate your user file and reapply your settings.</value>
   <data name="BrowserStringTextBox.PlaceholderText" xml:space="preserve">
     <value>Executable string</value>
   </data>
+  <data name="ClearActionsButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Clear action list</value>
+  </data>
   <data name="ClearActionsButtonToolTipTextBlock.Text" xml:space="preserve">
     <value>Clear actions list</value>
   </data>
@@ -214,11 +217,32 @@ You will need to locate your user file and reapply your settings.</value>
   <data name="CommandBarAddTriggerButton.Label" xml:space="preserve">
     <value>Add trigger</value>
   </data>
+  <data name="CommandBarAddTriggerButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Show a popup to create a new trigger.</value>
+  </data>
+  <data name="CommandBarAddTriggerButtonTeachingTip.Title" xml:space="preserve">
+    <value>Add trigger</value>
+  </data>
   <data name="CommandBarImportButton.Label" xml:space="preserve">
     <value>Import</value>
   </data>
+  <data name="CommandBarImportButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Click to open a file explorer dialog to choose and import a user file.</value>
+  </data>
+  <data name="CommandBarImportButtonTeachingTip.Title" xml:space="preserve">
+    <value>Import clipboard</value>
+    <comment>MainPage Teaching tips</comment>
+  </data>
   <data name="CommandBarReloadTriggersButton.Label" xml:space="preserve">
     <value>Reload triggers</value>
+  </data>
+  <data name="CommandBarReloadTriggersButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Force the application to reload triggers file.</value>
+    <comment>MainPage Teaching tips</comment>
+  </data>
+  <data name="CommandBarReloadTriggersButtonTeachingTip.Title" xml:space="preserve">
+    <value>Reload triggers</value>
+    <comment>MainPage Teaching tips</comment>
   </data>
   <data name="CommandBarSaveButton.Label" xml:space="preserve">
     <value>Save</value>
@@ -226,7 +250,16 @@ You will need to locate your user file and reapply your settings.</value>
   <data name="CommandBarSaveButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Click to save the modifications made to any clipboard trigger</value>
   </data>
+  <data name="CommandBarSaveButtonTeachingTip.Title" xml:space="preserve">
+    <value>Save</value>
+  </data>
   <data name="CommandBarTestRegexButton.Label" xml:space="preserve">
+    <value>Test trigger</value>
+  </data>
+  <data name="CommandBarTestRegexButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Open a popup where you can create and test a trigger. Very useful to debug why a trigger isn't creating an action, or when regex extraction is needed and doesn't work.</value>
+  </data>
+  <data name="CommandBarTestRegexButtonTeachingTip.Title" xml:space="preserve">
     <value>Test trigger</value>
   </data>
   <data name="CreateButton.Content" xml:space="preserve">
@@ -249,6 +282,14 @@ You will need to locate your user file and reapply your settings.</value>
   </data>
   <data name="EditActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Edit</value>
+  </data>
+  <data name="EditActionButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Edit clipboard text</value>
+    <comment>ClipboardActionView</comment>
+  </data>
+  <data name="EditActionButtonTeachingTip.Title" xml:space="preserve">
+    <value>Edit</value>
+    <comment>ClipboardActionView</comment>
   </data>
   <data name="EditButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Edit</value>
@@ -342,6 +383,12 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="IgnoreCaseTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Ignore case</value>
   </data>
+  <data name="ImportClipboardButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Loads clipboard history, text that triggers creates an action.</value>
+  </data>
+  <data name="ImportClipboardButtonTeachingTip.Title" xml:space="preserve">
+    <value>Import clipboard</value>
+  </data>
   <data name="ImportClipboardHistoryHostControl.Header" xml:space="preserve">
     <value>Import clipboard</value>
   </data>
@@ -361,283 +408,284 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Clipboard action</value>
   </data>
   <data name="LocateButton.Content" xml:space="preserve">
-    <value />
+    <value>Locate</value>
   </data>
   <data name="MadeByTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Made by psyKomicron</value>
   </data>
   <data name="NextTeachingTipTextBlock.Text" xml:space="preserve">
     <value>Next</value>
     <comment>App.xaml</comment>
   </data>
   <data name="NoClipboardActionsInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>No clipboard triggers have been created, please create at least one action to use clipboard actions.</value>
   </data>
   <data name="NoClipboardActionsTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>No clipboard triggers</value>
   </data>
   <data name="NotificationScenariosComboBox_Alarm.Content" xml:space="preserve">
-    <value />
+    <value>Alarm</value>
   </data>
   <data name="NotificationScenariosComboBox_Default.Content" xml:space="preserve">
-    <value />
+    <value>Default</value>
   </data>
   <data name="NotificationScenariosComboBox_IncomingCall.Content" xml:space="preserve">
-    <value />
+    <value>Incoming call</value>
   </data>
   <data name="NotificationScenariosComboBox_Reminder.Content" xml:space="preserve">
-    <value />
+    <value>Reminder</value>
   </data>
   <data name="NotificationScenariosComboBox_Urgent.Content" xml:space="preserve">
-    <value />
+    <value>Urgent</value>
   </data>
   <data name="NotificationsExpanderDurationHostControl.Header" xml:space="preserve">
-    <value />
+    <value>Duration</value>
   </data>
   <data name="NotificationsExpanderScenarioHostControl.Header" xml:space="preserve">
-    <value />
+    <value>Scenario</value>
   </data>
   <data name="NotificationsExpanderSoundHostControl.Header" xml:space="preserve">
-    <value />
+    <value>Sound</value>
   </data>
   <data name="NotificationSoundComboBox_Default.Content" xml:space="preserve">
-    <value />
+    <value>Default</value>
   </data>
   <data name="NotificationSoundComboBox_InstantMessage.Content" xml:space="preserve">
-    <value />
+    <value>Instant message</value>
   </data>
   <data name="NotificationSoundComboBox_Mail.Content" xml:space="preserve">
-    <value />
+    <value>Mail</value>
   </data>
   <data name="NotificationSoundComboBox_Reminder.Content" xml:space="preserve">
-    <value />
+    <value>Reminder</value>
   </data>
   <data name="NotificationSoundComboBox_Silent.Content" xml:space="preserve">
-    <value />
+    <value>Silent</value>
   </data>
   <data name="NotificationSoundComboBox_SMS.Content" xml:space="preserve">
-    <value />
+    <value>SMS</value>
   </data>
   <data name="OpenOptionsButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value />
+    <value>Click here to show additional options</value>
   </data>
   <data name="OpenQuickSettingsButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value />
+    <value>Open or close quick settings</value>
   </data>
   <data name="OpenQuickSettingsButton_ToolTipTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Quick settings</value>
   </data>
   <data name="OpenSaveFileButton.Content" xml:space="preserve">
-    <value />
+    <value>Open &amp; edit</value>
   </data>
   <data name="OpenSaveFileInfoBar.Message" xml:space="preserve">
-    <value />
+    <value>One default trigger has been added as a template, do you want to edit it ?</value>
   </data>
   <data name="OpenSaveFileInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>Save file successfully created !</value>
   </data>
   <data name="OverlayPopupContentTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Overlay mode has been enabled, the application's window won't be shown in the task bar or in system views. To show the window hit the "show window" shortcut.</value>
   </data>
   <data name="OverlayPopupShowWarningCheckBox.Content" xml:space="preserve">
-    <value />
+    <value>Show warning every time</value>
   </data>
   <data name="OverlayPopupTitleTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Overlay mode</value>
   </data>
   <data name="OverwriteExampleTriggersFileButtton.Content" xml:space="preserve">
-    <value />
+    <value>Overwrite</value>
   </data>
   <data name="RegexIgnoreCaseButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Ignore case</value>
     <comment>ClipboardTriggerEditControl</comment>
   </data>
   <data name="RegexIgnoreCaseTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Ignore case</value>
   </data>
   <data name="RegexModeComboBox_Match.Content" xml:space="preserve">
-    <value />
+    <value>Match</value>
   </data>
   <data name="RegexModeComboBox_Match_ToolTip.Text" xml:space="preserve">
-    <value />
+    <value>String must match the full regex.</value>
   </data>
   <data name="RegexModeComboBox_Search.Content" xml:space="preserve">
-    <value />
+    <value>Search</value>
   </data>
   <data name="RegexModeComboBox_Search_ToolTip.Text" xml:space="preserve">
-    <value />
+    <value>Search for any subsequence in the string that matches the regex.</value>
   </data>
   <data name="RegexModeHostControl.Header" xml:space="preserve">
-    <value />
+    <value>Regex mode</value>
   </data>
   <data name="RegexModeTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Search</value>
   </data>
   <data name="RegexTextBox.Header" xml:space="preserve">
-    <value />
+    <value>Regex</value>
   </data>
   <data name="RegexUseSearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Regex search</value>
     <comment>ClipboardTriggerEditControl</comment>
   </data>
   <data name="ReloadActionsButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value />
+    <value>Reload triggers</value>
   </data>
   <data name="ReloadTriggersButton_ToolTipTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Reload triggers</value>
   </data>
   <data name="RemoveActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value />
+    <value>Remove action from the list</value>
   </data>
   <data name="RemoveActionButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value />
+    <value>Remove action from the list</value>
   </data>
   <data name="RemoveActionButtonTeachingTip.Title" xml:space="preserve">
-    <value />
+    <value>Remove</value>
   </data>
   <data name="RemoveButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value />
+    <value>Remove</value>
   </data>
   <data name="RemoveButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value />
+    <value>Remove and delete trigger</value>
   </data>
   <data name="RemoveButtonTeachingTip.Title" xml:space="preserve">
-    <value />
+    <value>Remove</value>
   </data>
   <data name="ReportIssueTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Report bugs</value>
   </data>
   <data name="RootGridTeachingTip.Subtitle" xml:space="preserve">
-    <value />
+    <value>This is a clipboard action</value>
   </data>
   <data name="SaveMatchingResultsHostControl.Header" xml:space="preserve">
-    <value />
+    <value>Save matching results</value>
   </data>
   <data name="SaveWindowShortcutButton.Content" xml:space="preserve">
-    <value />
+    <value>Save</value>
   </data>
   <data name="SettingsOtherLinksTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Other links</value>
   </data>
   <data name="SettingsPivotTeachingTip.Subtitle" xml:space="preserve">
-    <value />
+    <value>Change application settings (auto startup, notifications...)</value>
   </data>
   <data name="SettingsPivotTeachingTip.Title" xml:space="preserve">
-    <value />
+    <value>Settings</value>
   </data>
   <data name="ShowWindowShortcutTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Current show window shortcut</value>
   </data>
   <data name="SilenceNotificationsToggleButtonTeachingTip.Subtitle" xml:space="preserve">
-    <value />
+    <value>Silence notifications</value>
   </data>
   <data name="SilenceNotificationsToggleButton_ToolTipTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Silence notifications</value>
   </data>
   <data name="StartMinimizedSubtitleTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Control the application window state when it's auto-started.</value>
   </data>
   <data name="StartMinimizedTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Start minimized</value>
   </data>
   <data name="StartTourButton.Content" xml:space="preserve">
-    <value />
+    <value>Start tour</value>
   </data>
   <data name="StartTourButton.MaxWidth" xml:space="preserve">
-    <value />
+    <value>150</value>
   </data>
   <data name="StartTourInfoBar.Message" xml:space="preserve">
-    <value />
+    <value>Start a short guided tour of the application</value>
   </data>
   <data name="StartTourInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>Is this your first time ?</value>
   </data>
   <data name="StringFormatError_ArgumentNotFound" xml:space="preserve">
-    <value />
+    <value>Argument not found: {}.
+If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).</value>
   </data>
   <data name="StringFormatError_Empty" xml:space="preserve">
-    <value />
+    <value>Format string can't be empty</value>
   </data>
   <data name="StringFormatError_MissingBraces" xml:space="preserve">
-    <value />
+    <value>Format string is missing opening and closing brace '{}'</value>
   </data>
   <data name="StringFormatError_MissingCloser" xml:space="preserve">
-    <value />
+    <value>Format string is missing closing brace '}'</value>
   </data>
   <data name="StringFormatError_MissingOpener" xml:space="preserve">
-    <value />
+    <value>Format string is missing opening brace '{'</value>
   </data>
   <data name="StringFormatWarning_MissingProtocol" xml:space="preserve">
-    <value />
+    <value>Missing url protocol (https/http), application will default to https</value>
   </data>
   <data name="StringRegexError_EmptyString" xml:space="preserve">
-    <value />
+    <value>Regex string cannot be empty</value>
   </data>
   <data name="StringRegexError_Invalid" xml:space="preserve">
-    <value />
+    <value>Invalid regex at position {}</value>
   </data>
   <data name="TestInputTextBox.Header" xml:space="preserve">
-    <value />
+    <value>Input</value>
   </data>
   <data name="ToastNotification_ClickAction" xml:space="preserve">
-    <value />
+    <value>Click action</value>
   </data>
   <data name="ToastNotification_OpenApp" xml:space="preserve">
-    <value />
+    <value>Open app</value>
   </data>
   <data name="ToastNotification_TooManyButtons" xml:space="preserve">
-    <value />
+    <value>Too many buttons</value>
   </data>
   <data name="TriggerError_FailedToReload" xml:space="preserve">
-    <value />
+    <value>Failed to reload triggers</value>
   </data>
   <data name="TriggersStorageExpander.Header" xml:space="preserve">
-    <value />
+    <value>Triggers file</value>
   </data>
   <data name="TriggersXmlExampleHostControl.Header" xml:space="preserve">
-    <value />
+    <value>Triggers XML example</value>
   </data>
   <data name="UseRegexMatchResultsTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value />
+    <value>Use regex match results</value>
   </data>
   <data name="UseRegexMatchResultsToggleBlock.Text" xml:space="preserve">
     <value>Extract with regex</value>
     <comment>ClipboardTriggerEditControl</comment>
   </data>
   <data name="UserFileHostControl.Header" xml:space="preserve">
-    <value />
+    <value>Triggers file</value>
   </data>
   <data name="UserFilePathTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>No path saved</value>
   </data>
   <data name="UseSearchFontIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value />
+    <value>Use search</value>
   </data>
   <data name="ViewActionsInfoBar.Message" xml:space="preserve">
-    <value />
+    <value>You can view your triggers in the clipboard triggers page.</value>
   </data>
   <data name="ViewActionsInfoBar.Title" xml:space="preserve">
-    <value />
+    <value>Clipboard triggers successfully loaded</value>
   </data>
   <data name="Warning_FailedToLoadClipboardHistory" xml:space="preserve">
-    <value />
+    <value>Failed to load clipboard history</value>
   </data>
   <data name="WindowPresenterOverlayResizableHostControl.Header" xml:space="preserve">
-    <value />
+    <value>Overlay can be resized</value>
   </data>
   <data name="WindowPresenterOverlayShownInSwitcherHostControl.Header" xml:space="preserve">
-    <value />
+    <value>Overlay is shown in switchers (Alt + Tab/Super + Tab)</value>
   </data>
   <data name="WindowPresenterStyleAllowMaximizeHostControl.Header" xml:space="preserve">
-    <value />
+    <value>Window can maximize</value>
   </data>
   <data name="WindowPresenterStyleAllowMinimizeHostControl.Header" xml:space="preserve">
-    <value />
+    <value>Window can minimize</value>
   </data>
   <data name="WindowShortcutHostControl.Header" xml:space="preserve">
-    <value />
+    <value>Show window shortcut</value>
   </data>
   <data name="WindowStyleHostControl.Header" xml:space="preserve">
-    <value />
+    <value>Window presenter style</value>
   </data>
 </root>
