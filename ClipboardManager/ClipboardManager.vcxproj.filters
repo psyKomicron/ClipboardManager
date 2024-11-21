@@ -205,9 +205,6 @@
     <Xml Include="..\..\..\..\..\Documents\Clipboard Manager\user_file.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="Resources.lang-en-us.resw">
-      <Filter>Resource Files</Filter>
-    </PRIResource>
     <PRIResource Include="Resources.lang-fr-fr.resw">
       <Filter>Resource Files</Filter>
     </PRIResource>

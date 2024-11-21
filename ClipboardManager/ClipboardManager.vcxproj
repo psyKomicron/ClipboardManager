@@ -37,6 +37,10 @@
     <CppWinRTVerbosity>high</CppWinRTVerbosity>
     <CppWinRTProjectLanguage>C++/WinRT</CppWinRTProjectLanguage>
     <CppWinRTModernIDL>true</CppWinRTModernIDL>
+    <WebView2UseWinRT>
+    </WebView2UseWinRT>
+    <WebView2EnableCsWinRTProjection>
+    </WebView2EnableCsWinRTProjection>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -114,6 +118,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -146,6 +153,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -303,9 +313,6 @@
     <ClInclude Include="src\implementation\Settings_implementation.hpp">
       <FileType>Document</FileType>
     </ClInclude>
-    <PRIResource Include="Resources.lang-en-us.resw">
-      <SubType>Designer</SubType>
-    </PRIResource>
     <PRIResource Include="Resources.lang-fr-fr.resw" />
     <PRIResource Include="Resources.resw" />
   </ItemGroup>
