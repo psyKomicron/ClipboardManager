@@ -191,7 +191,7 @@
         <clip:MessagesBar x:Name="MessagesBar" Grid.Row="1"/>
 
         <Pivot x:Name="Pivot" SelectedIndex="2" Grid.Row="2">
-            <PivotItem Margin="0" Padding="5,3,5,0">
+            <PivotItem x:Name="SettingsPivotItem" Margin="0" Padding="5,3,5,0">
                 <PivotItem.Header>
                     <FontIcon x:Name="SettingsPivot" Glyph="&#xe713;" FontSize="16"/>
                 </PivotItem.Header>
@@ -201,7 +201,7 @@
                 </Frame>
             </PivotItem>
 
-            <PivotItem Padding="0" Margin="0" Loaded="ClipboadTriggersListPivot_Loaded">
+            <PivotItem x:Name="ClipboardTriggersPivotItem" Padding="0" Margin="0" Loaded="ClipboadTriggersListPivot_Loaded">
                 <PivotItem.Header>
                     <FontIcon x:Name="ClipboardTriggersPivot" Glyph="&#xe945;" FontSize="16"/>
                 </PivotItem.Header>
@@ -215,8 +215,9 @@
                         <RepositionThemeTransition/>
                     </Grid.Transitions>
 
-                    <CommandBar Background="Transparent" DefaultLabelPosition="Right">
+                    <CommandBar x:Name="TriggersCommandBar" Background="Transparent" DefaultLabelPosition="Right">
                         <AppBarButton 
+                            x:Name="CommandBarImportButton"
                             x:Uid="CommandBarImportButton" 
                             Icon="OpenFile"
                             Click="CommandBarImportButton_Click"/>
@@ -226,14 +227,17 @@
                             Icon="Save" 
                             Click="CommandBarSaveButton_Click"/>
                         <AppBarButton 
+                            x:Name="CommandBarReloadTriggersButton" 
                             x:Uid="CommandBarReloadTriggersButton" 
                             Icon="Refresh"
                             Click="ReloadTriggersButton_Click"/>
                         <AppBarButton 
+                            x:Name="CommandBarAddTriggerButton" 
                             x:Uid="CommandBarAddTriggerButton" 
                             Icon="Add"
                             Click="AddTriggerButton_Click"/>
                         <AppBarButton 
+                            x:Name="CommandBarTestRegexButton"
                             x:Uid="CommandBarTestRegexButton"
                             Click="TestRegexButton_Click">
                             <AppBarButton.Icon>
@@ -262,19 +266,10 @@
 
                     <clip:RegexTesterControl x:Name="TestRegexContentDialog" Grid.RowSpan="2"/>
                     <clip:ClipboardTriggerEditControl x:Name="ClipboardTriggerEditControl" Grid.RowSpan="2"/>
-
-                    <TeachingTip x:Name="ClipboardTriggersListViewTeachingTip" 
-                                 x:Uid="ClipboardActionsListViewTeachingTip"
-                                 Target="{x:Bind ClipboardTriggersListView}"
-                                 CloseButtonClick="TeachingTip2_CloseButtonClick"/>
-                    <TeachingTip x:Name="CommandBarSaveButtonTeachingTip" 
-                                 x:Uid="CommandBarSaveButtonTeachingTip"
-                                 Target="{x:Bind CommandBarSaveButton}"
-                                 CloseButtonClick="TeachingTip2_CloseButtonClick"/>
                 </Grid>
             </PivotItem>
 
-            <PivotItem Padding="0" Margin="0">
+            <PivotItem x:Name="ClipboardActionsPivotItem" Padding="0" Margin="0">
                 <PivotItem.Header>
                     <FontIcon x:Name="ClipboardActionsPivot" Glyph="&#xea8a;" FontSize="16"/>
                 </PivotItem.Header>
@@ -422,7 +417,7 @@
                                     <FontIcon FontSize="16" Glyph="&#xe894;"/>
                                 </Button>
 
-                                <Button Click="ImportFromClipboardButton_Click">
+                                <Button x:Name="ImportClipboardButton" Click="ImportFromClipboardButton_Click">
                                     <ToolTipService.ToolTip>
                                         <TextBlock x:Uid="ImportFromClipboardButtonToolTipTextBlock"/>
                                     </ToolTipService.ToolTip>
@@ -446,63 +441,298 @@
 
         <!--#region TeachingTips -->
         <TeachingTip 
+            x:Name="SettingsPivotTeachingTip" 
+            x:Uid="SettingsPivotTeachingTip"
+            Target="{x:Bind SettingsPivot}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+        
+        <TeachingTip 
+            x:Name="ClipboardTriggersPivotTeachingTip" 
+            x:Uid="ClipboardTriggersPivotTeachingTip"
+            Target="{x:Bind ClipboardTriggersPivot}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip 
+            x:Name="ClipboardActionsPivotTeachingTip" 
+            x:Uid="ClipboardActionsPivotTeachingTip"
+            Target="{x:Bind ClipboardActionsPivot}"
+            ShouldConstrainToRootBounds="False"
+            PreferredPlacement="BottomRight"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip 
+            x:Name="OpenQuickSettingsButtonTeachingTip"
+            x:Uid="OpenQuickSettingsButtonTeachingTip"
+            Target="{x:Bind OpenQuickSettingsButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip 
+            x:Name="ReloadActionsButtonTeachingTip"
+            x:Uid="ReloadActionsButtonTeachingTip"
+            Target="{x:Bind ReloadTriggersButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip 
+            x:Name="SilenceNotificationsToggleButtonTeachingTip"
+            x:Uid="SilenceNotificationsToggleButtonTeachingTip"
+            Target="{x:Bind SilenceNotificationsToggleButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip 
+            x:Name="HistoryToggleButtonTeachingTip"
+            x:Uid="HistoryToggleButtonTeachingTip"
+            Target="{x:Bind HistoryToggleButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip
+            x:Name="ClearActionsButtonTeachingTip"
+            x:Uid="ClearActionsButtonTeachingTip"
+            Target="{x:Bind ClearActionsButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+        
+        <TeachingTip
+            x:Name="ImportClipboardButtonTeachingTip"
+            x:Uid="ImportClipboardButtonTeachingTip"
+            Target="{x:Bind ImportClipboardButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip 
             x:Name="ListViewTeachingTip" 
             x:Uid="ListViewTeachingTip"
             Style="{StaticResource AppTeachingTip}"
             Target="{x:Bind ActionsListView}" 
             PreferredPlacement="Center"
-            ActionButtonClick="TeachingTip_CloseButtonClick"/>
+            TailVisibility="Collapsed"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
 
         <TeachingTip 
-            x:Name="OpenQuickSettingsButtonTeachingTip"
-            x:Uid="OpenQuickSettingsButtonTeachingTip"
-            Style="{StaticResource AppTeachingTip}"
-            Target="{x:Bind OpenQuickSettingsButton}"
-            ActionButtonClick="TeachingTip_CloseButtonClick"/>
+            x:Name="ClipboardTriggersListViewTeachingTip" 
+            x:Uid="ClipboardActionsListViewTeachingTip"
+            Target="{x:Bind ClipboardTriggersListView}"
+            ActionButtonClick="TeachingTip2_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip
+            x:Name="CommandBarSaveButtonTeachingTip" 
+            x:Uid="CommandBarSaveButtonTeachingTip"
+            Target="{x:Bind CommandBarSaveButton}"
+            ActionButtonClick="TeachingTip2_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip
+            x:Name="CommandBarImportButtonTeachingTip"
+            x:Uid="CommandBarImportButtonTeachingTip"
+            Target="{x:Bind CommandBarImportButton}"
+            ActionButtonClick="TeachingTip2_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip
+            x:Name="CommandBarReloadTriggersButtonTeachingTip"
+            x:Uid="CommandBarReloadTriggersButtonTeachingTip"
+            Target="{x:Bind CommandBarReloadTriggersButton}"
+            ActionButtonClick="TeachingTip2_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
 
         <TeachingTip 
-            x:Name="ReloadActionsButtonTeachingTip"
-            x:Uid="ReloadActionsButtonTeachingTip"
-            Style="{StaticResource AppTeachingTip}"
-            Target="{x:Bind ReloadTriggersButton}"
-            ActionButtonClick="TeachingTip_CloseButtonClick"/>
+            x:Name="CommandBarAddTriggerButtonTeachingTip" 
+            x:Uid="CommandBarAddTriggerButtonTeachingTip" 
+            Target="{x:Bind CommandBarAddTriggerButton}"
+            ActionButtonClick="TeachingTip2_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
 
         <TeachingTip 
-            x:Name="SilenceNotificationsToggleButtonTeachingTip"
-            x:Uid="SilenceNotificationsToggleButtonTeachingTip"
-            Style="{StaticResource AppTeachingTip}"
-            Target="{x:Bind SilenceNotificationsToggleButton}"
-            ActionButtonClick="TeachingTip_CloseButtonClick"/>
-
-        <TeachingTip 
-            x:Name="HistoryToggleButtonTeachingTip"
-            x:Uid="HistoryToggleButtonTeachingTip"
-            Style="{StaticResource AppTeachingTip}"
-            Target="{x:Bind HistoryToggleButton}"
-            ActionButtonClick="TeachingTip_CloseButtonClick"/>
+            x:Name="CommandBarTestRegexButtonTeachingTip" 
+            x:Uid="CommandBarTestRegexButtonTeachingTip" 
+            Target="{x:Bind CommandBarTestRegexButton}"
+            ActionButtonClick="TeachingTip2_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
         
-        <TeachingTip 
-            x:Name="SettingsPivotTeachingTip" 
-            x:Uid="SettingsPivotTeachingTip"
-            Style="{StaticResource AppTeachingTip}"
-            Target="{x:Bind SettingsPivot}"
-            ActionButtonClick="TeachingTip_CloseButtonClick"/>
-
-        <TeachingTip 
-            x:Name="ClipboardTriggersPivotTeachingTip" 
-            x:Uid="ClipboardTriggersPivotTeachingTip"
-            Style="{StaticResource AppTeachingTip}"
-            Target="{x:Bind ClipboardTriggersPivot}"
-            ActionButtonClick="TeachingTip_CloseButtonClick"/>
-
-        <TeachingTip 
-            x:Name="ClipboardActionsPivotTeachingTip" 
-            x:Uid="ClipboardActionsPivotTeachingTip"
-            Style="{StaticResource AppTeachingTip}"
-            Target="{x:Bind ClipboardActionsPivot}"
-            ShouldConstrainToRootBounds="False"
-            PreferredPlacement="BottomRight"
-            ActionButtonClick="TeachingTip_CloseButtonClick"/>
         <!--#endregion-->
     </Grid>
     

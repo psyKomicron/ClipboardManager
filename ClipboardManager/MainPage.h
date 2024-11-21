@@ -55,7 +55,6 @@ namespace winrt::ClipboardManager::implementation
 
         bool loaded = false;
         bool updated = false;
-        bool windowHidden = false;
         size_t teachingTipIndex = 0;
         clip::Settings localSettings{};
         clip::FileWatcher watcher{ std::bind(&MainPage::FileWatcher_Changed, this) };

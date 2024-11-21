@@ -304,20 +304,19 @@ namespace winrt::ClipboardManager::implementation
         // Load triggers:
         LoadUserFile(L"");
 
-        // Get activation hot key (shortcut that brings the app window to the foreground):
-        auto&& map = localSettings.get<std::map<std::wstring, clip::reg_types>>(L"ActivationHotKey");
-        if (!map.empty())
-        {
-            auto key = std::get<std::wstring>(map[L"Key"]);
-            auto mod = std::get<uint32_t>(map[L"Mod"]);
-            if (key.size() == 1)
-            {
-                activationHotKey = clip::HotKey(mod, key[0]);
-            }
-        }
-
         try
         {
+            // Get activation hot key (shortcut that brings the app window to the foreground):
+            auto&& map = localSettings.get<std::map<std::wstring, clip::reg_types>>(L"ActivationHotKey");
+            if (!map.empty())
+            {
+                auto key = std::get<std::wstring>(map[L"Key"]);
+                auto mod = std::get<uint32_t>(map[L"Mod"]);
+                if (key.size() == 1)
+                {
+                    activationHotKey = clip::HotKey(mod, key[0]);
+                }
+            }
             activationHotKey.startListening([this]()
             {
                 appWindow.Show();
@@ -331,6 +330,11 @@ namespace winrt::ClipboardManager::implementation
         catch (std::invalid_argument)
         {
             logger.error(L"HotKey invalid argument error.");
+            uint32_t index{};
+            if (TitleBarGrid().Children().IndexOf(OverlayToggleButton(), index))
+            {
+                TitleBarGrid().Children().RemoveAt(index);
+            }
         }
 
         auto&& presenter = appWindow.Presenter().try_as<xaml::OverlappedPresenter>();
@@ -730,7 +734,7 @@ namespace winrt::ClipboardManager::implementation
                 presenter.IsMinimizable(!overlayEnabled.get());
                 presenter.IsMaximizable(!overlayEnabled.get());
                 presenter.IsResizable(localSettings.get<bool>(L"OverlayIsResizable").value_or(true));
-                appWindow.IsShownInSwitchers(localSettings.get<bool>(L"OverlayShownInSwitchers").value_or(true));
+                appWindow.IsShownInSwitchers(localSettings.get<bool>(L"OverlayShownInSwitchers").value_or(true) && activationHotKey.registered());
                 appWindow.TitleBar().PreferredHeightOption(Microsoft::UI::Windowing::TitleBarHeightOption::Collapsed);
 
                 visualStateManager.goToState(overlayWindowState);
@@ -797,9 +801,16 @@ namespace winrt::ClipboardManager::implementation
 
         localSettings.insert(L"CurrentAppVersion", APP_VERSION);
 
+        co_return;
+    }
+
+    winrt::async MainPage::Page_Loaded(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    {
+        Restore();
+
         if (localSettings.get<bool>(L"StartWindowMinimized").value_or(false))
         {
-            if (localSettings.get<bool>(L"HideAppWindow").value_or(false))
+            if (activationHotKey.registered() && localSettings.get<bool>(L"HideAppWindow").value_or(false))
             {
                 overlayEnabled.set(true);
                 appWindow.Hide();
@@ -809,13 +820,6 @@ namespace winrt::ClipboardManager::implementation
                 appWindow.Presenter().as<xaml::OverlappedPresenter>().Minimize();
             }
         }
-
-        co_return;
-    }
-
-    winrt::async MainPage::Page_Loaded(win::IInspectable const&, xaml::RoutedEventArgs const&)
-    {
-        Restore();
 
         clipboardContentChangedToken = win::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
         appWindow.Changed([this](auto, xaml::AppWindowChangedEventArgs args)
@@ -844,6 +848,10 @@ namespace winrt::ClipboardManager::implementation
             localSettings.insert(L"FirstStartup", false);
             visualStateManager.goToState(firstStartupState);
         }
+
+#ifdef _DEBUG
+        visualStateManager.goToState(firstStartupState);
+#endif
 
         if (!localSettings.get<std::wstring>(L"UserFilePath").has_value())
         {
@@ -920,6 +928,8 @@ namespace winrt::ClipboardManager::implementation
             ReloadActionsButtonTeachingTip(),
             SilenceNotificationsToggleButtonTeachingTip(),
             HistoryToggleButtonTeachingTip(),
+            ClearActionsButtonTeachingTip(),
+            ImportClipboardButtonTeachingTip(),
             ListViewTeachingTip()
         };
 
@@ -937,10 +947,8 @@ namespace winrt::ClipboardManager::implementation
             if (clipboardActionViews.Size() == 0)
             {
                 manuallyAddedAction = true;
-
                 auto actionView = winrt::make<ClipboardActionView>(L"Clipboard content that matches a trigger");
-                actionView.AddAction(L"{}", L"Trigger", L"", true, false, false);
-
+                actionView.AddAction(L"Trigger", L"{}", L".*", true, false, false);
                 clipboardActionViews.InsertAt(0, actionView);
             }
 
@@ -951,8 +959,8 @@ namespace winrt::ClipboardManager::implementation
                 clipboardActionViews.RemoveAt(0);
             }
 
-            Pivot().SelectedIndex(2);
-            CommandBarSaveButtonTeachingTip().IsOpen(true);
+            Pivot().SelectedItem(ClipboardTriggersPivotItem());
+            TeachingTip2_CloseButtonClick(nullptr, nullptr);
         }
     }
 
@@ -961,17 +969,32 @@ namespace winrt::ClipboardManager::implementation
         static size_t index = 1;
         static std::vector<xaml::TeachingTip> teachingTips
         {
-            HistoryToggleButtonTeachingTip(),
-            ClipboardTriggersListViewTeachingTip()
+            ClipboardTriggersListViewTeachingTip(),
+            CommandBarImportButtonTeachingTip(),
+            CommandBarSaveButtonTeachingTip(),
+            CommandBarReloadTriggersButtonTeachingTip(),
+            CommandBarAddTriggerButtonTeachingTip(),
+            CommandBarTestRegexButtonTeachingTip()
         };
 
         if (index < teachingTips.size())
         {
+            if (index == 5)
+            {
+                TriggersCommandBar().IsOpen(true);
+            }
+            else
+            {
+                TriggersCommandBar().IsOpen(false);
+            }
+
             teachingTips[index - 1].IsOpen(false);
             teachingTips[index++].IsOpen(true);
         }
         else
         {
+            teachingTips[index - 1].IsOpen(false);
+
             bool manuallyAddedAction = false;
             if (clipboardTriggerViews.Size() == 0)
             {
@@ -982,7 +1005,6 @@ namespace winrt::ClipboardManager::implementation
                 triggerView.ActionFormat(L"https://duckduckgo.com/?q={}");
                 triggerView.ActionRegex(L".+");
                 triggerView.ActionEnabled(true);
-
                 clipboardTriggerViews.InsertAt(0, triggerView);
                 manuallyAddedAction = true;
             }
@@ -995,7 +1017,7 @@ namespace winrt::ClipboardManager::implementation
                 visualStateManager.goToState(noClipboardTriggersToDisplayState);
             }
 
-            Pivot().SelectedIndex(3);
+            Pivot().SelectedItem(ClipboardActionsPivotItem());
         }
     }
 
