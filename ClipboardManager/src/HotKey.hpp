@@ -15,9 +15,10 @@ namespace clip
         HotKey(const uint32_t& modifier, const wchar_t& key);
         ~HotKey();
 
+        bool registered() const;
+
         void startListening(const callback_t& callback);
         void editHotKey(const uint32_t& modifier, const wchar_t& key);
-
         void wait();
 
         HotKey& operator=(HotKey&& left);

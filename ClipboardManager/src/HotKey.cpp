@@ -16,6 +16,11 @@ namespace clip
         stopListening();
     }
 
+    bool HotKey::registered() const
+    {
+        return hotKeyRegistered;
+    }
+
     void HotKey::startListening(const callback_t& callback)
     {
         this->callback = callback;
