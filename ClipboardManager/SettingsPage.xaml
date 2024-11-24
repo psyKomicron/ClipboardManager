@@ -142,12 +142,6 @@
                 </clip:HostControl.HostContent>
             </clip:HostControl>
 
-            <clip:HostControl x:Uid="SaveMatchingResultsHostControl">
-                <clip:HostControl.HostContent>
-                    <ToggleSwitch x:Name="SaveMatchingResultsToggleSwitch" Toggled="SaveMatchingResultsToggleSwitch_Toggled"/>
-                </clip:HostControl.HostContent>
-            </clip:HostControl>
-
             <Expander Style="{StaticResource ExpanderStyle}" Padding="0" Background="Transparent">
                 <Expander.Header>
                     <clip:HostControl x:Uid="AllowNotificationsHostControl" Background="Transparent" BorderThickness="0" Padding="0">
@@ -223,12 +217,18 @@
 
                 </ListView>
             </Expander>
+            
+            <clip:HostControl x:Uid="SaveMatchingResultsHostControl">
+                <clip:HostControl.HostContent>
+                    <ToggleSwitch x:Name="SaveMatchingResultsToggleSwitch" Toggled="SaveMatchingResultsToggleSwitch_Toggled"/>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
 
             <Expander Style="{StaticResource ExpanderStyle}">
                 <Expander.Header>
                     <clip:HostControl Background="Transparent" BorderThickness="0" Padding="0">
                         <clip:HostControl.Header>
-                            <Grid ToolTipService.ToolTip="This only applies when the application auto-starts." RowSpacing="3" VerticalAlignment="Center">
+                            <Grid RowSpacing="3" VerticalAlignment="Center">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
@@ -461,6 +461,10 @@
                 </clip:HostControl.HostContent>
             </clip:HostControl>
 
+            <!--#endregion-->
+            
+            <!--#region Developper -->
+            <TextBlock x:Uid="HeaderDevTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
             <Expander x:Uid="TriggersXmlExampleHostControl" Style="{StaticResource ExpanderListStyle}" Background="Transparent" Expanding="TriggersStorageExpander_Expanding">
                 <StackPanel HorizontalAlignment="Stretch" Spacing="2" Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
                     <Border Background="{ThemeResource ExpanderContentBackground}" Padding="7,10">
