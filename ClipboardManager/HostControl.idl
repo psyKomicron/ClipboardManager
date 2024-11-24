@@ -4,7 +4,14 @@ namespace ClipboardManager
     runtimeclass HostControl : Microsoft.UI.Xaml.Controls.UserControl
     {
         HostControl();
+
         IInspectable Header;
         IInspectable HostContent;
+
+        String Title;
+        String Subtitle;
+        UInt32 IconHeight;
+        UInt32 IconWidth;
+        String IconGlyph;
     }
 }
