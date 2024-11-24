@@ -208,6 +208,7 @@
     <PRIResource Include="Resources.lang-fr-fr.resw">
       <Filter>Resource Files</Filter>
     </PRIResource>
+    <PRIResource Include="Resources.lang-en-us.resw" />
     <PRIResource Include="Resources.resw" />
   </ItemGroup>
 </Project>
