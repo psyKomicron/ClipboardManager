@@ -165,7 +165,10 @@
     <value>Ajouter les actions en double</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="AllowNotificationsHostControl.Header" xml:space="preserve">
+  <data name="AllowNotificationsHostControl.Subtitle" xml:space="preserve">
+    <value>Activer les notifications, modifier le type et le son des notifications.</value>
+  </data>
+  <data name="AllowNotificationsHostControl.Title" xml:space="preserve">
     <value>Autoriser les notifications</value>
     <comment>SettingsPage</comment>
   </data>
@@ -182,9 +185,18 @@ Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramè
     <value>Version d'application</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="AutomaticStartHostControl.Header" xml:space="preserve">
+  <data name="AutomaticStartHostControl.Subtitle" xml:space="preserve">
+    <value>Controle si l'application démarre automatiaquement avec la session.</value>
+  </data>
+  <data name="AutomaticStartHostControl.Title" xml:space="preserve">
     <value>Démarrage automatique</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="BoostRegexErrorCode13" xml:space="preserve">
+    <value>La regex ne peut pas commencer par l'operateur de répétition "*".</value>
+  </data>
+  <data name="BoostRegexErrorCode8" xml:space="preserve">
+    <value>Parenthèse fermante trouvée sans parenthèse ouvrante correspondante.</value>
   </data>
   <data name="BrowserHostControl.Header" xml:space="preserve">
     <value>Navigateur personnalisé</value>
@@ -256,14 +268,14 @@ Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramè
     <value>Ajouter un déclencheur</value>
   </data>
   <data name="CommandBarImportButton.Label" xml:space="preserve">
-    <value>Importer</value>
+    <value>Ouvrir</value>
     <comment>MainPage/CommandBar</comment>
   </data>
   <data name="CommandBarImportButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Cliquer pour ouvrir une fenêtre de dialogue de l'explorateur de fichier afin de choisir et importer un fichier de configuration utilisateur (fichier des déclencheurs).</value>
   </data>
   <data name="CommandBarImportButtonTeachingTip.Title" xml:space="preserve">
-    <value>Importer le presse-papier</value>
+    <value>Ouvrir un fichier utilisateur</value>
   </data>
   <data name="CommandBarReloadTriggersButton.Label" xml:space="preserve">
     <value>Recharger déclencheurs</value>
@@ -419,6 +431,9 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="HeaderBrowserTextBlock.Text" xml:space="preserve">
     <value>Navigateur</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="HeaderDevTextBlock.Text" xml:space="preserve">
+    <value>Développeur</value>
   </data>
   <data name="HeaderFormattingTextBlock.Text" xml:space="preserve">
     <value>Formattage &amp; correspondance</value>
@@ -676,7 +691,10 @@ Utilisez le raccourci clavier pour afficher la fenêtre.</value>
     <value>Ceci est une action presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
-  <data name="SaveMatchingResultsHostControl.Header" xml:space="preserve">
+  <data name="SaveMatchingResultsHostControl.Subtitle" xml:space="preserve">
+    <value>Garde l'historique des actions.</value>
+  </data>
+  <data name="SaveMatchingResultsHostControl.Title" xml:space="preserve">
     <value>Conserver l'historique</value>
     <comment>SettingsPage</comment>
   </data>
@@ -847,5 +865,20 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   <data name="WindowStyleHostControl.Header" xml:space="preserve">
     <value>Style de la fenêtre</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="BoostRegexErrorCode4" xml:space="preserve">
+    <value>Nom de classe de caractères, nom d'assemblage ou plage de caractères invalides.</value>
+  </data>
+  <data name="BoostRegexErrorCode7" xml:space="preserve">
+    <value>Non-appariement de [ ou [^ dans la déclaration de la classe de caractères.</value>
+  </data>
+  <data name="InvalidTriggerErrorTitle" xml:space="preserve">
+    <value>Déclencheur(s) invalide(s)</value>
+  </data>
+  <data name="InvalidTriggerErrorMessage" xml:space="preserve">
+    <value>Un déclencheur ou plus contient un format invalide, plus d'informations sont disponibles sur la page des déclencheurs.</value>
+  </data>
+  <data name="ReloadActionsUserFileNotFoundTitle" xml:space="preserve">
+    <value>Erreur lors du chargement des déclencheurs.</value>
   </data>
 </root>

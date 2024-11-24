@@ -19,6 +19,7 @@ namespace clip::res
     res_t StringRegexError_EmptyString{ L"Regex string cannot be empty" };
 
 
-
     res_t TriggerError_FailedToReload{ L"Failed to reload triggers" };
+    res_t InvalidTriggerErrorTitle{ L"Invalid trigger" };
+    res_t InvalidTriggerErrorMessage{ L"One or more triggers have invalid data, check the triggers page for more information. Invalid triggers: {}" };
 }
