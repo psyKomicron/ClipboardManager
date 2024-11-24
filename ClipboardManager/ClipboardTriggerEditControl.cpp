@@ -238,12 +238,21 @@ namespace winrt::ClipboardManager::implementation
             }
             catch (boost::regex_error regexError)
             {
-                auto what = regexError.what();
-                logger.error(what);
-                logger.error(std::to_wstring(regexError.code()));
+                auto resString = std::format(L"BoostRegexErrorCode{}", static_cast<int>(regexError.code()));
+                auto errorCodeString = resLoader.getNamedResource(hstring(resString));
+                if (errorCodeString.has_value())
+                {
+                    message = errorCodeString.value();
+                }
+                else
+                {
+                    auto what = regexError.what();
+                    logger.error(what);
+                    logger.error(std::to_wstring(static_cast<int>(regexError.code())));
 
-                auto position = regexError.position();
-                message = std::vformat(resLoader.getOrAlt(L"StringRegexError_Invalid", clip::res::StringRegexError_Invalid), std::make_wformat_args(position));
+                    auto position = regexError.position();
+                    message = std::vformat(resLoader.getOrAlt(L"StringRegexError_Invalid", clip::res::StringRegexError_Invalid), std::make_wformat_args(position));
+                }
             }
         }
         else
