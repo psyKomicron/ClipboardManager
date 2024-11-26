@@ -2,10 +2,14 @@
 ## New
 - Added setting to change "show window" shortcut (by default alt + space).
 - Overlay mode (button on the top left of the window) now hides the application's window. When enabled the application will behave like a system overlay, being shown when hitting the "Show window" shortcut and hiding after losing focus.
+    - If the hot key/shortcut fails to be enabled, the application will not hide.
+- Search bar in actions page.
 
 ## Changes
 - Added guard to prevent against duplicated clipboard events (bug from Chromium's copy).
 - Removed OCR and clipboard history.
+- Better explained settings.
+- New setting category: Developer.
 
 ## Bugs
 
