@@ -65,11 +65,38 @@
             </VisualStateGroup>
 
             <VisualStateGroup>
-                <VisualState x:Name="QuickSettingsClosed"/>
+                <VisualState x:Name="QuickSettingsClosed">
+                    <VisualState.Setters>
+                        <Setter Target="QuickSettingsStackPanel.Visibility" Value="Collapsed"/>
+                        <Setter Target="QuickSettingsStackPanel.Opacity" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="QuickSettingsOpen">
                     <VisualState.Setters>
+                        <Setter Target="QuickActionsRightColumn.Width" Value="*"/>
+                        <Setter Target="QuickActionsLeftColumn.Width" Value="Auto"/>
                         <Setter Target="QuickSettingsStackPanel.Visibility" Value="Visible"/>
+                        <Setter Target="QuickSettingsStackPanel.Opacity" Value="1"/>
+                        <Setter Target="SearchActionsAutoSuggestBox.Opacity" Value="0"/>
+                        <Setter Target="SearchActionsAutoSuggestBox.Visibility" Value="Collapsed"/>
                         <Setter Target="OpenQuickSettingsButtonFontIcon.Glyph" Value="&#xe76c;"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="SearchClosed">
+                    <VisualState.Setters>
+                        <Setter Target="SearchActionsAutoSuggestBox.Opacity" Value="0"/>
+                        <Setter Target="SearchActionsAutoSuggestBox.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="SearchOpened">
+                    <VisualState.Setters>
+                        <Setter Target="QuickActionsLeftColumn.Width" Value="*"/>
+                        <Setter Target="QuickActionsRightColumn.Width" Value="Auto"/>
+                        <Setter Target="QuickSettingsStackPanel.Visibility" Value="Collapsed"/>
+                        <Setter Target="SearchActionsAutoSuggestBox.Visibility" Value="Visible"/>
+                        <Setter Target="SearchActionsAutoSuggestBox.Opacity" Value="1"/>
+                        <Setter Target="QuickSettingsStackPanel.Opacity" Value="0"/>
+                        <Setter Target="SearchActionsGrid.HorizontalAlignment" Value="Stretch"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -255,9 +282,9 @@
                         <ItemsRepeater
                             x:Name="ClipboardTriggersListView"
                             ItemsSource="{x:Bind ClipboardTriggers}">
-                            <ItemsRepeater.Transitions>
+                            <!--<ItemsRepeater.Transitions>
                                 <AddDeleteThemeTransition/>
-                            </ItemsRepeater.Transitions>
+                            </ItemsRepeater.Transitions>-->
                             <ItemsRepeater.Layout>
                                 <StackLayout Orientation="Vertical" Spacing="7"/>
                             </ItemsRepeater.Layout>
@@ -342,89 +369,117 @@
                         </InfoBar>
                     </StackPanel>
 
-                    <Grid Grid.Row="1" MinHeight="35" HorizontalAlignment="Right">
+                    <Grid Grid.Row="1" MinHeight="40">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition x:Name="QuickActionsLeftColumn" Width="1*"/>
+                            <ColumnDefinition x:Name="QuickActionsRightColumn" Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <Grid.Transitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                            </TransitionCollection>
-                        </Grid.Transitions>
 
-                        <Button x:Name="OpenQuickSettingsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="0" Click="OpenQuickSettingsButton_Click">
-                            <ToolTipService.ToolTip>
-                                <TextBlock x:Uid="OpenQuickSettingsButton_ToolTipTextBlock"/>
-                            </ToolTipService.ToolTip>
-                            <FontIcon x:Name="OpenQuickSettingsButtonFontIcon" FontSize="14" Glyph="&#xe76b;"/>
-                        </Button>
+                        <Grid x:Name="SearchActionsGrid" Grid.Column="0" HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Style="{StaticResource IconButtonStyle}" Click="OpenSearchButton_Click" Grid.Column="0">
+                                <FontIcon Glyph="&#xe721;"/>
+                            </Button>
+                            <AutoSuggestBox x:Name="SearchActionsAutoSuggestBox" Visibility="Collapsed" Grid.Column="1" HorizontalAlignment="Stretch" Height="35" Margin="5,0,0,0" Opacity="0" TextChanged="SearchActionsAutoSuggestBox_TextChanged">
+                                <AutoSuggestBox.OpacityTransition>
+                                    <ScalarTransition Duration="0:0:0.181"/>
+                                </AutoSuggestBox.OpacityTransition>
+                                <AutoSuggestBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="3" VerticalAlignment="Center">
+                                            <ContentPresenter Content="{Binding}" VerticalAlignment="Center"/>
+                                            <Button Style="{StaticResource IconButtonStyle}" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xe774;" FontSize="12"/>
+                                            </Button>
+                                            <Button Style="{StaticResource IconButtonStyle}" VerticalAlignment="Center">
+                                                <FontIcon Glyph="&#xe8ad;" FontSize="12"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </AutoSuggestBox.ItemTemplate>
+                            </AutoSuggestBox>
+                        </Grid>
 
-                        <StackPanel x:Name="QuickSettingsStackPanel" 
-                            Visibility="Collapsed"
-                            Grid.Column="1" 
-                            Orientation="Horizontal" 
-                            Spacing="5"
-                            VerticalAlignment="Stretch">
-                            <StackPanel.ChildrenTransitions>
-                                <TransitionCollection>
-                                    <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                                </TransitionCollection>
-                            </StackPanel.ChildrenTransitions>
+                        <Grid Grid.Column="1" MinHeight="35" HorizontalAlignment="Right">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Button x:Name="OpenQuickSettingsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="1" Click="OpenQuickSettingsButton_Click">
+                                <ToolTipService.ToolTip>
+                                    <TextBlock x:Uid="OpenQuickSettingsButton_ToolTipTextBlock"/>
+                                </ToolTipService.ToolTip>
+                                <FontIcon x:Name="OpenQuickSettingsButtonFontIcon" FontSize="16" Glyph="&#xe76b;"/>
+                            </Button>
 
-                            <StackPanel
-                                Orientation="Horizontal" 
-                                Spacing="5"
-                                VerticalAlignment="Stretch" 
-                                Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
-                                CornerRadius="{StaticResource OverlayCornerRadius}" 
-                                Padding="7,5">
-                                <Button x:Name="ReloadTriggersButton" Click="ReloadTriggersButton_Click">
-                                    <ToolTipService.ToolTip>
-                                        <TextBlock x:Uid="ReloadTriggersButton_ToolTipTextBlock"/>
-                                    </ToolTipService.ToolTip>
-                                    <FontIcon FontSize="16" Glyph="&#xe72c;"/>
-                                </Button>
-                                
-                                <ToggleButton x:Name="SilenceNotificationsToggleButton">
-                                    <ToolTipService.ToolTip>
-                                        <TextBlock x:Uid="SilenceNotificationsToggleButton_ToolTipTextBlock"/>
-                                    </ToolTipService.ToolTip>
-                                    <FontIcon FontSize="16" Glyph="&#xe7ed;"/>
-                                </ToggleButton>
-                                
-                                <ToggleButton x:Name="HistoryToggleButton">
-                                    <ToolTipService.ToolTip>
-                                        <TextBlock x:Uid="HistoryToggleButton_ToolTipTextBlock"/>
-                                    </ToolTipService.ToolTip>
-                                    <FontIcon FontSize="16" Glyph="&#xe823;"/>
-                                </ToggleButton>
-                            </StackPanel>
-
-                            <StackPanel
+                            <StackPanel 
+                                x:Name="QuickSettingsStackPanel" 
+                                CacheMode="BitmapCache"
+                                Visibility="Collapsed"
+                                Opacity="0"
+                                Grid.Column="0"
                                 Orientation="Horizontal" 
                                 Spacing="5" 
-                                Margin="5,0,5,0" 
-                                VerticalAlignment="Stretch" 
-                                Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
-                                CornerRadius="{StaticResource OverlayCornerRadius}" 
-                                Padding="7,5">
+                                VerticalAlignment="Stretch">
+                                <StackPanel.OpacityTransition>
+                                    <ScalarTransition Duration="0:0:0.181"/>
+                                </StackPanel.OpacityTransition>
+                                <StackPanel
+                                    Orientation="Horizontal" 
+                                    Spacing="5"
+                                    VerticalAlignment="Stretch" 
+                                    Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
+                                    CornerRadius="{StaticResource OverlayCornerRadius}" 
+                                    Padding="7,5">
+                                    <Button x:Name="ReloadTriggersButton" Click="ReloadTriggersButton_Click">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="ReloadTriggersButton_ToolTipTextBlock"/>
+                                        </ToolTipService.ToolTip>
+                                        <FontIcon FontSize="16" Glyph="&#xe72c;"/>
+                                    </Button>
 
-                                <Button x:Name="ClearActionsButton" Click="ClearActionsButton_Click">
-                                    <ToolTipService.ToolTip>
-                                        <TextBlock x:Uid="ClearActionsButtonToolTipTextBlock"/>
-                                    </ToolTipService.ToolTip>
-                                    <FontIcon FontSize="16" Glyph="&#xe894;"/>
-                                </Button>
+                                    <ToggleButton x:Name="SilenceNotificationsToggleButton">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="SilenceNotificationsToggleButton_ToolTipTextBlock"/>
+                                        </ToolTipService.ToolTip>
+                                        <FontIcon FontSize="16" Glyph="&#xe7ed;"/>
+                                    </ToggleButton>
 
-                                <Button x:Name="ImportClipboardButton" Click="ImportFromClipboardButton_Click">
-                                    <ToolTipService.ToolTip>
-                                        <TextBlock x:Uid="ImportFromClipboardButtonToolTipTextBlock"/>
-                                    </ToolTipService.ToolTip>
-                                    <FontIcon FontSize="16" Glyph="&#xe8b6;"/>
-                                </Button>
+                                    <ToggleButton x:Name="HistoryToggleButton">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="HistoryToggleButton_ToolTipTextBlock"/>
+                                        </ToolTipService.ToolTip>
+                                        <FontIcon FontSize="16" Glyph="&#xe823;"/>
+                                    </ToggleButton>
+                                </StackPanel>
+                                <StackPanel
+                                    Orientation="Horizontal" 
+                                    Spacing="5" 
+                                    Margin="5,0,5,0" 
+                                    VerticalAlignment="Stretch" 
+                                    Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
+                                    CornerRadius="{StaticResource OverlayCornerRadius}" 
+                                    Padding="7,5">
+
+                                    <Button x:Name="ClearActionsButton" Click="ClearActionsButton_Click">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="ClearActionsButtonToolTipTextBlock"/>
+                                        </ToolTipService.ToolTip>
+                                        <FontIcon FontSize="16" Glyph="&#xe894;"/>
+                                    </Button>
+
+                                    <Button x:Name="ImportClipboardButton" Click="ImportFromClipboardButton_Click">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="ImportFromClipboardButtonToolTipTextBlock"/>
+                                        </ToolTipService.ToolTip>
+                                        <FontIcon FontSize="16" Glyph="&#xe8b6;"/>
+                                    </Button>
+                                </StackPanel>
                             </StackPanel>
-                        </StackPanel>
+                        </Grid>
                     </Grid>
 
                     <ListView 

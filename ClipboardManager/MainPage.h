@@ -10,6 +10,8 @@
 #include "src/ui/VisualStateManager.hpp"
 #include "src/ui/ListenablePropertyValue.hpp"
 
+#include "ClipboardActionEditor.h"
+
 #include <winrt/Windows.Media.Ocr.h>
 #include <winrt/Windows.Storage.Streams.h>
 
@@ -48,6 +50,8 @@ namespace winrt::ClipboardManager::implementation
         const clip::ui::VisualState<MainPage> applicationUpdatedState{ L"ApplicationUpdated", 2, false };
         const clip::ui::VisualState<MainPage> quickSettingsClosedState{ L"QuickSettingsClosed", 3, true };
         const clip::ui::VisualState<MainPage> quickSettingsOpenState{ L"QuickSettingsOpen", 3, false };
+        const clip::ui::VisualState<MainPage> searchClosedState{ L"SearchClosed", 6, true };
+        const clip::ui::VisualState<MainPage> searchOpenState{ L"SearchOpened", 6, false };
         const clip::ui::VisualState<MainPage> normalWindowState{ L"NormalWindow", 4, true };
         const clip::ui::VisualState<MainPage> overlayWindowState{ L"OverlayWindow", 4, false };
         const clip::ui::VisualState<MainPage> under1kState{ L"Under1000", 5, true };
@@ -84,7 +88,7 @@ namespace winrt::ClipboardManager::implementation
         void LaunchAction(const std::wstring& url);
         async AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& notify);
         bool LoadUserFile(const std::filesystem::path& path);
-        void CreateTriggerViews();
+        ClipboardManager::ClipboardActionEditor CreateTriggerView(clip::ClipboardTrigger& trigger);
 
         // Inherited via PropertyChangedClass
         Windows::Foundation::IInspectable asInspectable() override;
@@ -111,6 +115,8 @@ namespace winrt::ClipboardManager::implementation
         void OverlayToggleButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void CommandBarImportButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void OverlayPopupShowWarningCheckBox_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void OpenSearchButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void SearchActionsAutoSuggestBox_TextChanged(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const& args);
     };
 }
 

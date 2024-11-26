@@ -15,9 +15,9 @@
 #include "src/notifs/ToastNotification.hpp"
 #include "src/notifs/win_toasts.hpp"
 #include "src/notifs/NotificationTypes.hpp"
+#include "src/res/strings.h"
 
 #include "ClipboardActionView.h"
-#include "ClipboardActionEditor.h"
 
 #include <winrt/Windows.ApplicationModel.h>
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
@@ -70,7 +70,9 @@ namespace winrt::ClipboardManager::implementation
                 firstStartupState,
                 normalStartupState,
                 quickSettingsClosedState,
-                quickSettingsOpenState
+                quickSettingsOpenState,
+                searchClosedState,
+                searchOpenState
             });
 
         manager.registerActionCallback([this](std::wstring args)
@@ -202,7 +204,7 @@ namespace winrt::ClipboardManager::implementation
             co_return;
         }
 
-        AddClipboardItem(content, true);
+        co_await AddClipboardItem(content, true);
     }
 
     void MainPage::Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel)
@@ -317,6 +319,7 @@ namespace winrt::ClipboardManager::implementation
                     activationHotKey = clip::HotKey(mod, key[0]);
                 }
             }
+#ifndef _DEBUG
             activationHotKey.startListening([this]()
             {
                 appWindow.Show();
@@ -326,6 +329,8 @@ namespace winrt::ClipboardManager::implementation
                     logger.error(std::vformat(L"SetForegroundWindow failed: ", std::make_wformat_args(message)));
                 }
             });
+#endif // !_DEBUG
+
         }
         catch (std::invalid_argument)
         {
@@ -452,9 +457,6 @@ namespace winrt::ClipboardManager::implementation
         {
             try
             {
-                clipboardTriggerViews.Clear();
-                CreateTriggerViews();
-
                 // Get the text of any actions that have been created then use 
                 // AddAction to re-create the actions with the new triggers.
                 auto vector = std::vector<winrt::hstring>();
@@ -487,6 +489,7 @@ namespace winrt::ClipboardManager::implementation
         try
         {
             triggers = clip::ClipboardTrigger::loadClipboardTriggers(path);
+            clipboardTriggerViews.Clear();
 
             bool showError = false;
             std::wstring invalidTriggers{};
@@ -494,6 +497,9 @@ namespace winrt::ClipboardManager::implementation
             {
                 try
                 {
+                    auto view = CreateTriggerView(trigger);
+                    clipboardTriggerViews.Append(view);
+
                     trigger.checkFormat();
                 }
                 catch (clip::ClipboardTriggerFormatException formatExcept)
@@ -507,8 +513,8 @@ namespace winrt::ClipboardManager::implementation
             if (showError)
             {
                 // I18N:
-                MessagesBar().Add(L"Invalid trigger",
-                                  L"One or more triggers have invalid data, check the triggers page for more information. Invalid triggers:" + invalidTriggers,
+                MessagesBar().Add(resLoader.getOrAlt(L"InvalidTriggerErrorTitle", clip::res::InvalidTriggerErrorTitle),
+                                  resLoader.getOrAlt(L"InvalidTriggerErrorMessage", clip::res::InvalidTriggerErrorMessage) + invalidTriggers,
                                   xaml::InfoBarSeverity::Error);
             }
             else
@@ -520,33 +526,23 @@ namespace winrt::ClipboardManager::implementation
         }
         catch (std::invalid_argument invalidArgument)
         {
-            MessagesBar().AddError(L"ErrorMessage_TriggersFileNotFound",
-                                   L"Triggers file not available or contains invalid data.");
+            MessagesBar().AddError(L"ErrorMessage_TriggersFileNotFound", L"Triggers file not available or contains invalid data.");
         }
         catch (boost::property_tree::xml_parser_error xmlParserError)
         {
-            MessagesBar().AddError(L"ErrorMessage_XmlParserError",
-                                   L"Triggers file has invalid XML markup data.");
+            MessagesBar().AddError(L"ErrorMessage_XmlParserError", L"Triggers file has invalid XML markup data.");
         }
         catch (boost::property_tree::ptree_bad_path badPath)
         {
             hstring message = resLoader.getOrAlt(L"ErrorMessage_InvalidTriggersFile", L"Triggers file has invalid XML markup data.");
-            hstring content = L"";
+            hstring content{};
 
             auto wpath = badPath.path<boost::property_tree::wpath>();
             auto path = clip::utils::to_wstring(wpath.dump());
-
             if (path == L"settings.triggers")
             {
-                // Missing <settings><triggers> node.
                 content = resLoader.getOrAlt(L"ErrorMessage_MissingTriggersNode",
                                              L"XML declaration is missing '<triggers>' node.\nCheck settings for an example of a valid XML declaration.");
-            }
-            else if (path == L"settings.actions")
-            {
-                // Old version of triggers file.
-                content = resLoader.getOrAlt(L"ErrorMessage_XmlOldVersion",
-                                             L"<actions> node has been renamed <triggers> and <trigger> <actions>. Rename those nodes in your XML file and reload triggers.\nYou can easily access your user file via settings and see an example of a valid XML declaration there.");
             }
             else
             {
@@ -614,24 +610,7 @@ namespace winrt::ClipboardManager::implementation
 
         if (userFilePath.has_value() && clip::utils::pathExists(userFilePath.value()))
         {
-            if (LoadTriggers(userFilePath.value()))
-            {
-                if (clipboardTriggerViews.Size() == 0)
-                {
-                    clipboardTriggerViews.Clear();
-                }
-                
-                try
-                {
-                    CreateTriggerViews();
-                    triggersLoaded = true;
-                }
-                catch (hresult_error error)
-                {
-                    logger.error(std::format(L"Error @ LoadUserFile: {}", error.message().data()));
-                }
-            }
-            else
+            if (!(triggersLoaded = LoadTriggers(userFilePath.value())))
             {
                 logger.info(L"Failed to load triggers.");
             }
@@ -673,50 +652,45 @@ namespace winrt::ClipboardManager::implementation
         return triggersLoaded;
     }
 
-    void MainPage::CreateTriggerViews()
+    ClipboardManager::ClipboardActionEditor MainPage::CreateTriggerView(clip::ClipboardTrigger& trigger)
     {
-        for (auto&& trigger : triggers)
+        auto triggerViewer = make<ClipboardManager::implementation::ClipboardActionEditor>();
+        triggerViewer.ActionFormat(trigger.format());
+        triggerViewer.ActionLabel(trigger.label());
+        triggerViewer.ActionRegex(trigger.regex().str());
+        triggerViewer.ActionEnabled(trigger.enabled());
+        triggerViewer.IgnoreCase((trigger.regex().flags() & boost::regex_constants::icase) == boost::regex_constants::icase);
+        triggerViewer.UseSearch(trigger.matchMode() == clip::MatchMode::Search);
+        triggerViewer.UseRegexMatchResults(trigger.useRegexMatchResults());
+
+        triggerViewer.IsOn({ this, &MainPage::Editor_Toggled });
+        triggerViewer.LabelChanged({ this, &MainPage::Editor_LabelChanged });
+        triggerViewer.Changed({ this, &MainPage::Editor_Changed });
+
+        triggerViewer.Removed([this](auto&& sender, auto&&)
         {
-            auto triggerViewer = make<ClipboardManager::implementation::ClipboardActionEditor>();
-            triggerViewer.ActionFormat(trigger.format());
-            triggerViewer.ActionLabel(trigger.label());
-            triggerViewer.ActionRegex(trigger.regex().str());
-            triggerViewer.ActionEnabled(trigger.enabled());
-            triggerViewer.IgnoreCase((trigger.regex().flags() & boost::regex_constants::icase) == boost::regex_constants::icase);
-            triggerViewer.UseSearch(trigger.matchMode() == clip::MatchMode::Search);
-            triggerViewer.UseRegexMatchResults(trigger.useRegexMatchResults());
-
-            triggerViewer.IsOn({ this, &MainPage::Editor_Toggled });
-            triggerViewer.LabelChanged({ this, &MainPage::Editor_LabelChanged });
-            triggerViewer.Changed({ this, &MainPage::Editor_Changed });
-
-            triggerViewer.Removed([this](auto&& sender, auto&&)
+            auto&& label = sender.ActionLabel();
+            for (size_t i = 0; i < triggers.size(); i++)
             {
-                auto&& label = sender.ActionLabel();
-                for (size_t i = 0; i < triggers.size(); i++)
+                if (triggers[i].label() == label)
                 {
-                    if (triggers[i].label() == label)
-                    {
-                        triggers.erase(triggers.begin() + i);
-                        break;
-                    }
+                    triggers.erase(triggers.begin() + i);
+                    break;
                 }
+            }
 
-                for (uint32_t i = 0; i < clipboardTriggerViews.Size(); i++)
+            for (uint32_t i = 0; i < clipboardTriggerViews.Size(); i++)
+            {
+                auto view = clipboardTriggerViews.GetAt(i).try_as<ClipboardManager::ClipboardActionEditor>();
+                if (view && view.ActionLabel() == label)
                 {
-                    auto view = clipboardTriggerViews.GetAt(i).try_as<ClipboardManager::ClipboardActionEditor>();
-                    if (view && view.ActionLabel() == label)
-                    {
-                        clipboardTriggerViews.RemoveAt(i);
-                        break;
-                    }
+                    clipboardTriggerViews.RemoveAt(i);
+                    break;
                 }
-            });
+            }
+        });
 
-            clipboardTriggerViews.Append(triggerViewer);
-        }
-
-        visualStateManager.goToState(!triggers.empty() ? displayClipboardTriggersState : noClipboardTriggersToDisplayState);
+        return triggerViewer;
     }
 
     Windows::Foundation::IInspectable MainPage::asInspectable()
@@ -857,6 +831,8 @@ namespace winrt::ClipboardManager::implementation
         {
             visualStateManager.goToState(noClipboardTriggersToDisplayState);
         }
+
+        visualStateManager.goToState(!triggers.empty() ? displayClipboardTriggersState : noClipboardTriggersToDisplayState);
 
         loaded = true;
 
@@ -1096,16 +1072,7 @@ namespace winrt::ClipboardManager::implementation
             trigger.useRegexMatchResults(useRegexMatchResults);
             triggers.push_back(trigger);
 
-            auto view = make<ClipboardManager::implementation::ClipboardActionEditor>();
-            view.ActionLabel(label);
-            view.ActionFormat(format);
-            view.IgnoreCase(ignoreCase);
-            view.ActionRegex(regex.str());
-            view.UseSearch(useSearch);
-            view.ActionEnabled(true);
-            view.UseRegexMatchResults(useRegexMatchResults);
-
-            clipboardTriggerViews.Append(view);
+            clipboardTriggerViews.InsertAt(0, CreateTriggerView(trigger));
         }
     }
 
@@ -1131,4 +1098,39 @@ namespace winrt::ClipboardManager::implementation
     {
         localSettings.insert(L"ShowOverlayWarningMessage", sender.as<xaml::Controls::CheckBox>().IsChecked().GetBoolean());
     }
+
+    void MainPage::OpenSearchButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    {
+        visualStateManager.switchState(searchClosedState.group());
+    }
+
+    void MainPage::SearchActionsAutoSuggestBox_TextChanged(xaml::AutoSuggestBox const& sender, xaml::AutoSuggestBoxTextChangedEventArgs const& args)
+    {
+        auto text = std::wstring(sender.Text());
+        if (!text.empty())
+        {
+            try
+            {
+                auto list = single_threaded_vector<IInspectable>();
+                boost::wregex regex{ text };
+                for (auto&& actionView : clipboardActionViews)
+                {
+                    if (boost::regex_search(std::wstring(actionView.Text()), regex))
+                    {
+                        list.Append(box_value(actionView.Text()));
+                    }
+                }
+
+                sender.ItemsSource(list);
+            }
+            catch (boost::regex_error& err)
+            {
+                logger.debug(L"! Regex error");
+            }
+        }
+    }
 }
+
+
+
+
