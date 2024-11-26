@@ -10,7 +10,8 @@
     BackgroundSizing="OuterBorderEdge"
     CornerRadius="{StaticResource OverlayCornerRadius}"
     MinHeight="40"
-    Loading="UserControl_Loading">
+    Loading="UserControl_Loading"
+    CacheMode="BitmapCache">
 
     <Grid x:Name="RootGrid"
           RowSpacing="4"
