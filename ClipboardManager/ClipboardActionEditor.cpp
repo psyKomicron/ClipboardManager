@@ -311,12 +311,14 @@ namespace winrt::ClipboardManager::implementation
 
     void ClipboardActionEditor::RootGrid_PointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
     {
-        visualStateManager.goToState(clip::ui::VisualState<ClipboardActionEditor>(L"PointerOver", 1, false));
+        auto state = clip::ui::VisualState<ClipboardActionEditor>(L"PointerOver", 1, false);
+        visualStateManager.goToState(state);
     }
 
     void ClipboardActionEditor::RootGrid_PointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
     {
-        visualStateManager.goToState(clip::ui::VisualState<ClipboardActionEditor>(L"PointerOut", 1, false));
+        clip::ui::VisualState<ClipboardActionEditor> state{ L"PointerOut", 1, false };
+        visualStateManager.goToState(state);
     }
 
     void ClipboardActionEditor::TeachingTip_CloseButtonClick(winrt::TeachingTip const& sender, winrt::IInspectable const& args)
