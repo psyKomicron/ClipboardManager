@@ -7,30 +7,39 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    BackgroundSizing="OuterBorderEdge"
-    CornerRadius="{StaticResource OverlayCornerRadius}"
-    MinHeight="40"
     Loading="UserControl_Loading"
-    CacheMode="BitmapCache">
+    BackgroundSizing="OuterBorderEdge"
+    MinHeight="40"
+    CacheMode="BitmapCache"
+    CornerRadius="10">
 
-    <Grid x:Name="RootGrid"
-          RowSpacing="4"
-          Margin="0,3,0,3"
-          Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
-          BackgroundSizing="OuterBorderEdge"
-          BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}" 
-          BorderThickness="1"
-          CornerRadius="{x:Bind CornerRadius}">
+    <Grid 
+        x:Name="RootGrid"
+        Margin="0,3,0,3"
+        Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+        BackgroundSizing="OuterBorderEdge"
+        BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}" 
+        BorderThickness="1"
+        CornerRadius="{x:Bind CornerRadius, Mode=OneWay}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="ContentColumn" Width="*"/>
             <ColumnDefinition x:Name="OptionsColumn" Width="0"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="OptionsClosed"/>
 
                 <VisualState x:Name="OptionsOpen">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OptionsGrid" Storyboard.TargetProperty="Scale">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="1,1,1" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
                     <VisualState.Setters>
                         <Setter Target="OptionsColumn.Width" Value="Auto"/>
                     </VisualState.Setters>
@@ -49,18 +58,21 @@
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
+                
+                <VisualState x:Name="PointerPressed">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentGrid" Storyboard.TargetProperty="Background">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBackgroundPressed}" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentGrid" Storyboard.TargetProperty="BorderBrush">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonBorderBrushPressed}" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid x:Name="ContentGrid"
-            PointerEntered="RootGrid_PointerEntered"
-            PointerExited="RootGrid_PointerExited"
-            PointerPressed="RootGrid_PointerPressed"
-            PointerReleased="RootGrid_PointerReleased"
-            Grid.Column="0" 
-            Padding="5,5,5,0"
-            Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
-            CornerRadius="{StaticResource OverlayCornerRadius}">
+        <Grid x:Name="ContentGrid" PointerEntered="RootGrid_PointerEntered" PointerExited="RootGrid_PointerExited" PointerPressed="RootGrid_PointerPressed" Grid.Column="0"  Padding="5,5,5,0" Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -84,7 +96,18 @@
                 Grid.Row="0" 
                 Margin="3,5,0,0"
                 HorizontalAlignment="Left"/>
-
+            
+            <TextBox 
+                x:Name="LabelTextBox"
+                x:Load="False"
+                Visibility="Collapsed"
+                Text="{x:Bind Text, Mode=TwoWay}"
+                Grid.Column="0"
+                TextWrapping="Wrap" 
+                Grid.Row="0" 
+                Margin="3,5,0,0"
+                HorizontalAlignment="Left"/>
+            
             <GridView 
                 x:Name="TriggersGridView"
                 Grid.ColumnSpan="2"
@@ -136,16 +159,16 @@
             BorderThickness="1"
             Background="{ThemeResource SubtleFillColorTransparentBrush}"
             CornerRadius="{StaticResource OverlayCornerRadius}"
-            HorizontalAlignment="Right">
+            HorizontalAlignment="Right"
+            Scale="1,0,1">
             <Grid.ScaleTransition>
-                <Vector3Transition Components="Y" Duration="0:0:3.5"/>
+                <Vector3Transition Components="Y" Duration="0:0:1"/>
             </Grid.ScaleTransition>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid.Resources>
@@ -159,19 +182,17 @@
             </Grid.Resources>
 
             <Button x:Name="FormatLinkButton" Grid.Column="0" Grid.Row="0" Click="FormatLinkButton_Click" x:Uid="FormatLinkButton">
-                <FontIcon Glyph="&#xe71b;" FontSize="16"/>
+                <FontIcon Glyph="&#xe71b;" FontSize="18"/>
             </Button>
 
             <Button x:Name="RemoveActionButton" Grid.Column="1" Grid.Row="0" Click="RemoveActionButton_Click" x:Uid="RemoveActionButton">
-                <FontIcon Glyph="&#xe74d;" FontSize="16"/>
-            </Button>
-
-            <Button x:Name="EditActionButton" Grid.Column="0" Grid.Row="1" Click="EditActionButton_Click" x:Uid="EditActionButton">
-                <FontIcon Glyph="&#xe70f;" FontSize="16"/>
+                <FontIcon Glyph="&#xe74d;" FontSize="18"/>
             </Button>
         </Grid>
 
+        <InfoBar x:Name="InfoBar" Severity="Error" Grid.ColumnSpan="2" Grid.Row="1" CornerRadius="0,0,8,8"/>
 
+        <!--#region TeachingTips -->
         <TeachingTip x:Name="RootGridTeachingTip"
              x:Uid="RootGridTeachingTip"
              Target="{x:Bind RootGrid}"
@@ -273,23 +294,6 @@
                 </Grid>
             </TeachingTip.ActionButtonContent>
         </TeachingTip>
-        
-        <TeachingTip 
-            x:Name="EditActionButtonTeachingTip"
-            x:Uid="EditActionButtonTeachingTip"
-            Target="{x:Bind EditActionButton}"
-            ActionButtonClick="TeachingTip_ButtonClick">
-            <TeachingTip.ActionButtonContent>
-                <Grid ColumnSpacing="4" VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="50"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
-                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
-                </Grid>
-            </TeachingTip.ActionButtonContent>
-        </TeachingTip>
+        <!--#endregion-->
     </Grid>
 </UserControl>
