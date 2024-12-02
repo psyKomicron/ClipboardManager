@@ -39,6 +39,16 @@
             </VisualStateGroup>
 
             <VisualStateGroup>
+                <VisualState x:Name="ShowActionsListView"/>
+                <VisualState x:Name="ShowSearchListView">
+                    <VisualState.Setters>
+                        <Setter Target="SearchActionsListView.Visibility" Value="Visible"/>
+                        <Setter Target="ActionsListView.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup>
                 <VisualState x:Name="NormalStartup"/>
                 <VisualState x:Name="FirstStartup">
                     <VisualState.Setters>
@@ -282,9 +292,6 @@
                         <ItemsRepeater
                             x:Name="ClipboardTriggersListView"
                             ItemsSource="{x:Bind ClipboardTriggers}">
-                            <!--<ItemsRepeater.Transitions>
-                                <AddDeleteThemeTransition/>
-                            </ItemsRepeater.Transitions>-->
                             <ItemsRepeater.Layout>
                                 <StackLayout Orientation="Vertical" Spacing="7"/>
                             </ItemsRepeater.Layout>
@@ -383,21 +390,27 @@
                             <Button Style="{StaticResource IconButtonStyle}" Click="OpenSearchButton_Click" Grid.Column="0">
                                 <FontIcon Glyph="&#xe721;"/>
                             </Button>
-                            <AutoSuggestBox x:Name="SearchActionsAutoSuggestBox" Visibility="Collapsed" Grid.Column="1" HorizontalAlignment="Stretch" Height="35" Margin="5,0,0,0" Opacity="0" TextChanged="SearchActionsAutoSuggestBox_TextChanged">
+                            <AutoSuggestBox x:Name="SearchActionsAutoSuggestBox" Visibility="Collapsed" Grid.Column="1" HorizontalAlignment="Stretch" Height="35" Margin="5,0,0,0" Opacity="0" TextChanged="SearchActionsAutoSuggestBox_TextChanged" GotFocus="SearchActionsAutoSuggestBox_GotFocus" SuggestionChosen="SearchActionsAutoSuggestBox_SuggestionChosen">
                                 <AutoSuggestBox.OpacityTransition>
                                     <ScalarTransition Duration="0:0:0.181"/>
                                 </AutoSuggestBox.OpacityTransition>
                                 <AutoSuggestBox.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal" Spacing="3" VerticalAlignment="Center">
-                                            <ContentPresenter Content="{Binding}" VerticalAlignment="Center"/>
-                                            <Button Style="{StaticResource IconButtonStyle}" VerticalAlignment="Center">
-                                                <FontIcon Glyph="&#xe774;" FontSize="12"/>
-                                            </Button>
-                                            <Button Style="{StaticResource IconButtonStyle}" VerticalAlignment="Center">
-                                                <FontIcon Glyph="&#xe8ad;" FontSize="12"/>
-                                            </Button>
-                                        </StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ContentPresenter Content="{Binding}" VerticalAlignment="Center" Grid.Column="0"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="3" VerticalAlignment="Center" Grid.Column="1">
+                                                <Button Style="{StaticResource IconButtonStyle}" VerticalAlignment="Center">
+                                                    <FontIcon Glyph="&#xe71b;" FontSize="14"/>
+                                                </Button>
+                                                <Button Style="{StaticResource IconButtonStyle}" VerticalAlignment="Center">
+                                                    <FontIcon Glyph="&#xe8ad;" FontSize="14"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
                                     </DataTemplate>
                                 </AutoSuggestBox.ItemTemplate>
                             </AutoSuggestBox>
@@ -482,8 +495,15 @@
                         </Grid>
                     </Grid>
 
-                    <ListView 
-                        x:Name="ActionsListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2" AllowDrop="True" CanReorderItems="True">
+                    <ListView x:Name="ActionsListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2">
+                        <ListView.Resources>
+                            <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+                                <Setter Property="Padding" Value="0" />
+                            </Style>
+                        </ListView.Resources>
+                    </ListView>
+                    
+                    <ListView x:Name="SearchActionsListView" x:Load="False" Visibility="Collapsed" SelectionMode="None" Padding="0" Margin="0" Grid.Row="2">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="Padding" Value="0" />

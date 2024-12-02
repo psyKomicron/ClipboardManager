@@ -693,6 +693,35 @@ namespace winrt::ClipboardManager::implementation
         return triggerViewer;
     }
 
+    void MainPage::RefreshSearchBoxSuggestions(const std::wstring& text)
+    {
+        if (!text.empty())
+        {
+            try
+            {
+                auto list = single_threaded_vector<IInspectable>();
+                boost::wregex regex{ text };
+                for (auto&& actionView : clipboardActionViews)
+                {
+                    if (boost::regex_search(std::wstring(actionView.Text()), regex))
+                    {
+                        list.Append(box_value(actionView.Text()));
+                    }
+                }
+
+                SearchActionsAutoSuggestBox().ItemsSource(list);
+            }
+            catch (boost::regex_error&)
+            {
+                logger.debug(L"! Regex error");
+            }
+        }
+        else
+        {
+            SearchActionsAutoSuggestBox().ItemsSource(single_threaded_vector<IInspectable>());
+        }
+    }
+
     Windows::Foundation::IInspectable MainPage::asInspectable()
     {
         return *this;
@@ -1102,35 +1131,41 @@ namespace winrt::ClipboardManager::implementation
     void MainPage::OpenSearchButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
         visualStateManager.switchState(searchClosedState.group());
+        if (showSearchListViewState.active())
+        {
+            visualStateManager.goToState(showActionsListViewState);
+        }
     }
 
     void MainPage::SearchActionsAutoSuggestBox_TextChanged(xaml::AutoSuggestBox const& sender, xaml::AutoSuggestBoxTextChangedEventArgs const& args)
     {
-        auto text = std::wstring(sender.Text());
-        if (!text.empty())
-        {
-            try
-            {
-                auto list = single_threaded_vector<IInspectable>();
-                boost::wregex regex{ text };
-                for (auto&& actionView : clipboardActionViews)
-                {
-                    if (boost::regex_search(std::wstring(actionView.Text()), regex))
-                    {
-                        list.Append(box_value(actionView.Text()));
-                    }
-                }
+        RefreshSearchBoxSuggestions(std::wstring(sender.Text()));
+    }
 
-                sender.ItemsSource(list);
-            }
-            catch (boost::regex_error& err)
+    void MainPage::SearchActionsAutoSuggestBox_GotFocus(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    {
+        RefreshSearchBoxSuggestions(std::wstring(SearchActionsAutoSuggestBox().Text()));
+    }
+
+    void MainPage::SearchActionsAutoSuggestBox_SuggestionChosen(xaml::AutoSuggestBox const& sender, xaml::AutoSuggestBoxSuggestionChosenEventArgs const& args)
+    {
+        auto selectedItem = args.SelectedItem().try_as<hstring>();
+        if (selectedItem.has_value())
+        {
+            visualStateManager.goToState(showSearchListViewState);
+
+            boost::wregex regex{ std::wstring(selectedItem.value()), boost::regex_constants::icase };
+            for (auto&& view : clipboardActionViews)
             {
-                logger.debug(L"! Regex error");
+                auto text = static_cast<std::wstring>(view.Text());
+                if (boost::regex_match(text, regex))
+                {
+                    SearchActionsListView().Items().Append(box_value(view.Text()));
+                }
             }
         }
     }
 }
-
 
 
 

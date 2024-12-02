@@ -41,21 +41,23 @@ namespace winrt::ClipboardManager::implementation
 
      private:
         const clip::utils::Logger logger{ L"MainPage" };
-        const clip::ui::VisualState<MainPage> openSaveFileState{ L"CreateNewActions", 0, false };
-        const clip::ui::VisualState<MainPage> viewActionsState{ L"ViewActions", 0, false };
-        const clip::ui::VisualState<MainPage> displayClipboardTriggersState{ L"DisplayClipboardTriggers", 1, false };
-        const clip::ui::VisualState<MainPage> noClipboardTriggersToDisplayState{ L"NoClipboardTriggersToDisplay", 1, false };
-        const clip::ui::VisualState<MainPage> normalStartupState{ L"NormalStartup", 2, true };
-        const clip::ui::VisualState<MainPage> firstStartupState{ L"FirstStartup", 2, false };
-        const clip::ui::VisualState<MainPage> applicationUpdatedState{ L"ApplicationUpdated", 2, false };
-        const clip::ui::VisualState<MainPage> quickSettingsClosedState{ L"QuickSettingsClosed", 3, true };
-        const clip::ui::VisualState<MainPage> quickSettingsOpenState{ L"QuickSettingsOpen", 3, false };
-        const clip::ui::VisualState<MainPage> searchClosedState{ L"SearchClosed", 6, true };
-        const clip::ui::VisualState<MainPage> searchOpenState{ L"SearchOpened", 6, false };
-        const clip::ui::VisualState<MainPage> normalWindowState{ L"NormalWindow", 4, true };
-        const clip::ui::VisualState<MainPage> overlayWindowState{ L"OverlayWindow", 4, false };
-        const clip::ui::VisualState<MainPage> under1kState{ L"Under1000", 5, true };
-        const clip::ui::VisualState<MainPage> over1kState{ L"Over1000", 5, false };
+        clip::ui::VisualState<MainPage> openSaveFileState{ L"CreateNewActions", 0, false };
+        clip::ui::VisualState<MainPage> viewActionsState{ L"ViewActions", 0, false };
+        clip::ui::VisualState<MainPage> displayClipboardTriggersState{ L"DisplayClipboardTriggers", 1, false };
+        clip::ui::VisualState<MainPage> noClipboardTriggersToDisplayState{ L"NoClipboardTriggersToDisplay", 1, false };
+        clip::ui::VisualState<MainPage> normalStartupState{ L"NormalStartup", 2, true };
+        clip::ui::VisualState<MainPage> firstStartupState{ L"FirstStartup", 2, false };
+        clip::ui::VisualState<MainPage> applicationUpdatedState{ L"ApplicationUpdated", 2, false };
+        clip::ui::VisualState<MainPage> quickSettingsClosedState{ L"QuickSettingsClosed", 3, true };
+        clip::ui::VisualState<MainPage> quickSettingsOpenState{ L"QuickSettingsOpen", 3, false };
+        clip::ui::VisualState<MainPage> searchClosedState{ L"SearchClosed", 6, true };
+        clip::ui::VisualState<MainPage> searchOpenState{ L"SearchOpened", 6, false };
+        clip::ui::VisualState<MainPage> normalWindowState{ L"NormalWindow", 4, true };
+        clip::ui::VisualState<MainPage> overlayWindowState{ L"OverlayWindow", 4, false };
+        clip::ui::VisualState<MainPage> under1kState{ L"Under1000", 5, true };
+        clip::ui::VisualState<MainPage> over1kState{ L"Over1000", 5, false };
+        clip::ui::VisualState<MainPage> showActionsListViewState{ L"ShowActionsListView", 7, true };
+        clip::ui::VisualState<MainPage> showSearchListViewState{ L"ShowSearchListView", 7, false };
 
         bool loaded = false;
         bool updated = false;
@@ -89,6 +91,7 @@ namespace winrt::ClipboardManager::implementation
         async AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& notify);
         bool LoadUserFile(const std::filesystem::path& path);
         ClipboardManager::ClipboardActionEditor CreateTriggerView(clip::ClipboardTrigger& trigger);
+        void RefreshSearchBoxSuggestions(const std::wstring& text);
 
         // Inherited via PropertyChangedClass
         Windows::Foundation::IInspectable asInspectable() override;
@@ -117,6 +120,8 @@ namespace winrt::ClipboardManager::implementation
         void OverlayPopupShowWarningCheckBox_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void OpenSearchButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void SearchActionsAutoSuggestBox_TextChanged(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const& args);
+        void SearchActionsAutoSuggestBox_GotFocus(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void SearchActionsAutoSuggestBox_SuggestionChosen(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxSuggestionChosenEventArgs const& args);
     };
 }
 
