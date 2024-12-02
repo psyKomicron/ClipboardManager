@@ -396,7 +396,7 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="HistoryToggleButton_ToolTipTextBlock.Text" xml:space="preserve">
     <value>Disable history</value>
   </data>
-  <data name="IgnoreCaseHostControl.Header" xml:space="preserve">
+  <data name="IgnoreCaseHostControl.Title" xml:space="preserve">
     <value>Ignore case</value>
   </data>
   <data name="IgnoreCaseTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
@@ -533,7 +533,7 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="RegexModeComboBox_Search_ToolTip.Text" xml:space="preserve">
     <value>Search for any subsequence in the string that matches the regex.</value>
   </data>
-  <data name="RegexModeHostControl.Header" xml:space="preserve">
+  <data name="RegexModeHostControl.Title" xml:space="preserve">
     <value>Regex mode</value>
   </data>
   <data name="RegexModeTextBlock.Text" xml:space="preserve">
@@ -727,5 +727,29 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
   </data>
   <data name="ReloadActionsUserFileNotFoundTitle" xml:space="preserve">
     <value>Failed to reload triggers</value>
+  </data>
+  <data name="IgnoreCaseHostControl.Subtitle" xml:space="preserve">
+    <value>Default case option for triggers.</value>
+  </data>
+  <data name="RegexModeHostControl.Subtitle" xml:space="preserve">
+    <value>Default regex mode for triggers.</value>
+  </data>
+  <data name="ClipboardActionViewClickOpen.Content" xml:space="preserve">
+    <value>Open browser</value>
+  </data>
+  <data name="ClipboardActionViewClickCopy.Content" xml:space="preserve">
+    <value>Copy link</value>
+  </data>
+  <data name="ClipboardActionViewClickHostControl.Title" xml:space="preserve">
+    <value>Clipboard action click behavior</value>
+  </data>
+  <data name="ClipboardActionViewClickHostControl.Subtitle" xml:space="preserve">
+    <value>Control what happens when you click on a clipboard action, open a web browser with the formatted link or copy the link to the clipboard.</value>
+  </data>
+  <data name="ErrorMessage_FailedToCopyToClipboard" xml:space="preserve">
+    <value>Failed to copy link to clipboard.</value>
+  </data>
+  <data name="Message_CopiedToClipboard" xml:space="preserve">
+    <value>Copied to clipboard</value>
   </data>
 </root>

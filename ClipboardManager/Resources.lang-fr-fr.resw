@@ -459,7 +459,7 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Désactiver l'historique</value>
     <comment>MainPage</comment>
   </data>
-  <data name="IgnoreCaseHostControl.Header" xml:space="preserve">
+  <data name="IgnoreCaseHostControl.Title" xml:space="preserve">
     <value>Ignorer la capitalisation</value>
     <comment>SettingsPage</comment>
   </data>
@@ -636,7 +636,7 @@ Utilisez le raccourci clavier pour afficher la fenêtre.</value>
     <value>Recherche dans la chaine une séquence qui vérifie la regex.</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="RegexModeHostControl.Header" xml:space="preserve">
+  <data name="RegexModeHostControl.Title" xml:space="preserve">
     <value>Mode regex</value>
     <comment>SettingsPage</comment>
   </data>
@@ -880,5 +880,29 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   </data>
   <data name="ReloadActionsUserFileNotFoundTitle" xml:space="preserve">
     <value>Erreur lors du chargement des déclencheurs.</value>
+  </data>
+  <data name="IgnoreCaseHostControl.Subtitle" xml:space="preserve">
+    <value>Option de casse par défaut des déclencheurs.</value>
+  </data>
+  <data name="RegexModeHostControl.Subtitle" xml:space="preserve">
+    <value>Mode regex par défaut pour les déclencheurs.</value>
+  </data>
+  <data name="ClipboardActionViewClickOpen.Content" xml:space="preserve">
+    <value>Lancer navigateur</value>
+  </data>
+  <data name="ClipboardActionViewClickCopy.Content" xml:space="preserve">
+    <value>Copier lien</value>
+  </data>
+  <data name="ClipboardActionViewClickHostControl.Title" xml:space="preserve">
+    <value>Réponse au clic des actions</value>
+  </data>
+  <data name="ClipboardActionViewClickHostControl.Subtitle" xml:space="preserve">
+    <value>Choisissez ce qui se passe lorsque vous cliquez sur une action presse-papier.</value>
+  </data>
+  <data name="ErrorMessage_FailedToCopyToClipboard" xml:space="preserve">
+    <value>Impossible de copier le texte dans le presse papier.</value>
+  </data>
+  <data name="Message_CopiedToClipboard" xml:space="preserve">
+    <value>Copié</value>
   </data>
 </root>
