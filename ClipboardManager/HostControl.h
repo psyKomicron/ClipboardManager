@@ -27,9 +27,9 @@ namespace winrt::ClipboardManager::implementation
         void IconGlyph(const hstring& value);
 
     private:
-        const clip::ui::VisualState<HostControl> onlyTitleState{ L"OnlyHeaderState", 1, true };
-        const clip::ui::VisualState<HostControl> titleSubtitleState{ L"TitleSubtitleState", 1, false };
-        const clip::ui::VisualState<HostControl> titleSubtitleIconState{ L"TitleSubtitleIconState", 1, false };
+        clip::ui::VisualState<HostControl> onlyTitleState{ L"OnlyHeaderState", 1, true };
+        clip::ui::VisualState<HostControl> titleSubtitleState{ L"TitleSubtitleState", 1, false };
+        clip::ui::VisualState<HostControl> titleSubtitleIconState{ L"TitleSubtitleIconState", 1, false };
         clip::ui::VisualStateManager<HostControl> visualStateManager{ *this };
         Windows::Foundation::IInspectable _headerContent{};
         Windows::Foundation::IInspectable _hostContent{};
