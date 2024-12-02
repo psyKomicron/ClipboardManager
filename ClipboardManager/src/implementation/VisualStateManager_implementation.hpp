@@ -46,13 +46,14 @@ namespace clip::ui
         throwIfInvalid();
         return other.name() == name();
     }
-
+    
     template<typename T>
-    inline VisualState<T>::operator winrt::param::hstring() const
+    inline bool VisualState<T>::operator==(VisualState<T>& other)
     {
         throwIfInvalid();
-        return _name;
+        return other.name() == name();
     }
+
 
     template<typename T>
     inline void VisualState<T>::throwIfInvalid() const
@@ -95,7 +96,7 @@ namespace clip::ui
     }
 
     template<typename T>
-    inline void VisualStateManager<T>::goToState(const VisualState<T>& state, const bool& useTransitions)
+    inline void VisualStateManager<T>::goToState(VisualState<T>& state, const bool& useTransitions)
     {
         try
         {
@@ -103,7 +104,8 @@ namespace clip::ui
 
             if (_visualStates.contains(state.group()))
             {
-                for (VisualState<T>& visualState : _visualStates[state.group()])
+                auto&& group = _visualStates[state.group()];
+                for (VisualState<T>& visualState : group)
                 {
                     bool same = visualState == state;
                     if (same)
@@ -117,7 +119,8 @@ namespace clip::ui
 
             if (!alreadyActive.value_or(false))
             {
-                xaml::VisualStateManager::GoToState(control, state, useTransitions);
+                xaml::VisualStateManager::GoToState(control, state.name(), useTransitions);
+                state.active(true);
             }
 #ifdef LOG_VISUALSTATEMANAGER
             logger.debug(std::format(L"Activated state '{}'", std::wstring(state.name())));

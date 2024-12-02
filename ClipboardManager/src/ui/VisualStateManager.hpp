@@ -22,8 +22,7 @@ namespace clip::ui
         winrt::hstring name() const;
 
         bool operator==(const VisualState<T>& other);
-
-        operator winrt::param::hstring() const;
+        bool operator==(VisualState<T>& other);
 
     private:
         bool isInvalidState = false;
@@ -42,7 +41,7 @@ namespace clip::ui
 
         VisualState<T> getCurrentState(const int32_t& group);
         void initializeStates(const std::vector<VisualState<T>>& states);
-        void goToState(const VisualState<T>& state, const bool& useTransitions = true);
+        void goToState(VisualState<T>& state, const bool& useTransitions = true);
         void switchState(int32_t group, const bool& useTransitions = true);
         void goToStateEnabled(const bool& enabled, const bool& useTransitions = true) const;
 
