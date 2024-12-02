@@ -290,6 +290,15 @@
                     <ToggleSwitch x:Name="ImportClipboardHistoryToggleSwitch" Toggled="ImportClipboardHistoryToggleSwitch_Toggled"/>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
+
+            <clip:HostControl x:Uid="ClipboardActionViewClickHostControl">
+                <clip:HostControl.HostContent>
+                    <ComboBox x:Name="ClipboardActionViewClickComboBox" SelectedIndex="0" MinWidth="150" SelectionChanged="ClipboardActionViewClickComboBox_SelectionChanged">
+                        <ComboBoxItem x:Uid="ClipboardActionViewClickOpen" Tag="0"/>
+                        <ComboBoxItem x:Uid="ClipboardActionViewClickCopy" Tag="1"/>
+                    </ComboBox>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
             <!--#endregion-->
 
 
@@ -460,8 +469,8 @@
                     </StackPanel>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
-
             <!--#endregion-->
+           
             
             <!--#region Developper -->
             <TextBlock x:Uid="HeaderDevTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>

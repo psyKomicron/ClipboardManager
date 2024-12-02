@@ -33,10 +33,49 @@ namespace xaml
 
 namespace winrt::ClipboardManager::implementation
 {
-    SettingsPage::SettingsPage(const winrt::ClipboardManager::MainPage& mainPage) :
-        mainPage{ mainPage }
+    SettingsPage::SettingsPage()
     {
+        visualStateManager.initializeStates(
+            {
+                testWindowShortcutDefaultState,
+                testWindowShortcutState,
+                testWindowShortcutOkState,
+                testWindowShortcutNokState
+            });
     }
+
+    SettingsPage::SettingsPage(const winrt::ClipboardManager::MainPage& mainPage) :
+        SettingsPage()
+    {
+        this->mainPage = mainPage;
+    }
+
+
+    void SettingsPage::updateSetting(win::IInspectable const& s, const std::wstring& key)
+    {
+        auto sender = s.as<xaml::ToggleSwitch>();
+        auto isOn = sender.IsOn();
+        settings.insert(key, isOn);
+    }
+
+    void SettingsPage::selectComboBoxItem(const xaml::Controls::ComboBox& comboBox, const uint32_t& value)
+    {
+        for (auto&& inspectable : comboBox.Items())
+        {
+            auto item = inspectable.try_as<xaml::ComboBoxItem>();
+            if (item && item.Tag().as<hstring>() == std::to_wstring(value))
+            {
+                comboBox.SelectedItem(inspectable);
+                break;
+            }
+        }
+    }
+
+    uint32_t SettingsPage::getSelectedComboBoxItemTag(const xaml::Controls::ComboBox& comboBox)
+    {
+        return std::stoi(comboBox.SelectedItem().as<xaml::ComboBoxItem>().Tag().as<hstring>().data());
+    }
+
 
     void SettingsPage::Page_Loading(xaml::FrameworkElement const&, win::IInspectable const&)
     {
@@ -57,6 +96,7 @@ namespace winrt::ClipboardManager::implementation
         selectComboBoxItem(RegexModeComboBox(), settings.get<int32_t>(L"TriggerMatchMode").value_or(0));
         AddDuplicatedActionsToggleSwitch().IsOn(settings.get<bool>(L"AddDuplicatedActions").value_or(true));
         ImportClipboardHistoryToggleSwitch().IsOn(settings.get<bool>(L"ImportClipboardHistory").value_or(false));
+        selectComboBoxItem(ClipboardActionViewClickComboBox(), settings.get<int32_t>(L"ClipboardActionClick").value_or(0));
 
         // Notifications:
         auto durationType = settings.get<clip::notifs::NotificationDurationType>(L"NotificationDurationType").value_or(clip::notifs::NotificationDurationType::Default);
@@ -86,18 +126,12 @@ namespace winrt::ClipboardManager::implementation
             UserFilePathTextBlock().FontStyle(Windows::UI::Text::FontStyle::Normal);
         }
 
-        visualStateManager.initializeStates(
-            {
-                testWindowShortcutDefaultState,
-                testWindowShortcutState,
-                testWindowShortcutOkState,
-                testWindowShortcutNokState
-            });
+        loaded = true;
     }
 
     void SettingsPage::Page_Loaded(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
-        loaded = true;
+        //loaded = true;
     }
 
     void SettingsPage::AutoStartToggleSwitch_Toggled(win::IInspectable const& s, xaml::RoutedEventArgs const&)
@@ -245,7 +279,7 @@ namespace winrt::ClipboardManager::implementation
 
     void SettingsPage::TriggersStorageExpander_Expanding(xaml::Controls::Expander const&, xaml::Controls::ExpanderExpandingEventArgs const&)
     {
-        
+
     }
 
     winrt::async SettingsPage::LocateButton_Clicked(win::IInspectable const& sender, xaml::RoutedEventArgs const& e)
@@ -342,7 +376,7 @@ namespace winrt::ClipboardManager::implementation
                 }
 
                 wchar_t key = selectedKey[0];
-                
+
                 clip::HotKey hotKey{ modifiers, key };
                 hotKey.startListening([](){});
                 success = true;
@@ -373,29 +407,9 @@ namespace winrt::ClipboardManager::implementation
         updateSetting(sender, L"OverlayShownInSwitchers");
     }
 
-
-    void SettingsPage::updateSetting(win::IInspectable const& s, const std::wstring& key)
+    void SettingsPage::ClipboardActionViewClickComboBox_SelectionChanged(win::IInspectable const&, xaml::SelectionChangedEventArgs const&)
     {
-        auto sender = s.as<xaml::ToggleSwitch>();
-        auto isOn = sender.IsOn();
-        settings.insert(key, isOn);
-    }
-
-    void SettingsPage::selectComboBoxItem(const xaml::Controls::ComboBox& comboBox, const uint32_t& value)
-    {
-        for (auto&& inspectable : comboBox.Items())
-        {
-            auto item = inspectable.try_as<xaml::ComboBoxItem>();
-            if (item && item.Tag().as<hstring>() == std::to_wstring(value))
-            {
-                comboBox.SelectedItem(inspectable);
-                break;
-            }
-        }
-    }
-
-    uint32_t SettingsPage::getSelectedComboBoxItemTag(const xaml::Controls::ComboBox& comboBox)
-    {
-        return std::stoi(comboBox.SelectedItem().as<xaml::ComboBoxItem>().Tag().as<hstring>().data());
+        check_loaded(loaded);
+        settings.insert(L"ClipboardActionClick", ClipboardActionViewClickComboBox().SelectedItem().as<winrt::FrameworkElement>().Tag().as<bool>());
     }
 }
