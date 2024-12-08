@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-constexpr const wchar_t* APP_VERSION = L"1.3.0";
+constexpr const wchar_t* APP_VERSION = L"1.3.3";
 constexpr const wchar_t* APP_VERSION_NAME = L"Pin";
 
 namespace clip::utils
@@ -17,8 +17,6 @@ namespace clip::utils
         uint32_t revision() const;
         std::wstring name() const;
         std::wstring versionString() const;
-
-        int compare(const AppVersion& other, const bool& ignoreRevision = true) const;
 
     private:
         uint32_t _major = 0;

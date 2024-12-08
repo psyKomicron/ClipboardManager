@@ -40,41 +40,6 @@ namespace clip::utils
         return std::wstring(APP_VERSION);
     }
 
-    int AppVersion::compare(const AppVersion& other, const bool& ignoreRevision) const
-    {
-        if (major() > other.major())
-        {
-            return 1;
-        }
-        else if (major() < other.major())
-        {
-            return -1;
-        }
-
-        if (minor() > other.minor())
-        {
-            return 1;
-        }
-        else if (minor() < other.minor())
-        {
-            return -1;
-        }
-
-        if (!ignoreRevision)
-        {
-            if (revision() > other.revision())
-            {
-                return 1;
-            }
-            else if (revision() < other.revision())
-            {
-                return -1;
-            }
-        }
-
-        return 0;
-    }
-
     void AppVersion::parseString(std::wstring string)
     {
         uint32_t ints[2]{ 0 };
