@@ -14,6 +14,7 @@ namespace ClipboardManager
         void EditAction(UInt32 pos, 
                         String format, String label, String regex, Boolean enabled, Boolean useRegexMatchResults, Boolean ignoreCase);
         Boolean IndexOf(out UInt32 pos, String label);
+        Windows.Foundation.Collections.IVector<String> GetTriggersText();
 
         Windows.Foundation.IAsyncAction StartTour();
     }

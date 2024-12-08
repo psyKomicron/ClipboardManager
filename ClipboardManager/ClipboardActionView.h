@@ -32,6 +32,7 @@ namespace winrt::ClipboardManager::implementation
                         const winrt::hstring& regex, const bool& enabled, const bool& useRegexMatchResults,
                         const bool& ignoreCase);
         bool IndexOf(uint32_t& pos, const winrt::hstring& label);
+        winrt::Windows::Foundation::Collections::IVector<hstring> GetTriggersText();
 
         winrt::async StartTour();
 
@@ -42,6 +43,8 @@ namespace winrt::ClipboardManager::implementation
         VisualState normalState{ L"Normal", 1, true };
         VisualState pointerOverState{ L"PointerOver", 1, false };
         VisualState pointerPressedState{ L"PointerPressed", 1, false };
+        VisualState normalVisualState{ L"NormalVisual", 2, true };
+        VisualState compactVisualState{ L"CompactVisual", 2, true };
 
         static clip::utils::ResLoader resLoader;
 

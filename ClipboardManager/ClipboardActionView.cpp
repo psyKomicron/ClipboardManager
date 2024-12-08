@@ -150,6 +150,16 @@ namespace winrt::ClipboardManager::implementation
         return false;
     }
 
+    winrt::Windows::Foundation::Collections::IVector<hstring> ClipboardActionView::GetTriggersText()
+    {
+        auto triggersText = single_threaded_vector<hstring>();
+        for (auto&& trigger : triggers)
+        {
+            triggersText.Append(trigger.label());
+        }
+        return triggersText;
+    }
+
     winrt::async ClipboardActionView::StartTour()
     {
         visualStateManager.goToState(optionsOpenState);
@@ -223,6 +233,14 @@ namespace winrt::ClipboardManager::implementation
     void ClipboardActionView::OpenOptionsButton_Click(win::IInspectable const&, ui::RoutedEventArgs const&)
     {
         visualStateManager.switchState(0, true);
+        if (visualStateManager.getCurrentState(0).name() == optionsOpenState.name())
+        {
+            OptionsGrid().Scale({ 1, 1, 1 });
+        }
+        else
+        {
+            OptionsGrid().Scale({ 0, 0, 0 });
+        }
     }
 
     void ClipboardActionView::HyperlinkButton_Click(win::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
