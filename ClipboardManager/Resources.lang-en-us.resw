@@ -405,9 +405,6 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="ImportClipboardButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Loads clipboard history, text that triggers creates an action.</value>
   </data>
-  <data name="ImportClipboardButtonTeachingTip.Title" xml:space="preserve">
-    <value>Import clipboard</value>
-  </data>
   <data name="ImportClipboardHistoryHostControl.Header" xml:space="preserve">
     <value>Import clipboard</value>
   </data>
@@ -751,5 +748,35 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
   </data>
   <data name="Message_CopiedToClipboard" xml:space="preserve">
     <value>Copied to clipboard</value>
+  </data>
+  <data name="SearchButtonTeachingTip.Title" xml:space="preserve">
+    <value>Open search</value>
+  </data>
+  <data name="SearchButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Shows a search box to search through actions.</value>
+  </data>
+  <data name="OpenQuickSettingsButtonTeachingTip.Title" xml:space="preserve">
+    <value>Quick settings</value>
+  </data>
+  <data name="SearchFilter_TriggersDesc" xml:space="preserve">
+    <value>trigger</value>
+  </data>
+  <data name="SearchFilter_TextDesc" xml:space="preserve">
+    <value>text</value>
+  </data>
+  <data name="SearchFilter_Triggers" xml:space="preserve">
+    <value>t:</value>
+  </data>
+  <data name="SearchFilter_Text" xml:space="preserve">
+    <value>x:</value>
+  </data>
+  <data name="SearchTriggersToggleButton.Content" xml:space="preserve">
+    <value>t: triggers</value>
+  </data>
+  <data name="SearchTextToggleButton.Content" xml:space="preserve">
+    <value>x: text</value>
+  </data>
+  <data name="SearchActionsListView.Header" xml:space="preserve">
+    <value>Search results:</value>
   </data>
 </root>

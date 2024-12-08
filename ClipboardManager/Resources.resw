@@ -396,9 +396,6 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="ImportClipboardButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Loads clipboard history, text that triggers creates an action.</value>
   </data>
-  <data name="ImportClipboardButtonTeachingTip.Title" xml:space="preserve">
-    <value>Import clipboard</value>
-  </data>
   <data name="ImportClipboardHistoryHostControl.Header" xml:space="preserve">
     <value>Import clipboard</value>
   </data>
@@ -517,22 +514,22 @@ You can easily access your user file via settings and see an example of a valid 
     <value />
   </data>
   <data name="RegexModeComboBox_Search.Content" xml:space="preserve">
-    <value />
+    <value>Search</value>
   </data>
   <data name="RegexModeComboBox_Search_ToolTip.Text" xml:space="preserve">
-    <value />
+    <value>Search for any subsequence in the string that matches the regex.</value>
   </data>
   <data name="RegexModeHostControl.Title" xml:space="preserve">
     <value>Regex mode</value>
   </data>
   <data name="RegexModeTextBlock.Text" xml:space="preserve">
-    <value />
+    <value>Search</value>
   </data>
   <data name="RegexTextBox.Header" xml:space="preserve">
     <value />
   </data>
   <data name="RegexUseSearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value />
+    <value>Regex search</value>
   </data>
   <data name="ReloadActionsButtonTeachingTip.Subtitle" xml:space="preserve">
     <value />
@@ -668,7 +665,7 @@ You can easily access your user file via settings and see an example of a valid 
     <value />
   </data>
   <data name="UseSearchFontIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value />
+    <value>Use search</value>
   </data>
   <data name="ViewActionsInfoBar.Message" xml:space="preserve">
     <value />
@@ -745,5 +742,39 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="Message_CopiedToClipboard" xml:space="preserve">
     <value>Copied to clipboard</value>
     <comment>Message</comment>
+  </data>
+  <data name="SearchButtonTeachingTip.Title" xml:space="preserve">
+    <value>Open search</value>
+  </data>
+  <data name="SearchButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Shows a search box to search through actions.</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="OpenQuickSettingsButtonTeachingTip.Title" xml:space="preserve">
+    <value>Quick settings</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="SearchFilter_TriggersDesc" xml:space="preserve">
+    <value>trigger</value>
+  </data>
+  <data name="SearchFilter_TextDesc" xml:space="preserve">
+    <value>text</value>
+  </data>
+  <data name="SearchFilter_Triggers" xml:space="preserve">
+    <value>t:</value>
+  </data>
+  <data name="SearchFilter_Text" xml:space="preserve">
+    <value>x:</value>
+  </data>
+  <data name="SearchTriggersToggleButton.Content" xml:space="preserve">
+    <value>t: triggers</value>
+  </data>
+  <data name="SearchTextToggleButton.Content" xml:space="preserve">
+    <value>x: text</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="SearchActionsListView.Header" xml:space="preserve">
+    <value>Search results:</value>
+    <comment>MainPage</comment>
   </data>
 </root>

@@ -470,9 +470,6 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="ImportClipboardButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Charge l'historique du presse papier, si le texte déclenche une action sera créée.</value>
   </data>
-  <data name="ImportClipboardButtonTeachingTip.Title" xml:space="preserve">
-    <value>Importer le presse-papier</value>
-  </data>
   <data name="ImportClipboardHistoryHostControl.Header" xml:space="preserve">
     <value>Importer le contenu du presse-papier</value>
     <comment>SettingsPage</comment>
@@ -904,5 +901,35 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   </data>
   <data name="Message_CopiedToClipboard" xml:space="preserve">
     <value>Copié</value>
+  </data>
+  <data name="SearchButtonTeachingTip.Title" xml:space="preserve">
+    <value>Recherche</value>
+  </data>
+  <data name="SearchButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Affiche une zone de texte permettant de rechercher dans la liste d'actions.</value>
+  </data>
+  <data name="OpenQuickSettingsButtonTeachingTip.Title" xml:space="preserve">
+    <value>Options rapides</value>
+  </data>
+  <data name="SearchFilter_TriggersDesc" xml:space="preserve">
+    <value>déclencheur</value>
+  </data>
+  <data name="SearchFilter_TextDesc" xml:space="preserve">
+    <value>texte</value>
+  </data>
+  <data name="SearchFilter_Triggers" xml:space="preserve">
+    <value>d:</value>
+  </data>
+  <data name="SearchFilter_Text" xml:space="preserve">
+    <value>x:</value>
+  </data>
+  <data name="SearchTriggersToggleButton.Content" xml:space="preserve">
+    <value>d: déclencheurs</value>
+  </data>
+  <data name="SearchTextToggleButton.Content" xml:space="preserve">
+    <value>x: texte</value>
+  </data>
+  <data name="SearchActionsListView.Header" xml:space="preserve">
+    <value>Résultats de recherche :</value>
   </data>
 </root>
