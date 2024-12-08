@@ -194,6 +194,7 @@
     </Page>
     <Page Include="RegexTesterControl.xaml" />
     <Page Include="MessagesBar.xaml" />
+    <Page Include="SearchSuggestionView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

@@ -87,15 +87,18 @@
                         <Setter Target="QuickActionsLeftColumn.Width" Value="Auto"/>
                         <Setter Target="QuickSettingsStackPanel.Visibility" Value="Visible"/>
                         <Setter Target="QuickSettingsStackPanel.Opacity" Value="1"/>
-                        <Setter Target="SearchActionsAutoSuggestBox.Opacity" Value="0"/>
-                        <Setter Target="SearchActionsAutoSuggestBox.Visibility" Value="Collapsed"/>
                         <Setter Target="OpenQuickSettingsButtonFontIcon.Glyph" Value="&#xe76c;"/>
+                        <Setter Target="SearchBoxGrid.Opacity" Value="0"/>
+                        <Setter Target="SearchBoxGrid.Visibility" Value="Collapsed"/>
+                        <Setter Target="SearchActionsListView.Visibility" Value="Collapsed"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="SearchClosed">
                     <VisualState.Setters>
-                        <Setter Target="SearchActionsAutoSuggestBox.Opacity" Value="0"/>
-                        <Setter Target="SearchActionsAutoSuggestBox.Visibility" Value="Collapsed"/>
+                        <Setter Target="SearchBoxGrid.Opacity" Value="0"/>
+                        <Setter Target="SearchBoxGrid.Visibility" Value="Collapsed"/>
+                        <Setter Target="SearchActionsListView.Visibility" Value="Collapsed"/>
+                        <Setter Target="SearchActionsListView.Opacity" Value="0"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="SearchOpened">
@@ -103,10 +106,12 @@
                         <Setter Target="QuickActionsLeftColumn.Width" Value="*"/>
                         <Setter Target="QuickActionsRightColumn.Width" Value="Auto"/>
                         <Setter Target="QuickSettingsStackPanel.Visibility" Value="Collapsed"/>
-                        <Setter Target="SearchActionsAutoSuggestBox.Visibility" Value="Visible"/>
-                        <Setter Target="SearchActionsAutoSuggestBox.Opacity" Value="1"/>
+                        <Setter Target="SearchBoxGrid.Visibility" Value="Visible"/>
+                        <Setter Target="SearchBoxGrid.Opacity" Value="1"/>
                         <Setter Target="QuickSettingsStackPanel.Opacity" Value="0"/>
                         <Setter Target="SearchActionsGrid.HorizontalAlignment" Value="Stretch"/>
+                        <Setter Target="SearchActionsListView.Visibility" Value="Visible"/>
+                        <Setter Target="SearchActionsListView.Opacity" Value="1"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -238,7 +243,7 @@
                 </Frame>
             </PivotItem>
 
-            <PivotItem x:Name="ClipboardTriggersPivotItem" Padding="0" Margin="0" Loaded="ClipboadTriggersListPivot_Loaded">
+            <PivotItem x:Name="ClipboardTriggersPivotItem" Padding="0" Margin="0">
                 <PivotItem.Header>
                     <FontIcon x:Name="ClipboardTriggersPivot" Glyph="&#xe945;" FontSize="16"/>
                 </PivotItem.Header>
@@ -310,6 +315,7 @@
 
                 <Grid Padding="5,3,5,0">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
@@ -387,33 +393,62 @@
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Button Style="{StaticResource IconButtonStyle}" Click="OpenSearchButton_Click" Grid.Column="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <Button x:Name="OpenSearchButton" Style="{StaticResource IconButtonStyle}" Click="OpenSearchButton_Click" Grid.Column="0">
                                 <FontIcon Glyph="&#xe721;"/>
                             </Button>
-                            <AutoSuggestBox x:Name="SearchActionsAutoSuggestBox" Visibility="Collapsed" Grid.Column="1" HorizontalAlignment="Stretch" Height="35" Margin="5,0,0,0" Opacity="0" TextChanged="SearchActionsAutoSuggestBox_TextChanged" GotFocus="SearchActionsAutoSuggestBox_GotFocus" SuggestionChosen="SearchActionsAutoSuggestBox_SuggestionChosen">
-                                <AutoSuggestBox.OpacityTransition>
-                                    <ScalarTransition Duration="0:0:0.181"/>
-                                </AutoSuggestBox.OpacityTransition>
-                                <AutoSuggestBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <ContentPresenter Content="{Binding}" VerticalAlignment="Center" Grid.Column="0"/>
-                                            <StackPanel Orientation="Horizontal" Spacing="3" VerticalAlignment="Center" Grid.Column="1">
-                                                <Button Style="{StaticResource IconButtonStyle}" VerticalAlignment="Center">
-                                                    <FontIcon Glyph="&#xe71b;" FontSize="14"/>
-                                                </Button>
-                                                <Button Style="{StaticResource IconButtonStyle}" VerticalAlignment="Center">
-                                                    <FontIcon Glyph="&#xe8ad;" FontSize="14"/>
-                                                </Button>
-                                            </StackPanel>
-                                        </Grid>
-                                    </DataTemplate>
-                                </AutoSuggestBox.ItemTemplate>
-                            </AutoSuggestBox>
+
+                            <Grid 
+                                x:Name="SearchBoxGrid" 
+                                x:Load="False" 
+                                Grid.Column="1" 
+                                Visibility="Collapsed" 
+                                Opacity="0"
+                                ColumnSpacing="7" 
+                                RowSpacing="3"
+                                Scale="0,0,1" 
+                                Margin="5,7"
+                                Loading="SearchBoxGrid_Loading">
+                                <Grid.OpacityTransition>
+                                    <ScalarTransition/>
+                                </Grid.OpacityTransition>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBox 
+                                    x:Name="SearchActionsAutoSuggestBox" 
+                                    Grid.Column="0" 
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Stretch" 
+                                    Height="35"
+                                    TextChanged="SearchActionsAutoSuggestBox_TextChanged" 
+                                    GotFocus="SearchActionsAutoSuggestBox_GotFocus"/>
+
+                                <StackPanel x:Name="SearchButtonsStackPanel" Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="5" IsHitTestVisible="False">
+                                    <ToggleButton x:Name="SearchTriggersToggleButton" x:Uid="SearchTriggersToggleButton"/>
+                                    <ToggleButton x:Name="SearchTextToggleButton" x:Uid="SearchTextToggleButton"/>
+                                </StackPanel>
+
+                                <ToggleButton 
+                                    x:Name="SearchActionsIgnoreCaseToggleButton" 
+                                    x:Uid="IgnoreCaseTextBlock" 
+                                    Grid.Column="1" 
+                                    Grid.Row="0"
+                                    Content="i" 
+                                    FontFamily="Consolas" 
+                                    Height="35" 
+                                    Width="40"/>
+                            </Grid>
                         </Grid>
 
                         <Grid Grid.Column="1" MinHeight="35" HorizontalAlignment="Right">
@@ -438,8 +473,9 @@
                                 Spacing="5" 
                                 VerticalAlignment="Stretch">
                                 <StackPanel.OpacityTransition>
-                                    <ScalarTransition Duration="0:0:0.181"/>
+                                    <ScalarTransition/>
                                 </StackPanel.OpacityTransition>
+
                                 <StackPanel
                                     Orientation="Horizontal" 
                                     Spacing="5"
@@ -468,6 +504,7 @@
                                         <FontIcon FontSize="16" Glyph="&#xe823;"/>
                                     </ToggleButton>
                                 </StackPanel>
+
                                 <StackPanel
                                     Orientation="Horizontal" 
                                     Spacing="5" 
@@ -476,6 +513,10 @@
                                     Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
                                     CornerRadius="{StaticResource OverlayCornerRadius}" 
                                     Padding="7,5">
+
+                                    <ToggleButton x:Name="CompactModeToggleButton" Click="CompactModeToggleButton_Click">
+                                        <FontIcon FontSize="16" Glyph="&#xe949;"/>
+                                    </ToggleButton>
 
                                     <Button x:Name="ClearActionsButton" Click="ClearActionsButton_Click">
                                         <ToolTipService.ToolTip>
@@ -495,15 +536,23 @@
                         </Grid>
                     </Grid>
 
-                    <ListView x:Name="ActionsListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2">
-                        <ListView.Resources>
-                            <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
-                                <Setter Property="Padding" Value="0" />
-                            </Style>
-                        </ListView.Resources>
+                    <ListView 
+                        x:Name="SearchActionsListView" 
+                        x:Uid="SearchActionsListView" 
+                        x:Load="False"
+                        Visibility="Collapsed" 
+                        Opacity="0"
+                        SelectionMode="None"  
+                        Grid.Row="2"
+                        MaxHeight="320"
+                        BorderThickness="0,0,0,1"
+                        BorderBrush="{ThemeResource TextFillColorPrimaryBrush}">
+                        <ListView.OpacityTransition>
+                            <ScalarTransition/>
+                        </ListView.OpacityTransition>
                     </ListView>
                     
-                    <ListView x:Name="SearchActionsListView" x:Load="False" Visibility="Collapsed" SelectionMode="None" Padding="0" Margin="0" Grid.Row="2">
+                    <ListView x:Name="ActionsListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="3">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="Padding" Value="0" />
@@ -557,6 +606,24 @@
             Target="{x:Bind ClipboardActionsPivot}"
             ShouldConstrainToRootBounds="False"
             PreferredPlacement="BottomRight"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip
+            x:Name="SearchButtonTeachingTip"
+            x:Uid="SearchButtonTeachingTip"
+            Target="{x:Bind OpenSearchButton}"
             ActionButtonClick="TeachingTip_CloseButtonClick">
             <TeachingTip.ActionButtonContent>
                 <Grid ColumnSpacing="4" VerticalAlignment="Center">

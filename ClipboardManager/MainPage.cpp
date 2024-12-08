@@ -18,6 +18,7 @@
 #include "src/res/strings.h"
 
 #include "ClipboardActionView.h"
+#include "SearchSuggestionView.h"
 
 #include <winrt/Windows.ApplicationModel.h>
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
@@ -28,8 +29,10 @@
 #include <winrt/Windows.System.h>
 #include <microsoft.ui.xaml.window.h>
 #include <winrt/Microsoft.UI.Interop.h>
+#include <winrt/Windows.UI.Text.h>
 
 #include <boost/property_tree/xml_parser.hpp>
+#include <boost/regex.hpp>
 
 #include <Shobjidl.h>
 #include <ppltasks.h>
@@ -37,6 +40,7 @@
 #include <iostream>
 #include <chrono>
 #include <sstream>
+#include <limits>
 
 namespace xaml
 {
@@ -128,8 +132,12 @@ namespace winrt::ClipboardManager::implementation
 
     void MainPage::AppClosing()
     {
-        auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
+        if (SearchActionsIgnoreCaseToggleButton())
+        {
+            localSettings.insert(L"SearchActionsIgnoreCase", SearchActionsIgnoreCaseToggleButton().IsChecked().GetBoolean());
+        }
 
+        auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
         if (userFilePath.has_value())
         {
             if (!triggers.empty())
@@ -693,23 +701,94 @@ namespace winrt::ClipboardManager::implementation
         return triggerViewer;
     }
 
-    void MainPage::RefreshSearchBoxSuggestions(const std::wstring& text)
+    void MainPage::RefreshSearchBoxSuggestions(std::wstring text)
     {
         if (!text.empty())
         {
+            static const std::map<SearchFilter, std::wstring> filtersPrefixes
+            {
+                { SearchFilter::Triggers, static_cast<std::wstring>(resLoader.getNamedResource(L"SearchFilter_Triggers").value_or(L"t:")) },
+                { SearchFilter::Text, static_cast<std::wstring>(resLoader.getNamedResource(L"SearchFilter_Text").value_or(L"x:")) }
+            };
+            
+            SearchFilter filter = SearchFilter::Actions;
+            if (text.starts_with(filtersPrefixes.at(SearchFilter::Triggers)))
+            {
+                filter = SearchFilter::Triggers;
+                SearchTriggersToggleButton().IsChecked(true);
+                SearchTextToggleButton().IsChecked(false);
+
+                text = text.substr(filtersPrefixes.at(SearchFilter::Triggers).size());
+
+                logger.debug(L"Search filtering on triggers.");
+            }
+            else if (text.starts_with(filtersPrefixes.at(SearchFilter::Text)))
+            {
+                filter = SearchFilter::Text;
+                SearchTriggersToggleButton().IsChecked(false);
+                SearchTextToggleButton().IsChecked(true);
+
+                text = text.substr(filtersPrefixes.at(SearchFilter::Triggers).size());
+
+                logger.debug(L"Search filtering on text.");
+            }
+            else
+            {
+                SearchTriggersToggleButton().IsChecked(false);
+                SearchTextToggleButton().IsChecked(false);
+             
+                logger.debug(L"Search filtering on actions.");
+            }
+
             try
             {
                 auto list = single_threaded_vector<IInspectable>();
-                boost::wregex regex{ text };
+                
+                if (text.empty())
+                {
+                    text = L".*";
+                }
+                auto flags = SearchActionsIgnoreCaseToggleButton().IsChecked().GetBoolean() ? boost::regex_constants::icase : boost::regex_constants::normal;
+                auto regex = boost::wregex(text, flags);
+
                 for (auto&& actionView : clipboardActionViews)
                 {
-                    if (boost::regex_search(std::wstring(actionView.Text()), regex))
+                    if (filter == SearchFilter::Triggers || filter == SearchFilter::Text)
                     {
-                        list.Append(box_value(actionView.Text()));
+                        auto triggersText = actionView.GetTriggersText();
+                        for (auto&& triggerText : triggersText)
+                        {
+                            if (boost::regex_search(std::wstring(triggerText), regex))
+                            {
+                                ClipboardManager::SearchSuggestionView hostControl = make<ClipboardManager::implementation::SearchSuggestionView>();
+
+                                xaml::FontIcon icon{};
+                                icon.Glyph(L"\ue945");
+                                hostControl.Icon(box_value(resLoader.getNamedResource(L"SearchFilter_TriggersDesc").value_or(L"t:")));
+                                hostControl.Suggestion(box_value(triggerText));
+                                hostControl.Subtitle(actionView.Text());
+
+                                list.Append(hostControl);
+                            }
+                        }
+                    }
+                    
+                    if (filter == SearchFilter::Actions || filter == SearchFilter::Text)
+                    {
+                        if (boost::regex_search(std::wstring(actionView.Text()), regex))
+                        {
+                            ClipboardManager::SearchSuggestionView hostControl = make<ClipboardManager::implementation::SearchSuggestionView>();
+
+                            hostControl.Icon(box_value(resLoader.getNamedResource(L"SearchFilter_TextDesc").value_or(L"x:")));
+                            hostControl.Suggestion(box_value(actionView.Text()));
+                            hostControl.Subtitle(L"");
+
+                            list.Append(hostControl);
+                        }
                     }
                 }
 
-                SearchActionsAutoSuggestBox().ItemsSource(list);
+                SearchActionsListView().ItemsSource(list);
             }
             catch (boost::regex_error&)
             {
@@ -718,7 +797,10 @@ namespace winrt::ClipboardManager::implementation
         }
         else
         {
-            SearchActionsAutoSuggestBox().ItemsSource(single_threaded_vector<IInspectable>());
+            SearchActionsListView().ItemsSource(single_threaded_vector<IInspectable>());
+
+            SearchTriggersToggleButton().IsChecked(false);
+            SearchTextToggleButton().IsChecked(false);
         }
     }
 
@@ -786,23 +868,21 @@ namespace winrt::ClipboardManager::implementation
     {
         loaded = false;
 
-        auto&& appVersionSetting = localSettings.get<std::wstring>(L"CurrentAppVersion");
-        if (appVersionSetting.has_value())
+        clipboardContentChangedToken = win::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
+        appWindow.Changed([this](auto, xaml::AppWindowChangedEventArgs args)
         {
-            clip::utils::AppVersion appVersion{ APP_VERSION };
-            clip::utils::AppVersion storedAppVersion{ appVersionSetting.value() };
-            if (appVersion.compare(storedAppVersion))
+            if (args.DidSizeChange())
             {
-                logger.info(L"Application has been updated, clearing settings and removing startup task.");
-
-                localSettings.clear();
-                clip::notifs::toasts::compat::DesktopNotificationManagerCompat::Uninstall();
-
-                updated = true;
+                if (appWindow.Size().Width < 930)
+                {
+                    visualStateManager.goToState(under1kState);
+                }
+                else if (appWindow.Size().Width > 930 && !over1kState.active())
+                {
+                    visualStateManager.goToState(over1kState);
+                }
             }
-        }
-
-        localSettings.insert(L"CurrentAppVersion", APP_VERSION);
+        });
 
         co_return;
     }
@@ -824,33 +904,30 @@ namespace winrt::ClipboardManager::implementation
             }
         }
 
-        clipboardContentChangedToken = win::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
-        appWindow.Changed([this](auto, xaml::AppWindowChangedEventArgs args)
-        {
-            if (args.DidSizeChange())
-            {
-                if (appWindow.Size().Width < 930)
-                {
-                    visualStateManager.goToState(under1kState);
-                }
-                else if (appWindow.Size().Width > 930 && !over1kState.active())
-                {
-                    visualStateManager.goToState(over1kState);
-                }
-            }
-        });
-
         visualStateManager.goToState(appWindow.Size().Width < 930 ? under1kState : over1kState);
 
-        if (updated)
+        auto&& appVersionSetting = localSettings.get<std::wstring>(L"CurrentAppVersion");
+        if (appVersionSetting.has_value())
         {
-            visualStateManager.goToState(applicationUpdatedState);
+            clip::utils::AppVersion appVersion{ APP_VERSION };
+            clip::utils::AppVersion storedAppVersion{ appVersionSetting.value() };
+            if (appVersion.major() < storedAppVersion.major())
+            {
+                logger.info(L"Application has been updated, clearing settings and removing startup task.");
+
+                localSettings.clear();
+                clip::notifs::toasts::compat::DesktopNotificationManagerCompat::Uninstall();
+
+                visualStateManager.goToState(applicationUpdatedState);
+            }
+            else if (!localSettings.get<bool>(L"FirstStartup").has_value())
+            {
+                localSettings.insert(L"FirstStartup", false);
+                visualStateManager.goToState(firstStartupState);
+            }
         }
-        else if (!localSettings.get<bool>(L"FirstStartup").has_value())
-        {
-            localSettings.insert(L"FirstStartup", false);
-            visualStateManager.goToState(firstStartupState);
-        }
+
+        localSettings.insert(L"CurrentAppVersion", APP_VERSION);
 
 #ifdef _DEBUG
         visualStateManager.goToState(firstStartupState);
@@ -864,13 +941,7 @@ namespace winrt::ClipboardManager::implementation
         visualStateManager.goToState(!triggers.empty() ? displayClipboardTriggersState : noClipboardTriggersToDisplayState);
 
         loaded = true;
-
         co_return;
-    }
-
-    void MainPage::ClipboadTriggersListPivot_Loaded(win::IInspectable const&, win::IInspectable const&)
-    {
-        //CreateTriggerViews();
     }
 
     winrt::async MainPage::LocateUserFileButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
@@ -929,6 +1000,7 @@ namespace winrt::ClipboardManager::implementation
             SettingsPivotTeachingTip(),
             ClipboardTriggersPivotTeachingTip(),
             ClipboardActionsPivotTeachingTip(),
+            SearchButtonTeachingTip(),
             OpenQuickSettingsButtonTeachingTip(),
             ReloadActionsButtonTeachingTip(),
             SilenceNotificationsToggleButtonTeachingTip(),
@@ -946,6 +1018,7 @@ namespace winrt::ClipboardManager::implementation
         else
         {
             teachingTips[teachingTipIndex - 1].IsOpen(false);
+            teachingTipIndex = 0;
 
             // Start tour of triggers:
             bool manuallyAddedAction = false;
@@ -1131,15 +1204,26 @@ namespace winrt::ClipboardManager::implementation
     void MainPage::OpenSearchButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
         visualStateManager.switchState(searchClosedState.group());
+
+        if (visualStateManager.getCurrentState(searchClosedState.group()).name() == searchClosedState.name())
+        {
+            SearchBoxGrid().Scale({ 0, 0, 0 });
+        }
+        else
+        {
+            SearchBoxGrid().Scale({ 1, 1, 1 });
+        }
+
+        // Show actions list view if the search list view is currently visible.
         if (showSearchListViewState.active())
         {
             visualStateManager.goToState(showActionsListViewState);
         }
     }
 
-    void MainPage::SearchActionsAutoSuggestBox_TextChanged(xaml::AutoSuggestBox const& sender, xaml::AutoSuggestBoxTextChangedEventArgs const& args)
+    void MainPage::SearchActionsAutoSuggestBox_TextChanged(win::IInspectable const& sender, xaml::TextChangedEventArgs const& args)
     {
-        RefreshSearchBoxSuggestions(std::wstring(sender.Text()));
+        RefreshSearchBoxSuggestions(std::wstring(SearchActionsAutoSuggestBox().Text()));
     }
 
     void MainPage::SearchActionsAutoSuggestBox_GotFocus(win::IInspectable const&, xaml::RoutedEventArgs const&)
@@ -1149,6 +1233,7 @@ namespace winrt::ClipboardManager::implementation
 
     void MainPage::SearchActionsAutoSuggestBox_SuggestionChosen(xaml::AutoSuggestBox const& sender, xaml::AutoSuggestBoxSuggestionChosenEventArgs const& args)
     {
+        /*SearchActionsListView().Items().Clear();
         auto selectedItem = args.SelectedItem().try_as<hstring>();
         if (selectedItem.has_value())
         {
@@ -1163,9 +1248,29 @@ namespace winrt::ClipboardManager::implementation
                     SearchActionsListView().Items().Append(box_value(view.Text()));
                 }
             }
+        }*/
+    }
+
+    void MainPage::SearchBoxGrid_Loading(xaml::FrameworkElement const&, win::IInspectable const&)
+    {
+        SearchActionsIgnoreCaseToggleButton().IsChecked(localSettings.get<bool>(L"SearchActionsIgnoreCase").value_or(true));
+    }
+
+    void MainPage::CompactModeToggleButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    {
+        if (CompactModeToggleButton().IsChecked().GetBoolean())
+        {
+            for (auto&& view : clipboardActionViews)
+            {
+                xaml::VisualStateManager::GoToState(view, L"CompactVisual", true);
+            }
+        }
+        else
+        {
+            for (auto&& view : clipboardActionViews)
+            {
+                xaml::VisualStateManager::GoToState(view, L"NormalVisual", true);
+            }
         }
     }
 }
-
-
-

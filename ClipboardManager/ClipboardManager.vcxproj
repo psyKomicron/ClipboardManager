@@ -180,6 +180,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="SearchSuggestionView.h">
+      <DependentUpon>SearchSuggestionView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="src\FormatExceptionCode.hpp" />
     <ClInclude Include="MessagesBar.h">
       <DependentUpon>MessagesBar.xaml</DependentUpon>
@@ -246,6 +250,10 @@
     <ClInclude Include="src\notifs\ToastNotificationHandler.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="SearchSuggestionView.cpp">
+      <DependentUpon>SearchSuggestionView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="src\FormatExceptionCode.cpp" />
     <ClCompile Include="MessagesBar.cpp">
       <DependentUpon>MessagesBar.xaml</DependentUpon>
@@ -354,6 +362,10 @@
       <DependentUpon>RegexTesterControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="SearchSuggestionView.idl">
+      <DependentUpon>SearchSuggestionView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="SettingsPage.idl">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -380,6 +392,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="RegexTesterControl.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SearchSuggestionView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="SettingsPage.xaml">
