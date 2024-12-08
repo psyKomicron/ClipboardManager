@@ -11,19 +11,21 @@
     BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
     BorderThickness="1"
     Padding="16,9,16,9"
+    MaxHeight="120"
+    MinHeight="70"
     IsEnabledChanged="UserControl_IsEnabledChanged"
     Loaded="UserControl_Loaded">
 
     <Grid 
         x:Name="RootGrid"
-        Padding="{x:Bind Padding}"
+        Padding="{x:Bind Padding, Mode=OneWay}"
         Background="{x:Bind Background, Mode=OneWay}"
         CornerRadius="{x:Bind CornerRadius}"
         BorderBrush="{x:Bind BorderBrush, Mode=OneWay}"
         BorderThickness="{x:Bind BorderThickness}"
         ColumnSpacing="7"
-        MaxHeight="120"
-        MinHeight="70">
+        MaxHeight="{x:Bind MaxHeight, Mode=OneWay}"
+        MinHeight="{x:Bind MinHeight, Mode=OneWay}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
