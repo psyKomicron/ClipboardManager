@@ -76,19 +76,19 @@ namespace clip
     template<concepts::StringInsertable T>
     inline std::optional<T> Settings::get(const key_t& key)
     {
-        std::optional<std::wstring> opt = wil::reg::try_get_value_string(hKey.get(), key.c_str());
-        if (opt.has_value())
+        if constexpr (std::same_as<T, std::wstring>)
         {
-            return T{ opt.value() };
+            return wil::reg::try_get_value_string(hKey.get(), key.c_str());
         }
-
-        return std::optional<T>();
-    }
-
-    template<>
-    inline std::optional<std::wstring> Settings::get(const key_t& key)
-    {
-        return wil::reg::try_get_value_string(hKey.get(), key.c_str());
+        else
+        {
+            std::optional<std::wstring> opt = wil::reg::try_get_value_string(hKey.get(), key.c_str());
+            if (opt.has_value())
+            {
+                return T{ opt.value() };
+            }
+            return std::nullopt;
+        }
     }
 
     template<concepts::BooleanInsertable T>
@@ -106,7 +106,7 @@ namespace clip
             logger.debug(L"'" + key + L"' not in registry.");
 #endif // ENABLE_LOGGING
 
-            return std::optional<bool>();
+            return std::nullopt;
         }
     }
 
@@ -134,7 +134,7 @@ namespace clip
         return std::optional<T>();
     }
 
-    template<concepts::Insertable T>
+    template<concepts::ObjectInsertable T>
     inline T Settings::get(const key_t& key)
     {
         if (!contains(key))
@@ -199,6 +199,15 @@ namespace clip
         wil::reg::set_value_dword(hKey.get(), key.c_str(), value ? 1 : 0);
     }
 
+    template<concepts::BooleanInsertable T>
+    inline void Settings::insert(const key_t & key, const std::optional<T>& value)
+    {
+        if (value.has_value())
+        {
+            insert<T>(key, value.value());
+        }
+    }
+
     template<concepts::IntegralInsertable T>
     inline void Settings::insert(const key_t& key, const T& value)
     {
@@ -212,7 +221,7 @@ namespace clip
         insert<uint32_t>(key, static_cast<uint32_t>(value));
     }
 
-    template<concepts::Insertable T>
+    template<concepts::ObjectInsertable T>
     inline void Settings::insert(const key_t& key, const T& value)
     {
         auto subKey = createSubKey(key);
