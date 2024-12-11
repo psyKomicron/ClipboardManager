@@ -239,7 +239,7 @@ namespace winrt::ClipboardManager::implementation
             catch (boost::regex_error regexError)
             {
                 auto resString = std::format(L"BoostRegexErrorCode{}", static_cast<int>(regexError.code()));
-                auto errorCodeString = resLoader.getNamedResource(hstring(resString));
+                auto errorCodeString = resLoader.getResource(hstring(resString));
                 if (errorCodeString.has_value())
                 {
                     message = errorCodeString.value();
