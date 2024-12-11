@@ -21,11 +21,11 @@
 
 namespace winrt::ClipboardManager::implementation
 {
-    enum class SearchFilter
+    enum SearchFilter
     {
         Actions = 1 << 0,
         Triggers = 1 << 1,
-        Text = 1 << 2,
+        Text = Actions | Triggers,
     };
 
     struct MainPage : MainPageT<MainPage>, clip::ui::PropertyChangedClass
@@ -129,7 +129,8 @@ namespace winrt::ClipboardManager::implementation
         void SearchActionsAutoSuggestBox_SuggestionChosen(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxSuggestionChosenEventArgs const& args);
         void SearchBoxGrid_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
         void CompactModeToggleButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-    };
+        void SearchActionsListView_DoubleTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& e);
+};
 }
 
 namespace winrt::ClipboardManager::factory_implementation

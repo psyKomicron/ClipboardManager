@@ -30,6 +30,7 @@
 #include <microsoft.ui.xaml.window.h>
 #include <winrt/Microsoft.UI.Interop.h>
 #include <winrt/Windows.UI.Text.h>
+#include <winrt/Windows.Globalization.DateTimeFormatting.h>
 
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/regex.hpp>
@@ -41,6 +42,7 @@
 #include <chrono>
 #include <sstream>
 #include <limits>
+#include <format>
 
 namespace xaml
 {
@@ -703,12 +705,14 @@ namespace winrt::ClipboardManager::implementation
 
     void MainPage::RefreshSearchBoxSuggestions(std::wstring text)
     {
+        auto list = single_threaded_vector<IInspectable>();
+
         if (!text.empty())
         {
             static const std::map<SearchFilter, std::wstring> filtersPrefixes
             {
-                { SearchFilter::Triggers, static_cast<std::wstring>(resLoader.getNamedResource(L"SearchFilter_Triggers").value_or(L"t:")) },
-                { SearchFilter::Text, static_cast<std::wstring>(resLoader.getNamedResource(L"SearchFilter_Text").value_or(L"x:")) }
+                { SearchFilter::Triggers, static_cast<std::wstring>(resLoader.getResource(L"SearchFilter_Triggers").value_or(L"t:")) },
+                { SearchFilter::Text, static_cast<std::wstring>(resLoader.getResource(L"SearchFilter_Text").value_or(L"x:")) }
             };
             
             SearchFilter filter = SearchFilter::Actions;
@@ -742,20 +746,25 @@ namespace winrt::ClipboardManager::implementation
 
             try
             {
-                auto list = single_threaded_vector<IInspectable>();
-                
                 if (text.empty())
                 {
                     text = L".*";
                 }
+
                 auto flags = SearchActionsIgnoreCaseToggleButton().IsChecked().GetBoolean() ? boost::regex_constants::icase : boost::regex_constants::normal;
                 auto regex = boost::wregex(text, flags);
 
+                const hstring searchFilter_TriggersDesc = resLoader.getResource(L"SearchFilter_TriggersDesc").value_or(L"t:");
+                const hstring searchFilter_TextDesc = resLoader.getResource(L"SearchFilter_TextDesc").value_or(L"x:");
+
                 for (auto&& actionView : clipboardActionViews)
                 {
-                    if (filter == SearchFilter::Triggers || filter == SearchFilter::Text)
+                    boost::wsmatch matches{};
+                    
+                    auto triggersText = actionView.GetTriggersText();
+
+                    if ((filter & SearchFilter::Triggers) == SearchFilter::Triggers)
                     {
-                        auto triggersText = actionView.GetTriggersText();
                         for (auto&& triggerText : triggersText)
                         {
                             if (boost::regex_search(std::wstring(triggerText), regex))
@@ -764,7 +773,7 @@ namespace winrt::ClipboardManager::implementation
 
                                 xaml::FontIcon icon{};
                                 icon.Glyph(L"\ue945");
-                                hostControl.Icon(box_value(resLoader.getNamedResource(L"SearchFilter_TriggersDesc").value_or(L"t:")));
+                                hostControl.Icon(box_value(searchFilter_TriggersDesc));
                                 hostControl.Suggestion(box_value(triggerText));
                                 hostControl.Subtitle(actionView.Text());
 
@@ -773,22 +782,45 @@ namespace winrt::ClipboardManager::implementation
                         }
                     }
                     
-                    if (filter == SearchFilter::Actions || filter == SearchFilter::Text)
+                    if ((filter & SearchFilter::Actions) == SearchFilter::Actions
+                        && boost::regex_search(std::wstring(actionView.Text()), regex))
                     {
-                        if (boost::regex_search(std::wstring(actionView.Text()), regex))
+                        ClipboardManager::SearchSuggestionView hostControl = make<ClipboardManager::implementation::SearchSuggestionView>();
+                        hostControl.Icon((filter & SearchFilter::Text) == SearchFilter::Text 
+                                            ? box_value(searchFilter_TextDesc)
+                                            : box_value(L"action"));
+                        hostControl.Suggestion(box_value(actionView.Text()));
+
+                        xaml::DropDownButton dropdownButton{};
+                        xaml::Flyout flyout{};
+                        dropdownButton.Flyout(flyout);
+
+                        xaml::StackPanel stackPanel{};
+                        stackPanel.Spacing(2);
+                        stackPanel.Orientation(xaml::Orientation::Vertical);
+                        flyout.Content(stackPanel);
+
+                        for (auto&& triggerText : triggersText)
                         {
-                            ClipboardManager::SearchSuggestionView hostControl = make<ClipboardManager::implementation::SearchSuggestionView>();
-
-                            hostControl.Icon(box_value(resLoader.getNamedResource(L"SearchFilter_TextDesc").value_or(L"x:")));
-                            hostControl.Suggestion(box_value(actionView.Text()));
-                            hostControl.Subtitle(L"");
-
-                            list.Append(hostControl);
+                            xaml::TextBlock triggerTextBlock{};
+                            triggerTextBlock.Text(triggerText);
+                            stackPanel.Children().Append(triggerTextBlock);
                         }
+
+                        static Windows::Globalization::DateTimeFormatting::DateTimeFormatter formatter
+                        {
+                            L"{hour.integer}:{minute.integer(2)} {month.integer(2)}/{day.integer(2)}/{year.abbreviated}"
+                        };
+                        hostControl.Subtitle(formatter.Format(actionView.Timestamp()));
+
+                        auto size = stackPanel.Children().Size();
+                        auto message = std::vformat(resLoader.getStdResource(L"UserMessage_XNumberOfTriggers").value_or(L"{}"), std::make_wformat_args(size));
+                        dropdownButton.Content(box_value(message));
+                        hostControl.RightContent(dropdownButton);
+
+                        list.Append(hostControl);
                     }
                 }
-
-                SearchActionsListView().ItemsSource(list);
             }
             catch (boost::regex_error&)
             {
@@ -797,11 +829,11 @@ namespace winrt::ClipboardManager::implementation
         }
         else
         {
-            SearchActionsListView().ItemsSource(single_threaded_vector<IInspectable>());
-
             SearchTriggersToggleButton().IsChecked(false);
             SearchTextToggleButton().IsChecked(false);
         }
+
+        SearchActionsListView().ItemsSource(list);
     }
 
     Windows::Foundation::IInspectable MainPage::asInspectable()
@@ -1272,5 +1304,10 @@ namespace winrt::ClipboardManager::implementation
                 xaml::VisualStateManager::GoToState(view, L"NormalVisual", true);
             }
         }
+    }
+
+    void MainPage::SearchActionsListView_DoubleTapped(win::IInspectable const&, winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& e)
+    {
+        logger.debug(L"Search list view double tapped.");
     }
 }

@@ -779,4 +779,7 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
   <data name="SearchActionsListView.Header" xml:space="preserve">
     <value>Search results:</value>
   </data>
+  <data name="UserMessage_XNumberOfTriggers" xml:space="preserve">
+    <value>{} triggers</value>
+  </data>
 </root>

@@ -932,4 +932,7 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   <data name="SearchActionsListView.Header" xml:space="preserve">
     <value>Résultats de recherche :</value>
   </data>
+  <data name="UserMessage_XNumberOfTriggers" xml:space="preserve">
+    <value>{} déclencheurs</value>
+  </data>
 </root>

@@ -777,4 +777,7 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Search results:</value>
     <comment>MainPage</comment>
   </data>
+  <data name="UserMessage_XNumberOfTriggers" xml:space="preserve">
+    <value>{} triggers</value>
+  </data>
 </root>

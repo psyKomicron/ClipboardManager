@@ -6,9 +6,20 @@
     xmlns:local="using:ClipboardManager"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    HorizontalAlignment="Stretch"
+    Background="{StaticResource SubtleFillColorTransparentBrush}">
+    <UserControl.ContextFlyout>
+        <MenuFlyout>
+            <MenuFlyoutItem Text="Copy link">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xe8c8;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+        </MenuFlyout>
+    </UserControl.ContextFlyout>
 
-    <Grid RowSpacing="4" ColumnSpacing="7" Padding="3,6">
+    <Grid RowSpacing="4" ColumnSpacing="7" Padding="3,6" Background="{x:Bind Background, Mode=OneWay}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition/>
@@ -30,8 +41,11 @@
             <ContentPresenter Content="{x:Bind Suggestion, Mode=OneWay}" VerticalAlignment="Center"/>
         </StackPanel>
 
-        <ContentPresenter Grid.Column="1" Grid.Row="0" Content="{x:Bind RightContent, Mode=OneWay}"/>
+        <ScrollViewer Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right">
+            <ContentPresenter Content="{x:Bind RightContent, Mode=OneWay}"/>
+        </ScrollViewer>
 
-        <TextBlock Grid.Column="0" Grid.Row="1" Text="{x:Bind Subtitle, Mode=OneWay}" Style="{StaticResource SettingSubheaderTextBlockStyle}"/>
+        <TextBlock Grid.Column="0" Grid.Row="1" Text="{x:Bind Subtitle, Mode=OneWay}" Style="{StaticResource SettingSubheaderTextBlockStyle}" 
+                   Margin="4,0,20,0" TextTrimming="CharacterEllipsis"/>
     </Grid>
 </UserControl>
