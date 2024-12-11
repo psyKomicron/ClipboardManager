@@ -7,6 +7,7 @@ namespace ClipboardManager
         ClipboardActionView(String text);
 
         String Text;
+        Windows.Foundation.DateTime Timestamp;
 
         event Windows.Foundation.TypedEventHandler<ClipboardActionView, IInspectable> Removed;
 

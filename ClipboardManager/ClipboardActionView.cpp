@@ -44,6 +44,8 @@ namespace winrt::ClipboardManager::implementation
                 optionsClosedState,
                 optionsOpenState
             });
+        
+        _timestamp = winrt::clock::now();
     }
 
     ClipboardActionView::ClipboardActionView(const winrt::hstring& text) : ClipboardActionView()
@@ -59,6 +61,16 @@ namespace winrt::ClipboardManager::implementation
     void ClipboardActionView::Text(const winrt::hstring& value)
     {
         _text = value;
+    }
+
+    Windows::Foundation::DateTime ClipboardActionView::Timestamp()
+    {
+        return _timestamp;
+    }
+
+    void ClipboardActionView::Timestamp(const Windows::Foundation::DateTime& value)
+    {
+        _timestamp = value;
     }
 
     winrt::event_token ClipboardActionView::Removed(const event_removed_t& handler)
@@ -200,7 +212,7 @@ namespace winrt::ClipboardManager::implementation
                 dataPackage.Properties().ApplicationName(APP_NAMEW);
                 win::Clipboard::SetContent(dataPackage);
 
-                InfoBar().Message(resLoader.getNamedResource(L"Message_CopiedToClipboard").value_or(L"Copied"));
+                InfoBar().Message(resLoader.getResource(L"Message_CopiedToClipboard").value_or(L"Copied"));
                 InfoBar().Severity(ui::InfoBarSeverity::Success);
                 InfoBar().IsOpen(true);
             }
@@ -208,7 +220,7 @@ namespace winrt::ClipboardManager::implementation
             {
                 logger.error(L"Failed to format and add formatted link to clipboard (ClipboardActionView::CopyLinkToClipboard).");
 
-                InfoBar().Message(resLoader.getNamedResource(L"ErrorMessage_FailedToCopyToClipboard").value_or(L"Error"));
+                InfoBar().Message(resLoader.getResource(L"ErrorMessage_FailedToCopyToClipboard").value_or(L"Error"));
                 InfoBar().Severity(ui::InfoBarSeverity::Error);
                 InfoBar().IsOpen(true);
             }

@@ -13,30 +13,35 @@ namespace winrt::ClipboardManager::implementation
     struct ClipboardActionView : ClipboardActionViewT<ClipboardActionView>
     {
     public:
-        using event_removed_t = winrt::Windows::Foundation::TypedEventHandler<winrt::ClipboardManager::ClipboardActionView, winrt::Windows::Foundation::IInspectable>;
-        using actions_t = winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::Collections::IVector<winrt::hstring>>;
+        using event_removed_t = Windows::Foundation::TypedEventHandler<ClipboardManager::ClipboardActionView, Windows::Foundation::IInspectable>;
+        using actions_t = Windows::Foundation::Collections::IVector<Windows::Foundation::Collections::IVector<hstring>>;
 
         ClipboardActionView();
-        ClipboardActionView(const winrt::hstring& text);
+        ClipboardActionView(const hstring& text);
 
-        winrt::hstring Text() const;
-        void Text(const winrt::hstring& value);
+        hstring Text() const;
+        void Text(const hstring& value);
+        Windows::Foundation::DateTime Timestamp();
+        void Timestamp(const Windows::Foundation::DateTime& value);
 
-        winrt::event_token Removed(const event_removed_t& handler);
-        void Removed(const winrt::event_token& token);
+        event_token Removed(const event_removed_t& handler);
+        void Removed(const event_token& token);
 
-        void AddAction(const winrt::hstring& label, const winrt::hstring& format,
-                       const winrt::hstring& regex, const bool& enabled, const bool& useRegexMatchResults,
+        void AddAction(const hstring& label, const hstring& format,
+                       const hstring& regex, const bool& enabled, const bool& useRegexMatchResults,
                        const bool& ignoreCase);
-        void EditAction(const uint32_t& pos, const winrt::hstring& label, const winrt::hstring& format, 
-                        const winrt::hstring& regex, const bool& enabled, const bool& useRegexMatchResults,
+        void EditAction(const uint32_t& pos, const hstring& label, const hstring& format, 
+                        const hstring& regex, const bool& enabled, const bool& useRegexMatchResults,
                         const bool& ignoreCase);
-        bool IndexOf(uint32_t& pos, const winrt::hstring& label);
-        winrt::Windows::Foundation::Collections::IVector<hstring> GetTriggersText();
+        bool IndexOf(uint32_t& pos, const hstring& label);
+        Windows::Foundation::Collections::IVector<hstring> GetTriggersText();
 
-        winrt::async StartTour();
+        async StartTour();
 
     private:
+        static clip::utils::ResLoader resLoader;
+
+        clip::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
         using VisualState = clip::ui::VisualState<ClipboardActionView>;
         VisualState optionsClosedState{ L"OptionsClosed", 0, true };
         VisualState optionsOpenState{ L"OptionsOpen", 0, false };
@@ -45,31 +50,28 @@ namespace winrt::ClipboardManager::implementation
         VisualState pointerPressedState{ L"PointerPressed", 1, false };
         VisualState normalVisualState{ L"NormalVisual", 2, true };
         VisualState compactVisualState{ L"CompactVisual", 2, true };
-
-        static clip::utils::ResLoader resLoader;
-
         std::atomic_flag teachingTipsWaitFlag{};
         clip::utils::Logger logger{ L"ClipboardActionView" };
-        winrt::hstring _text{};
+        hstring _text{};
         std::vector<clip::ClipboardTrigger> triggers{};
-        clip::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
+        Windows::Foundation::DateTime _timestamp{};
 
-        winrt::event<event_removed_t> e_removed{};
+        event<event_removed_t> e_removed{};
 
         void AddTriggerButton(clip::ClipboardTrigger& trigger);
         void CopyLinkToClipboard();
 
     public:
-        void UserControl_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
-        void OpenOptionsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void HyperlinkButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void FormatLinkButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void RemoveActionButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void TeachingTip_ButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
-        void RootGrid_PointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
-        void RootGrid_PointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
-        void RootGrid_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
-        void ContentGrid_PointerReleased(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+        void UserControl_Loading(Microsoft::UI::Xaml::FrameworkElement const& sender, Windows::Foundation::IInspectable const& args);
+        void OpenOptionsButton_Click(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void HyperlinkButton_Click(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void FormatLinkButton_Click(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void RemoveActionButton_Click(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void TeachingTip_ButtonClick(Microsoft::UI::Xaml::Controls::TeachingTip const& sender, Windows::Foundation::IInspectable const& args);
+        void RootGrid_PointerEntered(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+        void RootGrid_PointerExited(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+        void RootGrid_PointerPressed(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+        void ContentGrid_PointerReleased(Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
     };
 }
 
