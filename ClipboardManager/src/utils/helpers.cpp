@@ -78,7 +78,7 @@ namespace clip::utils
         }
         catch (winrt::hresult_error)
         {
-            std::wcerr << L"'getNamedResource' Failed to instanciate or get string from resources." << std::endl;
+            std::wcerr << L"'getResource' Failed to instanciate or get string from resources." << std::endl;
             return {};
         }
     }

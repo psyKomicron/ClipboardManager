@@ -12,7 +12,8 @@ namespace clip::utils
     public:
         ResLoader();
 
-        std::optional<winrt::hstring> getNamedResource(const winrt::hstring& name);
+        std::optional<winrt::hstring> getResource(const winrt::hstring& name);
+        std::optional<std::wstring> getStdResource(const std::wstring_view& name);
         winrt::hstring getOrAlt(const winrt::hstring& name, const winrt::hstring& alt);
 
     private:
