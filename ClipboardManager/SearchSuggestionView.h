@@ -24,7 +24,7 @@ namespace winrt::ClipboardManager::implementation
         // Inherited via PropertyChangedClass
         Windows::Foundation::IInspectable asInspectable() override;
 
-        void ShowCopiedToClipboard();
+        void ShowCopiedToClipboard(const hstring& triggerLabel);
 
     private:
         clip::ui::ListenablePropertyValue<IInspectable> _icon{ BIND(&SearchSuggestionView::raisePropertyChanged), nullptr };

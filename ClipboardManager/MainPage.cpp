@@ -805,7 +805,7 @@ namespace winrt::ClipboardManager::implementation
                                     dataPackage.Properties().ApplicationName(APP_NAMEW);
                                     win::Clipboard::SetContent(dataPackage);
 
-                                    searchSuggestionView.ShowCopiedToClipboard();
+                                    searchSuggestionView.ShowCopiedToClipboard(triggerLabel);
                                 }
                             }
                         });
@@ -824,7 +824,6 @@ namespace winrt::ClipboardManager::implementation
                             button.Click([this](auto&& sender, auto&&)
                             {
                                 win::IVector<hstring> tag = sender.as<xaml::FrameworkElement>().Tag().as<win::IVector<hstring>>();
-                                logger.debug(L"Menu flyout item clicked.");
                                 auto actionText = tag.GetAt(0);
                                 auto triggerLabel = tag.GetAt(1);
 

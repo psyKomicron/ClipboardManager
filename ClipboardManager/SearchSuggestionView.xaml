@@ -79,8 +79,13 @@
         </Grid>
 
         <StackPanel x:Name="ClipboardInfoPanel" x:Load="False" Opacity="0" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Orientation="Horizontal">
-            <FontIcon Glyph="&#xe73e;" Grid.Column="0" FontSize="22" VerticalAlignment="Center" Foreground="{ThemeResource SystemFillColorSuccess}"/>
-            <TextBlock x:Uid="CopiedToClipboardTextBlock" Style="{StaticResource BodyStrongTextBlockStyle}" Grid.Column="1" Text="Link copied to clipboard" VerticalAlignment="Center"/>
+            <FontIcon Glyph="&#xe73e;" FontSize="22" VerticalAlignment="Center" Foreground="{ThemeResource SystemFillColorSuccess}"/>
+            <TextBlock x:Uid="CopiedToClipboardTextBlock" Style="{StaticResource BodyStrongTextBlockStyle}" VerticalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" Margin="3,0,0,0" VerticalAlignment="Center">
+                <TextBlock Text="(" Style="{StaticResource BodyStrongTextBlockStyle}" VerticalAlignment="Center"/>
+                <TextBlock x:Name="TriggerCopiedTextBlock" Style="{StaticResource BodyStrongTextBlockStyle}" VerticalAlignment="Center"/>
+                <TextBlock Text=")" Style="{StaticResource BodyStrongTextBlockStyle}" VerticalAlignment="Center"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </UserControl>

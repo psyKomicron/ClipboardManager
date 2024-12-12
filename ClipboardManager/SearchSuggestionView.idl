@@ -10,6 +10,6 @@ namespace ClipboardManager
         IInspectable RightContent;
         String Subtitle;
 
-        void ShowCopiedToClipboard();
+        void ShowCopiedToClipboard(String triggerLabel);
     }
 }
