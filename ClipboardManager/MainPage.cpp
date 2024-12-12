@@ -53,12 +53,13 @@ namespace xaml
 
 namespace win
 {
-    using namespace winrt::Microsoft::Windows::AppNotifications;
     using namespace winrt::Microsoft::Windows::AppNotifications::Builder;
+    using namespace winrt::Microsoft::Windows::AppNotifications;
     using namespace winrt::Windows::ApplicationModel;
     using namespace winrt::Windows::ApplicationModel::DataTransfer;
     using namespace winrt::Windows::ApplicationModel::Resources;
     using namespace winrt::Windows::Foundation;
+    using namespace winrt::Windows::Foundation::Collections;
     using namespace winrt::Windows::Storage::Pickers;
     using namespace winrt::Windows::System;
 }
@@ -752,14 +753,14 @@ namespace winrt::ClipboardManager::implementation
                 }
 
                 auto flags = SearchActionsIgnoreCaseToggleButton().IsChecked().GetBoolean() ? boost::regex_constants::icase : boost::regex_constants::normal;
-                auto regex = boost::wregex(text, flags);
+                const auto regex = boost::wregex(text, flags);
 
                 const hstring searchFilter_TriggersDesc = resLoader.getResource(L"SearchFilter_TriggersDesc").value_or(L"t:");
                 const hstring searchFilter_TextDesc = resLoader.getResource(L"SearchFilter_TextDesc").value_or(L"x:");
 
                 for (auto&& actionView : clipboardActionViews)
                 {
-                    boost::wsmatch matches{};
+                    //boost::wsmatch matches{};
                     
                     auto triggersText = actionView.GetTriggersText();
 
@@ -770,9 +771,6 @@ namespace winrt::ClipboardManager::implementation
                             if (boost::regex_search(std::wstring(triggerText), regex))
                             {
                                 ClipboardManager::SearchSuggestionView hostControl = make<ClipboardManager::implementation::SearchSuggestionView>();
-
-                                xaml::FontIcon icon{};
-                                icon.Glyph(L"\ue945");
                                 hostControl.Icon(box_value(searchFilter_TriggersDesc));
                                 hostControl.Suggestion(box_value(triggerText));
                                 hostControl.Subtitle(actionView.Text());
@@ -785,40 +783,76 @@ namespace winrt::ClipboardManager::implementation
                     if ((filter & SearchFilter::Actions) == SearchFilter::Actions
                         && boost::regex_search(std::wstring(actionView.Text()), regex))
                     {
-                        ClipboardManager::SearchSuggestionView hostControl = make<ClipboardManager::implementation::SearchSuggestionView>();
-                        hostControl.Icon((filter & SearchFilter::Text) == SearchFilter::Text 
+                        ClipboardManager::SearchSuggestionView searchSuggestionView = make<ClipboardManager::implementation::SearchSuggestionView>();
+                        searchSuggestionView.Icon((filter & SearchFilter::Text) == SearchFilter::Text 
                                             ? box_value(searchFilter_TextDesc)
                                             : box_value(L"action"));
-                        hostControl.Suggestion(box_value(actionView.Text()));
+                        searchSuggestionView.Suggestion(box_value(actionView.Text()));
+                        searchSuggestionView.RightTapped([this, tag = single_threaded_vector<hstring>({ actionView.Text(), triggersText.GetAt(0) }), searchSuggestionView]
+                                                         (auto&& s, auto&& e)
+                        {
+                            logger.debug(L"SearchSuggestionView RightTapped.");
+                            auto actionText = tag.GetAt(0);
+                            auto triggerLabel = tag.GetAt(1);
+
+                            std::unique_lock lock{ triggersMutex };
+                            for (auto&& trigger : triggers)
+                            {
+                                if (triggerLabel == trigger.label())
+                                {
+                                    win::DataPackage dataPackage{};
+                                    dataPackage.SetText(trigger.formatTrigger(actionText.data()));
+                                    dataPackage.Properties().ApplicationName(APP_NAMEW);
+                                    win::Clipboard::SetContent(dataPackage);
+
+                                    searchSuggestionView.ShowCopiedToClipboard();
+                                }
+                            }
+                        });
 
                         xaml::DropDownButton dropdownButton{};
-                        xaml::Flyout flyout{};
+                        xaml::MenuFlyout flyout{};
                         dropdownButton.Flyout(flyout);
-
-                        xaml::StackPanel stackPanel{};
-                        stackPanel.Spacing(2);
-                        stackPanel.Orientation(xaml::Orientation::Vertical);
-                        flyout.Content(stackPanel);
-
                         for (auto&& triggerText : triggersText)
                         {
-                            xaml::TextBlock triggerTextBlock{};
-                            triggerTextBlock.Text(triggerText);
-                            stackPanel.Children().Append(triggerTextBlock);
+                            xaml::MenuFlyoutItem button{};
+                            button.Text(triggerText);
+                            auto tag = single_threaded_vector<hstring>();
+                            tag.Append(actionView.Text());
+                            tag.Append(triggerText);
+                            button.Tag(tag);
+                            button.Click([this](auto&& sender, auto&&)
+                            {
+                                win::IVector<hstring> tag = sender.as<xaml::FrameworkElement>().Tag().as<win::IVector<hstring>>();
+                                logger.debug(L"Menu flyout item clicked.");
+                                auto actionText = tag.GetAt(0);
+                                auto triggerLabel = tag.GetAt(1);
+
+                                std::unique_lock lock{ triggersMutex };
+                                for (auto&& trigger : triggers)
+                                {
+                                    if (triggerLabel == trigger.label())
+                                    {
+                                        clip::utils::Launcher launcher{};
+                                        launcher.launch(trigger, static_cast<std::wstring>(actionText));
+                                    }
+                                }
+                            });
+                            flyout.Items().Append(button);
                         }
 
-                        static Windows::Globalization::DateTimeFormatting::DateTimeFormatter formatter
+                        const Windows::Globalization::DateTimeFormatting::DateTimeFormatter formatter
                         {
                             L"{hour.integer}:{minute.integer(2)} {month.integer(2)}/{day.integer(2)}/{year.abbreviated}"
                         };
-                        hostControl.Subtitle(formatter.Format(actionView.Timestamp()));
+                        searchSuggestionView.Subtitle(formatter.Format(actionView.Timestamp()));
 
-                        auto size = stackPanel.Children().Size();
+                        auto size = triggersText.Size();
                         auto message = std::vformat(resLoader.getStdResource(L"UserMessage_XNumberOfTriggers").value_or(L"{}"), std::make_wformat_args(size));
                         dropdownButton.Content(box_value(message));
-                        hostControl.RightContent(dropdownButton);
+                        searchSuggestionView.RightContent(dropdownButton);
 
-                        list.Append(hostControl);
+                        list.Append(searchSuggestionView);
                     }
                 }
             }
@@ -1310,4 +1344,26 @@ namespace winrt::ClipboardManager::implementation
     {
         logger.debug(L"Search list view double tapped.");
     }
+
+    void MainPage::RootGrid_ActualThemeChanged(xaml::FrameworkElement const& sender, win::IInspectable const& args)
+    {
+        if (appWindow.TitleBar().IsCustomizationSupported())
+        {
+            auto&& titleBar = appWindow.TitleBar();
+            auto&& resources = winrt::Application::Current().Resources();
+
+            appWindow.TitleBar().ButtonInactiveForegroundColor(
+                resources.TryLookup(winrt::box_value(L"AppTitleBarHoverColor")).as<winrt::Windows::UI::Color>());
+            appWindow.TitleBar().ButtonHoverBackgroundColor(
+                resources.TryLookup(winrt::box_value(L"ButtonHoverBackgroundColor")).as<winrt::Windows::UI::Color>());
+            appWindow.TitleBar().ButtonForegroundColor(
+                resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>());
+            appWindow.TitleBar().ButtonHoverForegroundColor(
+                resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>());
+            appWindow.TitleBar().ButtonPressedForegroundColor(
+                resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>());
+        }
+    }
 }
+
+

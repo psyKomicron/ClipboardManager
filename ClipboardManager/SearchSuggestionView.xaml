@@ -8,44 +8,79 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     HorizontalAlignment="Stretch"
-    Background="{StaticResource SubtleFillColorTransparentBrush}">
-    <UserControl.ContextFlyout>
-        <MenuFlyout>
-            <MenuFlyoutItem Text="Copy link">
-                <MenuFlyoutItem.Icon>
-                    <FontIcon Glyph="&#xe8c8;"/>
-                </MenuFlyoutItem.Icon>
-            </MenuFlyoutItem>
-        </MenuFlyout>
-    </UserControl.ContextFlyout>
+    Background="{StaticResource SubtleFillColorTransparentBrush}"
+    IsRightTapEnabled="True"
+    RightTapped="UserControl_RightTapped">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <Color x:Key="BorderBackgroundColor">BlueViolet</Color>
+                    <Color x:Key="BorderForegroundColor">Violet</Color>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="BorderBackgroundColor">DarkCyan</Color>
+                    <Color x:Key="BorderForegroundColor">DarkBlue</Color>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
-    <Grid RowSpacing="4" ColumnSpacing="7" Padding="3,6" Background="{x:Bind Background, Mode=OneWay}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Grid Background="{x:Bind Background, Mode=OneWay}" Padding="3,6">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="ClipboardNone"/>
+                <VisualState x:Name="ClipboardCopied">
+                    <Storyboard Completed="ClipboardStatesStoryboard_Completed">
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentGrid" Storyboard.TargetProperty="Opacity">
+                            <LinearDoubleKeyFrame KeyTime="0:0:0.181" Value="0.1"/>
+                            <DiscreteDoubleKeyFrame KeyTime="0:0:1" Value="0.1"/>
+                            <SplineDoubleKeyFrame KeyTime="0:0:1.181" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="1" />
+                        </DoubleAnimationUsingKeyFrames>
 
-        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Spacing="12" VerticalAlignment="Center">
-            <Border Padding="4,3" CornerRadius="{StaticResource ControlCornerRadius}">
-                <Border.Background>
-                    <SolidColorBrush Color="BlueViolet" Opacity="0.1"/>
-                </Border.Background>
-                <Viewbox>
-                    <ContentPresenter Content="{x:Bind Icon, Mode=OneWay}" VerticalAlignment="Center" Foreground="Violet"/>
-                </Viewbox>
-            </Border>
-            <ContentPresenter Content="{x:Bind Suggestion, Mode=OneWay}" VerticalAlignment="Center"/>
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ClipboardInfoPanel" Storyboard.TargetProperty="Opacity">
+                            <LinearDoubleKeyFrame KeyTime="0:0:0.181" Value="1"/>
+                            <DiscreteDoubleKeyFrame KeyTime="0:0:1" Value="1"/>
+                            <SplineDoubleKeyFrame KeyTime="0:0:1.181" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="0" />
+                        </DoubleAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
+        <Grid x:Name="ContentGrid" x:Load="True" RowSpacing="4" ColumnSpacing="7" Opacity="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Spacing="12" VerticalAlignment="Center">
+                <Border Padding="4,3" CornerRadius="{StaticResource ControlCornerRadius}">
+                    <Border.Background>
+                        <SolidColorBrush Color="{ThemeResource BorderBackgroundColor}" Opacity="0.1"/>
+                    </Border.Background>
+                    <Viewbox>
+                        <ContentPresenter Content="{x:Bind Icon, Mode=OneWay}" VerticalAlignment="Center" Foreground="{ThemeResource BorderForegroundColor}"/>
+                    </Viewbox>
+                </Border>
+                <ContentPresenter Content="{x:Bind Suggestion, Mode=OneWay}" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <ScrollViewer Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right">
+                <ContentPresenter Content="{x:Bind RightContent, Mode=OneWay}"/>
+            </ScrollViewer>
+
+            <TextBlock Grid.Column="0" Grid.Row="1" Text="{x:Bind Subtitle, Mode=OneWay}" Style="{StaticResource SettingSubheaderTextBlockStyle}" 
+                       Margin="4,0,20,0" TextTrimming="CharacterEllipsis"/>
+        </Grid>
+
+        <StackPanel x:Name="ClipboardInfoPanel" x:Load="False" Opacity="0" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12" Orientation="Horizontal">
+            <FontIcon Glyph="&#xe73e;" Grid.Column="0" FontSize="22" VerticalAlignment="Center" Foreground="{ThemeResource SystemFillColorSuccess}"/>
+            <TextBlock x:Uid="CopiedToClipboardTextBlock" Style="{StaticResource BodyStrongTextBlockStyle}" Grid.Column="1" Text="Link copied to clipboard" VerticalAlignment="Center"/>
         </StackPanel>
-
-        <ScrollViewer Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right">
-            <ContentPresenter Content="{x:Bind RightContent, Mode=OneWay}"/>
-        </ScrollViewer>
-
-        <TextBlock Grid.Column="0" Grid.Row="1" Text="{x:Bind Subtitle, Mode=OneWay}" Style="{StaticResource SettingSubheaderTextBlockStyle}" 
-                   Margin="4,0,20,0" TextTrimming="CharacterEllipsis"/>
     </Grid>
 </UserControl>

@@ -12,7 +12,7 @@
     Loaded="Page_Loaded"
     SizeChanged="Page_SizeChanged">
 
-    <Grid x:Name="RootGrid" BorderThickness="2" CornerRadius="{StaticResource OverlayCornerRadius}">
+    <Grid x:Name="RootGrid" BorderThickness="2" CornerRadius="{StaticResource OverlayCornerRadius}" ActualThemeChanged="RootGrid_ActualThemeChanged">
         <Grid.RowDefinitions>
             <RowDefinition Height="33"/>
             <RowDefinition Height="Auto"/>
@@ -435,8 +435,12 @@
                                     GotFocus="SearchActionsAutoSuggestBox_GotFocus"/>
 
                                 <StackPanel x:Name="SearchButtonsStackPanel" Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="5" IsHitTestVisible="False">
-                                    <ToggleButton x:Name="SearchTriggersToggleButton" x:Uid="SearchTriggersToggleButton"/>
-                                    <ToggleButton x:Name="SearchTextToggleButton" x:Uid="SearchTextToggleButton"/>
+                                    <ToggleButton x:Name="SearchTriggersToggleButton" Padding="6,3,6,4">
+                                        <TextBlock x:Uid="SearchTriggersToggleButtonText" Text="a: actions" FontSize="12"/>
+                                    </ToggleButton>
+                                    <ToggleButton x:Name="SearchTextToggleButton" Padding="6,3,6,4">
+                                        <TextBlock x:Uid="SearchTextToggleButtonText" Text="a: actions" FontSize="12"/>
+                                    </ToggleButton>
                                 </StackPanel>
 
                                 <ToggleButton 

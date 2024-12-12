@@ -9,5 +9,7 @@ namespace ClipboardManager
         IInspectable Suggestion;
         IInspectable RightContent;
         String Subtitle;
+
+        void ShowCopiedToClipboard();
     }
 }

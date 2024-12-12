@@ -770,10 +770,10 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
   <data name="SearchFilter_Text" xml:space="preserve">
     <value>x:</value>
   </data>
-  <data name="SearchTriggersToggleButton.Content" xml:space="preserve">
+  <data name="SearchTriggersToggleButtonText.Text" xml:space="preserve">
     <value>t: triggers</value>
   </data>
-  <data name="SearchTextToggleButton.Content" xml:space="preserve">
+  <data name="SearchTextToggleButtonText.Text" xml:space="preserve">
     <value>x: text</value>
   </data>
   <data name="SearchActionsListView.Header" xml:space="preserve">
@@ -781,5 +781,8 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
   </data>
   <data name="UserMessage_XNumberOfTriggers" xml:space="preserve">
     <value>{} triggers</value>
+  </data>
+  <data name="CopiedToClipboardTextBlock.Text" xml:space="preserve">
+    <value>Link copied to clipboard</value>
   </data>
 </root>

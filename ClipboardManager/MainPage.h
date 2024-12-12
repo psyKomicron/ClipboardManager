@@ -74,6 +74,7 @@ namespace winrt::ClipboardManager::implementation
         clip::ui::VisualStateManager<MainPage> visualStateManager{ *this };
         clip::notifs::ToastNotificationHandler manager{};
         clip::utils::ResLoader resLoader{};
+        std::timed_mutex triggersMutex{};
         std::vector<clip::ClipboardTrigger> triggers{};
         Microsoft::UI::Windowing::AppWindow appWindow{ nullptr };
         Windows::Foundation::Collections::IObservableVector<ClipboardManager::ClipboardActionView> clipboardActionViews = single_threaded_observable_vector<ClipboardManager::ClipboardActionView>();
@@ -130,6 +131,7 @@ namespace winrt::ClipboardManager::implementation
         void SearchBoxGrid_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
         void CompactModeToggleButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void SearchActionsListView_DoubleTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& e);
+        void RootGrid_ActualThemeChanged(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
 };
 }
 

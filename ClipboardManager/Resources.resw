@@ -766,10 +766,10 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="SearchFilter_Text" xml:space="preserve">
     <value>x:</value>
   </data>
-  <data name="SearchTriggersToggleButton.Content" xml:space="preserve">
+  <data name="SearchTriggersToggleButtonText.Text" xml:space="preserve">
     <value>t: triggers</value>
   </data>
-  <data name="SearchTextToggleButton.Content" xml:space="preserve">
+  <data name="SearchTextToggleButtonText.Text" xml:space="preserve">
     <value>x: text</value>
     <comment>MainPage</comment>
   </data>
@@ -779,5 +779,9 @@ You can easily access your user file via settings and see an example of a valid 
   </data>
   <data name="UserMessage_XNumberOfTriggers" xml:space="preserve">
     <value>{} triggers</value>
+  </data>
+  <data name="CopiedToClipboardTextBlock.Text" xml:space="preserve">
+    <value>Link copied to clipboard</value>
+    <comment>SearchSuggestionView</comment>
   </data>
 </root>

@@ -4,6 +4,10 @@
 #include "SearchSuggestionView.g.cpp"
 #endif
 
+//#include "Resource.h"
+//
+//#include <winrt/Windows.ApplicationModel.DataTransfer.h>
+
 namespace xaml
 {
     using namespace winrt::Microsoft::UI::Xaml;
@@ -55,4 +59,22 @@ namespace winrt::ClipboardManager::implementation
     {
         return *this;
     }
+
+    void SearchSuggestionView::ShowCopiedToClipboard()
+    {
+        visualStateManager.goToState(clipboardCopiedState);
+    }
+
+    void SearchSuggestionView::UserControl_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& e)
+    {
+    }
+
+    void SearchSuggestionView::ClipboardStatesStoryboard_Completed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+    {
+        visualStateManager.goToState(clipboardNoneState);
+    }
 }
+
+
+
+

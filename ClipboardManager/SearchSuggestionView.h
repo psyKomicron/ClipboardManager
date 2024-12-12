@@ -3,6 +3,7 @@
 #include "SearchSuggestionView.g.h"
 
 #include "src/ui/ListenablePropertyValue.hpp"
+#include "src/ui/VisualStateManager.hpp"
 
 namespace winrt::ClipboardManager::implementation
 {
@@ -23,11 +24,20 @@ namespace winrt::ClipboardManager::implementation
         // Inherited via PropertyChangedClass
         Windows::Foundation::IInspectable asInspectable() override;
 
+        void ShowCopiedToClipboard();
+
     private:
         clip::ui::ListenablePropertyValue<IInspectable> _icon{ BIND(&SearchSuggestionView::raisePropertyChanged), nullptr };
         clip::ui::ListenablePropertyValue<IInspectable> _suggestion{ BIND(&SearchSuggestionView::raisePropertyChanged), nullptr };
         clip::ui::ListenablePropertyValue<IInspectable> _rightContent{ BIND(&SearchSuggestionView::raisePropertyChanged), nullptr };
         clip::ui::ListenablePropertyValue<hstring> _subtitle{ BIND(&SearchSuggestionView::raisePropertyChanged), L"" };
+        clip::ui::VisualStateManager<SearchSuggestionView> visualStateManager{ *this };
+        clip::ui::VisualState<SearchSuggestionView> clipboardNoneState{ L"ClipboardNone", 0, true };
+        clip::ui::VisualState<SearchSuggestionView> clipboardCopiedState{ L"ClipboardCopied", 0, false };
+
+    public:
+        void UserControl_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& e);
+        void ClipboardStatesStoryboard_Completed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
     };
 }
 

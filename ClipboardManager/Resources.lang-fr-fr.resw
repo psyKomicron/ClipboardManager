@@ -923,10 +923,10 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   <data name="SearchFilter_Text" xml:space="preserve">
     <value>x:</value>
   </data>
-  <data name="SearchTriggersToggleButton.Content" xml:space="preserve">
+  <data name="SearchTriggersToggleButtonText.Text" xml:space="preserve">
     <value>d: déclencheurs</value>
   </data>
-  <data name="SearchTextToggleButton.Content" xml:space="preserve">
+  <data name="SearchTextToggleButtonText.Text" xml:space="preserve">
     <value>x: texte</value>
   </data>
   <data name="SearchActionsListView.Header" xml:space="preserve">
@@ -934,5 +934,8 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   </data>
   <data name="UserMessage_XNumberOfTriggers" xml:space="preserve">
     <value>{} déclencheurs</value>
+  </data>
+  <data name="CopiedToClipboardTextBlock.Text" xml:space="preserve">
+    <value>Lien copié dans le presse-papier</value>
   </data>
 </root>
