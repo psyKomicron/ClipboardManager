@@ -60,9 +60,10 @@ namespace winrt::ClipboardManager::implementation
         return *this;
     }
 
-    void SearchSuggestionView::ShowCopiedToClipboard()
+    void SearchSuggestionView::ShowCopiedToClipboard(const hstring& triggerLabel)
     {
         visualStateManager.goToState(clipboardCopiedState);
+        TriggerCopiedTextBlock().Text(triggerLabel);
     }
 
     void SearchSuggestionView::UserControl_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& e)
