@@ -10,9 +10,6 @@
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
 
-            <Color x:Key="AppTitleBarHoverColor">#8A8780</Color>
-            <Color x:Key="ButtonHoverBackgroundColor">#38F5F5F5</Color>
-
             <Style x:Key="SettingSubheaderTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                 <Setter Property="Opacity" Value="0.7" />
             </Style>
@@ -530,10 +527,14 @@
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
                     <Color x:Key="ButtonForegroundColor">White</Color>
+                    <Color x:Key="AppTitleBarHoverColor">#8A8780</Color>
+                    <Color x:Key="ButtonHoverBackgroundColor">#38F5F5F5</Color>
                 </ResourceDictionary>
 
                 <ResourceDictionary x:Key="Light">
                     <Color x:Key="ButtonForegroundColor">Black</Color>
+                    <Color x:Key="AppTitleBarHoverColor">#363636</Color>
+                    <Color x:Key="ButtonHoverBackgroundColor">#BDBDBD</Color>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
