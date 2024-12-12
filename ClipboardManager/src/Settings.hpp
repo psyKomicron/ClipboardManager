@@ -68,7 +68,10 @@ namespace clip::concepts
     };
 
     template<typename T>
-    concept Insertable = Mappable<T> || std::convertible_to<T, std::map<std::wstring, clip::reg_types>>;
+    concept ObjectInsertable = Mappable<T> || std::convertible_to<T, std::map<std::wstring, clip::reg_types>>;
+
+    template<typename T>
+    concept Insertable = IntegralInsertable<T> || EnumInsertable<T> || LongIntegralInsertable<T> || BooleanInsertable<T> || StringInsertable<T>;
 }
 
 namespace clip
@@ -95,9 +98,6 @@ namespace clip
         template<concepts::StringInsertable T>
         std::optional<T> get(const key_t& key);
 
-        template<>
-        std::optional<std::wstring> get(const key_t& key);
-
         template<concepts::BooleanInsertable T>
         std::optional<T> get(const key_t& key);
 
@@ -110,7 +110,7 @@ namespace clip
         template<concepts::EnumInsertable T>
         std::optional<T> get(const key_t& key);
 
-        template<concepts::Insertable T>
+        template<concepts::ObjectInsertable T>
         T get(const key_t& key);
 
         template<concepts::StringInsertable T>
@@ -118,6 +118,9 @@ namespace clip
 
         template<concepts::BooleanInsertable T>
         void insert(const key_t& key, const T& value);
+        
+        template<concepts::BooleanInsertable T>
+        void insert(const key_t& key, const std::optional<T>& value);
 
         template<concepts::IntegralInsertable T>
         void insert(const key_t& key, const T& value);
@@ -125,7 +128,7 @@ namespace clip
         template<concepts::EnumInsertable T>
         void insert(const key_t& key, const T& value);
 
-        template<concepts::Insertable T>
+        template<concepts::ObjectInsertable T>
         void insert(const key_t& key, const T& value);
 
     private:
