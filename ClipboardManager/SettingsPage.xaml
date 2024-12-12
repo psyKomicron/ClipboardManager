@@ -336,7 +336,7 @@
 
             <!--#region Window style -->
             <TextBlock x:Uid="HeaderWindowStyleTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
-            <Expander x:Uid="WindowStyleExpander" Style="{StaticResource ExpanderListStyle}">
+            <Expander Style="{StaticResource ExpanderListStyle}">
                 <Expander.Header>
                     <clip:HostControl x:Uid="WindowStyleHostControl" Background="Transparent" BorderThickness="0" Padding="0"/>
                 </Expander.Header>
@@ -439,36 +439,6 @@
                 </clip:HostControl.HostContent>
             </clip:HostControl>
 
-            <clip:HostControl>
-                <clip:HostControl.Header>
-                    <Grid RowSpacing="4" Padding="0,7">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock x:Uid="CreateExampleFileHostControl" Grid.Row="0"/>
-                        <TextBlock 
-                            x:Name="UserFilePathTextBlock" 
-                            x:Uid="UserFilePathTextBlock" 
-                            Style="{StaticResource CaptionTextBlockStyle}" 
-                            Grid.Row="1" 
-                            Opacity="0.6"
-                            FontStyle="Italic"/>
-                    </Grid>
-                </clip:HostControl.Header>
-                <clip:HostControl.HostContent>
-                    <StackPanel Orientation="Horizontal" Spacing="3">
-                        <Button 
-                            x:Uid="CreateExampleTriggersFileButtton" 
-                            MinWidth="100"
-                            Click="CreateExampleTriggersFileButton_Click"/>
-                        <Button 
-                            x:Uid="OverwriteExampleTriggersFileButtton" 
-                            MinWidth="100"
-                            Click="OverwriteExampleTriggersFileButton_Click"/>
-                    </StackPanel>
-                </clip:HostControl.HostContent>
-            </clip:HostControl>
             <!--#endregion-->
            
             
@@ -545,6 +515,37 @@
                             </Viewbox>
                         </StackPanel>
                     </Button>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
+
+            <clip:HostControl>
+                <clip:HostControl.Header>
+                    <Grid RowSpacing="4" Padding="0,7">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Uid="CreateExampleFileHostControl" Grid.Row="0"/>
+                        <TextBlock 
+                            x:Name="UserFilePathTextBlock" 
+                            x:Uid="UserFilePathTextBlock" 
+                            Style="{StaticResource CaptionTextBlockStyle}" 
+                            Grid.Row="1" 
+                            Opacity="0.6"
+                            FontStyle="Italic"/>
+                    </Grid>
+                </clip:HostControl.Header>
+                <clip:HostControl.HostContent>
+                    <StackPanel Orientation="Horizontal" Spacing="3">
+                        <Button 
+                            x:Uid="CreateExampleTriggersFileButtton" 
+                            MinWidth="100"
+                            Click="CreateExampleTriggersFileButton_Click"/>
+                        <Button 
+                            x:Uid="OverwriteExampleTriggersFileButtton" 
+                            MinWidth="100"
+                            Click="OverwriteExampleTriggersFileButton_Click"/>
+                    </StackPanel>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
             <!--#endregion-->

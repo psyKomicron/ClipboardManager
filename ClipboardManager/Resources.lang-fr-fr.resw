@@ -161,10 +161,6 @@
     <value>Boutons d'action du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
-  <data name="AddDuplicatedActionsHostControl.Header" xml:space="preserve">
-    <value>Ajouter les actions en double</value>
-    <comment>SettingsPage</comment>
-  </data>
   <data name="AllowNotificationsHostControl.Subtitle" xml:space="preserve">
     <value>Activer les notifications, modifier le type et le son des notifications.</value>
   </data>
@@ -197,10 +193,6 @@ Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramè
   </data>
   <data name="BoostRegexErrorCode8" xml:space="preserve">
     <value>Parenthèse fermante trouvée sans parenthèse ouvrante correspondante.</value>
-  </data>
-  <data name="BrowserHostControl.Header" xml:space="preserve">
-    <value>Navigateur personnalisé</value>
-    <comment>SettingsPage</comment>
   </data>
   <data name="BrowserStringTextBox.PlaceholderText" xml:space="preserve">
     <value>Chaine exécutable</value>
@@ -362,10 +354,6 @@ Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramè
     <value>Annuler</value>
     <comment>ClipboardActionEditor</comment>
   </data>
-  <data name="EnableFileWatchingHostControl.Header" xml:space="preserve">
-    <value>Activer la surveillance du fichier</value>
-    <comment>SettingsPage</comment>
-  </data>
   <data name="EnableOCRHostControl.Header" xml:space="preserve">
     <value>Activer la ROC/OCR</value>
     <comment>SettingsPage</comment>
@@ -428,10 +416,6 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Application</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="HeaderBrowserTextBlock.Text" xml:space="preserve">
-    <value>Navigateur</value>
-    <comment>SettingsPage</comment>
-  </data>
   <data name="HeaderDevTextBlock.Text" xml:space="preserve">
     <value>Développeur</value>
   </data>
@@ -469,10 +453,6 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   </data>
   <data name="ImportClipboardButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Charge l'historique du presse papier, si le texte déclenche une action sera créée.</value>
-  </data>
-  <data name="ImportClipboardHistoryHostControl.Header" xml:space="preserve">
-    <value>Importer le contenu du presse-papier</value>
-    <comment>SettingsPage</comment>
   </data>
   <data name="ImportFromClipboardButtonToolTipTextBlock.Text" xml:space="preserve">
     <value>Importer le contenu du presse-papier</value>
@@ -815,10 +795,6 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   <data name="UseRegexMatchResultsToggleBlock.Text" xml:space="preserve">
     <value>Utiliser la regex pour extraire</value>
   </data>
-  <data name="UserFileHostControl.Header" xml:space="preserve">
-    <value>Fichier des déclencheurs presse-papier</value>
-    <comment>SettingsPage</comment>
-  </data>
   <data name="UserFilePathTextBlock.Text" xml:space="preserve">
     <value>Pas de chemin sauvegardé</value>
     <comment>SettingsPage</comment>
@@ -857,10 +833,6 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   </data>
   <data name="WindowShortcutHostControl.Header" xml:space="preserve">
     <value>Raccourci clavier pour afficher la fenêtre</value>
-    <comment>SettingsPage</comment>
-  </data>
-  <data name="WindowStyleHostControl.Header" xml:space="preserve">
-    <value>Style de la fenêtre</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="BoostRegexErrorCode4" xml:space="preserve">
@@ -937,5 +909,45 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   </data>
   <data name="CopiedToClipboardTextBlock.Text" xml:space="preserve">
     <value>Lien copié dans le presse-papier</value>
+  </data>
+  <data name="EnableFileWatchingHostControl.Title" xml:space="preserve">
+    <value>Activer la surveillance du fichier</value>
+  </data>
+  <data name="EnableFileWatchingHostControl.Subtitle" xml:space="preserve">
+    <value>Une modification du fichier utilisateur forcera l'application à recharger les déclencheurs.</value>
+  </data>
+  <data name="UserFileHostControl.Title" xml:space="preserve">
+    <value>Fichier des déclencheurs</value>
+  </data>
+  <data name="UserFileHostControl.Subtitle" xml:space="preserve">
+    <value>Trouver ou retrouver votre fichier utilisateur.</value>
+  </data>
+  <data name="AddDuplicatedActionsHostControl.Title" xml:space="preserve">
+    <value>Ajouter les actions doublons</value>
+  </data>
+  <data name="AddDuplicatedActionsHostControl.Subtitle" xml:space="preserve">
+    <value>Crée et ajoute une action même si le texte est égal au texte de la dernière action ajoutée.</value>
+  </data>
+  <data name="ImportClipboardHistoryHostControl.Title" xml:space="preserve">
+    <value>Importer le contenu du presse-papier</value>
+  </data>
+  <data name="ImportClipboardHistoryHostControl.Subtitle" xml:space="preserve">
+    <value>Au démarrage de l'application, le contenu du presse-papier est scanné et des actions sont créées  lorsqu'un déclencheur est activé.</value>
+  </data>
+  <data name="HeaderBrowserTextBlock.Text" xml:space="preserve">
+    <value>Navigateur</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="BrowserHostControl.Title" xml:space="preserve">
+    <value>Navigateur personnalisé</value>
+  </data>
+  <data name="BrowserHostControl.Subtitle" xml:space="preserve">
+    <value>Spécifier une chaîne exécutable qui sera transmise au système au lieu d'utiliser le navigateur par défaut.</value>
+  </data>
+  <data name="WindowStyleHostControl.Title" xml:space="preserve">
+    <value>Style de la fenêtre</value>
+  </data>
+  <data name="WindowStyleHostControl.Subtitle" xml:space="preserve">
+    <value>Personnaliser les boutons de la fenêtre et les paramètres de l'overlay.</value>
   </data>
 </root>

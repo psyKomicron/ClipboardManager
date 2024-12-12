@@ -150,9 +150,6 @@
   <data name="ActionsGridViewTeachingTip.Title" xml:space="preserve">
     <value>Action trigger buttons</value>
   </data>
-  <data name="AddDuplicatedActionsHostControl.Header" xml:space="preserve">
-    <value>Add duplicated actions</value>
-  </data>
   <data name="AllowNotificationsHostControl.Subtitle" xml:space="preserve">
     <value>Enable notifications, control notification style and sound.</value>
   </data>
@@ -183,9 +180,6 @@ You will need to locate your user file and reapply your settings.</value>
   <data name="BoostRegexErrorCode8" xml:space="preserve">
     <value>Found a closing ) with no corresponding opening parenthesis.</value>
     <comment>BoostRegexErrorCode</comment>
-  </data>
-  <data name="BrowserHostControl.Header" xml:space="preserve">
-    <value>Use custom browser</value>
   </data>
   <data name="BrowserStringTextBox.PlaceholderText" xml:space="preserve">
     <value>Executable string</value>
@@ -321,9 +315,6 @@ You will need to locate your user file and reapply your settings.</value>
   <data name="EditDialog.SecondaryButtonText" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="EnableFileWatchingHostControl.Header" xml:space="preserve">
-    <value>Enable file watching</value>
-  </data>
   <data name="EnableOCRHostControl.Header" xml:space="preserve">
     <value>Enable OCR</value>
   </data>
@@ -371,9 +362,6 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="HeaderApplicationTextBlock.Text" xml:space="preserve">
     <value>Application</value>
   </data>
-  <data name="HeaderBrowserTextBlock.Text" xml:space="preserve">
-    <value>Browser</value>
-  </data>
   <data name="HeaderDevTextBlock.Text" xml:space="preserve">
     <value>Developer</value>
     <comment>SettingsPage</comment>
@@ -404,9 +392,6 @@ You can easily access your user file via settings and see an example of a valid 
   </data>
   <data name="ImportClipboardButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Loads clipboard history, text that triggers creates an action.</value>
-  </data>
-  <data name="ImportClipboardHistoryHostControl.Header" xml:space="preserve">
-    <value>Import clipboard</value>
   </data>
   <data name="ImportFromClipboardButtonToolTipTextBlock.Text" xml:space="preserve">
     <value>Import actions from clipboard</value>
@@ -672,9 +657,6 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
     <value>Extract with regex</value>
     <comment>ClipboardTriggerEditControl</comment>
   </data>
-  <data name="UserFileHostControl.Header" xml:space="preserve">
-    <value>Triggers file</value>
-  </data>
   <data name="UserFilePathTextBlock.Text" xml:space="preserve">
     <value>No path saved</value>
   </data>
@@ -704,9 +686,6 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
   </data>
   <data name="WindowShortcutHostControl.Header" xml:space="preserve">
     <value>Show window shortcut</value>
-  </data>
-  <data name="WindowStyleHostControl.Header" xml:space="preserve">
-    <value>Window presenter style</value>
   </data>
   <data name="BoostRegexErrorCode4" xml:space="preserve">
     <value>Invalid character class name, collating name, or character range.</value>
@@ -784,5 +763,44 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
   </data>
   <data name="CopiedToClipboardTextBlock.Text" xml:space="preserve">
     <value>Link copied to clipboard</value>
+  </data>
+  <data name="EnableFileWatchingHostControl.Title" xml:space="preserve">
+    <value>Enable file watching</value>
+  </data>
+  <data name="EnableFileWatchingHostControl.Subtitle" xml:space="preserve">
+    <value>Changes made to the user/trigger file will force the reload of the triggers.</value>
+  </data>
+  <data name="UserFileHostControl.Title" xml:space="preserve">
+    <value>Triggers file</value>
+  </data>
+  <data name="UserFileHostControl.Subtitle" xml:space="preserve">
+    <value>Locate or relocate your user file.</value>
+  </data>
+  <data name="AddDuplicatedActionsHostControl.Title" xml:space="preserve">
+    <value>Add duplicated actions</value>
+  </data>
+  <data name="AddDuplicatedActionsHostControl.Subtitle" xml:space="preserve">
+    <value>Create an action even if the text is the same as the last created action.</value>
+  </data>
+  <data name="ImportClipboardHistoryHostControl.Title" xml:space="preserve">
+    <value>Import clipboard</value>
+  </data>
+  <data name="ImportClipboardHistoryHostControl.Subtitle" xml:space="preserve">
+    <value>On application startup, clipboard history will be scanned and any text triggering will create an action.</value>
+  </data>
+  <data name="HeaderBrowserTextBlock.Text" xml:space="preserve">
+    <value>Browser</value>
+  </data>
+  <data name="BrowserHostControl.Title" xml:space="preserve">
+    <value>Use custom browser</value>
+  </data>
+  <data name="BrowserHostControl.Subtitle" xml:space="preserve">
+    <value>Specify an executable string that will be passed to the system instead of using the default browser.</value>
+  </data>
+  <data name="WindowStyleHostControl.Title" xml:space="preserve">
+    <value>Window presenter style</value>
+  </data>
+  <data name="WindowStyleHostControl.Subtitle" xml:space="preserve">
+    <value>Customize window buttons and overlay settings.</value>
   </data>
 </root>
