@@ -24,6 +24,8 @@
                 <Setter Property="Height" Value="34"/>
                 <Setter Property="Width" Value="37"/>
                 <Setter Property="CornerRadius" Value="{StaticResource OverlayCornerRadius}"/>
+                <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
+                <Setter Property="FontSize" Value="14"/>
             </Style>
             
             <Style x:Key="IconToggleButtonStyle" TargetType="ToggleButton" BasedOn="{StaticResource DefaultToggleButtonStyle}">
