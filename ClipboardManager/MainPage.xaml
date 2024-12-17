@@ -134,6 +134,9 @@
 
                     <VisualState.Setters>
                         <Setter Target="OverlayToggleButtonContent.Glyph" Value="&#xee47;"/>
+                        <Setter Target="MoveBorder.Visibility" Value="Collapsed"/>
+                        <Setter Target="OverlayCloseButton.Visibility" Value="Visible"/>
+                        <Setter Target="WindowButtonsColumn.Width" Value="Auto"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -228,6 +231,9 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Opacity="0.7"/>
+
+            <Button x:Name="OverlayCloseButton" x:Load="False" Style="{StaticResource IconButtonStyle}" Grid.Column="2" 
+                    Content="&#xe921;" Visibility="Collapsed" Click="OverlayCloseButton_Click"/>
         </Grid>
 
         <clip:MessagesBar x:Name="MessagesBar" Grid.Row="1"/>
@@ -404,7 +410,6 @@
 
                             <Grid 
                                 x:Name="SearchBoxGrid" 
-                                x:Load="False" 
                                 Grid.Column="1" 
                                 Visibility="Collapsed" 
                                 Opacity="0"
@@ -443,15 +448,45 @@
                                     </ToggleButton>
                                 </StackPanel>
 
-                                <ToggleButton 
-                                    x:Name="SearchActionsIgnoreCaseToggleButton" 
-                                    x:Uid="IgnoreCaseTextBlock" 
-                                    Grid.Column="1" 
-                                    Grid.Row="0"
-                                    Content="i" 
-                                    FontFamily="Consolas" 
-                                    Height="35" 
-                                    Width="40"/>
+                                <StackPanel Grid.Column="1" Grid.RowSpan="2" Spacing="3">
+                                    <ToggleButton 
+                                        x:Name="SearchActionsIgnoreCaseToggleButton" 
+                                        x:Uid="IgnoreCaseTextBlock" 
+                                        Content="i" 
+                                        FontFamily="Consolas" 
+                                        Height="35"
+                                        HorizontalAlignment="Stretch"/>
+                                    <ToggleSplitButton 
+                                        Content="&#xec92;" 
+                                        FontFamily="{StaticResource SymbolThemeFontFamily}" 
+                                        FontSize="14"
+                                        Height="35"
+                                        HorizontalAlignment="Stretch">
+                                        <ToggleSplitButton.Flyout>
+                                            <Flyout>
+                                                <Grid Margin="-8" >
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <TimePicker ClockIdentifier="24HourClock" Grid.Column="0" Grid.Row="0" IsEnabled="{x:Bind SearchActionsTimePickerToggleSwitch.IsOn, Mode=OneWay}"/>
+                                                    <Viewbox Grid.Column="1" Grid.Row="0" MaxHeight="32">
+                                                        <ToggleSwitch x:Name="SearchActionsTimePickerToggleSwitch" Style="{StaticResource FlippedToggleSwitchStyle}" OnContent="{x:Null}" OffContent="{x:Null}"/>
+                                                    </Viewbox>
+
+                                                    <DatePicker Grid.Column="0" Grid.Row="1" IsEnabled="{x:Bind SearchActionsDatePickerToggleSwitch.IsOn, Mode=OneWay}"/>
+                                                    <Viewbox Grid.Column="1" Grid.Row="1" MaxHeight="32">
+                                                        <ToggleSwitch x:Name="SearchActionsDatePickerToggleSwitch" Style="{StaticResource FlippedToggleSwitchStyle}" OnContent="{x:Null}" OffContent="{x:Null}"/>
+                                                    </Viewbox>
+                                                </Grid>
+                                            </Flyout>
+                                        </ToggleSplitButton.Flyout>
+                                    </ToggleSplitButton>
+                                </StackPanel>
                             </Grid>
                         </Grid>
 
@@ -557,6 +592,17 @@
                         <ListView.OpacityTransition>
                             <ScalarTransition/>
                         </ListView.OpacityTransition>
+                        <ListView.Header>
+                            <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,5,0,3">
+                                <TextBlock x:Uid="SearchActionsListViewHeader"/>
+                                <TextBlock x:Name="SearchActionsResultsTextBlock"/>
+                            </StackPanel>
+                        </ListView.Header>
+                        <ListView.FooterTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Style="{StaticResource SettingSubheaderTextBlockStyle}" Margin="0,0,0,5"/>
+                            </DataTemplate>
+                        </ListView.FooterTemplate>
                     </ListView>
                     
                     <ListView x:Name="ActionsListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="3">

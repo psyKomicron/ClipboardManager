@@ -901,8 +901,8 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   <data name="SearchTextToggleButtonText.Text" xml:space="preserve">
     <value>x: texte</value>
   </data>
-  <data name="SearchActionsListView.Header" xml:space="preserve">
-    <value>Résultats de recherche :</value>
+  <data name="SearchActionsListViewHeader.Text" xml:space="preserve">
+    <value>Résultats:</value>
   </data>
   <data name="UserMessage_XNumberOfTriggers" xml:space="preserve">
     <value>{} déclencheurs</value>
@@ -949,5 +949,8 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   </data>
   <data name="WindowStyleHostControl.Subtitle" xml:space="preserve">
     <value>Personnaliser les boutons de la fenêtre et les paramètres de l'overlay.</value>
+  </data>
+  <data name="SearchActionsListView.Footer" xml:space="preserve">
+    <value>Click droit sur un résultat de recherche pour copier le lien dans le presse papier.</value>
   </data>
 </root>

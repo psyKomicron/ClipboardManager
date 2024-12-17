@@ -710,7 +710,7 @@ You can easily access your user file via settings and see an example of a valid 
     <comment>SettingsPage</comment>
   </data>
   <data name="ClipboardActionViewClickHostControl.Subtitle" xml:space="preserve">
-    <value>Control what happens when you click on a clipboard action, open a web browser with the formatted link or copy the link to the clipboard.</value>
+    <value>Control what happens when you click on a clipboard action.</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="ErrorMessage_FailedToCopyToClipboard" xml:space="preserve">
@@ -751,8 +751,8 @@ You can easily access your user file via settings and see an example of a valid 
     <value>x: text</value>
     <comment>MainPage</comment>
   </data>
-  <data name="SearchActionsListView.Header" xml:space="preserve">
-    <value>Search results:</value>
+  <data name="SearchActionsListViewHeader.Text" xml:space="preserve">
+    <value>Results:</value>
     <comment>MainPage</comment>
   </data>
   <data name="UserMessage_XNumberOfTriggers" xml:space="preserve">
@@ -809,5 +809,9 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="WindowStyleHostControl.Subtitle" xml:space="preserve">
     <value>Customize window buttons, overlay settings.</value>
     <comment>SettingPage</comment>
+  </data>
+  <data name="SearchActionsListView.Footer" xml:space="preserve">
+    <value>Right click on search result to copy the link to the clipboard.</value>
+    <comment>MainPage</comment>
   </data>
 </root>

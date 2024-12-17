@@ -720,7 +720,7 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
     <value>Clipboard action click behavior</value>
   </data>
   <data name="ClipboardActionViewClickHostControl.Subtitle" xml:space="preserve">
-    <value>Control what happens when you click on a clipboard action, open a web browser with the formatted link or copy the link to the clipboard.</value>
+    <value>Control what happens when you click on a clipboard action.</value>
   </data>
   <data name="ErrorMessage_FailedToCopyToClipboard" xml:space="preserve">
     <value>Failed to copy link to clipboard.</value>
@@ -755,8 +755,8 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
   <data name="SearchTextToggleButtonText.Text" xml:space="preserve">
     <value>x: text</value>
   </data>
-  <data name="SearchActionsListView.Header" xml:space="preserve">
-    <value>Search results:</value>
+  <data name="SearchActionsListViewHeader.Text" xml:space="preserve">
+    <value>Results:</value>
   </data>
   <data name="UserMessage_XNumberOfTriggers" xml:space="preserve">
     <value>{} triggers</value>
@@ -802,5 +802,8 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
   </data>
   <data name="WindowStyleHostControl.Subtitle" xml:space="preserve">
     <value>Customize window buttons and overlay settings.</value>
+  </data>
+  <data name="SearchActionsListView.Footer" xml:space="preserve">
+    <value>Right click on search result to copy the link to the clipboard.</value>
   </data>
 </root>

@@ -25,7 +25,7 @@ namespace winrt::ClipboardManager::implementation
     {
         Actions = 1 << 0,
         Triggers = 1 << 1,
-        Text = Actions | Triggers,
+        Text = 1 << 2,
     };
 
     struct MainPage : MainPageT<MainPage>, clip::ui::PropertyChangedClass
@@ -99,6 +99,8 @@ namespace winrt::ClipboardManager::implementation
         bool LoadUserFile(const std::filesystem::path& path);
         ClipboardManager::ClipboardActionEditor CreateTriggerView(clip::ClipboardTrigger& trigger);
         void RefreshSearchBoxSuggestions(std::wstring text);
+        void FillSearchBoxSuggestions(const Windows::Foundation::Collections::IVector<IInspectable>& list, const SearchFilter& searchFilter, std::wstring text);
+        void SetDragRectangles();
 
         // Inherited via PropertyChangedClass
         Windows::Foundation::IInspectable asInspectable() override;
@@ -132,6 +134,7 @@ namespace winrt::ClipboardManager::implementation
         void CompactModeToggleButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void SearchActionsListView_DoubleTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& e);
         void RootGrid_ActualThemeChanged(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
+        void OverlayCloseButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 };
 }
 
