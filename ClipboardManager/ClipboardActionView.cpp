@@ -203,7 +203,7 @@ namespace winrt::ClipboardManager::implementation
 
     void ClipboardActionView::CopyLinkToClipboard()
     {
-        if (triggers.size() > 1)
+        if (triggers.size() > 0)
         {
             try
             {

@@ -410,6 +410,6 @@ namespace winrt::ClipboardManager::implementation
     void SettingsPage::ClipboardActionViewClickComboBox_SelectionChanged(win::IInspectable const&, xaml::SelectionChangedEventArgs const&)
     {
         check_loaded(loaded);
-        settings.insert(L"ClipboardActionClick", ClipboardActionViewClickComboBox().SelectedItem().as<winrt::FrameworkElement>().Tag().as<bool>());
+        settings.insert(L"ClipboardActionClick", ClipboardActionViewClickComboBox().SelectedItem().as<winrt::FrameworkElement>().Tag().as<hstring>() == L"1");
     }
 }

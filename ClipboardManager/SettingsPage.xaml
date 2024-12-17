@@ -294,8 +294,8 @@
             <clip:HostControl x:Uid="ClipboardActionViewClickHostControl">
                 <clip:HostControl.HostContent>
                     <ComboBox x:Name="ClipboardActionViewClickComboBox" SelectedIndex="0" MinWidth="150" SelectionChanged="ClipboardActionViewClickComboBox_SelectionChanged">
-                        <ComboBoxItem x:Uid="ClipboardActionViewClickOpen" Tag="0"/>
-                        <ComboBoxItem x:Uid="ClipboardActionViewClickCopy" Tag="1"/>
+                        <ComboBoxItem x:Uid="ClipboardActionViewClickOpen" Tag="1"/>
+                        <ComboBoxItem x:Uid="ClipboardActionViewClickCopy" Tag="0"/>
                     </ComboBox>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
