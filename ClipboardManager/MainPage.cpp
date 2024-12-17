@@ -330,7 +330,7 @@ namespace winrt::ClipboardManager::implementation
                     activationHotKey = clip::HotKey(mod, key[0]);
                 }
             }
-#ifndef _DEBUG
+
             activationHotKey.startListening([this]()
             {
                 appWindow.Show();
@@ -340,12 +340,11 @@ namespace winrt::ClipboardManager::implementation
                     logger.error(std::vformat(L"SetForegroundWindow failed: ", std::make_wformat_args(message)));
                 }
             });
-#endif // !_DEBUG
-
         }
         catch (std::invalid_argument)
         {
             logger.error(L"HotKey invalid argument error.");
+
             uint32_t index{};
             if (TitleBarGrid().Children().IndexOf(OverlayToggleButton(), index))
             {
@@ -716,10 +715,12 @@ namespace winrt::ClipboardManager::implementation
                 { SearchFilter::Text, static_cast<std::wstring>(resLoader.getResource(L"SearchFilter_Text").value_or(L"x:")) }
             };
             
+            bool hasFilter = false;
             SearchFilter filter = SearchFilter::Actions;
             if (text.starts_with(filtersPrefixes.at(SearchFilter::Triggers)))
             {
                 filter = SearchFilter::Triggers;
+                hasFilter = true;
                 SearchTriggersToggleButton().IsChecked(true);
                 SearchTextToggleButton().IsChecked(false);
 
@@ -730,6 +731,7 @@ namespace winrt::ClipboardManager::implementation
             else if (text.starts_with(filtersPrefixes.at(SearchFilter::Text)))
             {
                 filter = SearchFilter::Text;
+                hasFilter = true;
                 SearchTriggersToggleButton().IsChecked(false);
                 SearchTextToggleButton().IsChecked(true);
 
@@ -745,26 +747,81 @@ namespace winrt::ClipboardManager::implementation
                 logger.debug(L"Search filtering on actions.");
             }
 
-            try
+            FillSearchBoxSuggestions(list, filter, text);
+        }
+        else
+        {
+            SearchTriggersToggleButton().IsChecked(false);
+            SearchTextToggleButton().IsChecked(false);
+        }
+
+        SearchActionsResultsTextBlock().Text(to_hstring(list.Size()));
+        SearchActionsListView().ItemsSource(list);
+    }
+
+    void MainPage::FillSearchBoxSuggestions(const Windows::Foundation::Collections::IVector<IInspectable>& list, const SearchFilter& filter, std::wstring text)
+    {
+        try
+        {
+            if (text.empty())
             {
-                if (text.empty())
+                text = L".*";
+            }
+            else
+            {
+                std::wstring groups{};
+                groups = std::vformat(L"([{}]+)", std::make_wformat_args(text));
+                groups += std::vformat(L"({})", std::make_wformat_args(text));
+            }
+
+            auto flags = SearchActionsIgnoreCaseToggleButton().IsChecked().GetBoolean() ? boost::regex_constants::icase : boost::regex_constants::normal;
+            const auto regex = boost::wregex(text, flags);
+
+            const hstring searchFilter_TriggersDesc = resLoader.getResource(L"SearchFilter_TriggersDesc").value_or(L"t:");
+            const hstring searchFilter_TextDesc = resLoader.getResource(L"SearchFilter_TextDesc").value_or(L"x:");
+
+            if ((filter & SearchFilter::Triggers) == SearchFilter::Triggers)
+            {
+                std::unique_lock lock{ triggersMutex };
+                for (auto&& trigger : triggers)
                 {
-                    text = L".*";
+                    if (boost::regex_search(trigger.label(), regex))
+                    {
+                        ClipboardManager::SearchSuggestionView suggestion = make<ClipboardManager::implementation::SearchSuggestionView>();
+                        suggestion.Icon(box_value(searchFilter_TriggersDesc));
+                        suggestion.Suggestion(box_value(trigger.label()));
+
+                        std::wstring actions{};
+                        for (auto&& actionView : clipboardActionViews)
+                        {
+                            auto triggersText = actionView.GetTriggersText();
+                            for (auto&& triggerText : triggersText)
+                            {
+                                if (static_cast<std::wstring>(triggerText) == trigger.label())
+                                {
+                                    actions += (actions.empty() ? actionView.Text() : L", " + actionView.Text());
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!actions.empty())
+                        {
+                            suggestion.Subtitle(actions);
+                        }
+
+                        list.Append(suggestion);
+                    }
                 }
-
-                auto flags = SearchActionsIgnoreCaseToggleButton().IsChecked().GetBoolean() ? boost::regex_constants::icase : boost::regex_constants::normal;
-                const auto regex = boost::wregex(text, flags);
-
-                const hstring searchFilter_TriggersDesc = resLoader.getResource(L"SearchFilter_TriggersDesc").value_or(L"t:");
-                const hstring searchFilter_TextDesc = resLoader.getResource(L"SearchFilter_TextDesc").value_or(L"x:");
-
+            }
+            else
+            {
                 for (auto&& actionView : clipboardActionViews)
                 {
                     //boost::wsmatch matches{};
-                    
                     auto triggersText = actionView.GetTriggersText();
 
-                    if ((filter & SearchFilter::Triggers) == SearchFilter::Triggers)
+                    if ((filter & SearchFilter::Text) == SearchFilter::Text)
                     {
                         for (auto&& triggerText : triggersText)
                         {
@@ -779,17 +836,17 @@ namespace winrt::ClipboardManager::implementation
                             }
                         }
                     }
-                    
+
                     if ((filter & SearchFilter::Actions) == SearchFilter::Actions
                         && boost::regex_search(std::wstring(actionView.Text()), regex))
                     {
                         ClipboardManager::SearchSuggestionView searchSuggestionView = make<ClipboardManager::implementation::SearchSuggestionView>();
                         searchSuggestionView.Icon((filter & SearchFilter::Text) == SearchFilter::Text 
-                                            ? box_value(searchFilter_TextDesc)
-                                            : box_value(L"action"));
+                                                  ? box_value(searchFilter_TextDesc)
+                                                  : box_value(L"action"));
                         searchSuggestionView.Suggestion(box_value(actionView.Text()));
                         searchSuggestionView.RightTapped([this, tag = single_threaded_vector<hstring>({ actionView.Text(), triggersText.GetAt(0) }), searchSuggestionView]
-                                                         (auto&& s, auto&& e)
+                        (auto&& s, auto&& e)
                         {
                             logger.debug(L"SearchSuggestionView RightTapped.");
                             auto actionText = tag.GetAt(0);
@@ -855,18 +912,33 @@ namespace winrt::ClipboardManager::implementation
                     }
                 }
             }
-            catch (boost::regex_error&)
-            {
-                logger.debug(L"! Regex error");
-            }
         }
-        else
+        catch (boost::regex_error&)
         {
-            SearchTriggersToggleButton().IsChecked(false);
-            SearchTextToggleButton().IsChecked(false);
+            logger.debug(L"! Regex error");
         }
+    }
 
-        SearchActionsListView().ItemsSource(list);
+    void MainPage::SetDragRectangles()
+    {
+        if (!overlayEnabled.get())
+        {
+            std::vector<winrt::Windows::Graphics::RectInt32> dragRectangles{};
+
+            winrt::Windows::Graphics::RectInt32 rect
+            {
+                // X
+                static_cast<int32_t>(OverlayButtonColumn().ActualWidth()),
+                // Y
+                3,
+                // Width
+                static_cast<int32_t>(DragBorderColumn().ActualWidth()),
+                // Height
+                static_cast<int32_t>(TitleBarGrid().ActualHeight())
+            };
+
+            appWindow.TitleBar().SetDragRectangles(dragRectangles);
+        }
     }
 
     Windows::Foundation::IInspectable MainPage::asInspectable()
@@ -912,21 +984,7 @@ namespace winrt::ClipboardManager::implementation
 
     void MainPage::Page_SizeChanged(win::IInspectable const&, xaml::SizeChangedEventArgs const&)
     {
-        std::vector<winrt::Windows::Graphics::RectInt32> dragRectangles{};
-
-        winrt::Windows::Graphics::RectInt32 rect
-        {
-            // X
-            static_cast<int32_t>(OverlayButtonColumn().ActualWidth()),
-            // Y
-            3,
-            // Width
-            static_cast<int32_t>(DragBorderColumn().ActualWidth()),
-            // Height
-            static_cast<int32_t>(TitleBarGrid().ActualHeight())
-        };
-
-        appWindow.TitleBar().SetDragRectangles(dragRectangles);
+        SetDragRectangles();
     }
 
     winrt::async MainPage::Page_Loading(xaml::FrameworkElement const&, win::IInspectable const&)
@@ -1090,7 +1148,7 @@ namespace winrt::ClipboardManager::implementation
             if (clipboardActionViews.Size() == 0)
             {
                 manuallyAddedAction = true;
-                auto actionView = winrt::make<ClipboardActionView>(L"Clipboard content that matches a trigger");
+                auto actionView = winrt::make<ClipboardActionView>(L"Clipboard content that sequenceSearch a trigger");
                 actionView.AddAction(L"Trigger", L"{}", L".*", true, false, false);
                 clipboardActionViews.InsertAt(0, actionView);
             }
@@ -1363,6 +1421,12 @@ namespace winrt::ClipboardManager::implementation
                 resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>());
         }
     }
+
+    void winrt::ClipboardManager::implementation::MainPage::OverlayCloseButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    {
+        if (appWindow)
+        {
+            appWindow.Hide();
+        }
+    }
 }
-
-
