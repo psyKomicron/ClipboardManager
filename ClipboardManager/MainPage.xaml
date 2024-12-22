@@ -398,57 +398,32 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             
-                            <Button x:Name="OpenSearchButton" Style="{StaticResource IconButtonStyle}" Click="OpenSearchButton_Click" Grid.Column="0">
+                            <Button x:Name="OpenSearchButton" Style="{StaticResource IconButtonStyle}" Click="OpenSearchButton_Click" Grid.Column="0" VerticalAlignment="Center">
                                 <FontIcon Glyph="&#xe721;"/>
                             </Button>
 
-                            <Grid 
-                                x:Name="SearchBoxGrid" 
-                                Grid.Column="1" 
-                                Visibility="Collapsed" 
-                                Opacity="0"
-                                ColumnSpacing="7" 
-                                RowSpacing="3"
-                                Scale="0,0,1" 
-                                Margin="5,7"
-                                Loading="SearchBoxGrid_Loading">
-                                <Grid.OpacityTransition>
-                                    <ScalarTransition/>
-                                </Grid.OpacityTransition>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                            <TextBox x:Name="SearchActionsAutoSuggestBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" Height="35" 
+                                     Visibility="Collapsed" Opacity="0" 
+                                     TextChanged="SearchActionsAutoSuggestBox_TextChanged" GotFocus="SearchActionsAutoSuggestBox_GotFocus" />
+                            
+                            <StackPanel x:Name="SearchButtonsStackPanel" Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Spacing="5" IsHitTestVisible="False"
+                                        Visibility="Collapsed" Opacity="0">
+                                <ToggleButton x:Name="SearchTriggersToggleButton" Padding="6,3,6,4">
+                                    <TextBlock x:Uid="SearchTriggersToggleButtonText" Text="a: actions" FontSize="12"/>
+                                </ToggleButton>
+                                <ToggleButton x:Name="SearchTextToggleButton" Padding="6,3,6,4">
+                                    <TextBlock x:Uid="SearchTextToggleButtonText" Text="a: actions" FontSize="12"/>
+                                </ToggleButton>
+                            </StackPanel>
 
-                                <TextBox 
-                                    x:Name="SearchActionsAutoSuggestBox" 
-                                    Grid.Column="0" 
-                                    Grid.Row="0"
-                                    HorizontalAlignment="Stretch" 
-                                    Height="35"
-                                    TextChanged="SearchActionsAutoSuggestBox_TextChanged" 
-                                    GotFocus="SearchActionsAutoSuggestBox_GotFocus"/>
-
-                                <StackPanel x:Name="SearchButtonsStackPanel" Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="5" IsHitTestVisible="False">
-                                    <ToggleButton x:Name="SearchTriggersToggleButton" Padding="6,3,6,4">
-                                        <TextBlock x:Uid="SearchTriggersToggleButtonText" Text="a: actions" FontSize="12"/>
-                                    </ToggleButton>
-                                    <ToggleButton x:Name="SearchTextToggleButton" Padding="6,3,6,4">
-                                        <TextBlock x:Uid="SearchTextToggleButtonText" Text="a: actions" FontSize="12"/>
-                                    </ToggleButton>
-                                </StackPanel>
-
-                                <StackPanel Grid.Column="1" Grid.RowSpan="2" Spacing="3">
+                            <StackPanel Grid.Column="2" Grid.RowSpan="2" Spacing="3" Loading="SearchBoxGrid_Loading" Visibility="Collapsed" Opacity="0">
                                     <ToggleButton 
                                         x:Name="SearchActionsIgnoreCaseToggleButton" 
                                         x:Uid="IgnoreCaseTextBlock" 
@@ -487,6 +462,19 @@
                                         </ToggleSplitButton.Flyout>
                                     </ToggleSplitButton>
                                 </StackPanel>
+                            
+                            <Grid x:Name="SearchBoxGrid" Grid.Column="1"  ColumnSpacing="7" RowSpacing="3" 
+                                  Scale="0,0,1" Margin="5,7" >
+                                <Grid.OpacityTransition>
+                                    <ScalarTransition/>
+                                </Grid.OpacityTransition>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
                             </Grid>
                         </Grid>
 
