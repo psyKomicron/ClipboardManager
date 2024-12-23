@@ -725,8 +725,6 @@ namespace winrt::ClipboardManager::implementation
                 SearchTextToggleButton().IsChecked(false);
 
                 text = text.substr(filtersPrefixes.at(SearchFilter::Triggers).size());
-
-                logger.debug(L"Search filtering on triggers.");
             }
             else if (text.starts_with(filtersPrefixes.at(SearchFilter::Text)))
             {
@@ -736,15 +734,11 @@ namespace winrt::ClipboardManager::implementation
                 SearchTextToggleButton().IsChecked(true);
 
                 text = text.substr(filtersPrefixes.at(SearchFilter::Triggers).size());
-
-                logger.debug(L"Search filtering on text.");
             }
             else
             {
                 SearchTriggersToggleButton().IsChecked(false);
                 SearchTextToggleButton().IsChecked(false);
-             
-                logger.debug(L"Search filtering on actions.");
             }
 
             FillSearchBoxSuggestions(list, filter, text);
@@ -767,12 +761,13 @@ namespace winrt::ClipboardManager::implementation
             {
                 text = L".*";
             }
-            else
+            /*else
             {
                 std::wstring groups{};
                 groups = std::vformat(L"([{}]+)", std::make_wformat_args(text));
                 groups += std::vformat(L"({})", std::make_wformat_args(text));
-            }
+                text = groups;
+            }*/
 
             auto flags = SearchActionsIgnoreCaseToggleButton().IsChecked().GetBoolean() ? boost::regex_constants::icase : boost::regex_constants::normal;
             const auto regex = boost::wregex(text, flags);
