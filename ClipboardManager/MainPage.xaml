@@ -398,32 +398,51 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             
-                            <Button x:Name="OpenSearchButton" Style="{StaticResource IconButtonStyle}" Click="OpenSearchButton_Click" Grid.Column="0" VerticalAlignment="Center">
+                            <Button x:Name="OpenSearchButton" Style="{StaticResource IconButtonStyle}" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top"
+                                    Margin="0,3,0,0"
+                                    Click="OpenSearchButton_Click" >
                                 <FontIcon Glyph="&#xe721;"/>
                             </Button>
 
-                            <TextBox x:Name="SearchActionsAutoSuggestBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" Height="35" 
-                                     Visibility="Collapsed" Opacity="0" 
-                                     TextChanged="SearchActionsAutoSuggestBox_TextChanged" GotFocus="SearchActionsAutoSuggestBox_GotFocus" />
-                            
-                            <StackPanel x:Name="SearchButtonsStackPanel" Grid.Column="1" Grid.Row="1" Orientation="Horizontal" Spacing="5" IsHitTestVisible="False"
-                                        Visibility="Collapsed" Opacity="0">
-                                <ToggleButton x:Name="SearchTriggersToggleButton" Padding="6,3,6,4">
-                                    <TextBlock x:Uid="SearchTriggersToggleButtonText" Text="a: actions" FontSize="12"/>
-                                </ToggleButton>
-                                <ToggleButton x:Name="SearchTextToggleButton" Padding="6,3,6,4">
-                                    <TextBlock x:Uid="SearchTextToggleButtonText" Text="a: actions" FontSize="12"/>
-                                </ToggleButton>
-                            </StackPanel>
+                            <Grid x:Name="SearchBoxGrid" Grid.Column="1" Grid.RowSpan="2" Visibility="Collapsed" Opacity="0" ColumnSpacing="7" RowSpacing="3" 
+                                  Scale="0,0,0" Margin="5,3,5,7" VerticalAlignment="Top" Loading="SearchBoxGrid_Loading">
+                                <Grid.OpacityTransition>
+                                    <ScalarTransition/>
+                                </Grid.OpacityTransition>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-                            <StackPanel Grid.Column="2" Grid.RowSpan="2" Spacing="3" Loading="SearchBoxGrid_Loading" Visibility="Collapsed" Opacity="0">
+                                <TextBox 
+                                    x:Name="SearchActionsAutoSuggestBox" 
+                                    Grid.Column="0" 
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Stretch" 
+                                    Height="35"
+                                    TextChanged="SearchActionsAutoSuggestBox_TextChanged" 
+                                    GotFocus="SearchActionsAutoSuggestBox_GotFocus"/>
+
+                                <StackPanel x:Name="SearchButtonsStackPanel" Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="5" IsHitTestVisible="False">
+                                    <ToggleButton x:Name="SearchTriggersToggleButton" Padding="6,3,6,4">
+                                        <TextBlock x:Uid="SearchTriggersToggleButtonText" Text="a: actions" FontSize="12"/>
+                                    </ToggleButton>
+                                    <ToggleButton x:Name="SearchTextToggleButton" Padding="6,3,6,4">
+                                        <TextBlock x:Uid="SearchTextToggleButtonText" Text="a: actions" FontSize="12"/>
+                                    </ToggleButton>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Grid.RowSpan="2" Spacing="3" Orientation="Horizontal" VerticalAlignment="Top">
                                     <ToggleButton 
                                         x:Name="SearchActionsIgnoreCaseToggleButton" 
                                         x:Uid="IgnoreCaseTextBlock" 
@@ -462,19 +481,6 @@
                                         </ToggleSplitButton.Flyout>
                                     </ToggleSplitButton>
                                 </StackPanel>
-                            
-                            <Grid x:Name="SearchBoxGrid" Grid.Column="1"  ColumnSpacing="7" RowSpacing="3" 
-                                  Scale="0,0,1" Margin="5,7" >
-                                <Grid.OpacityTransition>
-                                    <ScalarTransition/>
-                                </Grid.OpacityTransition>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
                             </Grid>
                         </Grid>
 
@@ -483,33 +489,24 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Button x:Name="OpenQuickSettingsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="1" Click="OpenQuickSettingsButton_Click">
+                            
+                            <Button x:Name="OpenQuickSettingsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="1" VerticalAlignment="Top"
+                                    Margin="0,3,0,0"
+                                    Click="OpenQuickSettingsButton_Click">
                                 <ToolTipService.ToolTip>
                                     <TextBlock x:Uid="OpenQuickSettingsButton_ToolTipTextBlock"/>
                                 </ToolTipService.ToolTip>
                                 <FontIcon x:Name="OpenQuickSettingsButtonFontIcon" FontSize="16" Glyph="&#xe76b;"/>
                             </Button>
 
-                            <StackPanel 
-                                x:Name="QuickSettingsStackPanel" 
-                                CacheMode="BitmapCache"
-                                Visibility="Collapsed"
-                                Opacity="0"
-                                Grid.Column="0"
-                                Orientation="Horizontal" 
-                                Spacing="5" 
-                                VerticalAlignment="Stretch">
+                            <StackPanel x:Name="QuickSettingsStackPanel" CacheMode="BitmapCache" Visibility="Collapsed" Opacity="0" Grid.Column="0" Orientation="Horizontal" 
+                                        Spacing="5" VerticalAlignment="Stretch">
                                 <StackPanel.OpacityTransition>
                                     <ScalarTransition/>
                                 </StackPanel.OpacityTransition>
 
-                                <StackPanel
-                                    Orientation="Horizontal" 
-                                    Spacing="5"
-                                    VerticalAlignment="Stretch" 
-                                    Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
-                                    CornerRadius="{StaticResource OverlayCornerRadius}" 
-                                    Padding="7,5">
+                                <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Stretch" Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
+                                            CornerRadius="{StaticResource OverlayCornerRadius}" Padding="7,5">
                                     <Button x:Name="ReloadTriggersButton" Click="ReloadTriggersButton_Click">
                                         <ToolTipService.ToolTip>
                                             <TextBlock x:Uid="ReloadTriggersButton_ToolTipTextBlock"/>
