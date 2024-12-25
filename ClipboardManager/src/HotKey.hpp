@@ -24,7 +24,7 @@ namespace clip
         HotKey& operator=(HotKey&& left);
 
     private:
-        const clip::utils::Logger logger{ L"HotKey" };
+        clip::utils::Logger logger{ L"HotKey" };
         wchar_t key;
         uint32_t modifier;
         std::jthread keyboardListenerThread{};

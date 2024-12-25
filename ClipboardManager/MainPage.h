@@ -47,7 +47,7 @@ namespace winrt::ClipboardManager::implementation
         void ReceiveWindowMessage(const uint64_t& message, const uint64_t& param);
 
      private:
-        const clip::utils::Logger logger{ L"MainPage" };
+        clip::utils::Logger logger{ L"MainPage" };
         clip::ui::VisualState<MainPage> openSaveFileState{ L"CreateNewActions", 0, false };
         clip::ui::VisualState<MainPage> viewActionsState{ L"ViewActions", 0, false };
         clip::ui::VisualState<MainPage> displayClipboardTriggersState{ L"DisplayClipboardTriggers", 1, false };

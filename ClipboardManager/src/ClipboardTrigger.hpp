@@ -65,7 +65,7 @@ namespace clip
          * @throws clip::ClipboardTriggerFormatException Throws when the format is invalid.
          */
         void checkFormat() const;
-        std::wstring formatTrigger(const std::wstring& stringView) const;
+        std::wstring formatTrigger(const std::wstring& stringView);
 
         bool operator==(ClipboardTrigger& other);
 

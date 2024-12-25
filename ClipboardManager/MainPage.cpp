@@ -43,6 +43,7 @@
 #include <sstream>
 #include <limits>
 #include <format>
+#include <map>
 
 namespace xaml
 {
@@ -214,8 +215,69 @@ namespace winrt::ClipboardManager::implementation
             logger.info(L"Clipboard content changed, but the available format is not text or the application that changed the clipboard content is me.");
             co_return;
         }
+        else
+        {
+            std::map<std::wstring, std::wstring> properties
+            {
+                { L"ApplicationName:", std::wstring(content.Properties().ApplicationName())},
+                { L"ContentSourceUserActivityJson:", std::wstring(content.Properties().ContentSourceUserActivityJson()) },
+                { L"Description:", std::wstring(content.Properties().Description()) },
+                { L"PackageFamilyName:", std::wstring(content.Properties().PackageFamilyName()) },
+                { L"Title:", std::wstring(content.Properties().Title()) }
+            };
+
+            auto requestedOp = content.RequestedOperation();
+            std::wstring requestedOpString = [requestedOp]() -> std::wstring
+            {
+                switch (requestedOp)
+                {
+                    case win::DataPackageOperation::None:
+                        return L"None";
+                    case win::DataPackageOperation::Copy:
+                        return L"Copy";
+                    case win::DataPackageOperation::Move:  
+                        return L"Move";
+                    case win::DataPackageOperation::Link:
+                        return L"Link";
+                    default:
+                        return L"";
+                }
+            }();
+            properties.insert({ L"RequestedOperation:", requestedOpString });
+
+            if (content.Properties().ApplicationListingUri())
+            {
+                properties.insert({ L"ApplicationListingUri:", std::wstring(content.Properties().ApplicationListingUri().ToString()) });
+            }
+            if (content.Properties().ContentSourceApplicationLink())
+            {
+                properties.insert({ L"ContentSourceApplicationLink:", std::wstring(content.Properties().ContentSourceApplicationLink().ToString()) });
+            }
+
+            std::wstring availableFormats = [formats = content.AvailableFormats()]() -> std::wstring
+            {
+                std::wstringstream stream{};
+                for (auto&& format : formats)
+                {
+                    stream << format << L", ";
+                }
+                return stream.str();
+            }();
+            properties.insert({ L"AvailableFormats:", availableFormats });
+
+            std::wstringstream wss{};
+            wss << L"Clipboard content properties:\n";
+            for (auto&& pair : properties)
+            {
+                wss << L"[-] " << pair.first << L" " << pair.second << std::endl;
+            }
+            
+            logger.debug(wss.str());
+        }
 
         co_await AddClipboardItem(content, true);
+
+        content.ReportOperationCompleted(win::DataPackageOperation::None);
     }
 
     void MainPage::Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel)
