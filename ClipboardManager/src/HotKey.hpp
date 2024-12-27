@@ -21,7 +21,7 @@ namespace clip
         void editHotKey(const uint32_t& modifier, const wchar_t& key);
         void wait();
 
-        HotKey& operator=(HotKey&& left);
+        HotKey& operator=(HotKey&& left) noexcept;
 
     private:
         const clip::utils::Logger logger{ L"HotKey" };
