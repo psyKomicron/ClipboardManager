@@ -8,7 +8,6 @@
 #include <boost/log/sources/global_logger_storage.hpp>
 #include <boost/log/utility/setup/file.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
-
 #include <boost/log/trivial.hpp>
 
 #include <iostream>
@@ -40,9 +39,9 @@ namespace clip::utils
 
     void Logger::debug(const std::wstring& message)
     {
-    #ifdef _DEBUG
+#ifdef _DEBUG
         print(message, LogSeverity::Debug);
-    #endif // _DEBUG
+#endif // _DEBUG
     }
 
     void Logger::info(const std::wstring& message)
@@ -118,7 +117,8 @@ namespace clip::utils
     {
         boost::log::add_file_log
         (
-            boost::log::file_name = "sample.log"
+            boost::log::file_name = "sample.log",
+            boost::log::format = "[%TimeStamp%]: %Message%"
         );
         //boost::log::core::get()->set_filter(boost::log::trivial::severity >= 1);
         boost::log::add_common_attributes();

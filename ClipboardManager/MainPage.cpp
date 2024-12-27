@@ -149,7 +149,9 @@ namespace winrt::ClipboardManager::implementation
                 clip::ClipboardTrigger::saveClipboardTriggers(triggers, userFilePath.value());
             }
 
-            if (localSettings.get<bool>(L"SaveMatchingResults").value_or(false) && clipboardActionViews.Size() > 0)
+            if (clipboardActionViews.Size() > 0
+                && localSettings.get<bool>(L"SaveMatchingResults").value_or(false)
+                && HistoryToggleButton().IsChecked().GetBoolean())
             {
                 boost::property_tree::wptree tree{};
                 boost::property_tree::read_xml(userFilePath.value().string(), tree);
@@ -192,184 +194,6 @@ namespace winrt::ClipboardManager::implementation
                     appWindow.Hide();
                 }
                 break;
-        }
-    }
-
-
-    winrt::async MainPage::ClipboardContent_Changed(const win::IInspectable&, const win::IInspectable&)
-    {
-        using namespace std::literals;
-        static std::chrono::system_clock::time_point lastEntry{};
-        auto&& now = std::chrono::system_clock::now();
-        auto elapsed = (now - lastEntry);
-        lastEntry = now;
-        if (elapsed < 50ms)
-        {
-            logger.info(L"Duplicate clipboard event.");
-            co_return;
-        }
-
-        auto content = win::Clipboard::GetContent();
-        if (content.Properties().ApplicationName() == L"ClipboardManager")
-        {
-            logger.info(L"Clipboard content changed, but the available format is not text or the application that changed the clipboard content is me.");
-            co_return;
-        }
-        else
-        {
-            std::map<std::wstring, std::wstring> properties
-            {
-                { L"ApplicationName:", std::wstring(content.Properties().ApplicationName())},
-                { L"ContentSourceUserActivityJson:", std::wstring(content.Properties().ContentSourceUserActivityJson()) },
-                { L"Description:", std::wstring(content.Properties().Description()) },
-                { L"PackageFamilyName:", std::wstring(content.Properties().PackageFamilyName()) },
-                { L"Title:", std::wstring(content.Properties().Title()) }
-            };
-
-            auto requestedOp = content.RequestedOperation();
-            std::wstring requestedOpString = [requestedOp]() -> std::wstring
-            {
-                switch (requestedOp)
-                {
-                    case win::DataPackageOperation::None:
-                        return L"None";
-                    case win::DataPackageOperation::Copy:
-                        return L"Copy";
-                    case win::DataPackageOperation::Move:  
-                        return L"Move";
-                    case win::DataPackageOperation::Link:
-                        return L"Link";
-                    default:
-                        return L"";
-                }
-            }();
-            properties.insert({ L"RequestedOperation:", requestedOpString });
-
-            if (content.Properties().ApplicationListingUri())
-            {
-                properties.insert({ L"ApplicationListingUri:", std::wstring(content.Properties().ApplicationListingUri().ToString()) });
-            }
-            if (content.Properties().ContentSourceApplicationLink())
-            {
-                properties.insert({ L"ContentSourceApplicationLink:", std::wstring(content.Properties().ContentSourceApplicationLink().ToString()) });
-            }
-
-            std::wstring availableFormats = [formats = content.AvailableFormats()]() -> std::wstring
-            {
-                std::wstringstream stream{};
-                for (auto&& format : formats)
-                {
-                    stream << format << L", ";
-                }
-                return stream.str();
-            }();
-            properties.insert({ L"AvailableFormats:", availableFormats });
-
-            std::wstringstream wss{};
-            wss << L"Clipboard content properties:\n";
-            for (auto&& pair : properties)
-            {
-                wss << L"[-] " << pair.first << L" " << pair.second << std::endl;
-            }
-            
-            logger.debug(wss.str());
-        }
-
-        co_await AddClipboardItem(content, true);
-
-        content.ReportOperationCompleted(win::DataPackageOperation::None);
-    }
-
-    void MainPage::Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel)
-    {
-        auto label = std::wstring(oldLabel);
-        auto newLabel = std::wstring(sender.ActionLabel());
-
-        for (auto&& action : triggers)
-        {
-            if (action.label() == label)
-            {
-                action.label(newLabel);
-
-                for (auto&& clipboardItem : clipboardActionViews)
-                {
-                    uint32_t pos = 0;
-                    if (clipboardItem.IndexOf(pos, label))
-                    {
-                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), action.enabled(), 
-                                                 action.useRegexMatchResults(), action.regex().flags() & boost::regex_constants::icase);
-                    }
-                }
-
-                break;
-            }
-        }
-    }
-
-    void MainPage::FileWatcher_Changed()
-    {
-        DispatcherQueue().TryEnqueue([&]()
-        {
-            ReloadTriggers();
-        });
-    }
-
-    void MainPage::Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const win::IInspectable& inspectable)
-    {
-        auto actionLabel = std::wstring(sender.ActionLabel());
-        auto format = std::wstring(sender.ActionFormat());
-        auto newRegex = std::wstring(sender.ActionRegex());
-
-        auto flags = inspectable.as<int32_t>();
-        bool ignoreCase = flags & (1 << 2);
-        bool useSearch = flags & (1 << 1);
-        bool useRegexMatchResults = flags & 1;
-
-        auto regexFlags = ignoreCase ? boost::regex_constants::icase : 0;
-
-        for (auto&& action : triggers)
-        {
-            if (action.label() == actionLabel)
-            {
-                action.format(format);
-                action.regex(boost::wregex(newRegex, regexFlags));
-                action.updateMatchMode(useSearch ? clip::MatchMode::Search : clip::MatchMode::Match);
-                action.useRegexMatchResults(useRegexMatchResults);
-
-                // Edit on every action the trigger:
-                for (auto&& clipboardItem : clipboardActionViews)
-                {
-                    uint32_t pos = 0;
-                    if (clipboardItem.IndexOf(pos, action.label()))
-                    {
-                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), 
-                                                 action.enabled(), action.useRegexMatchResults(), ignoreCase);
-                    }
-                }
-
-                break;
-            }
-        }
-    }
-
-    void MainPage::Editor_Toggled(const winrt::ClipboardManager::ClipboardActionEditor& sender, const bool& isOn)
-    {
-        auto actionLabel = std::wstring(sender.ActionLabel());
-        for (auto&& action : triggers)
-        {
-            if (action.label() == actionLabel)
-            {
-                for (auto&& view : clipboardActionViews)
-                {
-                    uint32_t index = 0;
-                    if (view.IndexOf(index, action.label()))
-                    {
-                        view.IsEnabled(action.enabled());
-                    }
-                }
-
-                action.enabled(isOn);
-            }
         }
     }
 
@@ -488,6 +312,7 @@ namespace winrt::ClipboardManager::implementation
         if (!localSettings.get<bool>(L"NotificationsEnabled").value_or(true)
             || SilenceNotificationsToggleButton().IsChecked().GetBoolean())
         {
+            logger.info(L"Notifications are silenced, not sending one.");
             return;
         }
 
@@ -513,6 +338,7 @@ namespace winrt::ClipboardManager::implementation
         try
         {
             notif.send(durationType, scenarioType, soundType);
+            logger.info(L"Notification sent.");
         }
         catch (hresult_access_denied accessDenied)
         {
@@ -560,7 +386,9 @@ namespace winrt::ClipboardManager::implementation
     {
         try
         {
+            logger.info(L"*Loading triggers*");
             triggers = clip::ClipboardTrigger::loadClipboardTriggers(path);
+            logger.info(std::format(L"{} triggers on disk.", triggers.size()));
             clipboardTriggerViews.Clear();
 
             bool showError = false;
@@ -629,6 +457,7 @@ namespace winrt::ClipboardManager::implementation
 
     void MainPage::LaunchAction(const std::wstring& url)
     {
+        logger.info(L"Launching url: " + url);
         concurrency::create_task([this, url]() -> void
         {
             try
@@ -776,7 +605,7 @@ namespace winrt::ClipboardManager::implementation
                 { SearchFilter::Triggers, static_cast<std::wstring>(resLoader.getResource(L"SearchFilter_Triggers").value_or(L"t:")) },
                 { SearchFilter::Text, static_cast<std::wstring>(resLoader.getResource(L"SearchFilter_Text").value_or(L"x:")) }
             };
-            
+
             bool hasFilter = false;
             SearchFilter filter = SearchFilter::Actions;
             if (text.starts_with(filtersPrefixes.at(SearchFilter::Triggers)))
@@ -825,10 +654,10 @@ namespace winrt::ClipboardManager::implementation
             }
             /*else
             {
-                std::wstring groups{};
-                groups = std::vformat(L"([{}]+)", std::make_wformat_args(text));
-                groups += std::vformat(L"({})", std::make_wformat_args(text));
-                text = groups;
+            std::wstring groups{};
+            groups = std::vformat(L"([{}]+)", std::make_wformat_args(text));
+            groups += std::vformat(L"({})", std::make_wformat_args(text));
+            text = groups;
             }*/
 
             auto flags = SearchActionsIgnoreCaseToggleButton().IsChecked().GetBoolean() ? boost::regex_constants::icase : boost::regex_constants::normal;
@@ -1003,6 +832,184 @@ namespace winrt::ClipboardManager::implementation
         return *this;
     }
 
+    winrt::async MainPage::ClipboardContent_Changed(const win::IInspectable&, const win::IInspectable&)
+    {
+        logger.info(L"Clipboard changed.");
+        using namespace std::literals;
+        static std::chrono::system_clock::time_point lastEntry{};
+        auto&& now = std::chrono::system_clock::now();
+        auto elapsed = (now - lastEntry);
+        lastEntry = now;
+        if (elapsed < 50ms)
+        {
+            logger.debug(L"Duplicate clipboard event.");
+            co_return;
+        }
+
+        auto content = win::Clipboard::GetContent();
+        if (content.Properties().ApplicationName() == L"ClipboardManager")
+        {
+            logger.debug(L"Clipboard content changed, but the available format is not text or the application that changed the clipboard content is me.");
+            co_return;
+        }
+        else
+        {
+            // Debug logging.
+            std::map<std::wstring, std::wstring> properties
+            {
+                { L"ApplicationName:", std::wstring(content.Properties().ApplicationName())},
+                { L"ContentSourceUserActivityJson:", std::wstring(content.Properties().ContentSourceUserActivityJson()) },
+                { L"Description:", std::wstring(content.Properties().Description()) },
+                { L"PackageFamilyName:", std::wstring(content.Properties().PackageFamilyName()) },
+                { L"Title:", std::wstring(content.Properties().Title()) }
+            };
+            if (content.Properties().ApplicationListingUri())
+            {
+                properties.insert({ L"ApplicationListingUri:", std::wstring(content.Properties().ApplicationListingUri().ToString()) });
+            }
+            if (content.Properties().ContentSourceApplicationLink())
+            {
+                properties.insert({ L"ContentSourceApplicationLink:", std::wstring(content.Properties().ContentSourceApplicationLink().ToString()) });
+            }
+
+            auto requestedOp = content.RequestedOperation();
+            std::wstring requestedOpString = [requestedOp]() -> std::wstring
+            {
+                switch (requestedOp)
+                {
+                    case win::DataPackageOperation::None:
+                        return L"None";
+                    case win::DataPackageOperation::Copy:
+                        return L"Copy";
+                    case win::DataPackageOperation::Move:  
+                        return L"Move";
+                    case win::DataPackageOperation::Link:
+                        return L"Link";
+                    default:
+                        return L"";
+                }
+            }();
+            properties.insert({ L"RequestedOperation:", requestedOpString });
+
+            std::wstring availableFormats = [formats = content.AvailableFormats()]() -> std::wstring
+            {
+                std::wstringstream stream{};
+                for (auto&& format : formats)
+                {
+                    stream << format << L", ";
+                }
+                return stream.str();
+            }();
+            properties.insert({ L"AvailableFormats:", availableFormats });
+
+            std::wstringstream wss{};
+            wss << L"Clipboard content properties:\n";
+            for (auto&& pair : properties)
+            {
+                wss << L"[-] " << pair.first << L" " << pair.second << std::endl;
+            }
+            
+            logger.info(wss.str());
+        }
+
+        co_await AddClipboardItem(content, true);
+
+        content.ReportOperationCompleted(win::DataPackageOperation::Copy);
+    }
+
+    void MainPage::Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel)
+    {
+        auto label = std::wstring(oldLabel);
+        auto newLabel = std::wstring(sender.ActionLabel());
+
+        for (auto&& action : triggers)
+        {
+            if (action.label() == label)
+            {
+                action.label(newLabel);
+
+                for (auto&& clipboardItem : clipboardActionViews)
+                {
+                    uint32_t pos = 0;
+                    if (clipboardItem.IndexOf(pos, label))
+                    {
+                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), action.enabled(), 
+                                                 action.useRegexMatchResults(), action.regex().flags() & boost::regex_constants::icase);
+                    }
+                }
+
+                break;
+            }
+        }
+    }
+
+    void MainPage::FileWatcher_Changed()
+    {
+        DispatcherQueue().TryEnqueue([&]()
+        {
+            ReloadTriggers();
+        });
+    }
+
+    void MainPage::Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const win::IInspectable& inspectable)
+    {
+        auto actionLabel = std::wstring(sender.ActionLabel());
+        auto format = std::wstring(sender.ActionFormat());
+        auto newRegex = std::wstring(sender.ActionRegex());
+
+        auto flags = inspectable.as<int32_t>();
+        bool ignoreCase = flags & (1 << 2);
+        bool useSearch = flags & (1 << 1);
+        bool useRegexMatchResults = flags & 1;
+
+        auto regexFlags = ignoreCase ? boost::regex_constants::icase : 0;
+
+        for (auto&& action : triggers)
+        {
+            if (action.label() == actionLabel)
+            {
+                action.format(format);
+                action.regex(boost::wregex(newRegex, regexFlags));
+                action.updateMatchMode(useSearch ? clip::MatchMode::Search : clip::MatchMode::Match);
+                action.useRegexMatchResults(useRegexMatchResults);
+
+                // Edit on every action the trigger:
+                for (auto&& clipboardItem : clipboardActionViews)
+                {
+                    uint32_t pos = 0;
+                    if (clipboardItem.IndexOf(pos, action.label()))
+                    {
+                        clipboardItem.EditAction(pos, action.label(), action.format(), action.regex().str(), 
+                                                 action.enabled(), action.useRegexMatchResults(), ignoreCase);
+                    }
+                }
+
+                break;
+            }
+        }
+    }
+
+    void MainPage::Editor_Toggled(const winrt::ClipboardManager::ClipboardActionEditor& sender, const bool& isOn)
+    {
+        auto actionLabel = std::wstring(sender.ActionLabel());
+        for (auto&& action : triggers)
+        {
+            if (action.label() == actionLabel)
+            {
+                for (auto&& view : clipboardActionViews)
+                {
+                    uint32_t index = 0;
+                    if (view.IndexOf(index, action.label()))
+                    {
+                        view.IsEnabled(action.enabled());
+                    }
+                }
+
+                action.enabled(isOn);
+            }
+        }
+    }
+
     void MainPage::OverlayEnabled_Changed(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args)
     {
         auto&& presenter = appWindow.Presenter().as<xaml::OverlappedPresenter>();
@@ -1048,7 +1055,7 @@ namespace winrt::ClipboardManager::implementation
     {
         loaded = false;
 
-        clipboardContentChangedToken = win::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
+        clipboardContentChangedToken = win::Clipboard::HistoryChanged({ this, &MainPage::ClipboardContent_Changed });
         appWindow.Changed([this](auto, xaml::AppWindowChangedEventArgs args)
         {
             if (args.DidSizeChange())

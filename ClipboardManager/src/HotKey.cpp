@@ -48,7 +48,7 @@ namespace clip
         flag.clear();
     }
 
-    HotKey& HotKey::operator=(HotKey&& left)
+    HotKey& HotKey::operator=(HotKey&& left) noexcept
     {
         modifier = left.modifier;
         key = left.key;
