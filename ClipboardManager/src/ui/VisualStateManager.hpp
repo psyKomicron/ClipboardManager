@@ -27,8 +27,8 @@ namespace clip::ui
     private:
         bool isInvalidState = false;
         winrt::hstring _name{};
-        int32_t _group;
-        bool _active;
+        int32_t _group{};
+        bool _active{};
 
         inline void throwIfInvalid() const;
     };
