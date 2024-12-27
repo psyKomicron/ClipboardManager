@@ -228,7 +228,7 @@ namespace clip
         }
     }
 
-    std::wstring ClipboardTrigger::formatTrigger(const std::wstring& string) const
+    std::wstring ClipboardTrigger::formatTrigger(const std::wstring& string)
     {
         if (_useRegexMatchResults)
         {

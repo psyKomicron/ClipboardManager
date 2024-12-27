@@ -260,12 +260,12 @@ namespace winrt::ClipboardManager::implementation
         auto&& label = sender.as<ui::Control>().Tag().try_as<hstring>();
         if (label.has_value() && !label.value().empty())
         {
-            for (auto&& action : triggers)
+            for (auto&& trigger : triggers)
             {
-                if (label.value() == action.label())
+                if (label.value() == trigger.label())
                 {
                     clip::utils::Launcher launcher{};
-                    launcher.launch(action, std::wstring(_text));
+                    launcher.launch(trigger, std::wstring(_text));
 
                     break;
                 }

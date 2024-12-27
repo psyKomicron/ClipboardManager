@@ -8,7 +8,6 @@
 #include <boost/log/sources/global_logger_storage.hpp>
 #include <boost/log/utility/setup/file.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
-
 #include <boost/log/trivial.hpp>
 
 #include <iostream>
@@ -24,7 +23,7 @@ namespace boost::log
 namespace clip::utils
 {
     std::atomic_size_t Logger::maxClassNameLength = 0;
-
+    
     Logger::Logger(const std::wstring& className) :
         className{ className }
     {
@@ -68,25 +67,25 @@ namespace clip::utils
         }
 
         auto&& formattedName = formatClassName(className);
-
+        
         BOOST_LOG(logger) << formattedName << clip::utils::to_string(message);
 
         switch (severity)
         {
             case LogSeverity::Debug:
-        {
+            {
                 std::wcout << formattedName << L"  DEBUG:  " << message << std::endl;
                 break;
             }
 
             case LogSeverity::Info:
-        {
+            {
                 std::wcout << formattedName << L"  INFO:   " << message << std::endl;
                 break;
             }
 
             case LogSeverity::Error:
-        {
+            {
                 std::wcout << formattedName << L"  ERROR:  " << message << std::endl;
                 break;
             }
