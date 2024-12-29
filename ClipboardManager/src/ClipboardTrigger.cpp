@@ -119,7 +119,7 @@ namespace clip
                 // For each trigger, create an empty trigger node for the trigger object to save it-self.
                 for (auto&& trigger : triggersList)
                 {
-                    boost::property_tree::wptree triggerNode{ L"" };
+                    boost::property_tree::wptree triggerNode{};
                     trigger.save(triggerNode);
                     triggersNode.push_front({ L"trigger", triggerNode });
                 }
