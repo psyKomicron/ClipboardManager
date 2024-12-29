@@ -22,7 +22,7 @@ clip::utils::Console::Console()
     redirectConsole();
 
     MoveWindow(GetConsoleWindow(), 100, 100, 1000, 600, TRUE);
-
+       
     consoleInitialized = true;
 }
 
