@@ -1,0 +1,14 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <?include Include.wxi?>
+    <Package Name="$(var.PackageFriendlyName)" Manufacturer="psyKomicron" Version="1.0.0.0" UpgradeCode="19af4dd0-d520-457f-97dd-333b9a8be1cb">
+        <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
+
+        <MediaTemplate EmbedCab="yes" />
+        <!--<Icon Id="PackageIcon" SourceFile="msft.png"/>
+        <Property Id="ARPPRODUCTICON" Value="PackageIcon"/>-->
+
+        <Feature Id="Main">
+            <ComponentGroupRef Id="AppComponents" />
+        </Feature>
+    </Package>
+</Wix>
