@@ -1,11 +1,14 @@
 #pragma once
 #include <winrt/Microsoft.UI.Windowing.h>
+#include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include <Windows.h>
 
 #include <boost/regex.hpp>
 
 #include <filesystem>
 #include <functional>
+#include <string>
+#include <concepts>
 
 #define check_loaded(b) if (!b) return;
 
@@ -19,6 +22,7 @@ namespace winrt
     using namespace winrt::Microsoft::UI::Windowing;
 }
 
+// managed_dispatcher_queue_controller
 namespace clip::utils
 {
     class managed_dispatcher_queue_controller
@@ -110,6 +114,7 @@ namespace clip::utils
     };
 }
 
+// Utils functions
 namespace clip::utils
 {
     winrt::AppWindow getCurrentAppWindow();
@@ -125,4 +130,33 @@ namespace clip::utils
 
     std::wstring to_wstring(const std::string& string);
     std::string to_string(const std::wstring& string);
+    
+    template<typename _Elem, typename _Traits>
+    auto to_visual_string(std::basic_string<_Elem, _Traits>&& string)
+    {
+        if (string.empty())
+        {
+            if constexpr (std::same_as<wchar_t, _Elem>)
+            {
+                return std::basic_string<_Elem, _Traits>(L"<empty>");
+            }
+            else
+            {
+                return std::basic_string<_Elem, _Traits>("empty");
+            }
+        }
+        else
+        {
+            return string;
+        }
+    }
+}
+
+namespace clip::utils
+{
+    class clipboard_properties_formatter
+    {
+    public:
+        std::wstring format(winrt::Windows::ApplicationModel::DataTransfer::DataPackageView& content);
+    };
 }

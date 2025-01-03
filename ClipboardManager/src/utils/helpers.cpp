@@ -14,6 +14,9 @@
 #include <iostream>
 #include <locale>
 #include <codecvt>
+#include <map>
+#include <string>
+#include <sstream>
 
 
 namespace clip::utils
@@ -174,5 +177,84 @@ namespace clip::utils
         std::wstring functionName = clip::utils::to_wstring(match[2]);
 
         return functionName;
+    }
+}
+
+namespace clip::utils
+{
+    std::wstring clipboard_properties_formatter::format(winrt::Windows::ApplicationModel::DataTransfer::DataPackageView& content)
+    {
+        // Debug logging.
+        std::map<std::wstring, std::wstring> properties
+        {
+            { L"ApplicationName:", to_visual_string(std::wstring(content.Properties().ApplicationName()))},
+            { L"ContentSourceUserActivityJson:", to_visual_string(std::wstring(content.Properties().ContentSourceUserActivityJson())) },
+            { L"Description:", to_visual_string(std::wstring(content.Properties().Description())) },
+            { L"PackageFamilyName:", to_visual_string(std::wstring(content.Properties().PackageFamilyName())) },
+            { L"Title:", to_visual_string(std::wstring(content.Properties().Title())) }
+        };
+        if (content.Properties().ApplicationListingUri())
+        {
+        }
+        properties.insert
+        ({ 
+            L"ApplicationListingUri:", 
+            content.Properties().ApplicationListingUri() 
+                ? std::wstring(content.Properties().ApplicationListingUri().ToString())
+                : L"<null>"
+         });
+        properties.insert
+        ({ 
+            L"ContentSourceApplicationLink:", 
+            content.Properties().ContentSourceApplicationLink()
+                ? std::wstring(content.Properties().ContentSourceApplicationLink().ToString()) 
+                : L"<null>"
+         });
+
+        auto requestedOp = content.RequestedOperation();
+        properties.insert
+        ({ 
+            L"RequestedOperation:",  
+            [requestedOp]() -> std::wstring
+            {
+                switch (requestedOp)
+                {
+                    case winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::Copy:
+                        return L"Copy";
+                    case winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::Move:  
+                        return L"Move";
+                    case winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::Link:
+                        return L"Link";
+                    case winrt::Windows::ApplicationModel::DataTransfer::DataPackageOperation::None:
+                    default:
+                        return L"None";
+                }
+            }()
+         });
+
+        properties.insert
+        ({ 
+            L"AvailableFormats:", 
+            [formats = content.AvailableFormats()]() -> std::wstring
+            {
+                std::wstringstream stream{};
+                stream << L"\"";
+                for (auto&& format : formats)
+                {
+                    stream << format << L", ";
+                }
+                stream << L"\"";
+                return stream.str();
+            }()
+         });
+
+        std::wstringstream wss{};
+        wss << L"Clipboard content properties:\n";
+        for (auto&& pair : properties)
+        {
+            wss << L"[-] " << pair.first << L" " << pair.second << L" | ";
+        }
+
+        return wss.str();
     }
 }
