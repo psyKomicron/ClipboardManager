@@ -37,6 +37,7 @@
 
 #include <Shobjidl.h>
 #include <ppltasks.h>
+#include <pplawait.h>
 
 #include <iostream>
 #include <chrono>
@@ -832,9 +833,10 @@ namespace winrt::ClipboardManager::implementation
         return *this;
     }
 
-    winrt::async MainPage::ClipboardContent_Changed(const win::IInspectable&, const win::IInspectable&)
+    async MainPage::ClipboardContent_Changed(const win::IInspectable& s, const win::IInspectable& e)
     {
-        logger.info(L"Clipboard changed.");
+        logger.info(L"Clipboard history/content changed.");
+
         using namespace std::literals;
         static std::chrono::system_clock::time_point lastEntry{};
         auto&& now = std::chrono::system_clock::now();
@@ -842,79 +844,24 @@ namespace winrt::ClipboardManager::implementation
         lastEntry = now;
         if (elapsed < 50ms)
         {
-            logger.debug(L"Duplicate clipboard event.");
+            logger.info(L"Duplicate clipboard event.");
             co_return;
         }
+
+        //co_await resume_background();
 
         auto content = win::Clipboard::GetContent();
         if (content.Properties().ApplicationName() == L"ClipboardManager")
         {
-            logger.debug(L"Clipboard content changed, but the available format is not text or the application that changed the clipboard content is me.");
-            co_return;
+            logger.info(L"Clipboard content changed, but the available format is not text or the application that changed the clipboard content is me.");
         }
         else
         {
-            // Debug logging.
-            std::map<std::wstring, std::wstring> properties
-            {
-                { L"ApplicationName:", std::wstring(content.Properties().ApplicationName())},
-                { L"ContentSourceUserActivityJson:", std::wstring(content.Properties().ContentSourceUserActivityJson()) },
-                { L"Description:", std::wstring(content.Properties().Description()) },
-                { L"PackageFamilyName:", std::wstring(content.Properties().PackageFamilyName()) },
-                { L"Title:", std::wstring(content.Properties().Title()) }
-            };
-            if (content.Properties().ApplicationListingUri())
-            {
-                properties.insert({ L"ApplicationListingUri:", std::wstring(content.Properties().ApplicationListingUri().ToString()) });
-            }
-            if (content.Properties().ContentSourceApplicationLink())
-            {
-                properties.insert({ L"ContentSourceApplicationLink:", std::wstring(content.Properties().ContentSourceApplicationLink().ToString()) });
-            }
+            clip::utils::clipboard_properties_formatter formatter{};
+            logger.info(formatter.format(content));
 
-            auto requestedOp = content.RequestedOperation();
-            std::wstring requestedOpString = [requestedOp]() -> std::wstring
-            {
-                switch (requestedOp)
-                {
-                    case win::DataPackageOperation::None:
-                        return L"None";
-                    case win::DataPackageOperation::Copy:
-                        return L"Copy";
-                    case win::DataPackageOperation::Move:  
-                        return L"Move";
-                    case win::DataPackageOperation::Link:
-                        return L"Link";
-                    default:
-                        return L"";
-                }
-            }();
-            properties.insert({ L"RequestedOperation:", requestedOpString });
-
-            std::wstring availableFormats = [formats = content.AvailableFormats()]() -> std::wstring
-            {
-                std::wstringstream stream{};
-                for (auto&& format : formats)
-                {
-                    stream << format << L", ";
-                }
-                return stream.str();
-            }();
-            properties.insert({ L"AvailableFormats:", availableFormats });
-
-            std::wstringstream wss{};
-            wss << L"Clipboard content properties:\n";
-            for (auto&& pair : properties)
-            {
-                wss << L"[-] " << pair.first << L" " << pair.second << std::endl;
-            }
-            
-            logger.info(wss.str());
+            co_await AddClipboardItem(content, true);
         }
-
-        co_await AddClipboardItem(content, true);
-
-        content.ReportOperationCompleted(win::DataPackageOperation::Copy);
     }
 
     void MainPage::Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel)

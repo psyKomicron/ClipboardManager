@@ -12,9 +12,6 @@
 
 #include "ClipboardActionEditor.h"
 
-#include <winrt/Windows.Media.Ocr.h>
-#include <winrt/Windows.Storage.Streams.h>
-
 #include <vector>
 #include <filesystem>
 #include <mutex>
@@ -82,12 +79,6 @@ namespace winrt::ClipboardManager::implementation
         event_token clipboardContentChangedToken{};
         clip::ui::ListenablePropertyValue<bool> overlayEnabled{ std::bind(&MainPage::OverlayEnabled_Changed, this, std::placeholders::_1) };
 
-        async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
-        void Editor_Toggled(const winrt::ClipboardManager::ClipboardActionEditor& sender, const bool& isOn);
-        void Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const Windows::Foundation::IInspectable& oldFormat);
-        void Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel);
-        void FileWatcher_Changed();
-
         void Restore();
         void AddAction(const std::wstring& text, const bool& notify);
         bool FindActions(const winrt::ClipboardManager::ClipboardActionView& actionView, std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text);
@@ -105,6 +96,11 @@ namespace winrt::ClipboardManager::implementation
         // Inherited via PropertyChangedClass
         Windows::Foundation::IInspectable asInspectable() override;
 
+        void FileWatcher_Changed();
+        async ClipboardContent_Changed(const winrt::Windows::Foundation::IInspectable& sender, const winrt::Windows::Foundation::IInspectable& args);
+        void Editor_Toggled(const winrt::ClipboardManager::ClipboardActionEditor& sender, const bool& isOn);
+        void Editor_Changed(const winrt::ClipboardManager::ClipboardActionEditor& sender, const Windows::Foundation::IInspectable& oldFormat);
+        void Editor_LabelChanged(const winrt::ClipboardManager::ClipboardActionEditor& sender, const winrt::hstring& oldLabel);
         void OverlayEnabled_Changed(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs args);
 
     public:
