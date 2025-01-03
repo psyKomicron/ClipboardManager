@@ -442,7 +442,7 @@ void createWinUIWindow(clip::utils::WindowInfo* windowInfo, const HWND& windowHa
             resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>());
     }
 
-    AddClipboardFormatListener(windowHandle);
+    AddClipboardFormatListener(windowHandle); // outlook-bug
 }
 
 void handleWindowActivation(clip::utils::WindowInfo* windowInfo, const bool& inactive)
