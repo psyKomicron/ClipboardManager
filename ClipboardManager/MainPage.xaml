@@ -451,6 +451,7 @@
                                         Height="35"
                                         HorizontalAlignment="Stretch"/>
                                     <ToggleSplitButton 
+                                        x:Name="SearchActionsFilterDateToggleButton"
                                         Content="&#xec92;" 
                                         FontFamily="{StaticResource SymbolThemeFontFamily}" 
                                         FontSize="14"
@@ -467,12 +468,12 @@
                                                         <RowDefinition Height="Auto"/>
                                                         <RowDefinition Height="Auto"/>
                                                     </Grid.RowDefinitions>
-                                                    <TimePicker ClockIdentifier="24HourClock" Grid.Column="0" Grid.Row="0" IsEnabled="{x:Bind SearchActionsTimePickerToggleSwitch.IsOn, Mode=OneWay}"/>
+                                                    <TimePicker x:Name="SearchActionsTimePicker" ClockIdentifier="24HourClock" Grid.Column="0" Grid.Row="0" IsEnabled="{x:Bind SearchActionsTimePickerToggleSwitch.IsOn, Mode=OneWay}"/>
                                                     <Viewbox Grid.Column="1" Grid.Row="0" MaxHeight="32">
                                                         <ToggleSwitch x:Name="SearchActionsTimePickerToggleSwitch" Style="{StaticResource FlippedToggleSwitchStyle}" OnContent="{x:Null}" OffContent="{x:Null}"/>
                                                     </Viewbox>
 
-                                                    <DatePicker Grid.Column="0" Grid.Row="1" IsEnabled="{x:Bind SearchActionsDatePickerToggleSwitch.IsOn, Mode=OneWay}"/>
+                                                    <DatePicker x:Name="SearchActionsDatePicker" Grid.Column="0" Grid.Row="1" IsEnabled="{x:Bind SearchActionsDatePickerToggleSwitch.IsOn, Mode=OneWay}"/>
                                                     <Viewbox Grid.Column="1" Grid.Row="1" MaxHeight="32">
                                                         <ToggleSwitch x:Name="SearchActionsDatePickerToggleSwitch" Style="{StaticResource FlippedToggleSwitchStyle}" OnContent="{x:Null}" OffContent="{x:Null}"/>
                                                     </Viewbox>
@@ -554,6 +555,10 @@
                                             <TextBlock x:Uid="ImportFromClipboardButtonToolTipTextBlock"/>
                                         </ToolTipService.ToolTip>
                                         <FontIcon FontSize="16" Glyph="&#xe8b6;"/>
+                                    </Button>
+
+                                    <Button Click="QuickSettingsSaveButton_Click">
+                                        <FontIcon FontSize="16" Glyph="&#xe74e;"/>
                                     </Button>
                                 </StackPanel>
                             </StackPanel>

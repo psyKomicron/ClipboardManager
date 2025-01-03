@@ -35,6 +35,7 @@
 
                 <VisualState x:Name="OptionsOpen">
                     <VisualState.Setters>
+                        <Setter Target="OptionsGrid.Visibility" Value="Visible"/>
                         <Setter Target="OptionsColumn.Width" Value="Auto"/>
                     </VisualState.Setters>
                 </VisualState>
@@ -85,8 +86,8 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid 
-            x:Name="ContentGrid" PointerEntered="RootGrid_PointerEntered" PointerExited="RootGrid_PointerExited" PointerPressed="RootGrid_PointerPressed" Grid.Column="0"  Padding="5,5,5,0" Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}">
+        <Grid x:Name="ContentGrid" Grid.Column="0"  Padding="5,5,5,0" Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
+              PointerEntered="RootGrid_PointerEntered" PointerExited="RootGrid_PointerExited" PointerPressed="RootGrid_PointerPressed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -97,7 +98,7 @@
             </Grid.RowDefinitions>
             <Grid.ChildrenTransitions>
                 <TransitionCollection>
-                    <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                    <RepositionThemeTransition IsStaggeringEnabled="True"/>
                 </TransitionCollection>
             </Grid.ChildrenTransitions>
 
@@ -119,20 +120,12 @@
                 HorizontalAlignment="Center"
                 SelectionMode="None"
                 Padding="0">
-                <GridView.ItemContainerTransitions>
-                    <TransitionCollection>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                        <ReorderThemeTransition />
-                    </TransitionCollection>
-                </GridView.ItemContainerTransitions>
                 <GridView.Resources>
                     <Style TargetType="HyperlinkButton" BasedOn="{StaticResource DefaultHyperlinkButtonStyle}">
                         <Setter Property="MaxWidth" Value="250" />
-                        <Setter Property="HorizontalAlignment" Value="Stretch" />
-                        <Setter Property="Padding" Value="15,5" />
-                    </Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="Padding" Value="10,5" />
+                        <Setter Property="FontFamily" Value="Lucida Sans Typewriter"/>
                     </Style>
                     <Style TargetType="GridViewItem" BasedOn="{StaticResource DefaultGridViewItemStyle}">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -148,25 +141,20 @@
                 </GridView.ItemsPanel>
             </GridView>
 
-            <Button x:Name="OpenOptionsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="1" Click="OpenOptionsButton_Click" VerticalAlignment="Top">
+            <Button x:Name="OpenOptionsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="1" Click="OpenOptionsButton_Click" VerticalAlignment="Top" HorizontalAlignment="Right">
                 <FontIcon Glyph="&#xe712;" FontSize="14"/>
             </Button>
         </Grid>
 
-        <Grid 
-            x:Name="OptionsGrid" 
-            Grid.Column="1"
-            Margin="4,0,0,0" 
-            ColumnSpacing="5"
-            Background="{ThemeResource SubtleFillColorTransparentBrush}"
-            CornerRadius="{StaticResource OverlayCornerRadius}"
-            HorizontalAlignment="Right">
+        <Grid x:Name="OptionsGrid" Visibility="Collapsed" Grid.Column="1" Margin="4,0,0,0" ColumnSpacing="5" Background="{ThemeResource SubtleFillColorTransparentBrush}" 
+              CornerRadius="{StaticResource OverlayCornerRadius}" HorizontalAlignment="Right">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition/>
+                <RowDefinition />
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.Resources>
                 <Style TargetType="Button" BasedOn="{StaticResource IconButtonStyle}">
@@ -185,6 +173,8 @@
             <Button x:Name="RemoveActionButton" Grid.Column="1" Grid.Row="0" Click="RemoveActionButton_Click" x:Uid="RemoveActionButton">
                 <FontIcon Glyph="&#xe74d;" FontSize="18"/>
             </Button>
+
+            <TextBlock x:Name="TimestampTextBlock" Grid.ColumnSpan="2" Grid.Row="1" Style="{StaticResource CaptionTextBlockStyle}" Opacity="0.6" HorizontalAlignment="Center"/>
         </Grid>
 
         <InfoBar x:Name="InfoBar" Severity="Error" Grid.ColumnSpan="2" Grid.Row="1" CornerRadius="0,0,8,8"/>

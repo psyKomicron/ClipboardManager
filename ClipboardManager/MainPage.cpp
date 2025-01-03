@@ -16,6 +16,7 @@
 #include "src/notifs/win_toasts.hpp"
 #include "src/notifs/NotificationTypes.hpp"
 #include "src/res/strings.h"
+#include "src/ClipboardAction.hpp"
 
 #include "ClipboardActionView.h"
 #include "SearchSuggestionView.h"
@@ -152,22 +153,29 @@ namespace winrt::ClipboardManager::implementation
 
             if (clipboardActionViews.Size() > 0
                 && localSettings.get<bool>(L"SaveMatchingResults").value_or(false)
-                && HistoryToggleButton().IsChecked().GetBoolean())
+                && !HistoryToggleButton().IsChecked().GetBoolean())
             {
                 boost::property_tree::wptree tree{};
                 boost::property_tree::read_xml(userFilePath.value().string(), tree);
 
-                auto historyNode = tree.get_child_optional(L"settings.history");
-                if (historyNode.has_value())
-                {
-                    historyNode.value().clear();
-                }
-
+                auto&& history = boost::property_tree::wptree();
                 for (int i = clipboardActionViews.Size() - 1; i >= 0; i--)
                 {
                     auto&& view = clipboardActionViews.GetAt(i);
-                    tree.add(L"settings.history.item", std::wstring(view.Text()));
+                    try
+                    {
+                        clip::ClipboardAction clipboardAction{ view.Text(), view.Timestamp() };
+                        clipboardAction.save(history);
+                    }
+                    catch (...)
+                    {
+                        logger.error(L"Error serializing clipboard actions.");
+
+                        history.add(L"item", std::wstring(view.Text()));
+                    }
                 }
+
+                tree.put_child(L"settings.history", history);
 
                 boost::property_tree::write_xml(userFilePath.value().string(), tree);
             }
@@ -246,16 +254,17 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    void MainPage::AddAction(const std::wstring& text, const bool& notify)
+    void MainPage::AddAction(const clip::ClipboardAction& action, const bool& notify)
     {
         if (localSettings.get<bool>(L"AddDuplicatedActions").value_or(true)
             || clipboardActionViews.Size() == 0
-            || text != clipboardActionViews.GetAt(0).Text())
+            || action.text() != clipboardActionViews.GetAt(0).Text())
         {
-            auto actionView = winrt::make<ClipboardActionView>(text.c_str());
+            auto actionView = winrt::make<ClipboardActionView>(action.text().c_str());
+            actionView.Timestamp(clock::from_sys(action.creationTime()));
 
             std::vector<std::pair<std::wstring, std::wstring>> buttons{};
-            if (FindActions(actionView, buttons, text))
+            if (FindActions(actionView, buttons, action.text()))
             {
                 clipboardActionViews.InsertAt(0, actionView);
                 actionView.Removed([this](auto&& sender, auto&&)
@@ -275,7 +284,7 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    bool MainPage::FindActions(const winrt::ClipboardManager::ClipboardActionView& actionView,
+    bool MainPage::FindActions(winrt::ClipboardManager::ClipboardActionView& actionView,
                                std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text)
     {
         auto matchMode = localSettings.get<clip::MatchMode>(L"TriggerMatchMode");
@@ -358,15 +367,15 @@ namespace winrt::ClipboardManager::implementation
             {
                 // Get the text of any actions that have been created then use 
                 // AddAction to re-create the actions with the new triggers.
-                auto vector = std::vector<winrt::hstring>();
+                auto vector = std::vector<clip::ClipboardAction>();
                 for (auto&& view : clipboardActionViews)
                 {
-                    vector.push_back(view.Text());
+                    vector.push_back({ view.Text(), view.Timestamp() });
                 }
                 clipboardActionViews.Clear();
-                for (auto&& view : vector)
+                for (auto&& action : vector)
                 {
-                    AddAction(view.data(), false);
+                    AddAction(action, false);
                 }
 
                 return; // Explicit return to not reach "error state" and show an error message to the user.
@@ -490,7 +499,7 @@ namespace winrt::ClipboardManager::implementation
                 DispatcherQueue().TryEnqueue([this, text = std::wstring(itemText), notify]()
                 {
                     // Run triggers on the text:
-                    AddAction(text, notify);
+                    AddAction(clip::ClipboardAction(text), notify);
                 });
             }
         }
@@ -524,7 +533,21 @@ namespace winrt::ClipboardManager::implementation
                 boost::property_tree::read_xml(userFilePath.value().string(), tree);
                 for (auto&& historyItem : tree.get_child(L"settings.history"))
                 {
-                    AddAction(historyItem.second.data(), false);
+                    try
+                    {
+                        clip::ClipboardAction action{ historyItem.second };
+                        auto text = action.text();
+                        auto time = action.creationTime();
+                        logger.debug(
+                            std::vformat(L"action[text: {0}, creationTime: {1:%F} {1:%R}]", std::make_wformat_args(text, time)));
+
+                        AddAction(action, false);
+                    }
+                    catch (std::format_error error)
+                    {
+                        logger.error(error.what());
+                    }
+
                 }
             }
             catch (const boost::property_tree::ptree_bad_path badPath)
@@ -653,19 +676,29 @@ namespace winrt::ClipboardManager::implementation
             {
                 text = L".*";
             }
-            /*else
-            {
-            std::wstring groups{};
-            groups = std::vformat(L"([{}]+)", std::make_wformat_args(text));
-            groups += std::vformat(L"({})", std::make_wformat_args(text));
-            text = groups;
-            }*/
 
-            auto flags = SearchActionsIgnoreCaseToggleButton().IsChecked().GetBoolean() ? boost::regex_constants::icase : boost::regex_constants::normal;
+            const auto flags = SearchActionsIgnoreCaseToggleButton().IsChecked().GetBoolean() ? boost::regex_constants::icase : boost::regex_constants::normal;
             const auto regex = boost::wregex(text, flags);
 
             const hstring searchFilter_TriggersDesc = resLoader.getResource(L"SearchFilter_TriggersDesc").value_or(L"t:");
             const hstring searchFilter_TextDesc = resLoader.getResource(L"SearchFilter_TextDesc").value_or(L"x:");
+
+            std::optional<win::DateTime> dateFilter{};
+            if (SearchActionsFilterDateToggleButton().IsChecked())
+            {
+                if (!SearchActionsDatePickerToggleSwitch().IsOn())
+                {
+                    SearchActionsDatePicker().SelectedDate(winrt::clock::now());
+                }
+
+                dateFilter = SearchActionsDatePicker().Date();
+
+                if (SearchActionsTimePickerToggleSwitch().IsOn())
+                {
+                    auto timePickerSelectedTime = SearchActionsTimePicker().Time();
+                    dateFilter = dateFilter.value() + timePickerSelectedTime;
+                }
+            }
 
             if ((filter & SearchFilter::Triggers) == SearchFilter::Triggers)
             {
@@ -674,30 +707,7 @@ namespace winrt::ClipboardManager::implementation
                 {
                     if (boost::regex_search(trigger.label(), regex))
                     {
-                        ClipboardManager::SearchSuggestionView suggestion = make<ClipboardManager::implementation::SearchSuggestionView>();
-                        suggestion.Icon(box_value(searchFilter_TriggersDesc));
-                        suggestion.Suggestion(box_value(trigger.label()));
-
-                        std::wstring actions{};
-                        for (auto&& actionView : clipboardActionViews)
-                        {
-                            auto triggersText = actionView.GetTriggersText();
-                            for (auto&& triggerText : triggersText)
-                            {
-                                if (static_cast<std::wstring>(triggerText) == trigger.label())
-                                {
-                                    actions += (actions.empty() ? actionView.Text() : L", " + actionView.Text());
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (!actions.empty())
-                        {
-                            suggestion.Subtitle(actions);
-                        }
-
-                        list.Append(suggestion);
+                        list.Append(MakeTriggerSuggestion(trigger.label(), searchFilter_TriggersDesc));
                     }
                 }
             }
@@ -705,6 +715,14 @@ namespace winrt::ClipboardManager::implementation
             {
                 for (auto&& actionView : clipboardActionViews)
                 {
+                    logger.debug(
+                        std::format(
+                            L"Date filter: {} | trigger creation time < date filter ? {}", 
+                            dateFilter.has_value() ? L"yes" : L"no",
+                            (!dateFilter.has_value() || actionView.Timestamp() < dateFilter.value()) ? L"yes" : L"no"
+                        )
+                    );
+
                     //boost::wsmatch matches{};
                     auto triggersText = actionView.GetTriggersText();
 
@@ -712,97 +730,26 @@ namespace winrt::ClipboardManager::implementation
                     {
                         for (auto&& triggerText : triggersText)
                         {
-                            if (boost::regex_search(std::wstring(triggerText), regex))
+                            if (boost::regex_search(std::wstring(triggerText), regex)
+                                && (!dateFilter.has_value() || actionView.Timestamp() < dateFilter.value()))
                             {
-                                ClipboardManager::SearchSuggestionView hostControl = make<ClipboardManager::implementation::SearchSuggestionView>();
-                                hostControl.Icon(box_value(searchFilter_TriggersDesc));
-                                hostControl.Suggestion(box_value(triggerText));
-                                hostControl.Subtitle(actionView.Text());
-
-                                list.Append(hostControl);
+                                list.Append(MakeTextSuggestion(actionView, triggerText, searchFilter_TriggersDesc));
                             }
                         }
                     }
 
                     if ((filter & SearchFilter::Actions) == SearchFilter::Actions
-                        && boost::regex_search(std::wstring(actionView.Text()), regex))
+                        && boost::regex_search(std::wstring(actionView.Text()), regex)
+                        && (!dateFilter.has_value() || actionView.Timestamp() < dateFilter.value()))
                     {
-                        ClipboardManager::SearchSuggestionView searchSuggestionView = make<ClipboardManager::implementation::SearchSuggestionView>();
-                        searchSuggestionView.Icon((filter & SearchFilter::Text) == SearchFilter::Text 
-                                                  ? box_value(searchFilter_TextDesc)
-                                                  : box_value(L"action"));
-                        searchSuggestionView.Suggestion(box_value(actionView.Text()));
-                        searchSuggestionView.RightTapped([this, tag = single_threaded_vector<hstring>({ actionView.Text(), triggersText.GetAt(0) }), searchSuggestionView]
-                        (auto&& s, auto&& e)
-                        {
-                            logger.debug(L"SearchSuggestionView RightTapped.");
-                            auto actionText = tag.GetAt(0);
-                            auto triggerLabel = tag.GetAt(1);
-
-                            std::unique_lock lock{ triggersMutex };
-                            for (auto&& trigger : triggers)
-                            {
-                                if (triggerLabel == trigger.label())
-                                {
-                                    win::DataPackage dataPackage{};
-                                    dataPackage.SetText(trigger.formatTrigger(actionText.data()));
-                                    dataPackage.Properties().ApplicationName(APP_NAMEW);
-                                    win::Clipboard::SetContent(dataPackage);
-
-                                    searchSuggestionView.ShowCopiedToClipboard(triggerLabel);
-                                }
-                            }
-                        });
-
-                        xaml::DropDownButton dropdownButton{};
-                        xaml::MenuFlyout flyout{};
-                        dropdownButton.Flyout(flyout);
-                        for (auto&& triggerText : triggersText)
-                        {
-                            xaml::MenuFlyoutItem button{};
-                            button.Text(triggerText);
-                            auto tag = single_threaded_vector<hstring>();
-                            tag.Append(actionView.Text());
-                            tag.Append(triggerText);
-                            button.Tag(tag);
-                            button.Click([this](auto&& sender, auto&&)
-                            {
-                                win::IVector<hstring> tag = sender.as<xaml::FrameworkElement>().Tag().as<win::IVector<hstring>>();
-                                auto actionText = tag.GetAt(0);
-                                auto triggerLabel = tag.GetAt(1);
-
-                                std::unique_lock lock{ triggersMutex };
-                                for (auto&& trigger : triggers)
-                                {
-                                    if (triggerLabel == trigger.label())
-                                    {
-                                        clip::utils::Launcher launcher{};
-                                        launcher.launch(trigger, static_cast<std::wstring>(actionText));
-                                    }
-                                }
-                            });
-                            flyout.Items().Append(button);
-                        }
-
-                        const Windows::Globalization::DateTimeFormatting::DateTimeFormatter formatter
-                        {
-                            L"{hour.integer}:{minute.integer(2)} {month.integer(2)}/{day.integer(2)}/{year.abbreviated}"
-                        };
-                        searchSuggestionView.Subtitle(formatter.Format(actionView.Timestamp()));
-
-                        auto size = triggersText.Size();
-                        auto message = std::vformat(resLoader.getStdResource(L"UserMessage_XNumberOfTriggers").value_or(L"{}"), std::make_wformat_args(size));
-                        dropdownButton.Content(box_value(message));
-                        searchSuggestionView.RightContent(dropdownButton);
-
-                        list.Append(searchSuggestionView);
+                        list.Append(MakeActionSuggestion(filter, actionView, triggersText, searchFilter_TextDesc));
                     }
                 }
             }
         }
         catch (boost::regex_error&)
         {
-            logger.debug(L"! Regex error");
+            logger.error(L"! Regex error");
         }
     }
 
@@ -826,6 +773,119 @@ namespace winrt::ClipboardManager::implementation
 
             appWindow.TitleBar().SetDragRectangles(dragRectangles);
         }
+    }
+
+    ClipboardManager::SearchSuggestionView MainPage::MakeActionSuggestion(const SearchFilter& filter, const ClipboardManager::ClipboardActionView& actionView,
+                                                                          const winrt::Windows::Foundation::Collections::IVector<hstring>& triggersText, const hstring& searchFilter_TextDesc)
+    {
+        ClipboardManager::SearchSuggestionView searchSuggestionView = make<ClipboardManager::implementation::SearchSuggestionView>();
+        searchSuggestionView.Icon((filter & SearchFilter::Text) == SearchFilter::Text 
+                                  ? box_value(searchFilter_TextDesc)
+                                  : box_value(L"action"));
+        searchSuggestionView.Suggestion(box_value(actionView.Text()));
+
+        searchSuggestionView.RightTapped([this, tag = single_threaded_vector<hstring>({ actionView.Text(), triggersText.GetAt(0) }), searchSuggestionView]
+        (auto&& s, auto&& e)
+        {
+            logger.debug(L"SearchSuggestionView RightTapped.");
+            auto actionText = tag.GetAt(0);
+            auto triggerLabel = tag.GetAt(1);
+
+            std::unique_lock lock{ triggersMutex };
+            for (auto&& trigger : triggers)
+            {
+                if (triggerLabel == trigger.label())
+                {
+                    win::DataPackage dataPackage{};
+                    dataPackage.SetText(trigger.formatTrigger(actionText.data()));
+                    dataPackage.Properties().ApplicationName(APP_NAMEW);
+                    win::Clipboard::SetContent(dataPackage);
+
+                    searchSuggestionView.ShowCopiedToClipboard(triggerLabel);
+                }
+            }
+        });
+
+        xaml::DropDownButton dropdownButton{};
+        xaml::MenuFlyout flyout{};
+        dropdownButton.Flyout(flyout);
+        for (auto&& triggerText : triggersText)
+        {
+            xaml::MenuFlyoutItem button{};
+            button.Text(triggerText);
+            auto tag = single_threaded_vector<hstring>();
+            tag.Append(actionView.Text());
+            tag.Append(triggerText);
+            button.Tag(tag);
+            button.Click([this](auto&& sender, auto&&)
+            {
+                win::IVector<hstring> tag = sender.as<xaml::FrameworkElement>().Tag().as<win::IVector<hstring>>();
+                auto actionText = tag.GetAt(0);
+                auto triggerLabel = tag.GetAt(1);
+
+                std::unique_lock lock{ triggersMutex };
+                for (auto&& trigger : triggers)
+                {
+                    if (triggerLabel == trigger.label())
+                    {
+                        clip::utils::Launcher launcher{};
+                        launcher.launch(trigger, static_cast<std::wstring>(actionText));
+                    }
+                }
+            });
+            flyout.Items().Append(button);
+        }
+
+        const Windows::Globalization::DateTimeFormatting::DateTimeFormatter formatter
+        {
+            L"{hour.integer(2)}:{minute.integer(2)} {day.integer}/{month.integer}/{year.full}"
+        };
+        searchSuggestionView.Subtitle(formatter.Format(actionView.Timestamp()));
+
+        auto size = triggersText.Size();
+        auto message = std::vformat(resLoader.getStdResource(L"UserMessage_XNumberOfTriggers").value_or(L"{}"), std::make_wformat_args(size));
+        dropdownButton.Content(box_value(message));
+        searchSuggestionView.RightContent(dropdownButton);
+
+        return searchSuggestionView;
+    }
+
+    ClipboardManager::SearchSuggestionView MainPage::MakeTextSuggestion(const ClipboardManager::ClipboardActionView& actionView, const hstring& triggerText, 
+                                                                        const hstring& searchFilter_TriggersDesc)
+    {
+        ClipboardManager::SearchSuggestionView hostControl = make<ClipboardManager::implementation::SearchSuggestionView>();
+        hostControl.Icon(box_value(searchFilter_TriggersDesc));
+        hostControl.Suggestion(box_value(triggerText));
+        hostControl.Subtitle(actionView.Text());
+        return hostControl;
+    }
+
+    ClipboardManager::SearchSuggestionView MainPage::MakeTriggerSuggestion(const std::wstring& triggerLabel, const hstring& searchFilter_TriggersDesc)
+    {
+        ClipboardManager::SearchSuggestionView suggestion = make<ClipboardManager::implementation::SearchSuggestionView>();
+        suggestion.Icon(box_value(searchFilter_TriggersDesc));
+        suggestion.Suggestion(box_value(triggerLabel));
+
+        std::wstring actions{};
+        for (auto&& actionView : clipboardActionViews)
+        {
+            auto triggersText = actionView.GetTriggersText();
+            for (auto&& triggerText : triggersText)
+            {
+                if (static_cast<std::wstring>(triggerText) == triggerLabel)
+                {
+                    actions += (actions.empty() ? actionView.Text() : L", " + actionView.Text());
+                    break;
+                }
+            }
+        }
+
+        if (!actions.empty())
+        {
+            suggestion.Subtitle(actions);
+        }
+
+        return suggestion;
     }
 
     Windows::Foundation::IInspectable MainPage::asInspectable()
@@ -1433,11 +1493,18 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    void winrt::ClipboardManager::implementation::MainPage::OverlayCloseButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    void MainPage::OverlayCloseButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
         if (appWindow)
         {
             appWindow.Hide();
         }
     }
+
+    void MainPage::QuickSettingsSaveButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+    {
+        AppClosing();
+    }
 }
+
+

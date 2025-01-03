@@ -9,6 +9,7 @@
 #include "src/utils/ResLoader.hpp"
 #include "src/ui/VisualStateManager.hpp"
 #include "src/ui/ListenablePropertyValue.hpp"
+#include "src/ClipboardAction.hpp"
 
 #include "ClipboardActionEditor.h"
 
@@ -80,8 +81,8 @@ namespace winrt::ClipboardManager::implementation
         clip::ui::ListenablePropertyValue<bool> overlayEnabled{ std::bind(&MainPage::OverlayEnabled_Changed, this, std::placeholders::_1) };
 
         void Restore();
-        void AddAction(const std::wstring& text, const bool& notify);
-        bool FindActions(const winrt::ClipboardManager::ClipboardActionView& actionView, std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text);
+        void AddAction(const clip::ClipboardAction& action, const bool& notify);
+        bool FindActions(winrt::ClipboardManager::ClipboardActionView& actionView, std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text);
         void SendNotification(const std::vector<std::pair<std::wstring, std::wstring>>& buttons);
         void ReloadTriggers();
         bool LoadTriggers(std::filesystem::path& path);
@@ -92,6 +93,11 @@ namespace winrt::ClipboardManager::implementation
         void RefreshSearchBoxSuggestions(std::wstring text);
         void FillSearchBoxSuggestions(const Windows::Foundation::Collections::IVector<IInspectable>& list, const SearchFilter& searchFilter, std::wstring text);
         void SetDragRectangles();
+        ClipboardManager::SearchSuggestionView MakeActionSuggestion(const SearchFilter& filter, const ClipboardManager::ClipboardActionView& actionView,
+                                                                    const Windows::Foundation::Collections::IVector<hstring>& triggersText, const hstring& searchFilter_TextDesc);
+        ClipboardManager::SearchSuggestionView MakeTextSuggestion(const ClipboardManager::ClipboardActionView& actionView, const hstring& triggerText, 
+                                                                  const hstring& searchFilter_TriggersDesc);
+        ClipboardManager::SearchSuggestionView MakeTriggerSuggestion(const std::wstring& triggerLabel, const hstring& searchFilter_TriggersDesc);
 
         // Inherited via PropertyChangedClass
         Windows::Foundation::IInspectable asInspectable() override;
@@ -131,6 +137,7 @@ namespace winrt::ClipboardManager::implementation
         void SearchActionsListView_DoubleTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& e);
         void RootGrid_ActualThemeChanged(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
         void OverlayCloseButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void QuickSettingsSaveButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 };
 }
 

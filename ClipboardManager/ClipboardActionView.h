@@ -1,10 +1,12 @@
-#pragma once
+﻿#pragma once
 #include "ClipboardActionView.g.h"
 
 #include "src/ClipboardTrigger.hpp"
 #include "src/ui/VisualStateManager.hpp"
 #include "src/utils/Logger.hpp"
 #include "src/utils/ResLoader.hpp"
+
+#include <winrt/Windows.Globalization.DateTimeFormatting.h>
 
 #include <atomic>
 
@@ -55,6 +57,10 @@ namespace winrt::ClipboardManager::implementation
         hstring _text{};
         std::vector<clip::ClipboardTrigger> triggers{};
         Windows::Foundation::DateTime _timestamp{};
+        const Windows::Globalization::DateTimeFormatting::DateTimeFormatter formatter
+        {
+            L"‎{hour.integer(2)}:{minute.integer(2)} {day.integer}/{month.integer}/{year.full}"
+        };
 
         event<event_removed_t> e_removed{};
 

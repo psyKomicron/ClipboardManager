@@ -152,6 +152,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatSpecificWarningsAsErrors>4715;%(TreatSpecificWarningsAsErrors)</TreatSpecificWarningsAsErrors>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -170,6 +171,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -180,6 +182,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\ClipboardAction.hpp" />
     <ClInclude Include="SearchSuggestionView.h">
       <DependentUpon>SearchSuggestionView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -250,6 +253,7 @@
     <ClInclude Include="src\notifs\ToastNotificationHandler.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\ClipboardAction.cpp" />
     <ClCompile Include="SearchSuggestionView.cpp">
       <DependentUpon>SearchSuggestionView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -411,6 +415,7 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DeploymentContent>
     </Xml>
+    <Xml Include="user_file_copy.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

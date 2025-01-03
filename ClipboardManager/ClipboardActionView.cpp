@@ -13,6 +13,7 @@
 #include <winrt/Windows.System.h>
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include <winrt/Microsoft.UI.Input.h>
+#include <winrt/Microsoft.UI.Xaml.h>
 
 #include <ppltasks.h>
 #include <pplawait.h>
@@ -44,8 +45,6 @@ namespace winrt::ClipboardManager::implementation
                 optionsClosedState,
                 optionsOpenState
             });
-        
-        _timestamp = winrt::clock::now();
     }
 
     ClipboardActionView::ClipboardActionView(const winrt::hstring& text) : ClipboardActionView()
@@ -71,6 +70,7 @@ namespace winrt::ClipboardManager::implementation
     void ClipboardActionView::Timestamp(const Windows::Foundation::DateTime& value)
     {
         _timestamp = value;
+        TimestampTextBlock().Text(formatter.Format(value));
     }
 
     winrt::event_token ClipboardActionView::Removed(const event_removed_t& handler)
@@ -83,15 +83,15 @@ namespace winrt::ClipboardManager::implementation
         e_removed.remove(token);
     }
 
-    void ClipboardActionView::AddAction(const winrt::hstring& label, const winrt::hstring& format, const winrt::hstring& regex, 
+    void ClipboardActionView::AddAction(const winrt::hstring& label, const winrt::hstring& format, const winrt::hstring& regex,
                                         const bool& enabled, const bool& useRegexMatchResults, const bool& ignoreCase)
     {
         try
         {
             auto trigger = clip::ClipboardTrigger(
-                std::wstring(label), 
-                std::wstring(format), 
-                boost::wregex(std::wstring(regex), ignoreCase ? boost::regex_constants::icase : boost::regex_constants::basic), 
+                std::wstring(label),
+                std::wstring(format),
+                boost::wregex(std::wstring(regex), ignoreCase ? boost::regex_constants::icase : boost::regex_constants::basic),
                 enabled);
             trigger.useRegexMatchResults(useRegexMatchResults);
 
@@ -120,7 +120,7 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    void ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hstring& _label, const winrt::hstring& _format, const winrt::hstring& _regex, 
+    void ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hstring& _label, const winrt::hstring& _format, const winrt::hstring& _regex,
                                          const bool& _enabled, const bool& useRegexMatchResults, const bool& ignoreCase)
     {
         auto label = std::wstring(_label);
@@ -195,7 +195,7 @@ namespace winrt::ClipboardManager::implementation
         hyperlinkButton.Tag(box_value(trigger.label()));
         hyperlinkButton.Click({ this, &ClipboardActionView::HyperlinkButton_Click });
 
-        ui::ToolTipService::SetToolTip(hyperlinkButton, 
+        ui::ToolTipService::SetToolTip(hyperlinkButton,
                                        box_value(trigger.formatTrigger(std::wstring(_text))));
 
         TriggersGridView().Items().InsertAt(0, hyperlinkButton);
@@ -230,7 +230,7 @@ namespace winrt::ClipboardManager::implementation
 
     void ClipboardActionView::UserControl_Loading(ui::FrameworkElement const&, win::IInspectable const&)
     {
-        std::sort(triggers.begin(), triggers.end(), [](auto&& a, auto&& b) -> bool
+        std::sort(triggers.begin(), triggers.end(), [this](auto&& a, auto&& b) -> bool
         {
             return a.label().size() < b.label().size();
         });
@@ -347,7 +347,6 @@ namespace winrt::ClipboardManager::implementation
                 }
             }
         }
-
     }
 }
 
