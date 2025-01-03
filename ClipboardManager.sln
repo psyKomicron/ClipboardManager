@@ -5,22 +5,59 @@ VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClipboardManager", "ClipboardManager\ClipboardManager.vcxproj", "{42653B37-0C95-4786-874E-15FF91E3B60B}"
 EndProject
+Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "ClipboardManagerWixPackage", "ClipboardManagerWixPackage\ClipboardManagerWixPackage.wixproj", "{198951FD-C9DA-4C27-99C3-C2F917FA343F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{42653B37-0C95-4786-874E-15FF91E3B60B} = {42653B37-0C95-4786-874E-15FF91E3B60B}
+	EndProjectSection
+EndProject
+Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "ClipboardManagerBundle", "ClipboardManagerBundle\ClipboardManagerBundle.wixproj", "{6DB103B6-320A-4286-8C70-25558F3C2619}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM64 = Debug|ARM64
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|ARM64 = Release|ARM64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{42653B37-0C95-4786-874E-15FF91E3B60B}.Debug|ARM64.ActiveCfg = Debug|x64
+		{42653B37-0C95-4786-874E-15FF91E3B60B}.Debug|ARM64.Build.0 = Debug|x64
 		{42653B37-0C95-4786-874E-15FF91E3B60B}.Debug|x64.ActiveCfg = Debug|x64
 		{42653B37-0C95-4786-874E-15FF91E3B60B}.Debug|x64.Build.0 = Debug|x64
 		{42653B37-0C95-4786-874E-15FF91E3B60B}.Debug|x86.ActiveCfg = Debug|Win32
 		{42653B37-0C95-4786-874E-15FF91E3B60B}.Debug|x86.Build.0 = Debug|Win32
+		{42653B37-0C95-4786-874E-15FF91E3B60B}.Release|ARM64.ActiveCfg = Release|x64
+		{42653B37-0C95-4786-874E-15FF91E3B60B}.Release|ARM64.Build.0 = Release|x64
 		{42653B37-0C95-4786-874E-15FF91E3B60B}.Release|x64.ActiveCfg = Release|x64
 		{42653B37-0C95-4786-874E-15FF91E3B60B}.Release|x64.Build.0 = Release|x64
 		{42653B37-0C95-4786-874E-15FF91E3B60B}.Release|x86.ActiveCfg = Release|Win32
 		{42653B37-0C95-4786-874E-15FF91E3B60B}.Release|x86.Build.0 = Release|Win32
+		{198951FD-C9DA-4C27-99C3-C2F917FA343F}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{198951FD-C9DA-4C27-99C3-C2F917FA343F}.Debug|ARM64.Build.0 = Debug|ARM64
+		{198951FD-C9DA-4C27-99C3-C2F917FA343F}.Debug|x64.ActiveCfg = Debug|x64
+		{198951FD-C9DA-4C27-99C3-C2F917FA343F}.Debug|x64.Build.0 = Debug|x64
+		{198951FD-C9DA-4C27-99C3-C2F917FA343F}.Debug|x86.ActiveCfg = Debug|x86
+		{198951FD-C9DA-4C27-99C3-C2F917FA343F}.Debug|x86.Build.0 = Debug|x86
+		{198951FD-C9DA-4C27-99C3-C2F917FA343F}.Release|ARM64.ActiveCfg = Release|ARM64
+		{198951FD-C9DA-4C27-99C3-C2F917FA343F}.Release|ARM64.Build.0 = Release|ARM64
+		{198951FD-C9DA-4C27-99C3-C2F917FA343F}.Release|x64.ActiveCfg = Release|x64
+		{198951FD-C9DA-4C27-99C3-C2F917FA343F}.Release|x64.Build.0 = Release|x64
+		{198951FD-C9DA-4C27-99C3-C2F917FA343F}.Release|x86.ActiveCfg = Release|x86
+		{198951FD-C9DA-4C27-99C3-C2F917FA343F}.Release|x86.Build.0 = Release|x86
+		{6DB103B6-320A-4286-8C70-25558F3C2619}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{6DB103B6-320A-4286-8C70-25558F3C2619}.Debug|ARM64.Build.0 = Debug|ARM64
+		{6DB103B6-320A-4286-8C70-25558F3C2619}.Debug|x64.ActiveCfg = Debug|x64
+		{6DB103B6-320A-4286-8C70-25558F3C2619}.Debug|x64.Build.0 = Debug|x64
+		{6DB103B6-320A-4286-8C70-25558F3C2619}.Debug|x86.ActiveCfg = Debug|x86
+		{6DB103B6-320A-4286-8C70-25558F3C2619}.Debug|x86.Build.0 = Debug|x86
+		{6DB103B6-320A-4286-8C70-25558F3C2619}.Release|ARM64.ActiveCfg = Release|ARM64
+		{6DB103B6-320A-4286-8C70-25558F3C2619}.Release|ARM64.Build.0 = Release|ARM64
+		{6DB103B6-320A-4286-8C70-25558F3C2619}.Release|x64.ActiveCfg = Release|x64
+		{6DB103B6-320A-4286-8C70-25558F3C2619}.Release|x64.Build.0 = Release|x64
+		{6DB103B6-320A-4286-8C70-25558F3C2619}.Release|x86.ActiveCfg = Release|x86
+		{6DB103B6-320A-4286-8C70-25558F3C2619}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
