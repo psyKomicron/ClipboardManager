@@ -117,7 +117,7 @@ namespace clip::utils
     {
         boost::log::add_file_log
         (
-            boost::log::file_name = "sample.log",
+            boost::log::file_name = "sample%N.log",
             boost::log::format = "[%TimeStamp%]: %Message%"
         );
         //boost::log::core::get()->set_filter(boost::log::trivial::severity >= 1);
