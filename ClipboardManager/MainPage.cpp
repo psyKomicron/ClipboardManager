@@ -6,17 +6,17 @@
 
 #include "ClipboardManager.h"
 #include "Resource.h"
-#include "src/Settings.hpp"
-#include "src/utils/helpers.hpp"
-#include "src/utils/Launcher.hpp"
-#include "src/utils/AppVersion.hpp"
-#include "src/utils/StartupTask.hpp"
-#include "src/utils/unique_closable.hpp"
-#include "src/notifs/ToastNotification.hpp"
-#include "src/notifs/win_toasts.hpp"
-#include "src/notifs/NotificationTypes.hpp"
-#include "src/res/strings.h"
-#include "src/ClipboardAction.hpp"
+#include "lib/Settings.hpp"
+#include "lib/utils/helpers.hpp"
+#include "lib/utils/Launcher.hpp"
+#include "lib/utils/AppVersion.hpp"
+#include "lib/utils/StartupTask.hpp"
+#include "lib/utils/unique_closable.hpp"
+#include "lib/notifs/ToastNotification.hpp"
+#include "lib/notifs/win_toasts.hpp"
+#include "lib/notifs/NotificationTypes.hpp"
+#include "lib/res/strings.h"
+#include "lib/ClipboardAction.hpp"
 
 #include "ClipboardActionView.h"
 #include "SearchSuggestionView.h"
@@ -156,7 +156,7 @@ namespace winrt::ClipboardManager::implementation
                 && !HistoryToggleButton().IsChecked().GetBoolean())
             {
                 boost::property_tree::wptree tree{};
-                boost::property_tree::read_xml(userFilePath.value().string(), tree);
+                boost::property_tree::read_xml(userFilePath.value().string(), tree, boost::property_tree::xml_parser::trim_whitespace);
 
                 auto&& history = boost::property_tree::wptree();
                 for (int i = clipboardActionViews.Size() - 1; i >= 0; i--)
@@ -177,7 +177,7 @@ namespace winrt::ClipboardManager::implementation
 
                 tree.put_child(L"settings.history", history);
 
-                boost::property_tree::write_xml(userFilePath.value().string(), tree);
+                boost::property_tree::write_xml(userFilePath.value().string(), tree, std::locale(), boost::property_tree::xml_writer_settings<std::wstring>('\t', 1 ));
             }
         }
     }
@@ -895,8 +895,6 @@ namespace winrt::ClipboardManager::implementation
 
     async MainPage::ClipboardContent_Changed(const win::IInspectable& s, const win::IInspectable& e)
     {
-        logger.info(L"Clipboard history/content changed.");
-
         using namespace std::literals;
         static std::chrono::system_clock::time_point lastEntry{};
         auto&& now = std::chrono::system_clock::now();
@@ -908,8 +906,6 @@ namespace winrt::ClipboardManager::implementation
             co_return;
         }
 
-        //co_await resume_background();
-
         auto content = win::Clipboard::GetContent();
         if (content.Properties().ApplicationName() == L"ClipboardManager")
         {
@@ -918,7 +914,7 @@ namespace winrt::ClipboardManager::implementation
         else
         {
             clip::utils::clipboard_properties_formatter formatter{};
-            logger.info(formatter.format(content));
+            logger.info(L"Clipboard HISTORY changed: " + formatter.format(content));
 
             co_await AddClipboardItem(content, true);
         }
@@ -1063,6 +1059,11 @@ namespace winrt::ClipboardManager::implementation
         loaded = false;
 
         clipboardContentChangedToken = win::Clipboard::HistoryChanged({ this, &MainPage::ClipboardContent_Changed });
+        win::Clipboard::ContentChanged([this](auto&&, auto&&)
+        {
+            logger.info(L"Clipboard CONTENT changed.");
+        });
+
         appWindow.Changed([this](auto, xaml::AppWindowChangedEventArgs args)
         {
             if (args.DidSizeChange())

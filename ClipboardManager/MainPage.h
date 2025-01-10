@@ -1,15 +1,15 @@
 #pragma once
 #include "MainPage.g.h"
 
-#include "src/Settings.hpp"
-#include "src/ClipboardTrigger.hpp"
-#include "src/FileWatcher.hpp"
-#include "src/HotKey.hpp"
-#include "src/notifs/ToastNotificationHandler.hpp"
-#include "src/utils/ResLoader.hpp"
-#include "src/ui/VisualStateManager.hpp"
-#include "src/ui/ListenablePropertyValue.hpp"
-#include "src/ClipboardAction.hpp"
+#include "lib/Settings.hpp"
+#include "lib/ClipboardTrigger.hpp"
+#include "lib/FileWatcher.hpp"
+#include "lib/HotKey.hpp"
+#include "lib/notifs/ToastNotificationHandler.hpp"
+#include "lib/utils/ResLoader.hpp"
+#include "lib/ui/VisualStateManager.hpp"
+#include "lib/ui/ListenablePropertyValue.hpp"
+#include "lib/ClipboardAction.hpp"
 
 #include "ClipboardActionEditor.h"
 

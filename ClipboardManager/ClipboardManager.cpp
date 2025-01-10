@@ -2,9 +2,9 @@
 #include "pch.h"
 #include "ClipboardManager.h"
 
-#include "src/utils/helpers.hpp"
-#include "src/utils/Console.hpp"
-#include "src/Settings.hpp"
+#include "lib/utils/helpers.hpp"
+#include "lib/utils/Console.hpp"
+#include "lib/Settings.hpp"
 
 #include "App.xaml.h"
 #include "MainPage.h"
@@ -318,7 +318,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case WM_RENDERFORMAT: 
         case WM_SIZECLIPBOARD: 
         case WM_VSCROLLCLIPBOARD:
-            logger.debug(L"WM clipboard message: " + std::wstring(windowMessages[message]));
+            logger.info(L"WM clipboard message: " + std::wstring(windowMessages[message]));
             break;
 
         default:

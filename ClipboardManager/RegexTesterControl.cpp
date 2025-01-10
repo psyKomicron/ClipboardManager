@@ -4,7 +4,7 @@
 #include "RegexTesterControl.g.cpp"
 #endif
 
-#include <src/utils/helpers.hpp>
+#include "lib/utils/helpers.hpp"
 
 #include <boost/regex.hpp>
 

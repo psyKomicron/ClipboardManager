@@ -1,10 +1,10 @@
 #pragma once
 #include "ClipboardTriggerEditControl.g.h"
 
-#include "src/ui/ListenablePropertyValue.hpp"
-#include "src/ui/VisualStateManager.hpp"
-#include "src/utils/ResLoader.hpp"
-#include "src/utils/Logger.hpp"
+#include "lib/ui/ListenablePropertyValue.hpp"
+#include "lib/ui/VisualStateManager.hpp"
+#include "lib/utils/ResLoader.hpp"
+#include "lib/utils/Logger.hpp"
 
 namespace winrt::ClipboardManager::implementation
 {

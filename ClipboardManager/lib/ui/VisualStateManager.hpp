@@ -1,5 +1,5 @@
 #pragma once
-#include "src/utils/Logger.hpp"
+#include "lib/utils/Logger.hpp"
 
 #include <vector>
 #include <map>
@@ -52,4 +52,4 @@ namespace clip::ui
     };
 }
 
-#include "src/implementation/VisualStateManager_implementation.hpp"
+#include "lib/implementation/VisualStateManager_implementation.hpp"

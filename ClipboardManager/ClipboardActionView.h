@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include "ClipboardActionView.g.h"
 
-#include "src/ClipboardTrigger.hpp"
-#include "src/ui/VisualStateManager.hpp"
-#include "src/utils/Logger.hpp"
-#include "src/utils/ResLoader.hpp"
+#include "lib/ClipboardTrigger.hpp"
+#include "lib/ui/VisualStateManager.hpp"
+#include "lib/utils/Logger.hpp"
+#include "lib/utils/ResLoader.hpp"
 
 #include <winrt/Windows.Globalization.DateTimeFormatting.h>
 

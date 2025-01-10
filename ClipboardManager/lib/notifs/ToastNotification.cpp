@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "ToastNotification.hpp"
 
-#include "src/Settings.hpp"
-#include "src/notifs/win_toasts.hpp"
+#include "lib/Settings.hpp"
+#include "lib/notifs/win_toasts.hpp"
 
 #include <winrt/Windows.UI.Notifications.h>
 #include <winrt/Windows.Data.Xml.Dom.h>

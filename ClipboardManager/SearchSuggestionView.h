@@ -2,8 +2,8 @@
 
 #include "SearchSuggestionView.g.h"
 
-#include "src/ui/ListenablePropertyValue.hpp"
-#include "src/ui/VisualStateManager.hpp"
+#include "lib/ui/ListenablePropertyValue.hpp"
+#include "lib/ui/VisualStateManager.hpp"
 
 namespace winrt::ClipboardManager::implementation
 {

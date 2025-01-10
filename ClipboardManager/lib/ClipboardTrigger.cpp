@@ -64,6 +64,7 @@ namespace clip
         }
     }
 
+
     std::vector<ClipboardTrigger> ClipboardTrigger::loadClipboardTriggers(const std::filesystem::path& userFilePath)
     {
         if (utils::pathExists(userFilePath))
@@ -73,12 +74,11 @@ namespace clip
 
             try
             {
-                boost::property_tree::read_xml(userFilePath.string(), tree);
+                boost::property_tree::read_xml(userFilePath.string(), tree, boost::property_tree::xml_parser::trim_whitespace);
 
                 for (auto&& child : tree.get_child(L"settings.triggers"))
                 {
                     auto&& node = child.second;
-
                     urls.push_back(std::move(ClipboardTrigger(node)));
                 }
             }
@@ -113,7 +113,7 @@ namespace clip
             auto settingsNode = tree.get_child_optional(L"settings");
             if (settingsNode.has_value())
             {
-                settingsNode.value().erase(L"triggers");
+                //settingsNode.value().erase(L"triggers");
                 auto&& triggersNode = tree.put(L"settings.triggers", L"");
 
                 // For each trigger, create an empty trigger node for the trigger object to save it-self.
@@ -124,7 +124,7 @@ namespace clip
                     triggersNode.push_front({ L"trigger", triggerNode });
                 }
 
-                boost::property_tree::write_xml(userFilePath.string(), tree);
+                boost::property_tree::write_xml(userFilePath.string(), tree, std::locale(), boost::property_tree::xml_writer_settings<std::wstring>('\t', 1));
             }
         }
         else

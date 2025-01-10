@@ -4,8 +4,8 @@
 #include "ClipboardTriggerEditControl.g.cpp"
 #endif
 
-#include "src/res/strings.h"
-#include "src/ClipboardTrigger.hpp"
+#include "lib/res/strings.h"
+#include "lib/ClipboardTrigger.hpp"
 
 namespace xaml
 {

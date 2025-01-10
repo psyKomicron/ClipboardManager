@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Launcher.hpp"
 
-#include "src/Process.hpp"
+#include "lib/Process.hpp"
 
 #include <winrt/Windows.System.h>
 

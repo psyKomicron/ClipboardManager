@@ -1,10 +1,10 @@
 #pragma once
 #include "ClipboardActionEditor.g.h"
 
-#include "src/ui/VisualStateManager.hpp"
-#include "src/ui/ListenablePropertyValue.hpp"
-#include "src/utils/Logger.hpp"
-#include "src/utils/ResLoader.hpp"
+#include "lib/ui/VisualStateManager.hpp"
+#include "lib/ui/ListenablePropertyValue.hpp"
+#include "lib/utils/Logger.hpp"
+#include "lib/utils/ResLoader.hpp"
 
 #include <atomic>
 #include <functional>

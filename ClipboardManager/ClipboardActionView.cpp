@@ -4,9 +4,9 @@
 #include "ClipboardActionView.g.cpp"
 #endif
 
-#include "src/Settings.hpp"
-#include "src/utils/Launcher.hpp"
-#include "src/res/strings.h"
+#include "lib/Settings.hpp"
+#include "lib/utils/Launcher.hpp"
+#include "lib/res/strings.h"
 #include "Resource.h"
 
 #include <winrt/Windows.Storage.h>

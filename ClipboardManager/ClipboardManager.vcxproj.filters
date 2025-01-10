@@ -30,80 +30,80 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\helpers.hpp">
+    <ClInclude Include="lib\utils\helpers.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Settings.hpp">
+    <ClInclude Include="lib\Settings.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\FileWatcher.hpp">
+    <ClInclude Include="lib\FileWatcher.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ClipboardTrigger.hpp">
+    <ClInclude Include="lib\ClipboardTrigger.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\Console.hpp">
+    <ClInclude Include="lib\utils\Console.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\VisualStateManager.hpp">
+    <ClInclude Include="lib\ui\VisualStateManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\HotKey.hpp">
+    <ClInclude Include="lib\HotKey.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\StartupTask.hpp">
+    <ClInclude Include="lib\utils\StartupTask.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\Logger.hpp">
+    <ClInclude Include="lib\utils\Logger.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\notifs\win_toasts.hpp">
+    <ClInclude Include="lib\notifs\win_toasts.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\notifs\ToastNotification.hpp">
+    <ClInclude Include="lib\notifs\ToastNotification.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\notifs\ToastNotificationHandler.hpp">
+    <ClInclude Include="lib\notifs\ToastNotificationHandler.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\notifs\NotificationTypes.hpp">
+    <ClInclude Include="lib\notifs\NotificationTypes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Process.hpp">
+    <ClInclude Include="lib\Process.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\Launcher.hpp">
+    <ClInclude Include="lib\utils\Launcher.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\ListenablePropertyValue.hpp">
+    <ClInclude Include="lib\ui\ListenablePropertyValue.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\implementation\Settings_implementation.hpp" />
-    <ClInclude Include="src\utils\ResLoader.hpp">
+    <ClInclude Include="lib\implementation\Settings_implementation.hpp" />
+    <ClInclude Include="lib\utils\ResLoader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\res\strings.h">
+    <ClInclude Include="lib\res\strings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\implementation\VisualStateManager_implementation.hpp">
+    <ClInclude Include="lib\implementation\VisualStateManager_implementation.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\AppVersion.hpp">
+    <ClInclude Include="lib\utils\AppVersion.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\FormatExceptionCode.hpp">
+    <ClInclude Include="lib\FormatExceptionCode.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\unique_closable.hpp">
+    <ClInclude Include="lib\utils\unique_closable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\murmur\MurmurHash3.hpp">
+    <ClInclude Include="lib\murmur\MurmurHash3.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\implementation\murmurhash3_implementation.hpp">
+    <ClInclude Include="lib\implementation\murmurhash3_implementation.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ClipboardAction.hpp">
+    <ClInclude Include="lib\ClipboardAction.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -117,52 +117,52 @@
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils\helpers.cpp">
+    <ClCompile Include="lib\utils\helpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FileWatcher.cpp">
+    <ClCompile Include="lib\FileWatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ClipboardTrigger.cpp">
+    <ClCompile Include="lib\ClipboardTrigger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils\Console.cpp">
+    <ClCompile Include="lib\utils\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\HotKey.cpp">
+    <ClCompile Include="lib\HotKey.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils\StartupTask.cpp">
+    <ClCompile Include="lib\utils\StartupTask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils\Logger.cpp">
+    <ClCompile Include="lib\utils\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\notifs\win_toasts.cpp">
+    <ClCompile Include="lib\notifs\win_toasts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\notifs\ToastNotification.cpp">
+    <ClCompile Include="lib\notifs\ToastNotification.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\notifs\ToastNotificationHandler.cpp">
+    <ClCompile Include="lib\notifs\ToastNotificationHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Process.cpp">
+    <ClCompile Include="lib\Process.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils\Launcher.cpp">
+    <ClCompile Include="lib\utils\Launcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils\ResLoader.cpp">
+    <ClCompile Include="lib\utils\ResLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\utils\AppVersion.cpp">
+    <ClCompile Include="lib\utils\AppVersion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\FormatExceptionCode.cpp">
+    <ClCompile Include="lib\FormatExceptionCode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ClipboardAction.cpp">
+    <ClCompile Include="lib\ClipboardAction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

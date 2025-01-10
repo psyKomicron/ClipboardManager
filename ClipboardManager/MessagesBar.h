@@ -1,8 +1,8 @@
 #pragma once
 #include "MessagesBar.g.h"
 
-#include "src/ui/VisualStateManager.hpp"
-#include "src/utils/ResLoader.hpp"
+#include "lib/ui/VisualStateManager.hpp"
+#include "lib/utils/ResLoader.hpp"
 
 namespace winrt::ClipboardManager::implementation
 {

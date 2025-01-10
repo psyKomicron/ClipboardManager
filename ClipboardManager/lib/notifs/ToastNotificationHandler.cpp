@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ToastNotificationHandler.hpp"
 
-#include <src/notifs/win_toasts.hpp>
+#include "lib/notifs/win_toasts.hpp"
 
 namespace clip
 {

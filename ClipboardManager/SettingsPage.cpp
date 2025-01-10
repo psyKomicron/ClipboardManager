@@ -4,12 +4,12 @@
 #include "SettingsPage.g.cpp"
 #endif
 
-#include "src/ClipboardTrigger.hpp"
-#include "src/HotKey.hpp"
-#include "src/utils/StartupTask.hpp"
-#include "src/utils/helpers.hpp"
-#include "src/utils/AppVersion.hpp"
-#include "src/notifs/NotificationTypes.hpp"
+#include "lib/ClipboardTrigger.hpp"
+#include "lib/HotKey.hpp"
+#include "lib/utils/StartupTask.hpp"
+#include "lib/utils/helpers.hpp"
+#include "lib/utils/AppVersion.hpp"
+#include "lib/notifs/NotificationTypes.hpp"
 
 #include <winrt/Microsoft.UI.Xaml.Controls.h>
 #include <winrt/Windows.Storage.Pickers.h>

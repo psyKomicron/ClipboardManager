@@ -1,8 +1,8 @@
 #pragma once
 #include "HostControl.g.h"
 
-#include "src/ui/VisualStateManager.hpp"
-//#include "src/ui/ListenablePropertyValue.hpp"
+#include "lib/ui/VisualStateManager.hpp"
+//#include "lib/ui/ListenablePropertyValue.hpp"
 
 namespace winrt::ClipboardManager::implementation
 {

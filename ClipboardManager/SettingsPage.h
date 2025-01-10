@@ -1,9 +1,9 @@
 #pragma once
 #include "SettingsPage.g.h"
 
-#include "src/Settings.hpp"
-#include "src/utils/Logger.hpp"
-#include "src/ui/VisualStateManager.hpp"
+#include "lib/Settings.hpp"
+#include "lib/utils/Logger.hpp"
+#include "lib/ui/VisualStateManager.hpp"
 
 namespace winrt::ClipboardManager::implementation
 {

@@ -52,4 +52,4 @@ namespace clip::murmur
     };
 }
 
-#include "src/implementation/murmurhash3_implementation.hpp"
+#include "lib/implementation/murmurhash3_implementation.hpp"

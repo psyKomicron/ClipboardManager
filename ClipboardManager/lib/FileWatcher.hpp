@@ -1,11 +1,11 @@
 #pragma once
-#include "src/utils/Logger.hpp"
+#include "lib/utils/Logger.hpp"
 
 #include <filesystem>
 #include <thread>
 #include <functional>
 
-#include "src/murmur/MurmurHash3.hpp"
+#include "lib/murmur/MurmurHash3.hpp"
 
 namespace clip
 {

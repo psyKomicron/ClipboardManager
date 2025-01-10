@@ -1,6 +1,6 @@
 #pragma once
-#include "src/utils/Logger.hpp"
-#include "src/notifs/NotificationTypes.hpp"
+#include "lib/utils/Logger.hpp"
+#include "lib/notifs/NotificationTypes.hpp"
 
 #include <vector>
 #include <string>

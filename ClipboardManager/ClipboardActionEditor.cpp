@@ -4,9 +4,9 @@
 #include "ClipboardActionEditor.g.cpp"
 #endif
 
-#include <src/ClipboardTrigger.hpp>
-#include <src/utils/helpers.hpp>
-#include <src/res/strings.h>
+#include <lib/ClipboardTrigger.hpp>
+#include <lib/utils/helpers.hpp>
+#include <lib/res/strings.h>
 
 #include <boost/regex.hpp>
 

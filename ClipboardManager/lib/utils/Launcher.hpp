@@ -1,7 +1,7 @@
 #pragma once
-#include "src/Settings.hpp"
-#include "src/utils/Logger.hpp"
-#include "src/ClipboardTrigger.hpp"
+#include "lib/Settings.hpp"
+#include "lib/utils/Logger.hpp"
+#include "lib/ClipboardTrigger.hpp"
 
 namespace clip::utils
 {

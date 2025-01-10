@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.props')" />
+  <Import Project="..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.props')" />
   <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.props" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.props')" />
   <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.240405.15\build\native\Microsoft.Windows.CppWinRT.props')" />
   <ItemGroup Label="ProjectConfigurations">
@@ -182,19 +182,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\ClipboardAction.hpp" />
+    <ClInclude Include="lib\ClipboardAction.hpp" />
     <ClInclude Include="SearchSuggestionView.h">
       <DependentUpon>SearchSuggestionView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="src\FormatExceptionCode.hpp" />
+    <ClInclude Include="lib\FormatExceptionCode.hpp" />
     <ClInclude Include="MessagesBar.h">
       <DependentUpon>MessagesBar.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="src\implementation\murmurhash3_implementation.hpp" />
-    <ClInclude Include="src\murmur\MurmurHash3.hpp" />
-    <ClInclude Include="src\utils\AppVersion.hpp" />
+    <ClInclude Include="lib\implementation\murmurhash3_implementation.hpp" />
+    <ClInclude Include="lib\murmur\MurmurHash3.hpp" />
+    <ClInclude Include="lib\utils\AppVersion.hpp" />
     <ClInclude Include="ClipboardActionEditor.h">
       <DependentUpon>ClipboardActionEditor.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -211,26 +211,26 @@
       <DependentUpon>RegexTesterControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="src\implementation\VisualStateManager_implementation.hpp" />
-    <ClInclude Include="src\utils\unique_closable.hpp" />
-    <ClInclude Include="src\utils\ResLoader.hpp" />
-    <ClInclude Include="src\ui\ListenablePropertyValue.hpp" />
-    <ClInclude Include="src\utils\Launcher.hpp" />
-    <ClInclude Include="src\Process.hpp" />
-    <ClInclude Include="src\notifs\NotificationTypes.hpp" />
-    <ClInclude Include="src\utils\Logger.hpp" />
+    <ClInclude Include="lib\implementation\VisualStateManager_implementation.hpp" />
+    <ClInclude Include="lib\utils\unique_closable.hpp" />
+    <ClInclude Include="lib\utils\ResLoader.hpp" />
+    <ClInclude Include="lib\ui\ListenablePropertyValue.hpp" />
+    <ClInclude Include="lib\utils\Launcher.hpp" />
+    <ClInclude Include="lib\Process.hpp" />
+    <ClInclude Include="lib\notifs\NotificationTypes.hpp" />
+    <ClInclude Include="lib\utils\Logger.hpp" />
     <ClInclude Include="SettingsPage.h">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="src\HotKey.hpp" />
-    <ClInclude Include="src\utils\Console.hpp" />
-    <ClInclude Include="src\ClipboardTrigger.hpp" />
+    <ClInclude Include="lib\HotKey.hpp" />
+    <ClInclude Include="lib\utils\Console.hpp" />
+    <ClInclude Include="lib\ClipboardTrigger.hpp" />
     <ClInclude Include="ClipboardActionView.h">
       <DependentUpon>ClipboardActionView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="src\FileWatcher.hpp" />
+    <ClInclude Include="lib\FileWatcher.hpp" />
     <ClInclude Include="MainPage.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -242,28 +242,28 @@
     </ClInclude>
     <ClInclude Include="ClipboardManager.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="src\Settings.hpp" />
-    <ClInclude Include="src\utils\helpers.hpp" />
-    <ClInclude Include="src\utils\StartupTask.hpp" />
-    <ClInclude Include="src\notifs\win_toasts.hpp" />
-    <ClInclude Include="src\res\strings.h" />
+    <ClInclude Include="lib\Settings.hpp" />
+    <ClInclude Include="lib\utils\helpers.hpp" />
+    <ClInclude Include="lib\utils\StartupTask.hpp" />
+    <ClInclude Include="lib\notifs\win_toasts.hpp" />
+    <ClInclude Include="lib\res\strings.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="src\ui\VisualStateManager.hpp" />
-    <ClInclude Include="src\notifs\ToastNotification.hpp" />
-    <ClInclude Include="src\notifs\ToastNotificationHandler.hpp" />
+    <ClInclude Include="lib\ui\VisualStateManager.hpp" />
+    <ClInclude Include="lib\notifs\ToastNotification.hpp" />
+    <ClInclude Include="lib\notifs\ToastNotificationHandler.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\ClipboardAction.cpp" />
+    <ClCompile Include="lib\ClipboardAction.cpp" />
     <ClCompile Include="SearchSuggestionView.cpp">
       <DependentUpon>SearchSuggestionView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="src\FormatExceptionCode.cpp" />
+    <ClCompile Include="lib\FormatExceptionCode.cpp" />
     <ClCompile Include="MessagesBar.cpp">
       <DependentUpon>MessagesBar.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="src\utils\AppVersion.cpp" />
+    <ClCompile Include="lib\utils\AppVersion.cpp" />
     <ClCompile Include="ClipboardActionEditor.cpp">
       <DependentUpon>ClipboardActionEditor.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -280,22 +280,22 @@
       <DependentUpon>RegexTesterControl.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="src\utils\ResLoader.cpp" />
-    <ClCompile Include="src\utils\Launcher.cpp" />
-    <ClCompile Include="src\Process.cpp" />
-    <ClCompile Include="src\utils\Logger.cpp" />
+    <ClCompile Include="lib\utils\ResLoader.cpp" />
+    <ClCompile Include="lib\utils\Launcher.cpp" />
+    <ClCompile Include="lib\Process.cpp" />
+    <ClCompile Include="lib\utils\Logger.cpp" />
     <ClCompile Include="SettingsPage.cpp">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="src\HotKey.cpp" />
-    <ClCompile Include="src\utils\Console.cpp" />
-    <ClCompile Include="src\ClipboardTrigger.cpp" />
+    <ClCompile Include="lib\HotKey.cpp" />
+    <ClCompile Include="lib\utils\Console.cpp" />
+    <ClCompile Include="lib\ClipboardTrigger.cpp" />
     <ClCompile Include="ClipboardActionView.cpp">
       <DependentUpon>ClipboardActionView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="src\FileWatcher.cpp" />
+    <ClCompile Include="lib\FileWatcher.cpp" />
     <ClCompile Include="MainPage.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -310,11 +310,11 @@
     <!-- Island-support: This generated file implements some activation factories -->
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="ClipboardManager.cpp" />
-    <ClCompile Include="src\utils\helpers.cpp" />
-    <ClCompile Include="src\utils\StartupTask.cpp" />
-    <ClCompile Include="src\notifs\win_toasts.cpp" />
-    <ClCompile Include="src\notifs\ToastNotification.cpp" />
-    <ClCompile Include="src\notifs\ToastNotificationHandler.cpp" />
+    <ClCompile Include="lib\utils\helpers.cpp" />
+    <ClCompile Include="lib\utils\StartupTask.cpp" />
+    <ClCompile Include="lib\notifs\win_toasts.cpp" />
+    <ClCompile Include="lib\notifs\ToastNotification.cpp" />
+    <ClCompile Include="lib\notifs\ToastNotificationHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ClipboardManager.rc" />
@@ -326,7 +326,7 @@
   <ItemGroup>
     <None Include="CHANGELOG.md" />
     <None Include="packages.config" />
-    <ClInclude Include="src\implementation\Settings_implementation.hpp">
+    <ClInclude Include="lib\implementation\Settings_implementation.hpp">
       <FileType>Document</FileType>
     </ClInclude>
     <PRIResource Include="Resources.lang-fr-fr.resw" />
@@ -423,7 +423,6 @@
     <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.targets" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.targets')" />
     <Import Project="..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240803.1\build\native\Microsoft.Windows.ImplementationLibrary.targets" Condition="Exists('..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240803.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" />
     <Import Project="..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\native\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\native\Microsoft.Web.WebView2.targets')" />
-    <Import Project="..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.targets')" />
     <Import Project="..\packages\boost.1.87.0\build\boost.targets" Condition="Exists('..\packages\boost.1.87.0\build\boost.targets')" />
     <Import Project="..\packages\boost_regex-vc143.1.87.0\build\boost_regex-vc143.targets" Condition="Exists('..\packages\boost_regex-vc143.1.87.0\build\boost_regex-vc143.targets')" />
     <Import Project="..\packages\boost_log-vc143.1.87.0\build\boost_log-vc143.targets" Condition="Exists('..\packages\boost_log-vc143.1.87.0\build\boost_log-vc143.targets')" />
@@ -431,6 +430,7 @@
     <Import Project="..\packages\boost_thread-vc143.1.87.0\build\boost_thread-vc143.targets" Condition="Exists('..\packages\boost_thread-vc143.1.87.0\build\boost_thread-vc143.targets')" />
     <Import Project="..\packages\boost_atomic-vc143.1.87.0\build\boost_atomic-vc143.targets" Condition="Exists('..\packages\boost_atomic-vc143.1.87.0\build\boost_atomic-vc143.targets')" />
     <Import Project="..\packages\boost_log_setup-vc143.1.87.0\build\boost_log_setup-vc143.targets" Condition="Exists('..\packages\boost_log_setup-vc143.1.87.0\build\boost_log_setup-vc143.targets')" />
+    <Import Project="..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -442,8 +442,6 @@
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.1\build\Microsoft.Windows.SDK.BuildTools.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240803.1\build\native\Microsoft.Windows.ImplementationLibrary.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.ImplementationLibrary.1.0.240803.1\build\native\Microsoft.Windows.ImplementationLibrary.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.2651.64\build\native\Microsoft.Web.WebView2.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.6.240829007\build\native\Microsoft.WindowsAppSDK.targets'))" />
     <Error Condition="!Exists('..\packages\boost.1.87.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost.1.87.0\build\boost.targets'))" />
     <Error Condition="!Exists('..\packages\boost_regex-vc143.1.87.0\build\boost_regex-vc143.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_regex-vc143.1.87.0\build\boost_regex-vc143.targets'))" />
     <Error Condition="!Exists('..\packages\boost_log-vc143.1.87.0\build\boost_log-vc143.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_log-vc143.1.87.0\build\boost_log-vc143.targets'))" />
@@ -451,5 +449,7 @@
     <Error Condition="!Exists('..\packages\boost_thread-vc143.1.87.0\build\boost_thread-vc143.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_thread-vc143.1.87.0\build\boost_thread-vc143.targets'))" />
     <Error Condition="!Exists('..\packages\boost_atomic-vc143.1.87.0\build\boost_atomic-vc143.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_atomic-vc143.1.87.0\build\boost_atomic-vc143.targets'))" />
     <Error Condition="!Exists('..\packages\boost_log_setup-vc143.1.87.0\build\boost_log_setup-vc143.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_log_setup-vc143.1.87.0\build\boost_log_setup-vc143.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.6.241114003\build\native\Microsoft.WindowsAppSDK.targets'))" />
   </Target>
 </Project>

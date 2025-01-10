@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "HotKey.hpp"
 
-#include "src/utils/helpers.hpp"
+#include "lib/utils/helpers.hpp"
 
 namespace clip
 {

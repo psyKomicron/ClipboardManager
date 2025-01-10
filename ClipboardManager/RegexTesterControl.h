@@ -1,8 +1,8 @@
 #pragma once
 #include "RegexTesterControl.g.h"
 
-#include "src/ui/VisualStateManager.hpp"
-#include "src/utils/Logger.hpp"
+#include "lib/ui/VisualStateManager.hpp"
+#include "lib/utils/Logger.hpp"
 
 namespace winrt::ClipboardManager::implementation
 {

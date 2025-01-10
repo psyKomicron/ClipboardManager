@@ -1,5 +1,5 @@
 #pragma once
-#include "src/utils/Logger.hpp"
+#include "lib/utils/Logger.hpp"
 
 #include <winrt/Windows.ApplicationModel.Resources.h>
 
