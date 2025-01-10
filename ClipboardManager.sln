@@ -12,6 +12,8 @@ Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "ClipboardManagerWixPackage"
 EndProject
 Project("{B7DD6F7E-DEF8-4E67-B5B7-07EF123DB6F0}") = "ClipboardManagerBundle", "ClipboardManagerBundle\ClipboardManagerBundle.wixproj", "{6DB103B6-320A-4286-8C70-25558F3C2619}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "harvester", "harvester\harvester.vcxproj", "{90382DEC-8C40-40EB-82D0-440CA39D7368}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -58,6 +60,18 @@ Global
 		{6DB103B6-320A-4286-8C70-25558F3C2619}.Release|x64.Build.0 = Release|x64
 		{6DB103B6-320A-4286-8C70-25558F3C2619}.Release|x86.ActiveCfg = Release|x86
 		{6DB103B6-320A-4286-8C70-25558F3C2619}.Release|x86.Build.0 = Release|x86
+		{90382DEC-8C40-40EB-82D0-440CA39D7368}.Debug|ARM64.ActiveCfg = Debug|x64
+		{90382DEC-8C40-40EB-82D0-440CA39D7368}.Debug|ARM64.Build.0 = Debug|x64
+		{90382DEC-8C40-40EB-82D0-440CA39D7368}.Debug|x64.ActiveCfg = Debug|x64
+		{90382DEC-8C40-40EB-82D0-440CA39D7368}.Debug|x64.Build.0 = Debug|x64
+		{90382DEC-8C40-40EB-82D0-440CA39D7368}.Debug|x86.ActiveCfg = Debug|Win32
+		{90382DEC-8C40-40EB-82D0-440CA39D7368}.Debug|x86.Build.0 = Debug|Win32
+		{90382DEC-8C40-40EB-82D0-440CA39D7368}.Release|ARM64.ActiveCfg = Release|x64
+		{90382DEC-8C40-40EB-82D0-440CA39D7368}.Release|ARM64.Build.0 = Release|x64
+		{90382DEC-8C40-40EB-82D0-440CA39D7368}.Release|x64.ActiveCfg = Release|x64
+		{90382DEC-8C40-40EB-82D0-440CA39D7368}.Release|x64.Build.0 = Release|x64
+		{90382DEC-8C40-40EB-82D0-440CA39D7368}.Release|x86.ActiveCfg = Release|Win32
+		{90382DEC-8C40-40EB-82D0-440CA39D7368}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
