@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+      <ComponentGroup Id="RegistryRootKey" Directory="INSTALLFOLDER">
+          <Component Id="AppSettingsRootRegKey" Directory="INSTALLFOLDER" Guid="3E042EE0-DE71-4ADD-A873-76440A97E587">
+              <RegistryKey Root="HKCU" Key="Software\ClipboardManagerV2" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+                  <RegistryValue Type="integer" Name="FirstStartup" Value="1" KeyPath="yes"/>
+              </RegistryKey>
+          </Component>
+      </ComponentGroup>
+  </Fragment>
+</Wix>

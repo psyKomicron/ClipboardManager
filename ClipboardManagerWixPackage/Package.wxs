@@ -8,7 +8,9 @@
         <Property Id="ARPPRODUCTICON" Value="PackageIcon"/>-->
 
         <Feature Id="Main">
-            <ComponentGroupRef Id="AppComponents" />
+            <ComponentGroupRef Id="SourceComponents" />
+            <ComponentGroupRef Id="Components" />
+            <ComponentGroupRef Id="RegistryRootKey"/>
         </Feature>
     </Package>
 </Wix>
