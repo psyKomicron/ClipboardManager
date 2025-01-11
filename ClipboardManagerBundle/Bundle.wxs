@@ -8,7 +8,7 @@
         UpgradeCode="87cc44b6-bdbb-4e11-b7de-01a3b7f43efe"
         AboutUrl="https://github.com/psyKomicron/ClipboardManager">
         <BootstrapperApplication>
-            <bal:WixStandardBootstrapperApplication LicenseUrl="https://www.gnu.org/licenses/gpl-3.0.html" Theme="hyperlinkSidebarLicense" />
+            <bal:WixStandardBootstrapperApplication LicenseUrl="https://www.gnu.org/licenses/gpl-3.0.html" Theme="hyperlinkLicense" />
         </BootstrapperApplication>
 
         <util:RegistrySearch
@@ -27,16 +27,8 @@
             Condition="VersionNT64 AND (ARCH_NAME = &quot;AMD64&quot;)"
             After="REG_ARCH" />
 
-        <util:ProductSearch
-            Id="WASDKRUNTIME_X64"
-            Result="version"
-            Variable="WASDKRUNTIME_X64_VER"
-            UpgradeCode="0D6389B6-4F4B-4BC2-8049-499C83EC74F8"
-            Condition="VersionNT64 AND (ARCH_NAME = &quot;AMD64&quot;)"
-            After="REG_ARCH"/>
-
         <Variable Name="VCRUNTIME_VER" Type="version" Value="14.42.34433.0" />
-        <Variable Name="WASDKRUNTIME_VER" Type="version" Value="6000.318.2304.0" />
+        <!--<Variable Name="WASDKRUNTIME_VER" Type="version" Value="6000.318.2304.0" />-->
 
         <Chain DisableSystemRestore="yes">
             <!-- TODO: Define the list of chained packages. -->
@@ -61,16 +53,12 @@
                 DisplayName="Microsoft Windows App SDK Runtime"
                 Description="Microsoft Windows App SDK Runtime installer."
                 SourceFile="windowsappruntimeinstall-x64.exe"
-                DownloadUrl="https://aka.ms/windowsappsdk/1.6/latest/windowsappruntimeinstall-x64.exe"
-                Cache="remove"
                 PerMachine="yes"
                 Permanent="yes"
-                Protocol="burn"
                 Compressed="yes"
-                Vital="yes"
-                DetectCondition="(WASDKRUNTIME_X64_VER &gt;= WASDKRUNTIME_VER) AND VersionNT64 AND (ARCH_NAME = &quot;AMD64&quot;)"
-                InstallArguments="-f --msix"
-                RepairArguments="-r"/>
+                DetectCondition="VersionNT64 AND (ARCH_NAME = &quot;AMD64&quot;)"
+                InstallArguments="-f -q"
+                RepairArguments="-r -q"/>
             
             <MsiPackage Id="ClipboardManagerPackage" SourceFile="$(var.ClipboardManagerWixPackage.TargetPath)" />
         </Chain>
