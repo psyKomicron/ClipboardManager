@@ -45,3 +45,5 @@ Regex extraction is now enabled by default, if the regex cannot be used to extra
 
 # Clipboard actions click
 Clipboard actions can be clicked, and the behavior of the click can be changed in settings. Clicking an action will either launch the action (open in browser by default) or copy the link formatted by the first trigger of the action to the clipboard.
+
+# Installer
