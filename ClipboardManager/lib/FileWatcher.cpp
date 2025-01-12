@@ -58,18 +58,10 @@ namespace clip
         if (stream.is_open())
         {
             auto hash = hasher.hash(stream);
-
             if (hash != lastHash)
             {
-                logger.info(L"File changed !");
-
                 eventCallback();
             }
-            else
-            {
-                logger.debug(L"File is the same (same hash).");
-            }
-
             lastHash = hash;
         }
     }
@@ -95,13 +87,13 @@ namespace clip
         waitFlag->test_and_set();
         waitFlag->notify_one();
 
-        logger.info(L"Waiting for directory changes (path: '" + _path.wstring() + L"')");
+        logger.debug(L"Waiting for directory changes (path: '" + _path.wstring() + L"')");
 
         while (watcherRunning)
         {    
             WaitForSingleObjectEx(handle, INFINITE, true);
         
-            logger.info(L"Change detected !");
+            logger.debug(L"File change detected !");
 
             // Find next changes:
             if (!FindNextChangeNotification(handle))

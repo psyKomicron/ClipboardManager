@@ -22,8 +22,18 @@ namespace boost::log
 
 namespace clip::utils
 {
+    constexpr bool USE_LOG_FILE
+#ifdef _NDEBUG
+        = true;
+#else
+        = false;
+#endif
+
     std::atomic_size_t Logger::maxClassNameLength = 0;
-    
+}
+
+namespace clip::utils
+{   
     Logger::Logger(const std::wstring& className) :
         className{ className }
     {
@@ -117,7 +127,7 @@ namespace clip::utils
     {
         boost::log::add_file_log
         (
-            boost::log::file_name = "sample%N.log",
+            boost::log::file_name = "cm_log%N.log",
             boost::log::format = "[%TimeStamp%]: %Message%"
         );
         //boost::log::core::get()->set_filter(boost::log::trivial::severity >= 1);

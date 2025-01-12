@@ -5,8 +5,6 @@
 
 namespace clip::utils
 {
-    constexpr bool USE_LOG_FILE = true;
-
     enum class LogSeverity
     {
         Debug,
