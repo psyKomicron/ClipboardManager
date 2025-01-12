@@ -210,7 +210,6 @@
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\..\..\..\..\Documents\Clipboard Manager\user_file.xml" />
-    <Xml Include="user_file_copy.xml" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Resources.lang-fr-fr.resw">
