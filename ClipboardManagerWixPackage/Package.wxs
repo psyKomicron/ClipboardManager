@@ -11,6 +11,7 @@
             <ComponentGroupRef Id="SourceComponents" />
             <ComponentGroupRef Id="Components" />
             <ComponentGroupRef Id="RegistryRootKey"/>
+            <ComponentGroupRef Id="WasdkInstaller" />
         </Feature>
     </Package>
 </Wix>

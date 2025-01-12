@@ -32,6 +32,21 @@
 
         <Chain DisableSystemRestore="yes">
             <!-- TODO: Define the list of chained packages. -->
+            <!--<ExePackage
+                Id="WASDK_1_6"
+                DisplayName="Microsoft Windows App SDK Runtime"
+                Description="Microsoft Windows App SDK Runtime installer."
+                SourceFile="windowsappruntimeinstall-x64.exe"
+                Cache="remove"
+                PerMachine="yes"
+                Permanent="yes"
+                Protocol="burn"
+                Compressed="yes"
+                Vital="yes"
+                DetectCondition="VersionNT64 AND (ARCH_NAME = &quot;AMD64&quot;)"
+                InstallArguments="-q"
+                RepairArguments="-r"/>-->
+
             <ExePackage
                 Id="VC_REDIST_X64"
                 DisplayName="Microsoft Visual C++ 2015-2022 Redistributable (x64)"
@@ -39,26 +54,14 @@
                 DownloadUrl="https://aka.ms/vs/17/release/vc_redist.x64.exe"
                 Cache="remove"
                 PerMachine="yes"
-                Permanent="yes"
+                Permanent="no"
                 Protocol="burn"
                 Compressed="yes"
                 Vital="yes"
                 DetectCondition="(VCRUNTIME_X64_VER &gt;= VCRUNTIME_VER) AND VersionNT64 AND (ARCH_NAME = &quot;AMD64&quot;)"
                 InstallArguments="/install /quiet /norestart"
                 RepairArguments="/repair /quiet /norestart"
-                UninstallArguments="/uninstall /quiet /norestart">
-            </ExePackage>
-            <ExePackage
-                Id="WASDK_1_6"
-                DisplayName="Microsoft Windows App SDK Runtime"
-                Description="Microsoft Windows App SDK Runtime installer."
-                SourceFile="windowsappruntimeinstall-x64.exe"
-                PerMachine="yes"
-                Permanent="yes"
-                Compressed="yes"
-                DetectCondition="VersionNT64 AND (ARCH_NAME = &quot;AMD64&quot;)"
-                InstallArguments="-f -q"
-                RepairArguments="-r -q"/>
+                UninstallArguments="/uninstall /quiet /norestart" />
             
             <MsiPackage Id="ClipboardManagerPackage" SourceFile="$(var.ClipboardManagerWixPackage.TargetPath)" />
         </Chain>

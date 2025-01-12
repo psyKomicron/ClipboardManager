@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /ClipboardManagerBundle/windowsappruntimeinstall-x64.exe
 /ClipboardManager/user_file_copy.xml
+/ClipboardManagerWixPackage/windowsappruntimeinstall-x64.exe
