@@ -40,8 +40,8 @@ namespace clip::murmur
         template<concepts::is_iterable<uint8_t> T>
         inline void tail(T& tail, uint64_t& k1, uint64_t& k2, uint64_t& h1, uint64_t& h2, 
                          const uint64_t& c1, const uint64_t& c2) const;
-        inline void tail(const uint8_t* tail, const std::size_t& size, uint64_t& k1, uint64_t& k2, 
-                         uint64_t& h1, uint64_t& h2, const uint64_t& c1, const uint64_t& c2) const;
+        /*inline void tail(const uint8_t* tail, const std::size_t& size, uint64_t& k1, uint64_t& k2, 
+                         uint64_t& h1, uint64_t& h2, const uint64_t& c1, const uint64_t& c2) const;*/
 
         template<typename _Elem, typename _Traits>
         inline bool read(std::basic_istream<_Elem, _Traits>& stream, uint64_t& k1, uint64_t& k2) const;
