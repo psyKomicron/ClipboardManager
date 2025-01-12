@@ -909,7 +909,7 @@ namespace winrt::ClipboardManager::implementation
         auto content = win::Clipboard::GetContent();
         if (content.Properties().ApplicationName() == L"ClipboardManager")
         {
-            logger.info(L"Clipboard content changed, but the available format is not text or the application that changed the clipboard content is me.");
+            logger.info(L"Clipboard changed, but the available format is not text or the application that changed the clipboard content is me.");
         }
         else
         {
