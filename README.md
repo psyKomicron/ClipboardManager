@@ -3,11 +3,8 @@ C++ WinRT - Xaml Islands - Windows App SDK.
 
 ## What is it ?
 The goal of this application is to create formatted urls/links from the content copied to the clipboard. To select what content will be formatted to a specific string, you create triggers using regular expressions. If the trigger matches with the content that was just copied a notification will be sent (regular windows toast notification) with buttons if possible, just click the button you want.
-A notification can look like that:
 
-![image](https://github.com/user-attachments/assets/66cb562a-536e-491a-9f16-2163faea5649)
-
-If too many triggers match, you will have to open the application to choose which action to activate (ex: ATEL).
+If too many triggers match, you will have to open the application to choose which action to activate.
 
 ## Developement
 This application has been developped using Microsoft's own librairies and SDKs. It is not cross-platform.
