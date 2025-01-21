@@ -32,7 +32,8 @@ void clip::utils::StartupTask::set()
         DWORD dwDisposition{};
         if (RegCreateKeyExW(hKey, regAutoRunKey.c_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, nullptr, &subKey, &dwDisposition) == ERROR_SUCCESS)
         {
-            clip::utils::managed_resource<HKEY, std::function<LSTATUS(HKEY)>> hKeyPtr2{ subKey, RegCloseKey };
+            clip::utils::reg_key hKeyPtr2{ subKey, RegCloseKey };
+            //clip::utils::managed_resource<HKEY, std::function<LSTATUS(HKEY)>> hKeyPtr2{ subKey, RegCloseKey };
             
             auto startupCommandLine = getStartupCommandLine();
             
