@@ -95,7 +95,6 @@ namespace winrt::ClipboardManager::implementation
     winrt::Windows::Foundation::IAsyncOperation<bool> ClipboardTriggerEditControl::Edit()
     {
         auto result = co_await EditDialog().ShowAsync();
-
         co_return result == xaml::ContentDialogResult::Primary;
     }
 
