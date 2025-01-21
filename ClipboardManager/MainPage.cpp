@@ -4,6 +4,7 @@
 #include "MainPage.g.cpp"
 #endif
 
+// Application logic :
 #include "ClipboardManager.h"
 #include "Resource.h"
 #include "lib/Settings.hpp"
@@ -18,8 +19,10 @@
 #include "lib/res/strings.h"
 #include "lib/ClipboardAction.hpp"
 
+// Application UI :
 #include "ClipboardActionView.h"
 #include "SearchSuggestionView.h"
+#include "SettingsPage.h"
 
 #include <winrt/Windows.ApplicationModel.h>
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
@@ -93,6 +96,14 @@ namespace winrt::ClipboardManager::implementation
         manager.registerActivatedCallback([this]()
         {
             appWindow.Show();
+        });
+
+        clipboardTriggerViews.VectorChanged([this](auto&&, auto&&)
+        {
+            if (noClipboardTriggersToDisplayState.active() && clipboardTriggerViews.Size() > 0)
+            {
+                visualStateManager.goToState(displayClipboardTriggersState);
+            }
         });
     }
 
@@ -170,7 +181,6 @@ namespace winrt::ClipboardManager::implementation
                     catch (...)
                     {
                         logger.error(L"Error serializing clipboard actions.");
-
                         history.add(L"item", std::wstring(view.Text()));
                     }
                 }
@@ -193,6 +203,24 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
+    void MainPage::UpdateUserFile(const hstring& pathString)
+    {
+        auto path = std::filesystem::path(std::wstring(pathString));
+        if (!LoadUserFile(path))
+        {
+            MessagesBar().AddWarning(L"ErrorMessage_FailedToLoadUserFile", L"User file cannot be loaded, it might contain invalid data.");
+        }
+        else
+        {
+            localSettings.insert(L"UserFilePath", path);
+
+            auto triggersNumber = triggers.size();
+            auto message = std::vformat(resLoader.getStdResource(L"UserMessage_XNumberOfTriggersLoaded").value_or(L"{} triggers loaded."), 
+                                        std::make_wformat_args(triggersNumber));
+            MessagesBar().Add(L"", message, xaml::InfoBarSeverity::Success);
+        }
+    }
+
     void MainPage::ReceiveWindowMessage(const uint64_t& message, const uint64_t& param)
     {
         switch (message)
@@ -210,7 +238,7 @@ namespace winrt::ClipboardManager::implementation
     void MainPage::Restore()
     {
         // Load triggers:
-        LoadUserFile(L"");
+        LoadUserFile(std::nullopt);
 
         try
         {
@@ -254,6 +282,201 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
+    void MainPage::ReloadActions()
+    {
+        try
+        {
+            // Get the text of any actions that have been created then use 
+            // AddAction to re-create the actions with the new triggers.
+            auto vector = std::vector<clip::ClipboardAction>();
+            for (auto&& view : clipboardActionViews)
+            {
+                vector.push_back({ view.Text(), view.Timestamp() });
+            }
+
+            clipboardActionViews.Clear();
+            
+            for (auto&& action : vector)
+            {
+                AddAction(action, false);
+            }
+        }
+        catch (hresult_error)
+        {
+            logger.error(L"Failed to restore clipboard actions history.");
+        }
+    }
+
+    bool MainPage::LoadTriggers(std::filesystem::path& path)
+    {
+        if (!std::filesystem::exists(path))
+        {
+            logger.info(L"User file path doesn't exist.");
+
+            MessagesBar().AddError(L"ReloadActionsUserFileNotFoundTitle",
+                                   L"Failed to reload triggers",
+                                   L"ReloadActionsUserFileNotFoundMessage",
+                                   L"Triggers user file has either been moved/deleted or application settings have been cleared.");
+            return false;
+        }
+
+        try
+        {
+            logger.info(L"*Loading triggers*");
+            triggers = clip::ClipboardTrigger::loadClipboardTriggers(path);
+            logger.info(std::format(L"{} triggers on disk.", triggers.size()));
+
+            if (!triggers.empty())
+            {
+                clipboardTriggerViews.Clear();
+
+                bool showError = false;
+                std::wstring invalidTriggers{};
+                
+                for (auto&& trigger : triggers)
+                {
+                    try
+                    {
+                        auto view = CreateTriggerView(trigger);
+                        clipboardTriggerViews.Append(view);
+
+                        trigger.checkFormat();
+                    }
+                    catch (clip::ClipboardTriggerFormatException formatExcept)
+                    {
+                        logger.error(std::format(L"Trigger '{}' has an invalid format.", trigger.label()));
+
+                        showError = true;
+                        invalidTriggers += L"\n" + trigger.label();
+                    }
+                }
+
+                if (!showError)
+                {
+                    visualStateManager.goToState(displayClipboardTriggersState);
+                }
+                else
+                {
+                    MessagesBar().Add(resLoader.getOrAlt(L"InvalidTriggerErrorTitle", clip::res::InvalidTriggerErrorTitle),
+                                      resLoader.getOrAlt(L"InvalidTriggerErrorMessage", clip::res::InvalidTriggerErrorMessage) + invalidTriggers,
+                                      xaml::InfoBarSeverity::Error);
+                }
+            }
+            else
+            {
+                MessagesBar().AddWarning(L"UserMessage_NoClipboardTriggers", L"No clipboard triggers");
+                visualStateManager.goToState(noClipboardTriggersToDisplayState);
+            }
+
+            return true;
+        }
+        catch (std::invalid_argument invalidArgument)
+        {
+            MessagesBar().AddError(L"ErrorMessage_TriggersInvalidData", L"Triggers file not available or contains invalid data.");
+        }
+        catch (boost::property_tree::xml_parser_error xmlParserError)
+        {
+            if (xmlParserError.line() != 0)
+            {
+                auto line = xmlParserError.line();
+                auto xmlParserErrorMessage = std::vformat(resLoader.getStdResource(L"ErrorMessage_XmlParserError").value_or(L"Triggers file has invalid XML markup data."),
+                                                          std::make_wformat_args(line));
+                MessagesBar().AddError(xmlParserErrorMessage, std::wstring());
+
+                triggers.clear();
+            }
+        }
+        catch (boost::property_tree::ptree_bad_path badPath)
+        {
+            hstring message = resLoader.getOrAlt(L"ErrorMessage_InvalidTriggersFile", L"Triggers file has invalid XML markup data.");
+            hstring content{};
+
+            auto wpath = badPath.path<boost::property_tree::wpath>();
+            auto path = clip::utils::to_wstring(wpath.dump());
+            if (path == L"settings.triggers")
+            {
+                content = resLoader.getOrAlt(L"ErrorMessage_MissingTriggersNode",
+                                             L"XML declaration is missing '<triggers>' node.\nCheck settings for an example of a valid XML declaration.");
+            }
+            else
+            {
+                // I18N: Message not translated.
+                content = L"Path not found: '" + hstring(path) + L"'";
+            }
+
+            MessagesBar().Add(message, content, xaml::InfoBarSeverity::Error);
+        }
+
+        return false;
+    }
+
+    bool MainPage::LoadUserFile(std::optional<std::filesystem::path>&& userFilePath)
+    {
+        bool triggersLoaded = false;
+
+        if (!userFilePath)
+        {
+            userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
+        }
+
+        if (userFilePath.has_value() && clip::utils::pathExists(userFilePath.value()))
+        {
+            if (!(triggersLoaded = LoadTriggers(userFilePath.value())))
+            {
+                logger.info(L"Failed to load triggers.");
+            }
+
+            // Load history:
+            try
+            {
+                boost::property_tree::wptree tree{};
+                boost::property_tree::read_xml(userFilePath.value().string(), tree);
+                for (auto&& historyItem : tree.get_child(L"settings.history"))
+                {
+                    try
+                    {
+                        clip::ClipboardAction action{ historyItem.second };
+                        auto text = action.text();
+                        auto time = action.creationTime();
+
+                        AddAction(action, false);
+                    }
+                    catch (std::format_error error)
+                    {
+                        logger.error(error.what());
+                    }
+
+                }
+            }
+            catch (const boost::property_tree::ptree_bad_path badPath)
+            {
+                logger.error(L"Failed to retreive history from user file: " + clip::utils::to_wstring(badPath.what()));
+            }
+
+            // Enable file watcher:
+            try
+            {
+                if (localSettings.get<bool>(L"EnableTriggerFileWatching").value_or(false))
+                {
+                    watcher.startWatching(userFilePath.value());
+                }
+            }
+            catch (std::wstring message)
+            {
+                logger.error(L"Error enabling file watcher: " + message);
+            }
+        }
+        else if (userFilePath)
+        {
+            // The app has saved a file path, but it doesn't exist anymore.
+            logger.info(L"User file path doesn't exist: \"" + userFilePath.value().wstring() + L"\"");
+
+            MessagesBar().AddWarning(L"ErrorMessage_UserFileMoved");
+        }
+
+        return triggersLoaded;
+    }
+    
     void MainPage::AddAction(const clip::ClipboardAction& action, const bool& notify)
     {
         if (localSettings.get<bool>(L"AddDuplicatedActions").value_or(true)
@@ -296,7 +519,6 @@ namespace winrt::ClipboardManager::implementation
             {
                 hasMatch = true;
 
-                // TODO: When i add triggers, only enabled triggers will be added yet they can be enabled or disabled later. What do if.
                 actionView.AddAction(trigger.label(), trigger.format(), trigger.regex().str(), true, 
                                      trigger.useRegexMatchResults(), trigger.regex().flags() & boost::regex_constants::icase);
 
@@ -356,115 +578,6 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
-    void MainPage::ReloadTriggers()
-    {
-        auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
-        if (userFilePath.has_value()
-            && std::filesystem::exists(userFilePath.value())
-            && LoadTriggers(userFilePath.value()))
-        {
-            try
-            {
-                // Get the text of any actions that have been created then use 
-                // AddAction to re-create the actions with the new triggers.
-                auto vector = std::vector<clip::ClipboardAction>();
-                for (auto&& view : clipboardActionViews)
-                {
-                    vector.push_back({ view.Text(), view.Timestamp() });
-                }
-                clipboardActionViews.Clear();
-                for (auto&& action : vector)
-                {
-                    AddAction(action, false);
-                }
-
-                return; // Explicit return to not reach "error state" and show an error message to the user.
-            }
-            catch (...)
-            {
-                logger.error(L"Failed to reload triggers.");
-            }
-        }
-
-        MessagesBar().AddError(L"ReloadActionsUserFileNotFoundTitle",
-                               L"Failed to reload triggers",
-                               L"ReloadActionsUserFileNotFoundMessage",
-                               L"Triggers user file has either been moved/deleted or application settings have been cleared.");
-    }
-
-    bool MainPage::LoadTriggers(std::filesystem::path& path)
-    {
-        try
-        {
-            logger.info(L"*Loading triggers*");
-            triggers = clip::ClipboardTrigger::loadClipboardTriggers(path);
-            logger.info(std::format(L"{} triggers on disk.", triggers.size()));
-            clipboardTriggerViews.Clear();
-
-            bool showError = false;
-            std::wstring invalidTriggers{};
-            for (auto&& trigger : triggers)
-            {
-                try
-                {
-                    auto view = CreateTriggerView(trigger);
-                    clipboardTriggerViews.Append(view);
-
-                    trigger.checkFormat();
-                }
-                catch (clip::ClipboardTriggerFormatException formatExcept)
-                {
-                    logger.error(std::format(L"Trigger '{}' has an invalid format.", trigger.label()));
-                    showError = true;
-                    invalidTriggers += L"\n" + trigger.label();
-                }
-            }
-
-            if (showError)
-            {
-                // I18N:
-                MessagesBar().Add(resLoader.getOrAlt(L"InvalidTriggerErrorTitle", clip::res::InvalidTriggerErrorTitle),
-                                  resLoader.getOrAlt(L"InvalidTriggerErrorMessage", clip::res::InvalidTriggerErrorMessage) + invalidTriggers,
-                                  xaml::InfoBarSeverity::Error);
-            }
-            else
-            {
-                visualStateManager.goToState(triggers.empty() ? noClipboardTriggersToDisplayState : displayClipboardTriggersState);
-            }
-
-            return true;
-        }
-        catch (std::invalid_argument invalidArgument)
-        {
-            MessagesBar().AddError(L"ErrorMessage_TriggersFileNotFound", L"Triggers file not available or contains invalid data.");
-        }
-        catch (boost::property_tree::xml_parser_error xmlParserError)
-        {
-            MessagesBar().AddError(L"ErrorMessage_XmlParserError", L"Triggers file has invalid XML markup data.");
-        }
-        catch (boost::property_tree::ptree_bad_path badPath)
-        {
-            hstring message = resLoader.getOrAlt(L"ErrorMessage_InvalidTriggersFile", L"Triggers file has invalid XML markup data.");
-            hstring content{};
-
-            auto wpath = badPath.path<boost::property_tree::wpath>();
-            auto path = clip::utils::to_wstring(wpath.dump());
-            if (path == L"settings.triggers")
-            {
-                content = resLoader.getOrAlt(L"ErrorMessage_MissingTriggersNode",
-                                             L"XML declaration is missing '<triggers>' node.\nCheck settings for an example of a valid XML declaration.");
-            }
-            else
-            {
-                content = L"Path not found: '" + hstring(path) + L"'";
-            }
-
-            MessagesBar().Add(message, content, xaml::InfoBarSeverity::Error);
-        }
-
-        return false;
-    }
-
     void MainPage::LaunchAction(const std::wstring& url)
     {
         logger.info(L"Launching url: " + url);
@@ -503,78 +616,6 @@ namespace winrt::ClipboardManager::implementation
                 });
             }
         }
-    }
-
-    bool MainPage::LoadUserFile(const std::filesystem::path& path)
-    {
-        bool triggersLoaded = false;
-
-        std::optional<std::filesystem::path> userFilePath{};
-        if (path.empty())
-        {
-            userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
-        }
-        else
-        {
-            userFilePath = path;
-        }
-
-        if (userFilePath.has_value() && clip::utils::pathExists(userFilePath.value()))
-        {
-            if (!(triggersLoaded = LoadTriggers(userFilePath.value())))
-            {
-                logger.info(L"Failed to load triggers.");
-            }
-
-            // Load history:
-            try
-            {
-                boost::property_tree::wptree tree{};
-                boost::property_tree::read_xml(userFilePath.value().string(), tree);
-                for (auto&& historyItem : tree.get_child(L"settings.history"))
-                {
-                    try
-                    {
-                        clip::ClipboardAction action{ historyItem.second };
-                        auto text = action.text();
-                        auto time = action.creationTime();
-                        logger.debug(
-                            std::vformat(L"action[text: {0}, creationTime: {1:%F} {1:%R}]", std::make_wformat_args(text, time)));
-
-                        AddAction(action, false);
-                    }
-                    catch (std::format_error error)
-                    {
-                        logger.error(error.what());
-                    }
-
-                }
-            }
-            catch (const boost::property_tree::ptree_bad_path badPath)
-            {
-                logger.debug(L"Failed to retreive history from user file: " + clip::utils::to_wstring(badPath.what()));
-            }
-
-            // Enable file watcher:
-            try
-            {
-                if (localSettings.get<bool>(L"EnableTriggerFileWatching").value_or(false))
-                {
-                    watcher.startWatching(userFilePath.value());
-                }
-            }
-            catch (std::wstring message)
-            {
-                logger.error(message);
-            }
-            catch (std::invalid_argument invalidArg)
-            {
-                // Path doesn't exist.
-                logger.error(L"Path '" + watcher.path().wstring() + L"' doesn't exist.");
-            }
-        }
-
-        return triggersLoaded;
     }
 
     ClipboardManager::ClipboardActionEditor MainPage::CreateTriggerView(clip::ClipboardTrigger& trigger)
@@ -950,7 +991,16 @@ namespace winrt::ClipboardManager::implementation
     {
         DispatcherQueue().TryEnqueue([&]()
         {
-            ReloadTriggers();
+            if (localSettings.get<bool>(L"ReloadWholeUserFileOnFileChange"))
+            {
+                LoadUserFile(std::nullopt);
+            }
+            else
+            {
+                auto path = localSettings.get<std::filesystem::path>(L"UserFilePath").value_or(std::filesystem::path());
+                LoadTriggers(path);
+                ReloadActions();
+            }
         });
     }
 
@@ -1082,9 +1132,11 @@ namespace winrt::ClipboardManager::implementation
         co_return;
     }
 
-    winrt::async MainPage::Page_Loaded(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    void MainPage::Page_Loaded(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
         Restore();
+
+        visualStateManager.goToState(appWindow.Size().Width < 930 ? under1kState : over1kState);
 
         if (localSettings.get<bool>(L"StartWindowMinimized").value_or(false))
         {
@@ -1098,8 +1150,6 @@ namespace winrt::ClipboardManager::implementation
                 appWindow.Presenter().as<xaml::OverlappedPresenter>().Minimize();
             }
         }
-
-        visualStateManager.goToState(appWindow.Size().Width < 930 ? under1kState : over1kState);
 
         auto&& appVersionSetting = localSettings.get<std::wstring>(L"CurrentAppVersion");
         if (appVersionSetting.has_value())
@@ -1115,28 +1165,25 @@ namespace winrt::ClipboardManager::implementation
 
                 visualStateManager.goToState(applicationUpdatedState);
             }
-            else if (!localSettings.get<bool>(L"FirstStartup").has_value())
+            else if (localSettings.get<bool>(L"FirstStartup").value_or(true))
             {
                 localSettings.insert(L"FirstStartup", false);
                 visualStateManager.goToState(firstStartupState);
             }
         }
-
         localSettings.insert(L"CurrentAppVersion", APP_VERSION);
 
-#ifdef _DEBUG
-        visualStateManager.goToState(firstStartupState);
-#endif
-
-        if (!localSettings.get<std::wstring>(L"UserFilePath").has_value())
+        if (!localSettings.get<std::wstring>(L"UserFilePath"))
         {
-            visualStateManager.goToState(noClipboardTriggersToDisplayState);
+            visualStateManager.goToState(noUserFilePathSavedState);
         }
 
-        visualStateManager.goToState(!triggers.empty() ? displayClipboardTriggersState : noClipboardTriggersToDisplayState);
+        if (!logger.isLogBackendInitialized())
+        {
+            MessagesBar().AddMessage(L"Logging backend is not initialized.");
+        }
 
         loaded = true;
-        co_return;
     }
 
     winrt::async MainPage::LocateUserFileButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
@@ -1167,14 +1214,16 @@ namespace winrt::ClipboardManager::implementation
             L"XML Files", single_threaded_vector<winrt::hstring>({ L".xml" })
         );
 
-        auto&& storageFile = co_await picker.PickSaveFileAsync();
+        auto&& storageFile = co_await(picker.PickSaveFileAsync());
         if (storageFile)
         {
             std::filesystem::path userFilePath{ storageFile.Path().c_str() };
-            clip::ClipboardTrigger::initializeSaveFile(userFilePath);
 
-            visualStateManager.goToState(openSaveFileState);
-            ReloadTriggers();
+            if (LoadTriggers(userFilePath))
+            {
+                ReloadActions();
+                visualStateManager.goToState(openSaveFileState);
+            }
         }
     }
 
@@ -1301,10 +1350,14 @@ namespace winrt::ClipboardManager::implementation
 
     void MainPage::ReloadTriggersButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
-        ReloadTriggers();
+        auto path = localSettings.get<std::filesystem::path>(L"UserFilePath").value_or(std::filesystem::path());
+        if (LoadTriggers(path))
+        {
+            ReloadActions();
+        }
     }
 
-    void MainPage::CommandBarSaveButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
+    async MainPage::CommandBarSaveButton_Click(win::IInspectable const&, xaml::RoutedEventArgs const&)
     {
         auto optPath = localSettings.get<std::filesystem::path>(L"UserFilePath");
         if (optPath.has_value())
@@ -1324,7 +1377,19 @@ namespace winrt::ClipboardManager::implementation
         }
         else
         {
-            MessagesBar().AddMessage(L"ErrorMessage_CannotSaveTriggersNoUserFile", L"Cannot save triggers, no user file has been specified for this application.");
+            switch (co_await(UserFileSaveContentDialog().ShowAsync()))
+            {
+                case xaml::ContentDialogResult::Primary:
+                    CreateUserFileButton_Click(nullptr, nullptr);
+                    break;
+                case xaml::ContentDialogResult::Secondary:
+                    LocateUserFileButton_Click(nullptr, nullptr);
+                    break;
+                case xaml::ContentDialogResult::None:
+                default:
+                    MessagesBar().AddMessage(L"ErrorMessage_CannotSaveTriggersNoUserFile", L"Cannot save triggers, no user file has been specified for this application.");
+                    break;
+            }
         }
     }
 
@@ -1505,6 +1570,12 @@ namespace winrt::ClipboardManager::implementation
     void MainPage::QuickSettingsSaveButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
     {
         AppClosing();
+    }
+
+    void MainPage::SettingsFrame_Loaded(win::IInspectable const&, win::IInspectable const& e)
+    {
+        auto&& page = make<ClipboardManager::implementation::SettingsPage>(*this);
+        SettingsFrame().Content(page);
     }
 }
 

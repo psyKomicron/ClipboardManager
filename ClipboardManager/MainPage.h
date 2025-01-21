@@ -42,6 +42,7 @@ namespace winrt::ClipboardManager::implementation
 
         void AppClosing();
         void UpdateTitleBar();
+        void UpdateUserFile(const hstring& pathString);
         void ReceiveWindowMessage(const uint64_t& message, const uint64_t& param);
 
      private:
@@ -55,14 +56,15 @@ namespace winrt::ClipboardManager::implementation
         clip::ui::VisualState<MainPage> applicationUpdatedState{ L"ApplicationUpdated", 2, false };
         clip::ui::VisualState<MainPage> quickSettingsClosedState{ L"QuickSettingsClosed", 3, true };
         clip::ui::VisualState<MainPage> quickSettingsOpenState{ L"QuickSettingsOpen", 3, false };
-        clip::ui::VisualState<MainPage> searchClosedState{ L"SearchClosed", 6, true };
-        clip::ui::VisualState<MainPage> searchOpenState{ L"SearchOpened", 6, false };
         clip::ui::VisualState<MainPage> normalWindowState{ L"NormalWindow", 4, true };
         clip::ui::VisualState<MainPage> overlayWindowState{ L"OverlayWindow", 4, false };
         clip::ui::VisualState<MainPage> under1kState{ L"Under1000", 5, true };
         clip::ui::VisualState<MainPage> over1kState{ L"Over1000", 5, false };
+        clip::ui::VisualState<MainPage> searchClosedState{ L"SearchClosed", 6, true };
+        clip::ui::VisualState<MainPage> searchOpenState{ L"SearchOpened", 6, false };
         clip::ui::VisualState<MainPage> showActionsListViewState{ L"ShowActionsListView", 7, true };
         clip::ui::VisualState<MainPage> showSearchListViewState{ L"ShowSearchListView", 7, false };
+        clip::ui::VisualState<MainPage> noUserFilePathSavedState{ L"NoUserFilePathSaved", 8, false };
 
         bool loaded = false;
         size_t teachingTipIndex = 0;
@@ -84,11 +86,11 @@ namespace winrt::ClipboardManager::implementation
         void AddAction(const clip::ClipboardAction& action, const bool& notify);
         bool FindActions(winrt::ClipboardManager::ClipboardActionView& actionView, std::vector<std::pair<std::wstring, std::wstring>>& buttons, const std::wstring& text);
         void SendNotification(const std::vector<std::pair<std::wstring, std::wstring>>& buttons);
-        void ReloadTriggers();
+        void ReloadActions();
         bool LoadTriggers(std::filesystem::path& path);
         void LaunchAction(const std::wstring& url);
         async AddClipboardItem(const Windows::ApplicationModel::DataTransfer::DataPackageView& content, const bool& notify);
-        bool LoadUserFile(const std::filesystem::path& path);
+        bool LoadUserFile(std::optional<std::filesystem::path>&& path);
         ClipboardManager::ClipboardActionEditor CreateTriggerView(clip::ClipboardTrigger& trigger);
         void RefreshSearchBoxSuggestions(std::wstring text);
         void FillSearchBoxSuggestions(const Windows::Foundation::Collections::IVector<IInspectable>& list, const SearchFilter& searchFilter, std::wstring text);
@@ -114,13 +116,13 @@ namespace winrt::ClipboardManager::implementation
         winrt::async Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
         winrt::async LocateUserFileButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::async CreateUserFileButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        winrt::async Page_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void Page_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void StartTourButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::async TeachingTip_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
         winrt::async TeachingTip2_CloseButtonClick(winrt::Microsoft::UI::Xaml::Controls::TeachingTip const& sender, winrt::Windows::Foundation::IInspectable const& args);
         void OpenQuickSettingsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void ReloadTriggersButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-        void CommandBarSaveButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        async CommandBarSaveButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void ClearActionsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::async ImportFromClipboardButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         winrt::async AddTriggerButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -138,6 +140,7 @@ namespace winrt::ClipboardManager::implementation
         void RootGrid_ActualThemeChanged(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
         void OverlayCloseButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void QuickSettingsSaveButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void SettingsFrame_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
 };
 }
 

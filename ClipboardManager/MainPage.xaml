@@ -63,13 +63,22 @@
             </VisualStateGroup>
 
             <VisualStateGroup>
+                <VisualState x:Name="NoUserFilePathSaved">
+                    <VisualState.Setters>
+                        <Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>
+                        <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup>
                 <VisualState x:Name="DisplayClipboardTriggers"/>
                 <VisualState x:Name="NoClipboardTriggersToDisplay">
                     <VisualState.Setters>
                         <Setter Target="ClipboardTriggersListView.Visibility" Value="Collapsed"/>
                         <Setter Target="NoClipboardTriggersTextBlock.Visibility" Value="Visible"/>
-                        <Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>
-                        <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>
+                        <!--<Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>-->
+                        <!--<Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>-->
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -220,7 +229,7 @@
                     <CheckBox x:Uid="OverlayPopupShowWarningCheckBox" IsChecked="True" Margin="0,7,0,0" Click="OverlayPopupShowWarningCheckBox_Click"/>
                 </StackPanel>
             </TeachingTip>
-            
+
             <Border 
                 x:Name="MoveBorder"
                 Grid.ColumnSpan="3"
@@ -244,9 +253,7 @@
                     <FontIcon x:Name="SettingsPivot" Glyph="&#xe713;" FontSize="16"/>
                 </PivotItem.Header>
 
-                <Frame>
-                    <clip:SettingsPage/>
-                </Frame>
+                <Frame x:Name="SettingsFrame" Loading="SettingsFrame_Loaded"/>
             </PivotItem>
 
             <PivotItem x:Name="ClipboardTriggersPivotItem" Padding="0" Margin="0">
@@ -339,7 +346,7 @@
                             x:Uid="NoClipboardActionsInfoBar"
                             x:Load="False"
                             Severity="Warning" 
-                            IsClosable="False">
+                            IsClosable="True">
                             <InfoBar.Content>
                                 <Grid Padding="0,0,5,5" ColumnSpacing="10" ColumnDefinitions="1*,1*">
                                     <HyperlinkButton Grid.Column="0" x:Uid="LocateButton" HorizontalAlignment="Stretch" Click="LocateUserFileButton_Click"/>
@@ -403,7 +410,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            
+
                             <Button x:Name="OpenSearchButton" Style="{StaticResource IconButtonStyle}" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top"
                                     Margin="0,3,0,0"
                                     Click="OpenSearchButton_Click" >
@@ -490,7 +497,7 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            
+
                             <Button x:Name="OpenQuickSettingsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="1" VerticalAlignment="Top"
                                     Margin="0,3,0,0"
                                     Click="OpenQuickSettingsButton_Click">
@@ -594,7 +601,7 @@
                             </DataTemplate>
                         </ListView.FooterTemplate>
                     </ListView>
-                    
+
                     <ListView x:Name="ActionsListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="3">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
@@ -605,6 +612,14 @@
                 </Grid>
             </PivotItem>
         </Pivot>
+
+        <ContentDialog x:Name="UserFileSaveContentDialog" x:Uid="UserFileSaveContentDialog" Padding="0"
+                       DefaultButton="Close">
+            <TextBlock x:Uid="UserFileSaveContentDialogText" TextWrapping="Wrap"/>
+        </ContentDialog>
+        <!--<Button x:Uid="ContentDialogCloseButton" Grid.Column="0" HorizontalAlignment="Stretch"/>
+        <Button x:Uid="ContentDialogLocateFileButton" Style="{ThemeResource AccentButtonStyle}" Grid.Column="1" HorizontalAlignment="Stretch"/>
+        <Button x:Uid="ContentDialogCreateFileButton" Style="{ThemeResource AccentButtonStyle}" Grid.Column="2" HorizontalAlignment="Stretch"/>-->
 
         <!--#region TeachingTips -->
         <TeachingTip 
@@ -624,7 +639,7 @@
                 </Grid>
             </TeachingTip.ActionButtonContent>
         </TeachingTip>
-        
+
         <TeachingTip 
             x:Name="ClipboardTriggersPivotTeachingTip" 
             x:Uid="ClipboardTriggersPivotTeachingTip"
@@ -770,7 +785,7 @@
                 </Grid>
             </TeachingTip.ActionButtonContent>
         </TeachingTip>
-        
+
         <TeachingTip
             x:Name="ImportClipboardButtonTeachingTip"
             x:Uid="ImportClipboardButtonTeachingTip"
@@ -917,8 +932,8 @@
                 </Grid>
             </TeachingTip.ActionButtonContent>
         </TeachingTip>
-        
+
         <!--#endregion-->
     </Grid>
-    
+
 </Page>

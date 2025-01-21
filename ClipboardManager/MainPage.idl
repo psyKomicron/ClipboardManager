@@ -15,6 +15,7 @@ namespace ClipboardManager
 
         void AppClosing();
         void UpdateTitleBar();
+        void UpdateUserFile(String pathString);
         void ReceiveWindowMessage(UInt64 message, UInt64 param);
     }
 }
