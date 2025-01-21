@@ -67,9 +67,8 @@ namespace clip::utils
                             break;
                     }
                 }
-                catch (std::invalid_argument /*invalidArg*/)
+                catch (std::invalid_argument)
                 {
-                    // TODO: Log or do something about the exception, don't ignore it.
                 }
             }
         }
