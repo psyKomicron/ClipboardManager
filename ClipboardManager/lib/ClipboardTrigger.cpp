@@ -70,28 +70,14 @@ namespace clip
         if (utils::pathExists(userFilePath))
         {
             std::vector<ClipboardTrigger> urls{};
+
             boost::property_tree::wptree tree{};
+            boost::property_tree::read_xml(userFilePath.string(), tree, boost::property_tree::xml_parser::trim_whitespace);
 
-            try
+            for (auto&& child : tree.get_child(L"settings.triggers"))
             {
-                boost::property_tree::read_xml(userFilePath.string(), tree, boost::property_tree::xml_parser::trim_whitespace);
-
-                for (auto&& child : tree.get_child(L"settings.triggers"))
-                {
-                    auto&& node = child.second;
-                    urls.push_back(std::move(ClipboardTrigger(node)));
-                }
-            }
-            catch (const boost::property_tree::xml_parser_error& parserError)
-            {
-                if (parserError.line() == 0) // This should mean that the error is at the beginning of the file, thus it's empty.
-                {
-                    firstTimeInitialization(userFilePath, tree);
-                }
-                else
-                {
-                    throw;
-                }
+                auto&& node = child.second;
+                urls.push_back(std::move(ClipboardTrigger(node)));
             }
 
             return urls;
@@ -107,21 +93,18 @@ namespace clip
         if (std::filesystem::exists(userFilePath))
         {
             boost::property_tree::wptree tree{};
-            boost::property_tree::read_xml(userFilePath.string(), tree);
+            boost::property_tree::read_xml(userFilePath.string(), tree, boost::property_tree::xml_parser::trim_whitespace);
 
             // Erase the tree so I dont induce conflicts.
             auto settingsNode = tree.get_child_optional(L"settings");
             if (settingsNode.has_value())
             {
-                //settingsNode.value().erase(L"triggers");
-                auto&& triggersNode = tree.put(L"settings.triggers", L"");
+                auto&& triggersNode = tree.put_child(L"settings.triggers", boost::property_tree::wptree());
 
                 // For each trigger, create an empty trigger node for the trigger object to save it-self.
                 for (auto&& trigger : triggersList)
                 {
-                    boost::property_tree::wptree triggerNode{};
-                    trigger.save(triggerNode);
-                    triggersNode.push_front({ L"trigger", triggerNode });
+                    triggersNode.push_front({ L"trigger", trigger.serialize() });
                 }
 
                 boost::property_tree::write_xml(userFilePath.string(), tree, std::locale(), boost::property_tree::xml_writer_settings<std::wstring>('\t', 1));
@@ -133,19 +116,6 @@ namespace clip
         }
     }
 
-
-    void ClipboardTrigger::initializeSaveFile(const std::filesystem::path& userFilePath)
-    {
-        if (utils::pathExists(userFilePath) && utils::pathExists(userFilePath.parent_path()))
-        {
-            boost::property_tree::wptree tree{};
-            firstTimeInitialization(userFilePath, tree);
-        }
-        else
-        {
-            std::wcerr << L"[ClipboardTrigger]   Can't create user file, it either already exists or it's parent folder doesn't." << std::endl;
-        }
-    }
 
     std::wstring ClipboardTrigger::label() const
     {
@@ -267,17 +237,6 @@ namespace clip
     }
 
 
-    void ClipboardTrigger::firstTimeInitialization(const std::filesystem::path& path, boost::property_tree::wptree tree)
-    {
-        auto&& actions = tree.put(L"settings.triggers", L"");
-        actions.add(L"trigger.re", L"[A-Z]{,3}");
-        actions.add(L"trigger.format", L"https://example-namespace.com/search?={}");
-        actions.add(L"trigger.label", L"Search example-namespace");
-        actions.add(L"trigger.enabled", L"true");
-
-        boost::property_tree::write_xml(path.string(), tree);
-    }
-
     std::optional<ClipboardTriggerFormatException> ClipboardTrigger::checkFormat(const std::wstring& format) const
     {
         if (format.empty())
@@ -361,8 +320,9 @@ namespace clip
         return {};
     }
 
-    void ClipboardTrigger::save(boost::property_tree::wptree& triggerNode) const
+    boost::property_tree::wptree ClipboardTrigger::serialize() const
     {
+        boost::property_tree::wptree triggerNode{};
         triggerNode.add(L"label", _label);
         triggerNode.add(L"enabled", _enabled);
 
@@ -373,5 +333,7 @@ namespace clip
 
         auto&& formatNode = triggerNode.add(L"format", _format);
         formatNode.add(L"<xmlattr>.useRegexMatchResults", _useRegexMatchResults);
+
+        return triggerNode;
     }
 }

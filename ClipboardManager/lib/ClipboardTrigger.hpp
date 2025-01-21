@@ -44,7 +44,6 @@ namespace clip
          * @throws std::runtime_error - Thrown if the path pointed by 'userFilePath' is invalid.
          */
         static void saveClipboardTriggers(const std::vector<ClipboardTrigger>& triggers, const std::filesystem::path& userFilePath);
-        static void initializeSaveFile(const std::filesystem::path& userFilePath);
 
         std::wstring label() const;
         void label(const std::wstring& value);
@@ -80,9 +79,8 @@ namespace clip
 
         ClipboardTrigger(boost::property_tree::wptree& triggersNode);
 
-        static void firstTimeInitialization(const std::filesystem::path& path, boost::property_tree::wptree tree);
         std::optional<ClipboardTriggerFormatException> checkFormat(const std::wstring& format) const;
-        void save(boost::property_tree::wptree& triggersNode) const;
+        boost::property_tree::wptree serialize() const;
     };
 }
 
