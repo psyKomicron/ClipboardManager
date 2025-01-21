@@ -33,15 +33,15 @@
                 <VisualState x:Name="ClipboardCopied">
                     <Storyboard Completed="ClipboardStatesStoryboard_Completed">
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentGrid" Storyboard.TargetProperty="Opacity">
-                            <LinearDoubleKeyFrame KeyTime="0:0:0.181" Value="0.1"/>
+                            <LinearDoubleKeyFrame KeyTime="0:0:0.333" Value="0.1"/>
                             <DiscreteDoubleKeyFrame KeyTime="0:0:1" Value="0.1"/>
-                            <SplineDoubleKeyFrame KeyTime="0:0:1.181" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="1" />
+                            <SplineDoubleKeyFrame KeyTime="0:0:1.333" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="1" />
                         </DoubleAnimationUsingKeyFrames>
 
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ClipboardInfoPanel" Storyboard.TargetProperty="Opacity">
-                            <LinearDoubleKeyFrame KeyTime="0:0:0.181" Value="1"/>
+                            <LinearDoubleKeyFrame KeyTime="0:0:0.333" Value="1"/>
                             <DiscreteDoubleKeyFrame KeyTime="0:0:1" Value="1"/>
-                            <SplineDoubleKeyFrame KeyTime="0:0:1.181" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="0" />
+                            <SplineDoubleKeyFrame KeyTime="0:0:1.333" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="0" />
                         </DoubleAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
