@@ -379,8 +379,8 @@ Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramè
 Regardez dans les paramètres pour un exemple d'une déclaration XML valide.</value>
     <comment>Error message</comment>
   </data>
-  <data name="ErrorMessage_TriggersFileNotFound" xml:space="preserve">
-    <value>Fichier des déclencheurs non trouvé.</value>
+  <data name="ErrorMessage_TriggersInvalidData" xml:space="preserve">
+    <value>Données invalides dans le fichier des déclencheurs (ligne {}).</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_XmlOldVersion" xml:space="preserve">
@@ -486,10 +486,14 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Suivant</value>
   </data>
   <data name="NoClipboardActionsInfoBar.Title" xml:space="preserve">
-    <value>Aucun déclencheur créé, au moins 1 déclencheur est nécessaire pour utiliser les actions presse-papier.</value>
+    <value>Fichier utilisateur manquant</value>
     <comment>MainPage</comment>
   </data>
   <data name="NoClipboardActionsTextBlock.Text" xml:space="preserve">
+    <value>Aucun déclencheur presse-papier</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="UserMessage_NoClipboardTriggers" xml:space="preserve">
     <value>Aucun déclencheur presse-papier</value>
     <comment>MainPage</comment>
   </data>
@@ -952,5 +956,41 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   </data>
   <data name="SearchActionsListView.Footer" xml:space="preserve">
     <value>Click droit sur un résultat de recherche pour copier le lien dans le presse papier.</value>
+  </data>
+  <data name="ErrorMessage_UserFileMoved" xml:space="preserve">
+    <value>Le fichier utilisateur ("{}") est introuvable, les déclencheurs ne peuvent être créés. Vérifiez la présence  du fichier sur votre ordinateur.</value>
+  </data>
+  <data name="NoClipboardActionsInfoBar.Message" xml:space="preserve">
+    <value>Le fichier utilisateur contient les données nécessaires pour les déclencheurs  et l'historique des actions.</value>
+  </data>
+  <data name="UserFileSaveContentDialog.Title" xml:space="preserve">
+    <value>Création du fichier utilisateur</value>
+  </data>
+  <data name="UserFileSaveContentDialogText.Text" xml:space="preserve">
+    <value>Un fichier utilisateur n'a pas été trouvé, si vous créez des déclencheurs ils seront perdus lorsque l'application se fermera.</value>
+  </data>
+  <data name="UserFileSaveContentDialog.CloseButtonText" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="UserFileSaveContentDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Localiser</value>
+  </data>
+  <data name="UserFileSaveContentDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Créer</value>
+  </data>
+  <data name="LogFilePathHostControl.Header" xml:space="preserve">
+    <value>Chemin du fichier de log</value>
+  </data>
+  <data name="LogFilePathNokTextBlock.Text" xml:space="preserve">
+    <value>Le chemin n'existe pas.</value>
+  </data>
+  <data name="LogFilePathOkTextBlock.Text" xml:space="preserve">
+    <value>Ok, le chemin est valide.</value>
+  </data>
+  <data name="ErrorMessage_FailedToLoadUserFile" xml:space="preserve">
+    <value>Le fichier utilisateur n'a pas pu être chargé, il contient surement des données invalides.</value>
+  </data>
+  <data name="UserMessage_XNumberOfTriggersLoaded" xml:space="preserve">
+    <value>{} déclencheurs chargés.</value>
   </data>
 </root>

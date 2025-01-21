@@ -334,8 +334,8 @@ You will need to locate your user file and reapply your settings.</value>
     <value>XML declaration is missing '&lt;triggers&gt;' node.
 Check settings for an example of a valid XML declaration.</value>
   </data>
-  <data name="ErrorMessage_TriggersFileNotFound" xml:space="preserve">
-    <value>Triggers (XML) file not found.</value>
+  <data name="ErrorMessage_TriggersInvalidData" xml:space="preserve">
+    <value>Triggers file not available or contains invalid data (line {}).</value>
   </data>
   <data name="ErrorMessage_XmlOldVersion" xml:space="preserve">
     <value>&lt;actions&gt; node has been renamed &lt;triggers&gt; and &lt;action&gt; &lt;actions&gt;. Rename those nodes in your XML file and reload triggers.
@@ -419,9 +419,12 @@ You can easily access your user file via settings and see an example of a valid 
     <comment>App.xaml</comment>
   </data>
   <data name="NoClipboardActionsInfoBar.Title" xml:space="preserve">
-    <value>No clipboard triggers have been created, please create at least one action to use clipboard actions.</value>
+    <value>Missing user file</value>
   </data>
   <data name="NoClipboardActionsTextBlock.Text" xml:space="preserve">
+    <value>No clipboard triggers</value>
+  </data>
+  <data name="UserMessage_NoClipboardTriggers" xml:space="preserve">
     <value>No clipboard triggers</value>
   </data>
   <data name="NotificationScenariosComboBox_Alarm.Content" xml:space="preserve">
@@ -805,5 +808,41 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
   </data>
   <data name="SearchActionsListView.Footer" xml:space="preserve">
     <value>Right click on search result to copy the link to the clipboard.</value>
+  </data>
+  <data name="ErrorMessage_UserFileMoved" xml:space="preserve">
+    <value>User file ("{}") cannot be found and loaded, it may have been removed or moved.</value>
+  </data>
+  <data name="NoClipboardActionsInfoBar.Message" xml:space="preserve">
+    <value>User file contains triggers data and actions history.</value>
+  </data>
+  <data name="UserFileSaveContentDialog.Title" xml:space="preserve">
+    <value>Create user file</value>
+  </data>
+  <data name="UserFileSaveContentDialogText.Text" xml:space="preserve">
+    <value>No user file found, do you want to create one ? Without one, triggers you created in the app and actions history will be lost when the application closes.</value>
+  </data>
+  <data name="UserFileSaveContentDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="UserFileSaveContentDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Locate file</value>
+  </data>
+  <data name="UserFileSaveContentDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Create file</value>
+  </data>
+  <data name="LogFilePathHostControl.Header" xml:space="preserve">
+    <value>Log file path</value>
+  </data>
+  <data name="LogFilePathNokTextBlock.Text" xml:space="preserve">
+    <value>Path does not exist.</value>
+  </data>
+  <data name="LogFilePathOkTextBlock.Text" xml:space="preserve">
+    <value>Ok, path exists.</value>
+  </data>
+  <data name="ErrorMessage_FailedToLoadUserFile" xml:space="preserve">
+    <value>User file cannot be loaded, it might contain invalid data.</value>
+  </data>
+  <data name="UserMessage_XNumberOfTriggersLoaded" xml:space="preserve">
+    <value>{} triggers loaded.</value>
   </data>
 </root>
