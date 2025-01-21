@@ -3,6 +3,7 @@
 
 #include "Console.hpp"
 #include "lib/utils/helpers.hpp"
+#include "lib/Settings.hpp"
 
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/sources/global_logger_storage.hpp>
@@ -13,6 +14,7 @@
 #include <iostream>
 #include <format>
 #include <mutex>
+#include <filesystem>
 
 namespace boost::log
 {
@@ -22,14 +24,10 @@ namespace boost::log
 
 namespace clip::utils
 {
-    constexpr bool USE_LOG_FILE
-#ifdef _NDEBUG
-        = true;
-#else
-        = false;
-#endif
+    constexpr bool USE_LOG_FILE = true;
 
     std::atomic_size_t Logger::maxClassNameLength = 0;
+    std::atomic_bool Logger::boostLoggerInitialized = false;
 }
 
 namespace clip::utils
@@ -45,6 +43,11 @@ namespace clip::utils
                 initBoostLogging();
             });
         }
+    }
+
+    bool Logger::isLogBackendInitialized() const
+    {
+        return boostLoggerInitialized;
     }
 
     void Logger::debug(const std::wstring& message)
@@ -78,7 +81,10 @@ namespace clip::utils
 
         auto&& formattedName = formatClassName(className);
         
-        BOOST_LOG(logger) << formattedName << clip::utils::to_string(message);
+        if constexpr (USE_LOG_FILE)
+        {
+            BOOST_LOG(logger) << formattedName << clip::utils::to_string(message);
+        }
 
         switch (severity)
         {
@@ -125,12 +131,22 @@ namespace clip::utils
 
     void Logger::initBoostLogging()
     {
-        boost::log::add_file_log
+        std::filesystem::path logFileName{ "cm_log%N.log" };
+        auto logFilePath = clip::Settings().get<std::filesystem::path>(L"LogFilePath");
+        if (logFilePath)
+        {
+            logFileName = logFilePath.value() / logFileName;
+        }
+
+        auto&& fileLog = boost::log::add_file_log
         (
-            boost::log::file_name = "cm_log%N.log",
-            boost::log::format = "[%TimeStamp%]: %Message%"
+            boost::log::file_name = logFileName.string(),
+            boost::log::format = "[%TimeStamp%]: %Message%",
+            boost::log::auto_flush = true
         );
-        //boost::log::core::get()->set_filter(boost::log::trivial::severity >= 1);
+
         boost::log::add_common_attributes();
+
+        boostLoggerInitialized = (fileLog != nullptr);
     }
 }
