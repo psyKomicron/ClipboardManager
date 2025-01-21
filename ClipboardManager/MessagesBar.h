@@ -17,11 +17,13 @@ namespace winrt::ClipboardManager::implementation
         void AddMessage(const winrt::hstring& message);
         void AddMessage(const winrt::hstring& messageKey, const winrt::hstring& messageAlt);
 
-        void AddWarning(const winrt::hstring& messageKey, const winrt::hstring& messageAlt);
-        void AddWarning(const winrt::hstring& titleKey, const winrt::hstring& altTitle, const winrt::hstring& messageKey, const winrt::hstring& messageAlt);
-        
+        void AddError(const winrt::hstring& error);
         void AddError(const winrt::hstring& messageKey, const winrt::hstring& messageAlt);
         void AddError(const winrt::hstring& titleKey, const winrt::hstring& altTitle, const winrt::hstring& messageKey, const winrt::hstring& messageAlt);
+
+        void AddWarning(const winrt::hstring& warning);
+        void AddWarning(const winrt::hstring& messageKey, const winrt::hstring& messageAlt);
+        //void AddWarning(const winrt::hstring& titleKey, const winrt::hstring& altTitle, const winrt::hstring& messageKey, const winrt::hstring& messageAlt);
 
         void AddContent(const winrt::hstring& titleContent, const winrt::hstring& messageContent, 
             const winrt::Windows::Foundation::IInspectable& content, const winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity& severity);

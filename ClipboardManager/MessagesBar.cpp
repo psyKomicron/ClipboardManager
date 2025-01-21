@@ -42,9 +42,19 @@ namespace winrt::ClipboardManager::implementation
         AddMessage(resLoader.getOrAlt(messageKey, messageAlt));
     }
 
+    void MessagesBar::AddWarning(const winrt::hstring& warning)
+    {
+        Add({}, warning, xaml::InfoBarSeverity::Warning);
+    }
+
     void MessagesBar::AddWarning(const winrt::hstring& messageKey, const winrt::hstring& messageAlt)
     {
         Add({}, resLoader.getOrAlt(messageKey, messageAlt), xaml::InfoBarSeverity::Warning);
+    }
+
+    void MessagesBar::AddError(const winrt::hstring& error)
+    {
+        Add({}, error, xaml::InfoBarSeverity::Error);
     }
 
     void MessagesBar::AddError(const winrt::hstring& messageKey, const winrt::hstring& messageAlt)
