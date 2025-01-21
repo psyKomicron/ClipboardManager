@@ -20,6 +20,9 @@ namespace winrt::ClipboardManager::implementation
         clip::ui::VisualState<SettingsPage> testWindowShortcutState{ L"TestWindowShortcut", 1, false };
         clip::ui::VisualState<SettingsPage> testWindowShortcutOkState{ L"TestWindowShortcutOk", 1, false };
         clip::ui::VisualState<SettingsPage> testWindowShortcutNokState{ L"TestWindowShortcutNok", 1, false };
+        clip::ui::VisualState<SettingsPage> logFilePathOkState{ L"LogFilePathOk", 2, false };
+        clip::ui::VisualState<SettingsPage> logFilePathNokState{ L"LogFilePathNok", 2, false };
+        clip::ui::VisualState<SettingsPage> logFilePathEmptyState{ L"LogFilePathEmpty", 2, true };
         clip::Settings settings{};
         bool loaded = false;
         clip::utils::Logger logger{ L"SettingsPage" };
@@ -61,6 +64,8 @@ namespace winrt::ClipboardManager::implementation
         void OverlayResizableToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void OverlayShownInSwitcherToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void ClipboardActionViewClickComboBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
+        void LogFileTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e);
+        void DoubleAnimation_Completed_1(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
     };
 }
 

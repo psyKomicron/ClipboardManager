@@ -129,6 +129,34 @@
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
+
+            <VisualStateGroup>
+                <VisualState x:Name="LogFilePathEmpty"/>
+                <VisualState x:Name="LogFilePathNok">
+                    <VisualState.Setters>
+                        <Setter Target="LogFileTextBox.Header">
+                            <Setter.Value>
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon Glyph="&#xe783;" FontSize="16" Foreground="{ThemeResource SystemFillColorCritical}" VerticalAlignment="Center"/>
+                                    <TextBlock x:Uid="LogFilePathNokTextBlock" Foreground="{ThemeResource SystemFillColorCritical}" VerticalAlignment="Center" Margin="7,0,0,0"/>
+                                </StackPanel>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="LogFilePathOk">
+                    <VisualState.Setters>
+                        <Setter Target="LogFileTextBox.Header">
+                            <Setter.Value>
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon Glyph="&#xf13e;" FontSize="16" Foreground="{ThemeResource SystemFillColorSuccess}" VerticalAlignment="Center"/>
+                                    <TextBlock x:Uid="LogFilePathOkTextBlock" Foreground="{ThemeResource SystemFillColorSuccess}" VerticalAlignment="Center" Margin="7,0,0,0"/>
+                                </StackPanel>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>  
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         
         <StackPanel VerticalAlignment="Top" Orientation="Vertical" Spacing="3" Margin="0,0,0,15">
@@ -548,6 +576,37 @@
                     </StackPanel>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
+
+            <Expander Style="{StaticResource ExpanderStyle}">
+                <Expander.Resources>
+                    <Storyboard x:Name="TimeoutSaveStoryboard">
+                        <DoubleAnimation
+                            Duration="0:0:3"
+                            EnableDependentAnimation="True"
+                            Storyboard.TargetName="SaveProgressRing"
+                            Storyboard.TargetProperty="Value"
+                            From="1"
+                            To="0"
+                            Completed="DoubleAnimation_Completed_1"/>
+                    </Storyboard>
+                </Expander.Resources>
+                <Expander.Header>
+                    <clip:HostControl x:Uid="LogFilePathHostControl" Background="Transparent" BorderThickness="0" Padding="0"/>
+                </Expander.Header>
+
+                <Grid Padding="15,10,15,15" ColumnSpacing="15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="LogFileTextBox" TextWrapping="Wrap" TextChanged="LogFileTextBox_TextChanged" VerticalAlignment="Center"/>
+
+                    <Viewbox Height="15" Grid.Column="1" VerticalAlignment="Center">
+                        <!--<FontIcon Glyph="&#xe823;"/>-->
+                        <ProgressRing x:Name="SaveProgressRing" Value="1" Maximum="1" IsIndeterminate="False"/>
+                    </Viewbox>
+                </Grid>
+            </Expander>
             <!--#endregion-->
 
 

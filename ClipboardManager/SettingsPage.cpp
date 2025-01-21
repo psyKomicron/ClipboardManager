@@ -126,6 +126,12 @@ namespace winrt::ClipboardManager::implementation
             UserFilePathTextBlock().FontStyle(Windows::UI::Text::FontStyle::Normal);
         }
 
+        auto logFilePath = settings.get<std::filesystem::path>(L"LogFilePath");
+        if (logFilePath && std::filesystem::exists(logFilePath.value()))
+        {
+            LogFileTextBox().Text(logFilePath.value().wstring());
+        }
+
         loaded = true;
     }
 
@@ -228,7 +234,6 @@ namespace winrt::ClipboardManager::implementation
         if (storageFile)
         {
             std::filesystem::path userFilePath{ storageFile.Path().c_str() };
-            clip::ClipboardTrigger::initializeSaveFile(userFilePath);
         }
     }
 
@@ -243,7 +248,6 @@ namespace winrt::ClipboardManager::implementation
         {
             std::filesystem::path userFilePath{ storageFile.Path().c_str() };
             settings.insert(L"UserFilePath", userFilePath);
-            clip::ClipboardTrigger::initializeSaveFile(userFilePath);
         }
     }
 
@@ -255,7 +259,6 @@ namespace winrt::ClipboardManager::implementation
     void SettingsPage::BrowserStringTextBox_TextChanged(win::IInspectable const&, xaml::TextChangedEventArgs const&)
     {
         check_loaded(loaded);
-        // TODO: Check if writing that fast to the registry can hurt performance.
         settings.insert(L"CustomProcessString", BrowserStringTextBox().Text());
     }
 
@@ -279,7 +282,6 @@ namespace winrt::ClipboardManager::implementation
 
     void SettingsPage::TriggersStorageExpander_Expanding(xaml::Controls::Expander const&, xaml::Controls::ExpanderExpandingEventArgs const&)
     {
-
     }
 
     winrt::async SettingsPage::LocateButton_Clicked(win::IInspectable const& sender, xaml::RoutedEventArgs const& e)
@@ -289,10 +291,13 @@ namespace winrt::ClipboardManager::implementation
         picker.FileTypeFilter().Append(L".xml");
 
         auto&& storageFile = co_await picker.PickSingleFileAsync();
-        if (storageFile)
+        if (storageFile && mainPage)
         {
-            std::filesystem::path userFilePath{ storageFile.Path().c_str() };
-            settings.insert(L"UserFilePath", userFilePath);
+            mainPage.UpdateUserFile(storageFile.Path());
+        }
+        else if (!mainPage)
+        {
+            logger.info(L"MainPage is null, impossible to notify that the user file path has changed.");
         }
     }
 
@@ -322,6 +327,10 @@ namespace winrt::ClipboardManager::implementation
             if (mainPage)
             {
                 mainPage.UpdateTitleBar();
+            }
+            else
+            {
+                logger.info(L"MainPage is null, impossible to update title bar.");
             }
         }
     }
@@ -411,5 +420,34 @@ namespace winrt::ClipboardManager::implementation
     {
         check_loaded(loaded);
         settings.insert(L"ClipboardActionClick", ClipboardActionViewClickComboBox().SelectedItem().as<winrt::FrameworkElement>().Tag().as<hstring>() == L"1");
+    }
+
+    void SettingsPage::LogFileTextBox_TextChanged(win::IInspectable const&, xaml::Controls::TextChangedEventArgs const&)
+    {
+        std::filesystem::path logFilePath{ std::wstring(LogFileTextBox().Text()) };
+        if (std::filesystem::exists(logFilePath) && std::filesystem::is_directory(logFilePath))
+        {
+            visualStateManager.goToState(logFilePathOkState);
+            TimeoutSaveStoryboard().Begin();
+
+            return;
+        }
+        else if (!logFilePath.empty())
+        {
+            visualStateManager.goToState(logFilePathNokState);
+        }
+        else
+        {
+            visualStateManager.goToState(logFilePathEmptyState);
+        }
+
+        TimeoutSaveStoryboard().Stop();
+        TimeoutSaveStoryboard().Seek(win::TimeSpan());
+    }
+
+    void SettingsPage::DoubleAnimation_Completed_1(win::IInspectable const&, win::IInspectable const&)
+    {
+        logger.debug(L"Saving user file path (timeout).");
+        settings.insert<std::wstring_view>(L"LogFilePath", LogFileTextBox().Text());
     }
 }
