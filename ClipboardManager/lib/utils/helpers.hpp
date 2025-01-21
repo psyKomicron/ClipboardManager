@@ -91,6 +91,7 @@ namespace clip::utils
         DeleterT closer{};
     };
 
+    using reg_key = managed_resource<HKEY, std::function<LSTATUS(HKEY)>>;
 
     struct WindowInfo
     {
