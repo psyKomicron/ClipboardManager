@@ -339,7 +339,6 @@ winrt::DispatcherQueueController initIslandApp()
 
 bool processMessageForTabNav(const HWND& window, MSG& msg)
 {
-    //TODO: If I need to handle tab to do specific stuff in my app, i should add a way to hook this function to capture the tab key before WASDK handles it.
     if (msg.message == WM_KEYDOWN && msg.wParam == VK_TAB)
     {
         const HWND focusedWindow = ::GetFocus();
