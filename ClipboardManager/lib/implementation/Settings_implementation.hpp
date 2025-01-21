@@ -161,10 +161,6 @@ namespace clip
                 case RegTypes::String:
                     variant.emplace<0>(get<std::wstring>(subKey.name).value());
                     break;
-                    // TODO: Implement multi-string.
-                    /*case REG_MULTI_SZ:
-                    variant.emplace<1>(std::vector<std::wstring>());
-                    break;*/
                 case RegTypes::Uint32:
                     variant.emplace<2>(get<uint32_t>(subKey.name).value());
                     break;
