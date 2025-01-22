@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /ClipboardManagerBundle/windowsappruntimeinstall-x64.exe
 /ClipboardManager/user_file_copy.xml
 /ClipboardManagerWixPackage/windowsappruntimeinstall-x64.exe
+/ClipboardManagerBundle/VC_redist.x64.exe
