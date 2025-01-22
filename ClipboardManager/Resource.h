@@ -13,6 +13,9 @@
 #define IDC_CLIPBOARDMANAGER            109
 #define IDR_MAINFRAME                   128
 #define IDC_STATIC                      -1
+#define APP_NAMEW                       L"ClipboardManager"
+#define APP_NAMEA                       "ClipboardManager"
+#define MAX_NUMBER_OF_ACTIONS           5000
 
 // Next default values for new objects
 // 

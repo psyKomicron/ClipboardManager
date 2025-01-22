@@ -190,7 +190,8 @@
                 <TextBlock 
                     x:Name="IgnoreCaseTextBlock" 
                     x:Uid="IgnoreCaseTextBlock" 
-                    Text="Aa"
+                    Text="i"
+                    FontFamily="Consolas"
                     Opacity="0.5"/>
                 <FontIcon 
                     x:Name="UseSearchFontIcon" 

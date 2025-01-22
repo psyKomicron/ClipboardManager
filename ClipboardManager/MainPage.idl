@@ -11,8 +11,11 @@ namespace ClipboardManager
 
         IObservableVector<ClipboardActionView> Actions;
         IObservableVector<ClipboardActionEditor> ClipboardTriggers;
+        Boolean OverlayEnabled;
 
         void AppClosing();
         void UpdateTitleBar();
+        void UpdateUserFile(String pathString);
+        void ReceiveWindowMessage(UInt64 message, UInt64 param);
     }
 }

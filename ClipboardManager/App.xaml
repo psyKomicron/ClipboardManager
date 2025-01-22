@@ -10,9 +10,6 @@
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
 
-            <Color x:Key="AppTitleBarHoverColor">#8A8780</Color>
-            <Color x:Key="ButtonHoverBackgroundColor">#38F5F5F5</Color>
-
             <Style x:Key="SettingSubheaderTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
                 <Setter Property="Opacity" Value="0.7" />
             </Style>
@@ -27,6 +24,8 @@
                 <Setter Property="Height" Value="34"/>
                 <Setter Property="Width" Value="37"/>
                 <Setter Property="CornerRadius" Value="{StaticResource OverlayCornerRadius}"/>
+                <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}"/>
+                <Setter Property="FontSize" Value="14"/>
             </Style>
             
             <Style x:Key="IconToggleButtonStyle" TargetType="ToggleButton" BasedOn="{StaticResource DefaultToggleButtonStyle}">
@@ -511,13 +510,33 @@
                 <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}"/>
             </Style>
 
+            <Style x:Key="AppTeachingTip" TargetType="TeachingTip">
+                <Setter Property="ActionButtonContent">
+                    <Setter.Value>
+                        <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                            <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                        </Grid>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Default">
                     <Color x:Key="ButtonForegroundColor">White</Color>
+                    <Color x:Key="AppTitleBarHoverColor">#8A8780</Color>
+                    <Color x:Key="ButtonHoverBackgroundColor">#38F5F5F5</Color>
                 </ResourceDictionary>
 
                 <ResourceDictionary x:Key="Light">
                     <Color x:Key="ButtonForegroundColor">Black</Color>
+                    <Color x:Key="AppTitleBarHoverColor">#363636</Color>
+                    <Color x:Key="ButtonHoverBackgroundColor">#BDBDBD</Color>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>

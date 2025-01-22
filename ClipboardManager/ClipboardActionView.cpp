@@ -4,14 +4,16 @@
 #include "ClipboardActionView.g.cpp"
 #endif
 
-#include "src/Settings.hpp"
-#include "src/utils/Launcher.hpp"
-#include "src/res/strings.h"
+#include "lib/Settings.hpp"
+#include "lib/utils/Launcher.hpp"
+#include "lib/res/strings.h"
+#include "Resource.h"
 
 #include <winrt/Windows.Storage.h>
 #include <winrt/Windows.System.h>
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include <winrt/Microsoft.UI.Input.h>
+#include <winrt/Microsoft.UI.Xaml.h>
 
 #include <ppltasks.h>
 #include <pplawait.h>
@@ -40,8 +42,8 @@ namespace winrt::ClipboardManager::implementation
     {
         visualStateManager.initializeStates(
             {
-                OptionsClosedState,
-                OptionsOpenState
+                optionsClosedState,
+                optionsOpenState
             });
     }
 
@@ -60,6 +62,17 @@ namespace winrt::ClipboardManager::implementation
         _text = value;
     }
 
+    Windows::Foundation::DateTime ClipboardActionView::Timestamp()
+    {
+        return _timestamp;
+    }
+
+    void ClipboardActionView::Timestamp(const Windows::Foundation::DateTime& value)
+    {
+        _timestamp = value;
+        TimestampTextBlock().Text(formatter.Format(value));
+    }
+
     winrt::event_token ClipboardActionView::Removed(const event_removed_t& handler)
     {
         return e_removed.add(handler);
@@ -70,18 +83,18 @@ namespace winrt::ClipboardManager::implementation
         e_removed.remove(token);
     }
 
-    void ClipboardActionView::AddAction(const winrt::hstring& label, const winrt::hstring& format, const winrt::hstring& regex, 
+    void ClipboardActionView::AddAction(const winrt::hstring& label, const winrt::hstring& format, const winrt::hstring& regex,
                                         const bool& enabled, const bool& useRegexMatchResults, const bool& ignoreCase)
     {
-        auto trigger = clip::ClipboardTrigger(
-            std::wstring(label), 
-            std::wstring(format), 
-            boost::wregex(std::wstring(regex), ignoreCase ? boost::regex_constants::icase : boost::regex_constants::basic), 
-            enabled);
-        trigger.useRegexMatchResults(useRegexMatchResults);
-
         try
         {
+            auto trigger = clip::ClipboardTrigger(
+                std::wstring(label),
+                std::wstring(format),
+                boost::wregex(std::wstring(regex), ignoreCase ? boost::regex_constants::icase : boost::regex_constants::basic),
+                enabled);
+            trigger.useRegexMatchResults(useRegexMatchResults);
+
             trigger.checkFormat();
             triggers.push_back(std::move(trigger));
         }
@@ -103,11 +116,11 @@ namespace winrt::ClipboardManager::implementation
                     break;
             }*/
 
-            logger.error(L"Check format failed for trigger '" + trigger.label() + L"'.");
+            logger.error(L"Check format failed for trigger '" + std::wstring(label) + L"'.");
         }
     }
 
-    void ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hstring& _label, const winrt::hstring& _format, const winrt::hstring& _regex, 
+    void ClipboardActionView::EditAction(const uint32_t& pos, const winrt::hstring& _label, const winrt::hstring& _format, const winrt::hstring& _regex,
                                          const bool& _enabled, const bool& useRegexMatchResults, const bool& ignoreCase)
     {
         auto label = std::wstring(_label);
@@ -149,9 +162,19 @@ namespace winrt::ClipboardManager::implementation
         return false;
     }
 
+    winrt::Windows::Foundation::Collections::IVector<hstring> ClipboardActionView::GetTriggersText()
+    {
+        auto triggersText = single_threaded_vector<hstring>();
+        for (auto&& trigger : triggers)
+        {
+            triggersText.Append(trigger.label());
+        }
+        return triggersText;
+    }
+
     winrt::async ClipboardActionView::StartTour()
     {
-        visualStateManager.goToState(OptionsOpenState);
+        visualStateManager.goToState(optionsOpenState);
 
         RootGridTeachingTip().IsOpen(true);
 
@@ -165,9 +188,49 @@ namespace winrt::ClipboardManager::implementation
     }
 
 
+    void ClipboardActionView::AddTriggerButton(clip::ClipboardTrigger& trigger)
+    {
+        ui::HyperlinkButton hyperlinkButton{};
+        hyperlinkButton.Content(box_value(trigger.label()));
+        hyperlinkButton.Tag(box_value(trigger.label()));
+        hyperlinkButton.Click({ this, &ClipboardActionView::HyperlinkButton_Click });
+
+        ui::ToolTipService::SetToolTip(hyperlinkButton,
+                                       box_value(trigger.formatTrigger(std::wstring(_text))));
+
+        TriggersGridView().Items().InsertAt(0, hyperlinkButton);
+    }
+
+    void ClipboardActionView::CopyLinkToClipboard()
+    {
+        if (triggers.size() > 0)
+        {
+            try
+            {
+                win::DataPackage dataPackage{};
+                dataPackage.SetText(triggers[0].formatTrigger(_text.data()));
+                dataPackage.Properties().ApplicationName(APP_NAMEW);
+                win::Clipboard::SetContent(dataPackage);
+
+                InfoBar().Message(resLoader.getResource(L"Message_CopiedToClipboard").value_or(L"Copied"));
+                InfoBar().Severity(ui::InfoBarSeverity::Success);
+                InfoBar().IsOpen(true);
+            }
+            catch (clip::ClipboardTriggerFormatException)
+            {
+                logger.error(L"Failed to format and add formatted link to clipboard (ClipboardActionView::CopyLinkToClipboard).");
+
+                InfoBar().Message(resLoader.getResource(L"ErrorMessage_FailedToCopyToClipboard").value_or(L"Error"));
+                InfoBar().Severity(ui::InfoBarSeverity::Error);
+                InfoBar().IsOpen(true);
+            }
+        }
+    }
+
+
     void ClipboardActionView::UserControl_Loading(ui::FrameworkElement const&, win::IInspectable const&)
     {
-        std::sort(triggers.begin(), triggers.end(), [](auto&& a, auto&& b) -> bool
+        std::sort(triggers.begin(), triggers.end(), [this](auto&& a, auto&& b) -> bool
         {
             return a.label().size() < b.label().size();
         });
@@ -182,20 +245,27 @@ namespace winrt::ClipboardManager::implementation
     void ClipboardActionView::OpenOptionsButton_Click(win::IInspectable const&, ui::RoutedEventArgs const&)
     {
         visualStateManager.switchState(0, true);
+        if (visualStateManager.getCurrentState(0).name() == optionsOpenState.name())
+        {
+            OptionsGrid().Scale({ 1, 1, 1 });
+        }
+        else
+        {
+            OptionsGrid().Scale({ 0, 0, 0 });
+        }
     }
-
 
     void ClipboardActionView::HyperlinkButton_Click(win::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
     {
         auto&& label = sender.as<ui::Control>().Tag().try_as<hstring>();
         if (label.has_value() && !label.value().empty())
         {
-            for (auto&& action : triggers)
+            for (auto&& trigger : triggers)
             {
-                if (label.value() == action.label())
+                if (label.value() == trigger.label())
                 {
                     clip::utils::Launcher launcher{};
-                    launcher.launch(action, std::wstring(_text));
+                    launcher.launch(trigger, std::wstring(_text));
 
                     break;
                 }
@@ -209,14 +279,7 @@ namespace winrt::ClipboardManager::implementation
 
     void ClipboardActionView::FormatLinkButton_Click(win::IInspectable const&, ui::RoutedEventArgs const&)
     {
-        if (triggers.size() == 1)
-        {
-            win::DataPackage dataPackage{};
-            dataPackage.SetText(triggers[0].formatTrigger(_text.data()));
-            dataPackage.Properties().ApplicationName(L"ClipboardManager");
-
-            win::Clipboard::SetContent(dataPackage);
-        }
+        CopyLinkToClipboard();
     }
 
     void ClipboardActionView::RemoveActionButton_Click(win::IInspectable const&, ui::RoutedEventArgs const&)
@@ -253,13 +316,13 @@ namespace winrt::ClipboardManager::implementation
 
     void ClipboardActionView::RootGrid_PointerEntered(win::IInspectable const&, ui::Input::PointerRoutedEventArgs const&)
     {
-        visualStateManager.goToState(PointerOverState);
+        visualStateManager.goToState(pointerOverState);
         ProtectedCursor(winrt::Microsoft::UI::Input::InputSystemCursor::Create(winrt::Microsoft::UI::Input::InputSystemCursorShape::Hand));
     }
 
     void ClipboardActionView::RootGrid_PointerExited(win::IInspectable const&, ui::Input::PointerRoutedEventArgs const&)
     {
-        visualStateManager.goToState(NormalState);
+        visualStateManager.goToState(normalState);
         ProtectedCursor(winrt::Microsoft::UI::Input::InputSystemCursor::Create(winrt::Microsoft::UI::Input::InputSystemCursorShape::Arrow));
     }
 
@@ -267,39 +330,24 @@ namespace winrt::ClipboardManager::implementation
     {
         if (e.GetCurrentPoint(*this).Properties().IsLeftButtonPressed())
         {
-            visualStateManager.goToState(PointerPressedState);
+            visualStateManager.goToState(pointerPressedState);
 
-            clip::utils::Launcher launcher{};
             if (triggers.size() > 0)
             {
-                auto&& action = triggers[0];
-                launcher.launch(action, std::wstring(_text));
+                clip::Settings settings{};
+                if (settings.get<bool>(L"ClipboardActionClick").value_or(false))
+                {
+                    auto&& action = triggers[0];
+                    clip::utils::Launcher launcher{};
+                    launcher.launch(action, std::wstring(_text));
+                }
+                else
+                {
+                    CopyLinkToClipboard();
+                }
             }
         }
-
-    }
-
-    void ClipboardActionView::RootGrid_PointerReleased(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
-    {
-        // TODO: Implement or remove.
-    }
-
-    void ClipboardActionView::EditActionButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
-    {
-
-    }
-
-
-    void ClipboardActionView::AddTriggerButton(clip::ClipboardTrigger& trigger)
-    {
-        ui::HyperlinkButton hyperlinkButton{};
-        hyperlinkButton.Content(box_value(trigger.label()));
-        hyperlinkButton.Tag(box_value(trigger.label()));
-        hyperlinkButton.Click({ this, &ClipboardActionView::HyperlinkButton_Click });
-
-        ui::ToolTipService::SetToolTip(hyperlinkButton, 
-                                       box_value(trigger.formatTrigger(std::wstring(_text))));
-
-        TriggersGridView().Items().InsertAt(0, hyperlinkButton);
     }
 }
+
+

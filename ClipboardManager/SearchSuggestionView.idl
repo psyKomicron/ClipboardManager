@@ -1,0 +1,15 @@
+namespace ClipboardManager
+{
+    [default_interface]
+    runtimeclass SearchSuggestionView : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        SearchSuggestionView();
+
+        IInspectable Icon;
+        IInspectable Suggestion;
+        IInspectable RightContent;
+        String Subtitle;
+
+        void ShowCopiedToClipboard(String triggerLabel);
+    }
+}

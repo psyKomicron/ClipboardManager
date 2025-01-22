@@ -12,7 +12,7 @@
     Loaded="Page_Loaded"
     SizeChanged="Page_SizeChanged">
 
-    <Grid x:Name="RootGrid" BorderThickness="2" CornerRadius="{StaticResource OverlayCornerRadius}">
+    <Grid x:Name="RootGrid" BorderThickness="2" CornerRadius="{StaticResource OverlayCornerRadius}" ActualThemeChanged="RootGrid_ActualThemeChanged">
         <Grid.RowDefinitions>
             <RowDefinition Height="33"/>
             <RowDefinition Height="Auto"/>
@@ -39,6 +39,16 @@
             </VisualStateGroup>
 
             <VisualStateGroup>
+                <VisualState x:Name="ShowActionsListView"/>
+                <VisualState x:Name="ShowSearchListView">
+                    <VisualState.Setters>
+                        <Setter Target="SearchActionsListView.Visibility" Value="Visible"/>
+                        <Setter Target="ActionsListView.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup>
                 <VisualState x:Name="NormalStartup"/>
                 <VisualState x:Name="FirstStartup">
                     <VisualState.Setters>
@@ -53,11 +63,8 @@
             </VisualStateGroup>
 
             <VisualStateGroup>
-                <VisualState x:Name="DisplayClipboardTriggers"/>
-                <VisualState x:Name="NoClipboardTriggersToDisplay">
+                <VisualState x:Name="NoUserFilePathSaved">
                     <VisualState.Setters>
-                        <Setter Target="ClipboardTriggersListView.Visibility" Value="Collapsed"/>
-                        <Setter Target="NoClipboardTriggersTextBlock.Visibility" Value="Visible"/>
                         <Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>
                         <Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>
                     </VisualState.Setters>
@@ -65,11 +72,55 @@
             </VisualStateGroup>
 
             <VisualStateGroup>
-                <VisualState x:Name="QuickSettingsClosed"/>
+                <VisualState x:Name="DisplayClipboardTriggers"/>
+                <VisualState x:Name="NoClipboardTriggersToDisplay">
+                    <VisualState.Setters>
+                        <Setter Target="ClipboardTriggersListView.Visibility" Value="Collapsed"/>
+                        <Setter Target="NoClipboardTriggersTextBlock.Visibility" Value="Visible"/>
+                        <!--<Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>-->
+                        <!--<Setter Target="NoClipboardActionsInfoBar.IsOpen" Value="True"/>-->
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup>
+                <VisualState x:Name="QuickSettingsClosed">
+                    <VisualState.Setters>
+                        <Setter Target="QuickSettingsStackPanel.Visibility" Value="Collapsed"/>
+                        <Setter Target="QuickSettingsStackPanel.Opacity" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="QuickSettingsOpen">
                     <VisualState.Setters>
+                        <Setter Target="QuickActionsRightColumn.Width" Value="*"/>
+                        <Setter Target="QuickActionsLeftColumn.Width" Value="Auto"/>
                         <Setter Target="QuickSettingsStackPanel.Visibility" Value="Visible"/>
+                        <Setter Target="QuickSettingsStackPanel.Opacity" Value="1"/>
                         <Setter Target="OpenQuickSettingsButtonFontIcon.Glyph" Value="&#xe76c;"/>
+                        <Setter Target="SearchBoxGrid.Opacity" Value="0"/>
+                        <Setter Target="SearchBoxGrid.Visibility" Value="Collapsed"/>
+                        <Setter Target="SearchActionsListView.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="SearchClosed">
+                    <VisualState.Setters>
+                        <Setter Target="SearchBoxGrid.Opacity" Value="0"/>
+                        <Setter Target="SearchBoxGrid.Visibility" Value="Collapsed"/>
+                        <Setter Target="SearchActionsListView.Visibility" Value="Collapsed"/>
+                        <Setter Target="SearchActionsListView.Opacity" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="SearchOpened">
+                    <VisualState.Setters>
+                        <Setter Target="QuickActionsLeftColumn.Width" Value="*"/>
+                        <Setter Target="QuickActionsRightColumn.Width" Value="Auto"/>
+                        <Setter Target="QuickSettingsStackPanel.Visibility" Value="Collapsed"/>
+                        <Setter Target="SearchBoxGrid.Visibility" Value="Visible"/>
+                        <Setter Target="SearchBoxGrid.Opacity" Value="1"/>
+                        <Setter Target="QuickSettingsStackPanel.Opacity" Value="0"/>
+                        <Setter Target="SearchActionsGrid.HorizontalAlignment" Value="Stretch"/>
+                        <Setter Target="SearchActionsListView.Visibility" Value="Visible"/>
+                        <Setter Target="SearchActionsListView.Opacity" Value="1"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -82,13 +133,20 @@
                             <DoubleAnimationUsingKeyFrames 
                                 Storyboard.TargetName="RootGridBorderBrush"
                                 Storyboard.TargetProperty="Opacity"
-                                Duration="0:0:2"
+                                Duration="0:0:0.8"
                                 EnableDependentAnimation="True">
-                                <SplineDoubleKeyFrame KeyTime="0:0:1.5" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="1" />
-                                <LinearDoubleKeyFrame KeyTime="0:0:2" Value="0"/>
+                                <SplineDoubleKeyFrame KeyTime="0:0:0.5" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="0.7" />
+                                <LinearDoubleKeyFrame KeyTime="0:0:0.8" Value="0"/>
                             </DoubleAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState.Storyboard>
+
+                    <VisualState.Setters>
+                        <Setter Target="OverlayToggleButtonContent.Glyph" Value="&#xee47;"/>
+                        <Setter Target="MoveBorder.Visibility" Value="Collapsed"/>
+                        <Setter Target="OverlayCloseButton.Visibility" Value="Visible"/>
+                        <Setter Target="WindowButtonsColumn.Width" Value="Auto"/>
+                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
 
@@ -136,11 +194,42 @@
                 Style="{StaticResource IconToggleButtonStyle}" 
                 Grid.Column="0"
                 MaxHeight="30"
-                ClickMode="Release"
-                Click="OverlayToggleButton_Click">
-                <FontIcon Glyph="&#xee49;" FontSize="16"/>
+                IsChecked="{x:Bind OverlayEnabled, Mode=TwoWay}"
+                Checked="OverlayToggleButton_Click">
+                <FontIcon x:Name="OverlayToggleButtonContent" Glyph="&#xee49;" FontSize="16"/>
             </ToggleButton>
-            
+            <TeachingTip x:Name="OverlayToggleButtonTeachingTip" Target="{x:Bind OverlayToggleButton}">
+                <StackPanel Orientation="Vertical" Spacing="7">
+                    <TextBlock x:Uid="OverlayPopupTitleTextBlock" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="Wrap"/>
+                    <TextBlock x:Uid="OverlayPopupContentTextBlock" TextWrapping="Wrap"/>
+                    <TextBlock x:Uid="ShowWindowShortcutTextBlock" TextWrapping="Wrap" Margin="0,7,0,0"/>
+                    <StackPanel Orientation="Horizontal" Spacing="7" HorizontalAlignment="Center">
+                        <StackPanel.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorBaseBrush}" />
+                                <Setter Property="Padding" Value="10,8" />
+                                <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                            <Style x:Key="ShortcutTextBlockStyle" TargetType="TextBlock">
+                                <Setter Property="TextWrapping" Value="Wrap" />
+                                <Setter Property="FontFamily" Value="Consolas" />
+                                <Setter Property="CharacterSpacing" Value="70" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <Border>
+                            <TextBlock Text="CTRL" Style="{StaticResource ShortcutTextBlockStyle}"/>
+                        </Border>
+                        <TextBlock Text="+" VerticalAlignment="Center"/>
+                        <Border>
+                            <TextBlock Text="SPACE" Style="{StaticResource ShortcutTextBlockStyle}"/>
+                        </Border>
+                    </StackPanel>
+                    <CheckBox x:Uid="OverlayPopupShowWarningCheckBox" IsChecked="True" Margin="0,7,0,0" Click="OverlayPopupShowWarningCheckBox_Click"/>
+                </StackPanel>
+            </TeachingTip>
+
             <Border 
                 x:Name="MoveBorder"
                 Grid.ColumnSpan="3"
@@ -151,36 +240,23 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Opacity="0.7"/>
+
+            <Button x:Name="OverlayCloseButton" x:Load="False" Style="{StaticResource IconButtonStyle}" Grid.Column="2" 
+                    Content="&#xe921;" Visibility="Collapsed" Click="OverlayCloseButton_Click"/>
         </Grid>
 
         <clip:MessagesBar x:Name="MessagesBar" Grid.Row="1"/>
 
-        <Pivot x:Name="Pivot" SelectedIndex="3" Grid.Row="2">
-            <PivotItem Margin="0" Padding="5,3,5,0">
+        <Pivot x:Name="Pivot" SelectedIndex="2" Grid.Row="2">
+            <PivotItem x:Name="SettingsPivotItem" Margin="0" Padding="5,3,5,0">
                 <PivotItem.Header>
                     <FontIcon x:Name="SettingsPivot" Glyph="&#xe713;" FontSize="16"/>
                 </PivotItem.Header>
 
-                <Frame>
-                    <clip:SettingsPage/>
-                </Frame>
+                <Frame x:Name="SettingsFrame" Loading="SettingsFrame_Loaded"/>
             </PivotItem>
 
-            <PivotItem Margin="0" Padding="0">
-                <PivotItem.Header>
-                    <FontIcon x:Name="ClipboardHistoryPivot" Glyph="&#xe823;" FontSize="16"/>
-                </PivotItem.Header>
-
-                <ListView x:Name="ClipboardHistoryListView" SelectionMode="None" Grid.Row="0" Padding="0" Loading="ClipboardHistoryListView_Loading">
-                    <ListView.Resources>
-                        <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
-                            <Setter Property="Padding" Value="4,0,4,0" />
-                        </Style>
-                    </ListView.Resources>
-                </ListView>
-            </PivotItem>
-
-            <PivotItem Padding="0" Margin="0" Loaded="ClipboadTriggersListPivot_Loaded">
+            <PivotItem x:Name="ClipboardTriggersPivotItem" Padding="0" Margin="0">
                 <PivotItem.Header>
                     <FontIcon x:Name="ClipboardTriggersPivot" Glyph="&#xe945;" FontSize="16"/>
                 </PivotItem.Header>
@@ -194,8 +270,9 @@
                         <RepositionThemeTransition/>
                     </Grid.Transitions>
 
-                    <CommandBar Background="Transparent" DefaultLabelPosition="Right">
+                    <CommandBar x:Name="TriggersCommandBar" Background="Transparent" DefaultLabelPosition="Right">
                         <AppBarButton 
+                            x:Name="CommandBarImportButton"
                             x:Uid="CommandBarImportButton" 
                             Icon="OpenFile"
                             Click="CommandBarImportButton_Click"/>
@@ -205,14 +282,17 @@
                             Icon="Save" 
                             Click="CommandBarSaveButton_Click"/>
                         <AppBarButton 
+                            x:Name="CommandBarReloadTriggersButton" 
                             x:Uid="CommandBarReloadTriggersButton" 
                             Icon="Refresh"
                             Click="ReloadTriggersButton_Click"/>
                         <AppBarButton 
+                            x:Name="CommandBarAddTriggerButton" 
                             x:Uid="CommandBarAddTriggerButton" 
                             Icon="Add"
                             Click="AddTriggerButton_Click"/>
                         <AppBarButton 
+                            x:Name="CommandBarTestRegexButton"
                             x:Uid="CommandBarTestRegexButton"
                             Click="TestRegexButton_Click">
                             <AppBarButton.Icon>
@@ -238,25 +318,17 @@
 
                     <clip:RegexTesterControl x:Name="TestRegexContentDialog" Grid.RowSpan="2"/>
                     <clip:ClipboardTriggerEditControl x:Name="ClipboardTriggerEditControl" Grid.RowSpan="2"/>
-
-                    <TeachingTip x:Name="ClipboardTriggersListViewTeachingTip" 
-                                 x:Uid="ClipboardActionsListViewTeachingTip"
-                                 Target="{x:Bind ClipboardTriggersListView}"
-                                 CloseButtonClick="TeachingTip2_CloseButtonClick"/>
-                    <TeachingTip x:Name="CommandBarSaveButtonTeachingTip" 
-                                 x:Uid="CommandBarSaveButtonTeachingTip"
-                                 Target="{x:Bind CommandBarSaveButton}"
-                                 CloseButtonClick="TeachingTip2_CloseButtonClick"/>
                 </Grid>
             </PivotItem>
 
-            <PivotItem Padding="0" Margin="0">
+            <PivotItem x:Name="ClipboardActionsPivotItem" Padding="0" Margin="0">
                 <PivotItem.Header>
                     <FontIcon x:Name="ClipboardActionsPivot" Glyph="&#xea8a;" FontSize="16"/>
                 </PivotItem.Header>
 
                 <Grid Padding="5,3,5,0">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
@@ -274,7 +346,7 @@
                             x:Uid="NoClipboardActionsInfoBar"
                             x:Load="False"
                             Severity="Warning" 
-                            IsClosable="False">
+                            IsClosable="True">
                             <InfoBar.Content>
                                 <Grid Padding="0,0,5,5" ColumnSpacing="10" ColumnDefinitions="1*,1*">
                                     <HyperlinkButton Grid.Column="0" x:Uid="LocateButton" HorizontalAlignment="Stretch" Click="LocateUserFileButton_Click"/>
@@ -323,189 +395,545 @@
                         </InfoBar>
                     </StackPanel>
 
-                    <Grid Grid.Row="1" MinHeight="35" HorizontalAlignment="Right">
+                    <Grid Grid.Row="1" MinHeight="40">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition x:Name="QuickActionsLeftColumn" Width="1*"/>
+                            <ColumnDefinition x:Name="QuickActionsRightColumn" Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <Grid.Transitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                            </TransitionCollection>
-                        </Grid.Transitions>
 
-                        <Button x:Name="OpenQuickSettingsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="0" Click="OpenQuickSettingsButton_Click">
-                            <ToolTipService.ToolTip>
-                                <TextBlock x:Uid="OpenQuickSettingsButton_ToolTipTextBlock"/>
-                            </ToolTipService.ToolTip>
-                            <FontIcon x:Name="OpenQuickSettingsButtonFontIcon" FontSize="14" Glyph="&#xe76b;"/>
-                        </Button>
+                        <Grid x:Name="SearchActionsGrid" Grid.Column="0" HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
 
-                        <StackPanel x:Name="QuickSettingsStackPanel" 
-                            Visibility="Collapsed"
-                            Grid.Column="1" 
-                            Orientation="Horizontal" 
-                            Spacing="5"
-                            VerticalAlignment="Stretch">
-                            <StackPanel.ChildrenTransitions>
-                                <TransitionCollection>
-                                    <RepositionThemeTransition IsStaggeringEnabled="False"/>
-                                </TransitionCollection>
-                            </StackPanel.ChildrenTransitions>
+                            <Button x:Name="OpenSearchButton" Style="{StaticResource IconButtonStyle}" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top"
+                                    Margin="0,3,0,0"
+                                    Click="OpenSearchButton_Click" >
+                                <FontIcon Glyph="&#xe721;"/>
+                            </Button>
 
-                            <StackPanel
-                                Orientation="Horizontal" 
-                                Spacing="5"
-                                VerticalAlignment="Stretch" 
-                                Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
-                                CornerRadius="{StaticResource OverlayCornerRadius}" 
-                                Padding="7,5">
-                                <Button x:Name="ReloadTriggersButton" Click="ReloadTriggersButton_Click">
-                                    <ToolTipService.ToolTip>
-                                        <TextBlock x:Uid="ReloadTriggersButton_ToolTipTextBlock"/>
-                                    </ToolTipService.ToolTip>
-                                    <FontIcon FontSize="16" Glyph="&#xe72c;"/>
-                                </Button>
-                                
-                                <ToggleButton x:Name="SilenceNotificationsToggleButton">
-                                    <ToolTipService.ToolTip>
-                                        <TextBlock x:Uid="SilenceNotificationsToggleButton_ToolTipTextBlock"/>
-                                    </ToolTipService.ToolTip>
-                                    <FontIcon FontSize="16" Glyph="&#xe7ed;"/>
-                                </ToggleButton>
-                                
-                                <ToggleButton x:Name="HistoryToggleButton">
-                                    <ToolTipService.ToolTip>
-                                        <TextBlock x:Uid="HistoryToggleButton_ToolTipTextBlock"/>
-                                    </ToolTipService.ToolTip>
-                                    <FontIcon FontSize="16" Glyph="&#xe823;"/>
-                                </ToggleButton>
+                            <Grid x:Name="SearchBoxGrid" Grid.Column="1" Grid.RowSpan="2" Visibility="Collapsed" Opacity="0" ColumnSpacing="7" RowSpacing="3" 
+                                  Scale="0,0,0" Margin="5,3,5,7" VerticalAlignment="Top" Loading="SearchBoxGrid_Loading">
+                                <Grid.OpacityTransition>
+                                    <ScalarTransition/>
+                                </Grid.OpacityTransition>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBox 
+                                    x:Name="SearchActionsAutoSuggestBox" 
+                                    Grid.Column="0" 
+                                    Grid.Row="0"
+                                    HorizontalAlignment="Stretch" 
+                                    Height="35"
+                                    TextChanged="SearchActionsAutoSuggestBox_TextChanged" 
+                                    GotFocus="SearchActionsAutoSuggestBox_GotFocus"/>
+
+                                <StackPanel x:Name="SearchButtonsStackPanel" Grid.Column="0" Grid.Row="1" Orientation="Horizontal" Spacing="5" IsHitTestVisible="False">
+                                    <ToggleButton x:Name="SearchTriggersToggleButton" Padding="6,3,6,4">
+                                        <TextBlock x:Uid="SearchTriggersToggleButtonText" Text="a: actions" FontSize="12"/>
+                                    </ToggleButton>
+                                    <ToggleButton x:Name="SearchTextToggleButton" Padding="6,3,6,4">
+                                        <TextBlock x:Uid="SearchTextToggleButtonText" Text="a: actions" FontSize="12"/>
+                                    </ToggleButton>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="1" Grid.RowSpan="2" Spacing="3" Orientation="Horizontal" VerticalAlignment="Top">
+                                    <ToggleButton 
+                                        x:Name="SearchActionsIgnoreCaseToggleButton" 
+                                        x:Uid="IgnoreCaseTextBlock" 
+                                        Content="i" 
+                                        FontFamily="Consolas" 
+                                        Height="35"
+                                        HorizontalAlignment="Stretch"/>
+                                    <ToggleSplitButton 
+                                        x:Name="SearchActionsFilterDateToggleButton"
+                                        Content="&#xec92;" 
+                                        FontFamily="{StaticResource SymbolThemeFontFamily}" 
+                                        FontSize="14"
+                                        Height="35"
+                                        HorizontalAlignment="Stretch">
+                                        <ToggleSplitButton.Flyout>
+                                            <Flyout>
+                                                <Grid Margin="-8" >
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <TimePicker x:Name="SearchActionsTimePicker" ClockIdentifier="24HourClock" Grid.Column="0" Grid.Row="0" IsEnabled="{x:Bind SearchActionsTimePickerToggleSwitch.IsOn, Mode=OneWay}"/>
+                                                    <Viewbox Grid.Column="1" Grid.Row="0" MaxHeight="32">
+                                                        <ToggleSwitch x:Name="SearchActionsTimePickerToggleSwitch" Style="{StaticResource FlippedToggleSwitchStyle}" OnContent="{x:Null}" OffContent="{x:Null}"/>
+                                                    </Viewbox>
+
+                                                    <DatePicker x:Name="SearchActionsDatePicker" Grid.Column="0" Grid.Row="1" IsEnabled="{x:Bind SearchActionsDatePickerToggleSwitch.IsOn, Mode=OneWay}"/>
+                                                    <Viewbox Grid.Column="1" Grid.Row="1" MaxHeight="32">
+                                                        <ToggleSwitch x:Name="SearchActionsDatePickerToggleSwitch" Style="{StaticResource FlippedToggleSwitchStyle}" OnContent="{x:Null}" OffContent="{x:Null}"/>
+                                                    </Viewbox>
+                                                </Grid>
+                                            </Flyout>
+                                        </ToggleSplitButton.Flyout>
+                                    </ToggleSplitButton>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+
+                        <Grid Grid.Column="1" MinHeight="35" HorizontalAlignment="Right">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Button x:Name="OpenQuickSettingsButton" Style="{StaticResource IconButtonStyle}" Grid.Column="1" VerticalAlignment="Top"
+                                    Margin="0,3,0,0"
+                                    Click="OpenQuickSettingsButton_Click">
+                                <ToolTipService.ToolTip>
+                                    <TextBlock x:Uid="OpenQuickSettingsButton_ToolTipTextBlock"/>
+                                </ToolTipService.ToolTip>
+                                <FontIcon x:Name="OpenQuickSettingsButtonFontIcon" FontSize="16" Glyph="&#xe76b;"/>
+                            </Button>
+
+                            <StackPanel x:Name="QuickSettingsStackPanel" CacheMode="BitmapCache" Visibility="Collapsed" Opacity="0" Grid.Column="0" Orientation="Horizontal" 
+                                        Spacing="5" VerticalAlignment="Stretch">
+                                <StackPanel.OpacityTransition>
+                                    <ScalarTransition/>
+                                </StackPanel.OpacityTransition>
+
+                                <StackPanel Orientation="Horizontal" Spacing="5" VerticalAlignment="Stretch" Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
+                                            CornerRadius="{StaticResource OverlayCornerRadius}" Padding="7,5">
+                                    <Button x:Name="ReloadTriggersButton" Click="ReloadTriggersButton_Click">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="ReloadTriggersButton_ToolTipTextBlock"/>
+                                        </ToolTipService.ToolTip>
+                                        <FontIcon FontSize="16" Glyph="&#xe72c;"/>
+                                    </Button>
+
+                                    <ToggleButton x:Name="SilenceNotificationsToggleButton">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="SilenceNotificationsToggleButton_ToolTipTextBlock"/>
+                                        </ToolTipService.ToolTip>
+                                        <FontIcon FontSize="16" Glyph="&#xe7ed;"/>
+                                    </ToggleButton>
+
+                                    <ToggleButton x:Name="HistoryToggleButton">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="HistoryToggleButton_ToolTipTextBlock"/>
+                                        </ToolTipService.ToolTip>
+                                        <FontIcon FontSize="16" Glyph="&#xe823;"/>
+                                    </ToggleButton>
+                                </StackPanel>
+
+                                <StackPanel
+                                    Orientation="Horizontal" 
+                                    Spacing="5" 
+                                    Margin="5,0,5,0" 
+                                    VerticalAlignment="Stretch" 
+                                    Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
+                                    CornerRadius="{StaticResource OverlayCornerRadius}" 
+                                    Padding="7,5">
+
+                                    <ToggleButton x:Name="CompactModeToggleButton" Click="CompactModeToggleButton_Click">
+                                        <FontIcon FontSize="16" Glyph="&#xe949;"/>
+                                    </ToggleButton>
+
+                                    <Button x:Name="ClearActionsButton" Click="ClearActionsButton_Click">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="ClearActionsButtonToolTipTextBlock"/>
+                                        </ToolTipService.ToolTip>
+                                        <FontIcon FontSize="16" Glyph="&#xe894;"/>
+                                    </Button>
+
+                                    <Button x:Name="ImportClipboardButton" Click="ImportFromClipboardButton_Click">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="ImportFromClipboardButtonToolTipTextBlock"/>
+                                        </ToolTipService.ToolTip>
+                                        <FontIcon FontSize="16" Glyph="&#xe8b6;"/>
+                                    </Button>
+
+                                    <Button Click="QuickSettingsSaveButton_Click">
+                                        <FontIcon FontSize="16" Glyph="&#xe74e;"/>
+                                    </Button>
+                                </StackPanel>
                             </StackPanel>
-
-                            <StackPanel
-                                Orientation="Horizontal" 
-                                Spacing="5" 
-                                Margin="5,0,5,0" 
-                                VerticalAlignment="Stretch" 
-                                Background="{ThemeResource SubtleFillColorTertiaryBrush}" 
-                                CornerRadius="{StaticResource OverlayCornerRadius}" 
-                                Padding="7,5">
-
-                                <Button x:Name="ClearActionsButton" Click="ClearActionsButton_Click">
-                                    <ToolTipService.ToolTip>
-                                        <TextBlock x:Uid="ClearActionsButtonToolTipTextBlock"/>
-                                    </ToolTipService.ToolTip>
-                                    <FontIcon FontSize="16" Glyph="&#xe894;"/>
-                                </Button>
-
-                                <Button Click="ImportFromClipboardButton_Click">
-                                    <ToolTipService.ToolTip>
-                                        <TextBlock x:Uid="ImportFromClipboardButtonToolTipTextBlock"/>
-                                    </ToolTipService.ToolTip>
-                                    <FontIcon FontSize="16" Glyph="&#xe8b6;"/>
-                                </Button>
-                            </StackPanel>
-                        </StackPanel>
+                        </Grid>
                     </Grid>
 
-                    <ListView x:Name="ActionsListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="2" AllowDrop="True" CanReorderItems="True">
+                    <ListView 
+                        x:Name="SearchActionsListView" 
+                        x:Uid="SearchActionsListView" 
+                        x:Load="False"
+                        Visibility="Collapsed" 
+                        Opacity="0"
+                        Grid.Row="2"
+                        MaxHeight="320"
+                        BorderThickness="0,0,0,1"
+                        BorderBrush="{ThemeResource TextFillColorPrimaryBrush}"
+                        Margin="0,0,0,10"
+                        IsDoubleTapEnabled="True"
+                        SelectionMode="Single"
+                        DoubleTapped="SearchActionsListView_DoubleTapped">
+                        <ListView.OpacityTransition>
+                            <ScalarTransition/>
+                        </ListView.OpacityTransition>
+                        <ListView.Header>
+                            <StackPanel Orientation="Horizontal" Spacing="5" Margin="0,5,0,3">
+                                <TextBlock x:Uid="SearchActionsListViewHeader"/>
+                                <TextBlock x:Name="SearchActionsResultsTextBlock"/>
+                            </StackPanel>
+                        </ListView.Header>
+                        <ListView.FooterTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" Style="{StaticResource SettingSubheaderTextBlockStyle}" Margin="0,0,0,5"/>
+                            </DataTemplate>
+                        </ListView.FooterTemplate>
+                    </ListView>
+
+                    <ListView x:Name="ActionsListView" SelectionMode="None" ItemsSource="{x:Bind Actions}" Padding="0" Margin="0" Grid.Row="3">
                         <ListView.Resources>
                             <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
                                 <Setter Property="Padding" Value="0" />
                             </Style>
                         </ListView.Resources>
                     </ListView>
-
-                    <!--#region TeachingTips -->
-                    <TeachingTip x:Name="ListViewTeachingTip" 
-                                 x:Uid="ListViewTeachingTip"
-                                 Target="{x:Bind ActionsListView}" 
-                                 PreferredPlacement="Center"
-                                 ActionButtonClick="TeachingTip_CloseButtonClick">
-                        <TeachingTip.ActionButtonContent>
-                            <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-                        </TeachingTip.ActionButtonContent>
-                    </TeachingTip>
-
-                    <TeachingTip x:Name="OpenQuickSettingsButtonTeachingTip"
-                                 x:Uid="OpenQuickSettingsButtonTeachingTip"
-                                 Target="{x:Bind OpenQuickSettingsButton}"
-                                 ActionButtonClick="TeachingTip_CloseButtonClick">
-                        <TeachingTip.ActionButtonContent>
-                            <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-                        </TeachingTip.ActionButtonContent>
-                    </TeachingTip>
-                    
-                    <TeachingTip x:Name="ReloadActionsButtonTeachingTip"
-                                 x:Uid="ReloadActionsButtonTeachingTip"
-                                 Target="{x:Bind ReloadTriggersButton}"
-                                 ActionButtonClick="TeachingTip_CloseButtonClick">
-                        <TeachingTip.ActionButtonContent>
-                            <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-                        </TeachingTip.ActionButtonContent>
-                    </TeachingTip>
-
-                    <TeachingTip x:Name="SilenceNotificationsToggleButtonTeachingTip"
-                                 x:Uid="SilenceNotificationsToggleButtonTeachingTip"
-                                 Target="{x:Bind SilenceNotificationsToggleButton}"
-                                 ActionButtonClick="TeachingTip_CloseButtonClick">
-                        <TeachingTip.ActionButtonContent>
-                            <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-                        </TeachingTip.ActionButtonContent>
-                    </TeachingTip>
-
-                    <TeachingTip x:Name="HistoryToggleButtonTeachingTip"
-                                 x:Uid="HistoryToggleButtonTeachingTip"
-                                 Target="{x:Bind HistoryToggleButton}"
-                                 ActionButtonClick="TeachingTip_CloseButtonClick">
-                        <TeachingTip.ActionButtonContent>
-                            <FontIcon Glyph="&#xe72a;" FontSize="14"/>
-                        </TeachingTip.ActionButtonContent>
-                    </TeachingTip>
-                    <!--#endregion-->
                 </Grid>
             </PivotItem>
         </Pivot>
 
+        <ContentDialog x:Name="UserFileSaveContentDialog" x:Uid="UserFileSaveContentDialog" Padding="0"
+                       DefaultButton="Close">
+            <TextBlock x:Uid="UserFileSaveContentDialogText" TextWrapping="Wrap"/>
+        </ContentDialog>
+        <!--<Button x:Uid="ContentDialogCloseButton" Grid.Column="0" HorizontalAlignment="Stretch"/>
+        <Button x:Uid="ContentDialogLocateFileButton" Style="{ThemeResource AccentButtonStyle}" Grid.Column="1" HorizontalAlignment="Stretch"/>
+        <Button x:Uid="ContentDialogCreateFileButton" Style="{ThemeResource AccentButtonStyle}" Grid.Column="2" HorizontalAlignment="Stretch"/>-->
+
         <!--#region TeachingTips -->
-        <TeachingTip x:Name="SettingsPivotTeachingTip" 
-                     x:Uid="SettingsPivotTeachingTip"
-                     Target="{x:Bind SettingsPivot}"
-                     ActionButtonClick="TeachingTip_CloseButtonClick">
+        <TeachingTip 
+            x:Name="SettingsPivotTeachingTip" 
+            x:Uid="SettingsPivotTeachingTip"
+            Target="{x:Bind SettingsPivot}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
             <TeachingTip.ActionButtonContent>
-                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
             </TeachingTip.ActionButtonContent>
         </TeachingTip>
 
-        <TeachingTip x:Name="ClipboardHistoryPivotTeachingTip" 
-                     x:Uid="ClipboardHistoryPivotTeachingTip"
-                     Target="{x:Bind ClipboardHistoryPivot}"
-                     ActionButtonClick="TeachingTip_CloseButtonClick">
+        <TeachingTip 
+            x:Name="ClipboardTriggersPivotTeachingTip" 
+            x:Uid="ClipboardTriggersPivotTeachingTip"
+            Target="{x:Bind ClipboardTriggersPivot}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
             <TeachingTip.ActionButtonContent>
-                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
             </TeachingTip.ActionButtonContent>
         </TeachingTip>
 
-        <TeachingTip x:Name="ClipboardTriggersPivotTeachingTip" 
-                     x:Uid="ClipboardTriggersPivotTeachingTip"
-                     Target="{x:Bind ClipboardTriggersPivot}"
-                     ActionButtonClick="TeachingTip_CloseButtonClick">
+        <TeachingTip 
+            x:Name="ClipboardActionsPivotTeachingTip" 
+            x:Uid="ClipboardActionsPivotTeachingTip"
+            Target="{x:Bind ClipboardActionsPivot}"
+            ShouldConstrainToRootBounds="False"
+            PreferredPlacement="BottomRight"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
             <TeachingTip.ActionButtonContent>
-                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
             </TeachingTip.ActionButtonContent>
         </TeachingTip>
 
-        <TeachingTip x:Name="ClipboardActionsPivotTeachingTip" 
-                     x:Uid="ClipboardActionsPivotTeachingTip"
-                     Target="{x:Bind ClipboardActionsPivot}"
-                     ShouldConstrainToRootBounds="False"
-                     PreferredPlacement="BottomRight"
-                     ActionButtonClick="TeachingTip_CloseButtonClick">
+        <TeachingTip
+            x:Name="SearchButtonTeachingTip"
+            x:Uid="SearchButtonTeachingTip"
+            Target="{x:Bind OpenSearchButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
             <TeachingTip.ActionButtonContent>
-                <FontIcon Glyph="&#xe72a;" FontSize="14"/>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
             </TeachingTip.ActionButtonContent>
         </TeachingTip>
+
+        <TeachingTip 
+            x:Name="OpenQuickSettingsButtonTeachingTip"
+            x:Uid="OpenQuickSettingsButtonTeachingTip"
+            Target="{x:Bind OpenQuickSettingsButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip 
+            x:Name="ReloadActionsButtonTeachingTip"
+            x:Uid="ReloadActionsButtonTeachingTip"
+            Target="{x:Bind ReloadTriggersButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip 
+            x:Name="SilenceNotificationsToggleButtonTeachingTip"
+            x:Uid="SilenceNotificationsToggleButtonTeachingTip"
+            Target="{x:Bind SilenceNotificationsToggleButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip 
+            x:Name="HistoryToggleButtonTeachingTip"
+            x:Uid="HistoryToggleButtonTeachingTip"
+            Target="{x:Bind HistoryToggleButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip
+            x:Name="ClearActionsButtonTeachingTip"
+            x:Uid="ClearActionsButtonTeachingTip"
+            Target="{x:Bind ClearActionsButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip
+            x:Name="ImportClipboardButtonTeachingTip"
+            x:Uid="ImportClipboardButtonTeachingTip"
+            Target="{x:Bind ImportClipboardButton}"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip 
+            x:Name="ListViewTeachingTip" 
+            x:Uid="ListViewTeachingTip"
+            Style="{StaticResource AppTeachingTip}"
+            Target="{x:Bind ActionsListView}" 
+            PreferredPlacement="Center"
+            TailVisibility="Collapsed"
+            ActionButtonClick="TeachingTip_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip 
+            x:Name="ClipboardTriggersListViewTeachingTip" 
+            x:Uid="ClipboardActionsListViewTeachingTip"
+            Target="{x:Bind ClipboardTriggersListView}"
+            ActionButtonClick="TeachingTip2_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip
+            x:Name="CommandBarSaveButtonTeachingTip" 
+            x:Uid="CommandBarSaveButtonTeachingTip"
+            Target="{x:Bind CommandBarSaveButton}"
+            ActionButtonClick="TeachingTip2_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip
+            x:Name="CommandBarImportButtonTeachingTip"
+            x:Uid="CommandBarImportButtonTeachingTip"
+            Target="{x:Bind CommandBarImportButton}"
+            ActionButtonClick="TeachingTip2_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip
+            x:Name="CommandBarReloadTriggersButtonTeachingTip"
+            x:Uid="CommandBarReloadTriggersButtonTeachingTip"
+            Target="{x:Bind CommandBarReloadTriggersButton}"
+            ActionButtonClick="TeachingTip2_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip 
+            x:Name="CommandBarAddTriggerButtonTeachingTip" 
+            x:Uid="CommandBarAddTriggerButtonTeachingTip" 
+            Target="{x:Bind CommandBarAddTriggerButton}"
+            ActionButtonClick="TeachingTip2_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
+        <TeachingTip 
+            x:Name="CommandBarTestRegexButtonTeachingTip" 
+            x:Uid="CommandBarTestRegexButtonTeachingTip" 
+            Target="{x:Bind CommandBarTestRegexButton}"
+            ActionButtonClick="TeachingTip2_CloseButtonClick">
+            <TeachingTip.ActionButtonContent>
+                <Grid ColumnSpacing="4" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock x:Uid="NextTeachingTipTextBlock" Grid.Column="1" HorizontalAlignment="Center"/>
+                    <FontIcon Glyph="&#xe72a;" FontSize="14" Grid.Column="2"/>
+                </Grid>
+            </TeachingTip.ActionButtonContent>
+        </TeachingTip>
+
         <!--#endregion-->
     </Grid>
-    
+
 </Page>

@@ -1,10 +1,10 @@
 #pragma once
 #include "ClipboardActionEditor.g.h"
 
-#include "src/ui/VisualStateManager.hpp"
-#include "src/ui/ListenablePropertyValue.hpp"
-#include "src/utils/Logger.hpp"
-#include "src/utils/ResLoader.hpp"
+#include "lib/ui/VisualStateManager.hpp"
+#include "lib/ui/ListenablePropertyValue.hpp"
+#include "lib/utils/Logger.hpp"
+#include "lib/utils/ResLoader.hpp"
 
 #include <atomic>
 #include <functional>
@@ -62,25 +62,25 @@ namespace winrt::ClipboardManager::implementation
         // Const attributes:
         const clip::utils::Logger logger{ L"ClipboardActionEditor" };
         // Visual states:
-        const clip::ui::VisualState<ClipboardActionEditor> enabledState{ L"Enabled", 0, true };
-        const clip::ui::VisualState<ClipboardActionEditor> disabledState{ L"Disabled", 0, false };
+        clip::ui::VisualState<ClipboardActionEditor> enabledState{ L"Enabled", 0, true };
+        clip::ui::VisualState<ClipboardActionEditor> disabledState{ L"Disabled", 0, false };
         //    Label error states:
-        const clip::ui::VisualState<ClipboardActionEditor> noLabelErrorState{ L"NoLabelError", 1, true };
-        const clip::ui::VisualState<ClipboardActionEditor> labelErrorState{ L"LabelError", 1, false };
+        clip::ui::VisualState<ClipboardActionEditor> noLabelErrorState{ L"NoLabelError", 1, true };
+        clip::ui::VisualState<ClipboardActionEditor> labelErrorState{ L"LabelError", 1, false };
         //    Format error states:
-        const clip::ui::VisualState<ClipboardActionEditor> noFormatErrorState{ L"NoFormatError", 2, true };
-        const clip::ui::VisualState<ClipboardActionEditor> formatErrorState{ L"FormatError", 2, false };
-        const clip::ui::VisualState<ClipboardActionEditor> formatWarningState{ L"FormatWarning", 2, false };
+        clip::ui::VisualState<ClipboardActionEditor> noFormatErrorState{ L"NoFormatError", 2, true };
+        clip::ui::VisualState<ClipboardActionEditor> formatErrorState{ L"FormatError", 2, false };
+        clip::ui::VisualState<ClipboardActionEditor> formatWarningState{ L"FormatWarning", 2, false };
         //    Regex error states:
-        const clip::ui::VisualState<ClipboardActionEditor> noRegexErrorState{ L"NoRegexError", 3, true };
-        const clip::ui::VisualState<ClipboardActionEditor> regexErrorState{ L"RegexError", 3, false };
+        clip::ui::VisualState<ClipboardActionEditor> noRegexErrorState{ L"NoRegexError", 3, true };
+        clip::ui::VisualState<ClipboardActionEditor> regexErrorState{ L"RegexError", 3, false };
         //    Trigger options states:
-        const clip::ui::VisualState<ClipboardActionEditor> ignoreCaseDisabledState{ L"IgnoreCaseDisabled", 4, true };
-        const clip::ui::VisualState<ClipboardActionEditor> ignoreCaseEnabledState{ L"IgnoreCaseEnabled", 4, false };
-        const clip::ui::VisualState<ClipboardActionEditor> useSearchEnabledState{ L"UseSearchEnabled", 5, true };
-        const clip::ui::VisualState<ClipboardActionEditor> useSearchDisabledState{ L"UseSearchDisabled", 5, false };
-        const clip::ui::VisualState<ClipboardActionEditor> useRegexMatchResultsDisabledState{ L"UseRegexMatchResultsDisabled", 6, true };
-        const clip::ui::VisualState<ClipboardActionEditor> useRegexMatchResultsEnabledState{ L"UseRegexMatchResultsEnabled", 6, false };
+        clip::ui::VisualState<ClipboardActionEditor> ignoreCaseDisabledState{ L"IgnoreCaseDisabled", 4, true };
+        clip::ui::VisualState<ClipboardActionEditor> ignoreCaseEnabledState{ L"IgnoreCaseEnabled", 4, false };
+        clip::ui::VisualState<ClipboardActionEditor> useSearchEnabledState{ L"UseSearchEnabled", 5, true };
+        clip::ui::VisualState<ClipboardActionEditor> useSearchDisabledState{ L"UseSearchDisabled", 5, false };
+        clip::ui::VisualState<ClipboardActionEditor> useRegexMatchResultsDisabledState{ L"UseRegexMatchResultsDisabled", 6, true };
+        clip::ui::VisualState<ClipboardActionEditor> useRegexMatchResultsEnabledState{ L"UseRegexMatchResultsEnabled", 6, false };
         // Non-const attributes:
         clip::ui::VisualStateManager<ClipboardActionEditor> visualStateManager{ *this };
         bool loaded = false;

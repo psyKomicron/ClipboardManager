@@ -4,8 +4,8 @@
 #include "ClipboardTriggerEditControl.g.cpp"
 #endif
 
-#include "src/res/strings.h"
-#include "src/ClipboardTrigger.hpp"
+#include "lib/res/strings.h"
+#include "lib/ClipboardTrigger.hpp"
 
 namespace xaml
 {
@@ -95,7 +95,6 @@ namespace winrt::ClipboardManager::implementation
     winrt::Windows::Foundation::IAsyncOperation<bool> ClipboardTriggerEditControl::Edit()
     {
         auto result = co_await EditDialog().ShowAsync();
-
         co_return result == xaml::ContentDialogResult::Primary;
     }
 
@@ -238,12 +237,21 @@ namespace winrt::ClipboardManager::implementation
             }
             catch (boost::regex_error regexError)
             {
-                auto what = regexError.what();
-                logger.error(what);
-                logger.error(std::to_wstring(regexError.code()));
+                auto resString = std::format(L"BoostRegexErrorCode{}", static_cast<int>(regexError.code()));
+                auto errorCodeString = resLoader.getResource(hstring(resString));
+                if (errorCodeString.has_value())
+                {
+                    message = errorCodeString.value();
+                }
+                else
+                {
+                    auto what = regexError.what();
+                    logger.error(what);
+                    logger.error(std::to_wstring(static_cast<int>(regexError.code())));
 
-                auto position = regexError.position();
-                message = std::vformat(resLoader.getOrAlt(L"StringRegexError_Invalid", clip::res::StringRegexError_Invalid), std::make_wformat_args(position));
+                    auto position = regexError.position();
+                    message = std::vformat(resLoader.getOrAlt(L"StringRegexError_Invalid", clip::res::StringRegexError_Invalid), std::make_wformat_args(position));
+                }
             }
         }
         else

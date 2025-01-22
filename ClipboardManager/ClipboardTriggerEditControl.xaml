@@ -10,6 +10,7 @@
 
     <ContentDialog x:Name="EditDialog" 
                    x:Uid="EditDialog" 
+                   Padding="0"
                    DefaultButton="Primary" 
                    IsPrimaryButtonEnabled="False"
                    Opened="EditDialog_Opened">
@@ -25,8 +26,8 @@
                                 <SolidColorBrush Color="{ThemeResource SystemFillColorCritical}" Opacity="0.1"/>
                             </Setter.Value>
                         </Setter>
-                        <Setter Target="LabelTextBoxBorder.Padding" Value="5,3,5,7"/>
-                        <Setter Target="LabelTextBoxBorder.Margin" Value="-5,-3,-5,-7"/>
+                        <Setter Target="LabelTextBoxBorder.Padding" Value="5,7"/>
+                        <Setter Target="LabelTextBoxBorder.Margin" Value="-5,-7"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -41,8 +42,8 @@
                                 <SolidColorBrush Color="{ThemeResource SystemFillColorCritical}" Opacity="0.1"/>
                             </Setter.Value>
                         </Setter>
-                        <Setter Target="FormatTextBoxBorder.Padding" Value="5,3,5,7"/>
-                        <Setter Target="FormatTextBoxBorder.Margin" Value="-5,-3,-5,-7"/>
+                        <Setter Target="FormatTextBoxBorder.Padding" Value="5,7"/>
+                        <Setter Target="FormatTextBoxBorder.Margin" Value="-5,-7"/>
                         <Setter Target="FormatTextBoxErrorIcon.Visibility" Value="Visible"/>
                         <Setter Target="FormatTextBoxError.Visibility" Value="Visible"/>
                     </VisualState.Setters>
@@ -59,8 +60,8 @@
                                 <SolidColorBrush Color="{ThemeResource SystemFillColorCaution}" Opacity="0.1"/>
                             </Setter.Value>
                         </Setter>
-                        <Setter Target="FormatTextBoxBorder.Padding" Value="5,3,5,7"/>
-                        <Setter Target="FormatTextBoxBorder.Margin" Value="-5,-3,-5,-7"/>
+                        <Setter Target="FormatTextBoxBorder.Padding" Value="5,7"/>
+                        <Setter Target="FormatTextBoxBorder.Margin" Value="-5,-7"/>
                         <Setter Target="FormatTextBoxErrorIcon.Visibility" Value="Visible"/>
                         <Setter Target="FormatTextBoxError.Visibility" Value="Visible"/>
                     </VisualState.Setters>
@@ -87,8 +88,8 @@
                                 <SolidColorBrush Color="{ThemeResource SystemFillColorCritical}" Opacity="0.1"/>
                             </Setter.Value>
                         </Setter>
-                        <Setter Target="RegexTextBoxBorder.Padding" Value="5,3,5,7"/>
-                        <Setter Target="RegexTextBoxBorder.Margin" Value="-5,-3,-5,-7"/>
+                        <Setter Target="RegexTextBoxBorder.Padding" Value="5,7"/>
+                        <Setter Target="RegexTextBoxBorder.Margin" Value="-5,-7"/>
                         <Setter Target="RegexTextBoxError.Visibility" Value="Visible"/>
                         <Setter Target="RegexTextBoxErrorIcon.Visibility" Value="Visible"/>
                     </VisualState.Setters>
@@ -188,7 +189,7 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="Use regex match results to format" Grid.Column="0" VerticalAlignment="Center"/>
+                    <TextBlock x:Uid="UseRegexMatchResultsToggleBlock" Grid.Column="0" VerticalAlignment="Center"/>
 
                     <ToggleSwitch 
                         Style="{StaticResource FlippedToggleSwitchStyle}"
@@ -224,16 +225,24 @@
                             IsSpellCheckEnabled="False"
                             Text="{x:Bind TriggerRegex, Mode=TwoWay}" 
                             TextChanged="TextBox_TextChanged"/>
-                        <ToggleButton x:Name="RegexIgnoreCaseToggleButton" 
-                                IsChecked="{x:Bind IgnoreCase, Mode=TwoWay}"
-                                Grid.Column="1" 
-                                Content="Aa" 
-                                VerticalAlignment="Bottom"/>
-                        <ToggleButton x:Name="RegexUseSearchToggleButton" 
-                                IsChecked="{x:Bind UseSearch, Mode=TwoWay}"
-                                Grid.Column="2" 
-                                VerticalAlignment="Bottom" 
-                                MinHeight="32">
+                        <ToggleButton 
+                            x:Name="RegexIgnoreCaseToggleButton" 
+                            x:Uid="RegexIgnoreCaseButton"
+                            IsChecked="{x:Bind IgnoreCase, Mode=TwoWay}"
+                            Grid.Column="1" 
+                            Content="i" 
+                            FontFamily="Consolas"
+                            Height="32"
+                            Width="40"
+                            VerticalAlignment="Bottom"/>
+                        <ToggleButton 
+                            x:Name="RegexUseSearchToggleButton" 
+                            x:Uid="RegexUseSearchButton"
+                            IsChecked="{x:Bind UseSearch, Mode=TwoWay}"
+                            Grid.Column="2" 
+                            VerticalAlignment="Bottom" 
+                            Height="32"
+                            Width="40">
                             <FontIcon Glyph="&#xf78b;" FontSize="16"/>
                         </ToggleButton>
                     </Grid>

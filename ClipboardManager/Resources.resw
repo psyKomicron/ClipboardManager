@@ -1,0 +1,865 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ActionEnabledToggleSwitch.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Enable/disable trigger</value>
+  </data>
+  <data name="ActionEnabledToggleSwitchTeachingTip.Subtitle" xml:space="preserve">
+    <value>Enable or disable the trigger. A disabled trigger will not be used in any action</value>
+  </data>
+  <data name="ActionEnabledToggleSwitchTeachingTip.Title" xml:space="preserve">
+    <value>Trigger status</value>
+  </data>
+  <data name="ActionFormatTextBlockTeachingTip.Subtitle" xml:space="preserve">
+    <value>String that will be formatted with the content of the clipboard</value>
+  </data>
+  <data name="ActionFormatTextBlockTeachingTip.Title" xml:space="preserve">
+    <value>Trigger format</value>
+  </data>
+  <data name="ActionLabelTextBlockTeachingTip.Subtitle" xml:space="preserve">
+    <value>Label of the trigger, this name will be displayed for one of the button of a clipboard action</value>
+  </data>
+  <data name="ActionLabelTextBlockTeachingTip.Title" xml:space="preserve">
+    <value>Trigger label</value>
+  </data>
+  <data name="ActionRegexTextBlockTeachingTip.Subtitle" xml:space="preserve">
+    <value>Regex that the clipboard content needs to match</value>
+  </data>
+  <data name="ActionRegexTextBlockTeachingTip.Title" xml:space="preserve">
+    <value>Trigger regex</value>
+  </data>
+  <data name="ActionsGridViewTeachingTip.Subtitle" xml:space="preserve">
+    <value>Action buttons will be displayed here, click one to open the link created by the trigger format</value>
+  </data>
+  <data name="ActionsGridViewTeachingTip.Title" xml:space="preserve">
+    <value>Action trigger buttons</value>
+  </data>
+  <data name="AllowNotificationsHostControl.Subtitle" xml:space="preserve">
+    <value>Enable notifications, control notification style and sound.</value>
+  </data>
+  <data name="AllowNotificationsHostControl.Title" xml:space="preserve">
+    <value>Allow notifications</value>
+  </data>
+  <data name="ApplicationUpdatedInfoBar.Message" xml:space="preserve">
+    <value>ClipboardManager has been updated, to prevent any conflicts from the previous version settings have been cleared.
+You will need to locate your user file and reapply your settings.</value>
+  </data>
+  <data name="ApplicationUpdatedInfoBar.Title" xml:space="preserve">
+    <value>Application has received a major update</value>
+  </data>
+  <data name="ApplicationVersionHostControl.Header" xml:space="preserve">
+    <value>Application version</value>
+  </data>
+  <data name="AutomaticStartHostControl.Subtitle" xml:space="preserve">
+    <value>Controls if the application automatically starts when the user session starts.</value>
+  </data>
+  <data name="AutomaticStartHostControl.Title" xml:space="preserve">
+    <value>Automatic start</value>
+  </data>
+  <data name="BoostRegexErrorCode13" xml:space="preserve">
+    <value>The repeat operator "*" cannot start a regular expression.</value>
+  </data>
+  <data name="BoostRegexErrorCode8" xml:space="preserve">
+    <value>Found a closing ) with no corresponding opening parenthesis.</value>
+  </data>
+  <data name="BrowserStringTextBox.PlaceholderText" xml:space="preserve">
+    <value>Executable string</value>
+  </data>
+  <data name="ClearActionsButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Clear action list</value>
+  </data>
+  <data name="ClearActionsButtonToolTipTextBlock.Text" xml:space="preserve">
+    <value>Clear actions list</value>
+  </data>
+  <data name="ClearSettingsButton.Text" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="ClearSettingsHostControl.Header" xml:space="preserve">
+    <value>Clear settings</value>
+  </data>
+  <data name="ClipboardActionRootGridTeachingTip.Subtitle" xml:space="preserve">
+    <value>This is a clipboard trigger</value>
+  </data>
+  <data name="ClipboardActionsListViewTeachingTip.Subtitle" xml:space="preserve">
+    <value>Triggers list</value>
+  </data>
+  <data name="ClipboardActionsListViewTeachingTip.Title" xml:space="preserve">
+    <value>Clipboard triggers</value>
+  </data>
+  <data name="ClipboardActionsPivotTeachingTip.Subtitle" xml:space="preserve">
+    <value>View clipboard entries that triggered your custom clipboard triggers and start actions.</value>
+  </data>
+  <data name="ClipboardActionsPivotTeachingTip.Title" xml:space="preserve">
+    <value>Clipboard actions</value>
+  </data>
+  <data name="ClipboardActionsSaveFileMovedInfoBar.Message" xml:space="preserve">
+    <value>Choose to create or locate the missing file.</value>
+  </data>
+  <data name="ClipboardActionsSaveFileMovedInfoBar.Title" xml:space="preserve">
+    <value>Clipboard action file is missing, it was either moved or deleted.</value>
+  </data>
+  <data name="ClipboardTriggersPivotTeachingTip.Subtitle" xml:space="preserve">
+    <value>View and edit clipboard triggers</value>
+  </data>
+  <data name="ClipboardTriggersPivotTeachingTip.Title" xml:space="preserve">
+    <value>Clipboard triggers</value>
+  </data>
+  <data name="CommandBarAddTriggerButton.Label" xml:space="preserve">
+    <value>Add trigger</value>
+  </data>
+  <data name="CommandBarAddTriggerButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Show a popup to create a new trigger.</value>
+  </data>
+  <data name="CommandBarAddTriggerButtonTeachingTip.Title" xml:space="preserve">
+    <value>Add trigger</value>
+  </data>
+  <data name="CommandBarImportButton.Label" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="CommandBarImportButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Click to open a file explorer dialog to choose and import a user file.</value>
+  </data>
+  <data name="CommandBarImportButtonTeachingTip.Title" xml:space="preserve">
+    <value>Open user file</value>
+  </data>
+  <data name="CommandBarReloadTriggersButton.Label" xml:space="preserve">
+    <value>Reload triggers</value>
+  </data>
+  <data name="CommandBarReloadTriggersButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Force the application to reload triggers file.</value>
+  </data>
+  <data name="CommandBarReloadTriggersButtonTeachingTip.Title" xml:space="preserve">
+    <value>Reload triggers</value>
+  </data>
+  <data name="CommandBarSaveButton.Label" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="CommandBarSaveButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Click to save the modifications made to any clipboard trigger</value>
+  </data>
+  <data name="CommandBarSaveButtonTeachingTip.Title" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="CommandBarTestRegexButton.Label" xml:space="preserve">
+    <value>Test trigger</value>
+  </data>
+  <data name="CommandBarTestRegexButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Open a popup where you can create and test a trigger. Very useful to debug why a trigger isn't creating an action, or when regex extraction is needed and doesn't work.</value>
+  </data>
+  <data name="CommandBarTestRegexButtonTeachingTip.Title" xml:space="preserve">
+    <value>Test trigger</value>
+  </data>
+  <data name="CreateButton.Content" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="CreateExampleFileHostControl.Text" xml:space="preserve">
+    <value>Create example file</value>
+  </data>
+  <data name="CreateExampleTriggersFileButtton.Content" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="DurationDefaultToggleButton.Content" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="DurationLongToggleButton.Content" xml:space="preserve">
+    <value>Long</value>
+  </data>
+  <data name="DurationShortToggleButton.Content" xml:space="preserve">
+    <value>Short</value>
+  </data>
+  <data name="EditActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EditActionButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Edit clipboard text</value>
+  </data>
+  <data name="EditActionButtonTeachingTip.Title" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EditButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EditButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Open a dialog to edit this trigger</value>
+  </data>
+  <data name="EditButtonTeachingTip.Title" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EditDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="EditDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="EnableOCRHostControl.Header" xml:space="preserve">
+    <value>Enable OCR</value>
+  </data>
+  <data name="ErrorMessage_CannotSaveTriggersFileNotFound" xml:space="preserve">
+    <value>Failed to save triggers file.</value>
+  </data>
+  <data name="ErrorMessage_CannotSaveTriggersNoUserFile" xml:space="preserve">
+    <value>Missing triggers user file, triggers cannot be saved.</value>
+  </data>
+  <data name="ErrorMessage_CannotSaveTriggersXmlError" xml:space="preserve">
+    <value>Failed to save triggers file, XML content is invalid.</value>
+  </data>
+  <data name="ErrorMessage_InvalidTriggersFile" xml:space="preserve">
+    <value>Triggers file contains invalid data.</value>
+  </data>
+  <data name="ErrorMessage_MissingTriggersNode" xml:space="preserve">
+    <value>XML declaration is missing '&lt;triggers&gt;' node.
+Check settings for an example of a valid XML declaration.</value>
+  </data>
+  <data name="ErrorMessage_TriggersInvalidData" xml:space="preserve">
+    <value>Triggers file not available or contains invalid data (line {}).</value>
+  </data>
+  <data name="ErrorMessage_XmlOldVersion" xml:space="preserve">
+    <value>&lt;actions&gt; node has been renamed &lt;triggers&gt; and &lt;action&gt; &lt;actions&gt;. Rename those nodes in your XML file and reload triggers.
+You can easily access your user file via settings and see an example of a valid XML declaration there.</value>
+  </data>
+  <data name="ErrorMessage_XmlParserError" xml:space="preserve">
+    <value>Triggers (XML) file has invalid data, XML parser failed to parse.</value>
+  </data>
+  <data name="FormatLinkButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Copy formatted link to the clipboard</value>
+  </data>
+  <data name="FormatLinkButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Formats the action text with the default trigger format and adds it to the clipboard</value>
+  </data>
+  <data name="FormatLinkButtonTeachingTip.Title" xml:space="preserve">
+    <value>Format link</value>
+  </data>
+  <data name="FormatTextBox.Header" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="FormatWarningTextBlock.Text" xml:space="preserve">
+    <value>Missing url protocol (https/http), application will default to https</value>
+  </data>
+  <data name="HeaderApplicationTextBlock.Text" xml:space="preserve">
+    <value>Application</value>
+  </data>
+  <data name="HeaderDevTextBlock.Text" xml:space="preserve">
+    <value>Developer</value>
+  </data>
+  <data name="HeaderFormattingTextBlock.Text" xml:space="preserve">
+    <value>Formatting &amp; matching</value>
+  </data>
+  <data name="HeaderStorageTextBlock.Text" xml:space="preserve">
+    <value>Storage</value>
+  </data>
+  <data name="HeaderWindowStyleTextBlock.Text" xml:space="preserve">
+    <value>Window</value>
+  </data>
+  <data name="HideAppWindowHostControl.Header" xml:space="preserve">
+    <value>Hide app window</value>
+  </data>
+  <data name="HistoryToggleButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Quickly enable or disable actions history</value>
+  </data>
+  <data name="HistoryToggleButton_ToolTipTextBlock.Text" xml:space="preserve">
+    <value>Disable history</value>
+  </data>
+  <data name="IgnoreCaseHostControl.Title" xml:space="preserve">
+    <value>Ignore case</value>
+  </data>
+  <data name="IgnoreCaseTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ignore case</value>
+  </data>
+  <data name="ImportClipboardButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Loads clipboard history, text that triggers creates an action.</value>
+  </data>
+  <data name="ImportFromClipboardButtonToolTipTextBlock.Text" xml:space="preserve">
+    <value>Import actions from clipboard</value>
+  </data>
+  <data name="LabelTextBlockTeachingTip.Subtitle" xml:space="preserve">
+    <value>Clipboard text</value>
+  </data>
+  <data name="LabelTextBox.Header" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="ListViewTeachingTip.Subtitle" xml:space="preserve">
+    <value>You will find here the clipboard entries that match your clipboard triggers</value>
+  </data>
+  <data name="ListViewTeachingTip.Title" xml:space="preserve">
+    <value>Clipboard action</value>
+  </data>
+  <data name="LocateButton.Content" xml:space="preserve">
+    <value>Locate</value>
+  </data>
+  <data name="MadeByTextBlock.Text" xml:space="preserve">
+    <value>Made by psyKomicron</value>
+  </data>
+  <data name="NextTeachingTipTextBlock.Text" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="NoClipboardActionsInfoBar.Title" xml:space="preserve">
+    <value>Missing user file</value>
+  </data>
+  <data name="NoClipboardActionsTextBlock.Text" xml:space="preserve">
+    <value>No clipboard triggers</value>
+  </data>
+  <data name="UserMessage_NoClipboardTriggers" xml:space="preserve">
+    <value>No clipboard triggers</value>
+  </data>
+  <data name="NotificationScenariosComboBox_Alarm.Content" xml:space="preserve">
+    <value>Alarm</value>
+  </data>
+  <data name="NotificationScenariosComboBox_Default.Content" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="NotificationScenariosComboBox_IncomingCall.Content" xml:space="preserve">
+    <value>Incoming call</value>
+  </data>
+  <data name="NotificationScenariosComboBox_Reminder.Content" xml:space="preserve">
+    <value>Reminder</value>
+  </data>
+  <data name="NotificationScenariosComboBox_Urgent.Content" xml:space="preserve">
+    <value>Urgent</value>
+  </data>
+  <data name="NotificationsExpanderDurationHostControl.Header" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="NotificationsExpanderScenarioHostControl.Header" xml:space="preserve">
+    <value>Scenario</value>
+  </data>
+  <data name="NotificationsExpanderSoundHostControl.Header" xml:space="preserve">
+    <value>Sound</value>
+  </data>
+  <data name="NotificationSoundComboBox_Default.Content" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="NotificationSoundComboBox_InstantMessage.Content" xml:space="preserve">
+    <value>Instant message</value>
+  </data>
+  <data name="NotificationSoundComboBox_Mail.Content" xml:space="preserve">
+    <value>Mail</value>
+  </data>
+  <data name="NotificationSoundComboBox_Reminder.Content" xml:space="preserve">
+    <value>Reminder</value>
+  </data>
+  <data name="NotificationSoundComboBox_Silent.Content" xml:space="preserve">
+    <value>Silent</value>
+  </data>
+  <data name="NotificationSoundComboBox_SMS.Content" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="OpenOptionsButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Click here to show additional options</value>
+  </data>
+  <data name="OpenQuickSettingsButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Open or close quick settings</value>
+  </data>
+  <data name="OpenQuickSettingsButton_ToolTipTextBlock.Text" xml:space="preserve">
+    <value>Quick settings</value>
+  </data>
+  <data name="OpenSaveFileButton.Content" xml:space="preserve">
+    <value>Open &amp; edit</value>
+  </data>
+  <data name="OpenSaveFileInfoBar.Message" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OpenSaveFileInfoBar.Title" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OverlayPopupContentTextBlock.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OverlayPopupShowWarningCheckBox.Content" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OverlayPopupTitleTextBlock.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="OverwriteExampleTriggersFileButtton.Content" xml:space="preserve">
+    <value>Overwrite</value>
+  </data>
+  <data name="RegexIgnoreCaseButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegexIgnoreCaseTextBlock.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegexModeComboBox_Match.Content" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegexModeComboBox_Match_ToolTip.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegexModeComboBox_Search.Content" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="RegexModeComboBox_Search_ToolTip.Text" xml:space="preserve">
+    <value>Search for any subsequence in the string that matches the regex.</value>
+  </data>
+  <data name="RegexModeHostControl.Title" xml:space="preserve">
+    <value>Regex mode</value>
+  </data>
+  <data name="RegexModeTextBlock.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="RegexTextBox.Header" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RegexUseSearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Regex search</value>
+  </data>
+  <data name="ReloadActionsButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Reload triggers</value>
+  </data>
+  <data name="ReloadTriggersButton_ToolTipTextBlock.Text" xml:space="preserve">
+    <value>Reload triggers</value>
+  </data>
+  <data name="RemoveActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveActionButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveActionButtonTeachingTip.Title" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RemoveButtonTeachingTip.Title" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ReportIssueTextBlock.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RootGridTeachingTip.Subtitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SaveMatchingResultsHostControl.Subtitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SaveMatchingResultsHostControl.Title" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SaveWindowShortcutButton.Content" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsOtherLinksTextBlock.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPivotTeachingTip.Subtitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SettingsPivotTeachingTip.Title" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ShowWindowShortcutTextBlock.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SilenceNotificationsToggleButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SilenceNotificationsToggleButton_ToolTipTextBlock.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StartMinimizedSubtitleTextBlock.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StartMinimizedTextBlock.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StartTourButton.Content" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StartTourButton.MaxWidth" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StartTourInfoBar.Message" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StartTourInfoBar.Title" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StringFormatError_ArgumentNotFound" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StringFormatError_Empty" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StringFormatError_MissingBraces" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StringFormatError_MissingCloser" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StringFormatError_MissingOpener" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StringFormatWarning_MissingProtocol" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StringRegexError_EmptyString" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StringRegexError_Invalid" xml:space="preserve">
+    <value>Invalid regex at position {}</value>
+  </data>
+  <data name="TestInputTextBox.Header" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ToastNotification_ClickAction" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ToastNotification_OpenApp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ToastNotification_TooManyButtons" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TriggerError_FailedToReload" xml:space="preserve">
+    <value>Failed to reload triggers</value>
+  </data>
+  <data name="TriggersStorageExpander.Header" xml:space="preserve">
+    <value>Triggers file</value>
+  </data>
+  <data name="TriggersXmlExampleHostControl.Header" xml:space="preserve">
+    <value>Triggers XML example</value>
+  </data>
+  <data name="UseRegexMatchResultsTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UseRegexMatchResultsToggleBlock.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UserFilePathTextBlock.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UseSearchFontIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Use search</value>
+  </data>
+  <data name="ViewActionsInfoBar.Message" xml:space="preserve">
+    <value>You can view your triggers in the clipboard triggers page.</value>
+  </data>
+  <data name="ViewActionsInfoBar.Title" xml:space="preserve">
+    <value>Clipboard triggers successfully loaded</value>
+  </data>
+  <data name="Warning_FailedToLoadClipboardHistory" xml:space="preserve">
+    <value>Failed to load clipboard history</value>
+  </data>
+  <data name="WindowPresenterOverlayResizableHostControl.Header" xml:space="preserve">
+    <value />
+  </data>
+  <data name="WindowPresenterOverlayShownInSwitcherHostControl.Header" xml:space="preserve">
+    <value />
+  </data>
+  <data name="WindowPresenterStyleAllowMaximizeHostControl.Header" xml:space="preserve">
+    <value />
+  </data>
+  <data name="WindowPresenterStyleAllowMinimizeHostControl.Header" xml:space="preserve">
+    <value />
+  </data>
+  <data name="WindowShortcutHostControl.Header" xml:space="preserve">
+    <value />
+  </data>
+  <data name="BoostRegexErrorCode4" xml:space="preserve">
+    <value>Invalid character class name, collating name, or character range.</value>
+  </data>
+  <data name="BoostRegexErrorCode7" xml:space="preserve">
+    <value>Unmatched [ or [^ in character class declaration.</value>
+  </data>
+  <data name="InvalidTriggerErrorTitle" xml:space="preserve">
+    <value>Invalid trigger</value>
+    <comment>Trigger error message</comment>
+  </data>
+  <data name="InvalidTriggerErrorMessage" xml:space="preserve">
+    <value>One or more triggers have invalid data, check the triggers page for more information. Invalid triggers: {}</value>
+    <comment>Trigger error message</comment>
+  </data>
+  <data name="ReloadActionsUserFileNotFoundTitle" xml:space="preserve">
+    <value>Failed to reload triggers</value>
+  </data>
+  <data name="IgnoreCaseHostControl.Subtitle" xml:space="preserve">
+    <value>Default case option for triggers.</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="RegexModeHostControl.Subtitle" xml:space="preserve">
+    <value>Default regex mode for triggers.</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ClipboardActionViewClickOpen.Content" xml:space="preserve">
+    <value>Open browser</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ClipboardActionViewClickCopy.Content" xml:space="preserve">
+    <value>Copy link</value>
+    <comment>SettingsPage ComboBoxItem</comment>
+  </data>
+  <data name="ClipboardActionViewClickHostControl.Title" xml:space="preserve">
+    <value>Clipboard action click behavior</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ClipboardActionViewClickHostControl.Subtitle" xml:space="preserve">
+    <value>Control what happens when you click on a clipboard action.</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ErrorMessage_FailedToCopyToClipboard" xml:space="preserve">
+    <value>Failed to copy link to clipboard.</value>
+    <comment>Error messages</comment>
+  </data>
+  <data name="Message_CopiedToClipboard" xml:space="preserve">
+    <value>Copied to clipboard</value>
+    <comment>Message</comment>
+  </data>
+  <data name="SearchButtonTeachingTip.Title" xml:space="preserve">
+    <value>Open search</value>
+  </data>
+  <data name="SearchButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Shows a search box to search through actions.</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="OpenQuickSettingsButtonTeachingTip.Title" xml:space="preserve">
+    <value>Quick settings</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="SearchFilter_TriggersDesc" xml:space="preserve">
+    <value>trigger</value>
+  </data>
+  <data name="SearchFilter_TextDesc" xml:space="preserve">
+    <value>text</value>
+  </data>
+  <data name="SearchFilter_Triggers" xml:space="preserve">
+    <value>t:</value>
+  </data>
+  <data name="SearchFilter_Text" xml:space="preserve">
+    <value>x:</value>
+  </data>
+  <data name="SearchTriggersToggleButtonText.Text" xml:space="preserve">
+    <value>t: triggers</value>
+  </data>
+  <data name="SearchTextToggleButtonText.Text" xml:space="preserve">
+    <value>x: text</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="SearchActionsListViewHeader.Text" xml:space="preserve">
+    <value>Results:</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="UserMessage_XNumberOfTriggers" xml:space="preserve">
+    <value>{} triggers</value>
+  </data>
+  <data name="CopiedToClipboardTextBlock.Text" xml:space="preserve">
+    <value>Link copied to clipboard</value>
+    <comment>SearchSuggestionView</comment>
+  </data>
+  <data name="EnableFileWatchingHostControl.Title" xml:space="preserve">
+    <value>Enable file watching</value>
+  </data>
+  <data name="EnableFileWatchingHostControl.Subtitle" xml:space="preserve">
+    <value>Enable file watching</value>
+  </data>
+  <data name="UserFileHostControl.Title" xml:space="preserve">
+    <value>Triggers file</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="UserFileHostControl.Subtitle" xml:space="preserve">
+    <value>Locate or relocate your user file.</value>
+  </data>
+  <data name="AddDuplicatedActionsHostControl.Title" xml:space="preserve">
+    <value>Add duplicated actions</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="AddDuplicatedActionsHostControl.Subtitle" xml:space="preserve">
+    <value>Create an action even if the text is the same as the last created action.</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ImportClipboardHistoryHostControl.Title" xml:space="preserve">
+    <value>Import clipboard</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ImportClipboardHistoryHostControl.Subtitle" xml:space="preserve">
+    <value>On application startup, clipboard history will be scanned and any text triggering will create an action.</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="HeaderBrowserTextBlock.Text" xml:space="preserve">
+    <value>Browser</value>
+  </data>
+  <data name="BrowserHostControl.Title" xml:space="preserve">
+    <value>Use custom browser</value>
+    <comment>SettingPage</comment>
+  </data>
+  <data name="BrowserHostControl.Subtitle" xml:space="preserve">
+    <value>Specify an executable string that will be passed to the system instead of using the default browser.</value>
+    <comment>SettingPage</comment>
+  </data>
+  <data name="WindowStyleHostControl.Title" xml:space="preserve">
+    <value>Window presenter style</value>
+    <comment>SettingPage</comment>
+  </data>
+  <data name="WindowStyleHostControl.Subtitle" xml:space="preserve">
+    <value>Customize window buttons, overlay settings.</value>
+    <comment>SettingPage</comment>
+  </data>
+  <data name="SearchActionsListView.Footer" xml:space="preserve">
+    <value>Right click on search result to copy the link to the clipboard.</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="ErrorMessage_UserFileMoved" xml:space="preserve">
+    <value>User file ("{}") cannot be found and loaded, it may have been removed or moved.</value>
+    <comment>ErrorMessage</comment>
+  </data>
+  <data name="NoClipboardActionsInfoBar.Message" xml:space="preserve">
+    <value>User file contains triggers data and actions history.</value>
+  </data>
+  <data name="UserFileSaveContentDialog.Title" xml:space="preserve">
+    <value>Create user file</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="UserFileSaveContentDialogText.Text" xml:space="preserve">
+    <value>No user file found, do you want to create one ? If you answer no, then triggers you created in the app will be lost when the application closes.</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="UserFileSaveContentDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="UserFileSaveContentDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Locate file</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="UserFileSaveContentDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Create file</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="LogFilePathHostControl.Header" xml:space="preserve">
+    <value>Log file path</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="LogFilePathNokTextBlock.Text" xml:space="preserve">
+    <value>Path does not exist.</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="LogFilePathOkTextBlock.Text" xml:space="preserve">
+    <value>Ok, path exists.</value>
+  </data>
+  <data name="ErrorMessage_FailedToLoadUserFile" xml:space="preserve">
+    <value>User file cannot be loaded, it might contain invalid data.</value>
+  </data>
+  <data name="UserMessage_XNumberOfTriggersLoaded" xml:space="preserve">
+    <value>{} triggers loaded.</value>
+    <comment>UserMessage</comment>
+  </data>
+</root>

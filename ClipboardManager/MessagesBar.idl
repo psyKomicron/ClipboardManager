@@ -11,9 +11,11 @@ namespace ClipboardManager
         void AddMessage(String message);
         void AddMessage(String messageKey, String messageAlt);
 
+        void AddError(String error);
         void AddError(String errorKey, String errorAlt);
         void AddError(String titleKey, String altTitle, String messageKey, String altMessage);
 
+        void AddWarning(String warning);
         void AddWarning(String warningKey, String warningAlt);
 
         void AddContent(String titleContent, String messageContent, IInspectable content, Microsoft.UI.Xaml.Controls.InfoBarSeverity severity);

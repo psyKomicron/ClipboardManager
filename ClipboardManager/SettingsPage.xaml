@@ -51,6 +51,112 @@
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
+
+            <VisualStateGroup>
+                <VisualState x:Name="TestWindowShortcutDefault"/>
+                <VisualState x:Name="TestWindowShortcut">
+                    <VisualState.Setters>
+                        <Setter Target="WindowShortcutProgressRingFontIcon.Visibility" Value="Visible"/>
+                        <Setter Target="WindowShortcutViewbox.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="TestWindowShortcutOk">
+                    <VisualState.Setters>
+                        <Setter Target="WindowShortcutProgressRing.IsIndeterminate" Value="False"/>
+                        <Setter Target="WindowShortcutViewbox.Visibility" Value="Visible"/>
+                        <Setter Target="WindowShortcutProgressRingFontIcon.Visibility" Value="Visible"/>
+                        <Setter Target="WindowShortcutProgressRingFontIcon.Foreground" Value="Green"/>
+                    </VisualState.Setters>
+
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="WindowShortcutProgressRing"
+                            Storyboard.TargetProperty="Value"
+                            EnableDependentAnimation="True"
+                            From="0"
+                            To="1"
+                            Duration="0:0:0.281">
+                            <DoubleAnimation.EasingFunction>
+                                <SineEase EasingMode="EaseInOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="WindowShortcutProgressRingFontIcon" Storyboard.TargetProperty="Opacity" Completed="DoubleAnimation_Completed">
+                            <DiscreteDoubleKeyFrame KeyTime="0:0:0.8" Value="0"/>
+                            <LinearDoubleKeyFrame KeyTime="0:0:1.0" Value="1"/>
+                            <LinearDoubleKeyFrame KeyTime="0:0:3.0" Value="1"/>
+                            <LinearDoubleKeyFrame KeyTime="0:0:3.2" Value="0"/>
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WindowShortcutProgressRing" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="Visible"/>
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                
+                <VisualState x:Name="TestWindowShortcutNok">
+                    <VisualState.Setters>
+                        <Setter Target="WindowShortcutProgressRing.IsIndeterminate" Value="False"/>
+                        <Setter Target="WindowShortcutViewbox.Visibility" Value="Visible"/>
+                        <Setter Target="WindowShortcutProgressRingFontIcon.Visibility" Value="Visible"/>
+                        <Setter Target="WindowShortcutProgressRingFontIcon.Glyph" Value="&#xe783;"/>
+                        <Setter Target="WindowShortcutProgressRingFontIcon.Foreground" Value="Red"/>
+                    </VisualState.Setters>
+
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="WindowShortcutProgressRing"
+                            Storyboard.TargetProperty="Value"
+                            EnableDependentAnimation="True"
+                            From="0"
+                            To="1"
+                            Duration="0:0:0.281">
+                            <DoubleAnimation.EasingFunction>
+                                <SineEase EasingMode="EaseInOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="WindowShortcutProgressRingFontIcon" Storyboard.TargetProperty="Opacity">
+                            <DiscreteDoubleKeyFrame KeyTime="0:0:0.8" Value="0"/>
+                            <LinearDoubleKeyFrame KeyTime="0:0:1.0" Value="1"/>
+                        </DoubleAnimationUsingKeyFrames>
+
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="WindowShortcutProgressRing" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0.2" Value="Visible"/>
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0.5" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup>
+                <VisualState x:Name="LogFilePathEmpty"/>
+                <VisualState x:Name="LogFilePathNok">
+                    <VisualState.Setters>
+                        <Setter Target="LogFileTextBox.Header">
+                            <Setter.Value>
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon Glyph="&#xe783;" FontSize="16" Foreground="{ThemeResource SystemFillColorCritical}" VerticalAlignment="Center"/>
+                                    <TextBlock x:Uid="LogFilePathNokTextBlock" Foreground="{ThemeResource SystemFillColorCritical}" VerticalAlignment="Center" Margin="7,0,0,0"/>
+                                </StackPanel>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="LogFilePathOk">
+                    <VisualState.Setters>
+                        <Setter Target="LogFileTextBox.Header">
+                            <Setter.Value>
+                                <StackPanel Orientation="Horizontal">
+                                    <FontIcon Glyph="&#xf13e;" FontSize="16" Foreground="{ThemeResource SystemFillColorSuccess}" VerticalAlignment="Center"/>
+                                    <TextBlock x:Uid="LogFilePathOkTextBlock" Foreground="{ThemeResource SystemFillColorSuccess}" VerticalAlignment="Center" Margin="7,0,0,0"/>
+                                </StackPanel>
+                            </Setter.Value>
+                        </Setter>
+                    </VisualState.Setters>  
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         
         <StackPanel VerticalAlignment="Top" Orientation="Vertical" Spacing="3" Margin="0,0,0,15">
@@ -61,12 +167,6 @@
             <clip:HostControl x:Uid="AutomaticStartHostControl">
                 <clip:HostControl.HostContent>
                     <ToggleSwitch x:Name="AutoStartToggleSwitch" Toggled="AutoStartToggleSwitch_Toggled"/>
-                </clip:HostControl.HostContent>
-            </clip:HostControl>
-
-            <clip:HostControl x:Uid="SaveMatchingResultsHostControl">
-                <clip:HostControl.HostContent>
-                    <ToggleSwitch x:Name="SaveMatchingResultsToggleSwitch" Toggled="SaveMatchingResultsToggleSwitch_Toggled"/>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
 
@@ -145,12 +245,18 @@
 
                 </ListView>
             </Expander>
+            
+            <clip:HostControl x:Uid="SaveMatchingResultsHostControl">
+                <clip:HostControl.HostContent>
+                    <ToggleSwitch x:Name="SaveMatchingResultsToggleSwitch" Toggled="SaveMatchingResultsToggleSwitch_Toggled"/>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
 
             <Expander Style="{StaticResource ExpanderStyle}">
                 <Expander.Header>
                     <clip:HostControl Background="Transparent" BorderThickness="0" Padding="0">
                         <clip:HostControl.Header>
-                            <Grid ToolTipService.ToolTip="This only applies when the application auto-starts." RowSpacing="3" VerticalAlignment="Center">
+                            <Grid RowSpacing="3" VerticalAlignment="Center">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
@@ -212,6 +318,15 @@
                     <ToggleSwitch x:Name="ImportClipboardHistoryToggleSwitch" Toggled="ImportClipboardHistoryToggleSwitch_Toggled"/>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
+
+            <clip:HostControl x:Uid="ClipboardActionViewClickHostControl">
+                <clip:HostControl.HostContent>
+                    <ComboBox x:Name="ClipboardActionViewClickComboBox" SelectedIndex="0" MinWidth="150" SelectionChanged="ClipboardActionViewClickComboBox_SelectionChanged">
+                        <ComboBoxItem x:Uid="ClipboardActionViewClickOpen" Tag="1"/>
+                        <ComboBoxItem x:Uid="ClipboardActionViewClickCopy" Tag="0"/>
+                    </ComboBox>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
             <!--#endregion-->
 
 
@@ -249,7 +364,7 @@
 
             <!--#region Window style -->
             <TextBlock x:Uid="HeaderWindowStyleTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
-            <Expander x:Uid="WindowStyleExpander" Style="{StaticResource ExpanderListStyle}">
+            <Expander Style="{StaticResource ExpanderListStyle}">
                 <Expander.Header>
                     <clip:HostControl x:Uid="WindowStyleHostControl" Background="Transparent" BorderThickness="0" Padding="0"/>
                 </Expander.Header>
@@ -261,12 +376,78 @@
                         </clip:HostControl.HostContent>
                     </clip:HostControl>
 
-                    <clip:HostControl x:Uid="WindowPresenterStyleAllowMaximizeHostControl" CornerRadius="0,0,5,5" Background="{ThemeResource ExpanderHeaderBackground}">
+                    <clip:HostControl x:Uid="WindowPresenterStyleAllowMaximizeHostControl" CornerRadius="0" Background="{ThemeResource ExpanderHeaderBackground}">
                         <clip:HostControl.HostContent>
                             <ToggleSwitch x:Name="AllowMaximizeToggleSwitch" Toggled="AllowMaximizeToggleSwitch_Toggled"/>
                         </clip:HostControl.HostContent>
                     </clip:HostControl>
+
+                    <clip:HostControl x:Uid="WindowPresenterOverlayResizableHostControl" CornerRadius="0" Background="{ThemeResource ExpanderHeaderBackground}">
+                        <clip:HostControl.HostContent>
+                            <ToggleSwitch x:Name="OverlayResizableToggleSwitch" Toggled="OverlayResizableToggleSwitch_Toggled"/>
+                        </clip:HostControl.HostContent>
+                    </clip:HostControl>
+
+                    <clip:HostControl x:Uid="WindowPresenterOverlayShownInSwitcherHostControl" CornerRadius="0,0,5,5" Background="{ThemeResource ExpanderHeaderBackground}">
+                        <clip:HostControl.HostContent>
+                            <ToggleSwitch x:Name="OverlayShownInSwitcherToggleSwitch" Toggled="OverlayShownInSwitcherToggleSwitch_Toggled"/>
+                        </clip:HostControl.HostContent>
+                    </clip:HostControl>
                 </StackPanel>
+            </Expander>
+
+            <Expander IsEnabled="False" Style="{StaticResource ExpanderStyle}">
+                <Expander.Header>
+                    <clip:HostControl x:Uid="WindowShortcutHostControl" Background="Transparent" BorderThickness="0" Padding="0">
+                        <clip:HostControl.HostContent>
+                            <Grid ColumnSpacing="7" Grid.Column="0" CornerRadius="{StaticResource ControlCornerRadius}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                
+                            </Grid>
+                        </clip:HostControl.HostContent>
+                    </clip:HostControl>
+                </Expander.Header>
+                <Grid Padding="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid HorizontalAlignment="Center" ColumnSpacing="20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <ComboBox x:Name="ModifierComboBox" Grid.Column="0" MinWidth="140" MinHeight="38">
+                            <x:String>Alt</x:String>
+                            <x:String>Control</x:String>
+                            <x:String>Shift</x:String>
+                        </ComboBox>
+                        <TextBox x:Name="KeyTextBox" Grid.Column="1" MinWidth="70" Height="38" MaxLength="1" HorizontalAlignment="Center" FontSize="24" HorizontalTextAlignment="Center" VerticalContentAlignment="Center"/>
+                    </Grid>
+
+                    <Button x:Name="SaveWindowShortcutButton" Grid.Column="1" HorizontalAlignment="Center" Margin="0,0,10,0" Click="SaveWindowShortcutButton_Click">
+                        <Grid>
+                            <Grid.Transitions>
+                                <RepositionThemeTransition/>
+                            </Grid.Transitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter x:Uid="SaveWindowShortcutButton" Grid.Column="0"/>
+                            <Viewbox x:Name="WindowShortcutViewbox" Height="18" Visibility="Collapsed" Grid.Column="1" Margin="10,0,0,0">
+                                <Grid>
+                                    <ProgressRing x:Name="WindowShortcutProgressRing" Maximum="1" Value="0" IsIndeterminate="True"/>
+                                    <FontIcon x:Name="WindowShortcutProgressRingFontIcon" Glyph="&#xe73e;" FontSize="16" Opacity="0"/>
+                                </Grid>
+                            </Viewbox>
+                        </Grid>
+                    </Button>
+                </Grid>
             </Expander>
             <!--#endregion-->
 
@@ -286,37 +467,11 @@
                 </clip:HostControl.HostContent>
             </clip:HostControl>
 
-            <clip:HostControl>
-                <clip:HostControl.Header>
-                    <Grid RowSpacing="4" Padding="0,7">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock x:Uid="CreateExampleFileHostControl" Grid.Row="0"/>
-                        <TextBlock 
-                            x:Name="UserFilePathTextBlock" 
-                            x:Uid="UserFilePathTextBlock" 
-                            Style="{StaticResource CaptionTextBlockStyle}" 
-                            Grid.Row="1" 
-                            Opacity="0.6"
-                            FontStyle="Italic"/>
-                    </Grid>
-                </clip:HostControl.Header>
-                <clip:HostControl.HostContent>
-                    <StackPanel Orientation="Horizontal" Spacing="3">
-                        <Button 
-                            x:Uid="CreateExampleTriggersFileButtton" 
-                            MinWidth="100"
-                            Click="CreateExampleTriggersFileButton_Click"/>
-                        <Button 
-                            x:Uid="OverwriteExampleTriggersFileButtton" 
-                            MinWidth="100"
-                            Click="OverwriteExampleTriggersFileButton_Click"/>
-                    </StackPanel>
-                </clip:HostControl.HostContent>
-            </clip:HostControl>
-
+            <!--#endregion-->
+           
+            
+            <!--#region Developper -->
+            <TextBlock x:Uid="HeaderDevTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
             <Expander x:Uid="TriggersXmlExampleHostControl" Style="{StaticResource ExpanderListStyle}" Background="Transparent" Expanding="TriggersStorageExpander_Expanding">
                 <StackPanel HorizontalAlignment="Stretch" Spacing="2" Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
                     <Border Background="{ThemeResource ExpanderContentBackground}" Padding="7,10">
@@ -390,6 +545,68 @@
                     </Button>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
+
+            <clip:HostControl>
+                <clip:HostControl.Header>
+                    <Grid RowSpacing="4" Padding="0,7">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock x:Uid="CreateExampleFileHostControl" Grid.Row="0"/>
+                        <TextBlock 
+                            x:Name="UserFilePathTextBlock" 
+                            x:Uid="UserFilePathTextBlock" 
+                            Style="{StaticResource CaptionTextBlockStyle}" 
+                            Grid.Row="1" 
+                            Opacity="0.6"
+                            FontStyle="Italic"/>
+                    </Grid>
+                </clip:HostControl.Header>
+                <clip:HostControl.HostContent>
+                    <StackPanel Orientation="Horizontal" Spacing="3">
+                        <Button 
+                            x:Uid="CreateExampleTriggersFileButtton" 
+                            MinWidth="100"
+                            Click="CreateExampleTriggersFileButton_Click"/>
+                        <Button 
+                            x:Uid="OverwriteExampleTriggersFileButtton" 
+                            MinWidth="100"
+                            Click="OverwriteExampleTriggersFileButton_Click"/>
+                    </StackPanel>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
+
+            <Expander Style="{StaticResource ExpanderStyle}">
+                <Expander.Resources>
+                    <Storyboard x:Name="TimeoutSaveStoryboard">
+                        <DoubleAnimation
+                            Duration="0:0:3"
+                            EnableDependentAnimation="True"
+                            Storyboard.TargetName="SaveProgressRing"
+                            Storyboard.TargetProperty="Value"
+                            From="1"
+                            To="0"
+                            Completed="DoubleAnimation_Completed_1"/>
+                    </Storyboard>
+                </Expander.Resources>
+                <Expander.Header>
+                    <clip:HostControl x:Uid="LogFilePathHostControl" Background="Transparent" BorderThickness="0" Padding="0"/>
+                </Expander.Header>
+
+                <Grid Padding="15,10,15,15" ColumnSpacing="15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="LogFileTextBox" TextWrapping="Wrap" TextChanged="LogFileTextBox_TextChanged" VerticalAlignment="Center"/>
+
+                    <Viewbox Height="15" Grid.Column="1" VerticalAlignment="Center">
+                        <!--<FontIcon Glyph="&#xe823;"/>-->
+                        <ProgressRing x:Name="SaveProgressRing" Value="1" Maximum="1" IsIndeterminate="False"/>
+                    </Viewbox>
+                </Grid>
+            </Expander>
             <!--#endregion-->
 
 

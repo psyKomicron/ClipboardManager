@@ -10,20 +10,22 @@
     CornerRadius="{StaticResource ControlCornerRadius}"
     BorderBrush="{ThemeResource ExpanderHeaderBorderBrush}"
     BorderThickness="1"
-    Padding="16,3,16,3"
+    Padding="16,9,16,9"
+    MaxHeight="120"
+    MinHeight="70"
     IsEnabledChanged="UserControl_IsEnabledChanged"
     Loaded="UserControl_Loaded">
 
     <Grid 
         x:Name="RootGrid"
-        Padding="{x:Bind Padding}"
+        Padding="{x:Bind Padding, Mode=OneWay}"
         Background="{x:Bind Background, Mode=OneWay}"
         CornerRadius="{x:Bind CornerRadius}"
         BorderBrush="{x:Bind BorderBrush, Mode=OneWay}"
         BorderThickness="{x:Bind BorderThickness}"
-        ColumnSpacing="4"
-        MaxHeight="80"
-        MinHeight="65">
+        ColumnSpacing="7"
+        MaxHeight="{x:Bind MaxHeight, Mode=OneWay}"
+        MinHeight="{x:Bind MinHeight, Mode=OneWay}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
@@ -40,9 +42,44 @@
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
+
+            <VisualStateGroup>
+                <VisualState x:Name="OnlyHeaderState">
+                    <VisualState.Setters>
+                        <Setter Target="HeaderContentPresenter.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="TitleSubtitleState">
+                    <VisualState.Setters>
+                        <Setter Target="Grid.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="TitleSubtitleIconState">
+                    <VisualState.Setters>
+                        <Setter Target="Grid.Visibility" Value="Visible"/>
+                        <Setter Target="IconViewbox.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <ContentPresenter x:Name="HeaderContentPresenter" Content="{x:Bind Header, Mode=OneWay}" Grid.Column="0" VerticalAlignment="Center"/>
+        <Grid x:Name="Grid" x:Load="False" VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Viewbox x:Name="IconViewbox" x:Load="False" Height="{x:Bind IconHeight}" Width="{x:Bind IconWidth}" Grid.Column="0" Grid.RowSpan="2" Margin="0,0,15,0">
+                <FontIcon Glyph="{x:Bind IconGlyph}"/>
+            </Viewbox>
+            <TextBlock Text="{x:Bind Title}" Grid.Column="1" Grid.Row="0" TextWrapping="Wrap" Margin="0,0,15,0"/>
+            <TextBlock Text="{x:Bind Subtitle}" Grid.Column="1" Grid.Row="1" Style="{StaticResource SettingSubheaderTextBlockStyle}" TextWrapping="Wrap"/>
+        </Grid>
+
+        <ContentPresenter x:Name="HeaderContentPresenter" x:Load="False" Content="{x:Bind Header, Mode=OneWay}" Grid.Column="0" VerticalAlignment="Center"/>
 
         <ContentPresenter x:Name="HostContentPresenter" Content="{x:Bind HostContent, Mode=OneWay}" Grid.Column="1" VerticalAlignment="Center"/>
     </Grid>

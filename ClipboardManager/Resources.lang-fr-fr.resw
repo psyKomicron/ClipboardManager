@@ -117,6 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ActionEnabledToggleSwitch.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Activer/désactiver</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
+  <data name="ActionEnabledToggleSwitchTeachingTip.Subtitle" xml:space="preserve">
+    <value>Active ou désactive ce déclencheur. Un déclencheur désactivé ne sera plus utilisé dans aucune actions.</value>
+    <comment>Teaching tips</comment>
+  </data>
   <data name="ActionEnabledToggleSwitchTeachingTip.Title" xml:space="preserve">
     <value>Etat du déclencheur</value>
     <comment>Teaching tips</comment>
@@ -153,29 +161,45 @@
     <value>Boutons d'action du déclencheur</value>
     <comment>Teaching tips</comment>
   </data>
-  <data name="AddDuplicatedActionsHostControl.Header" xml:space="preserve">
-    <value>Ajouter les actions en double</value>
-    <comment>SettingsPage</comment>
+  <data name="AllowNotificationsHostControl.Subtitle" xml:space="preserve">
+    <value>Activer les notifications, modifier le type et le son des notifications.</value>
   </data>
-  <data name="AllowNotificationsHostControl.Header" xml:space="preserve">
+  <data name="AllowNotificationsHostControl.Title" xml:space="preserve">
     <value>Autoriser les notifications</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="ApplicationUpdatedInfoBar.Message" xml:space="preserve">
+    <value>ClipboardManager a été mise à jour et pour éviter d'éventuels conflits avec la version précédente, les paramètres de l'application ont été supprimés.
+Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramètres.</value>
+    <comment>MainPage InfoBar</comment>
+  </data>
+  <data name="ApplicationUpdatedInfoBar.Title" xml:space="preserve">
+    <value>L'application a recu une mise à jour majeure</value>
+    <comment>MainPage InfoBar</comment>
   </data>
   <data name="ApplicationVersionHostControl.Header" xml:space="preserve">
     <value>Version d'application</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="AutomaticStartHostControl.Header" xml:space="preserve">
+  <data name="AutomaticStartHostControl.Subtitle" xml:space="preserve">
+    <value>Controle si l'application démarre automatiaquement avec la session.</value>
+  </data>
+  <data name="AutomaticStartHostControl.Title" xml:space="preserve">
     <value>Démarrage automatique</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="BrowserHostControl.Header" xml:space="preserve">
-    <value>Navigateur personnalisé</value>
-    <comment>SettingsPage</comment>
+  <data name="BoostRegexErrorCode13" xml:space="preserve">
+    <value>La regex ne peut pas commencer par l'operateur de répétition "*".</value>
+  </data>
+  <data name="BoostRegexErrorCode8" xml:space="preserve">
+    <value>Parenthèse fermante trouvée sans parenthèse ouvrante correspondante.</value>
   </data>
   <data name="BrowserStringTextBox.PlaceholderText" xml:space="preserve">
     <value>Chaine exécutable</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="ClearActionsButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Vide la liste d'actions.</value>
   </data>
   <data name="ClearActionsButtonToolTipTextBlock.Text" xml:space="preserve">
     <value>Vider la liste d'actions</value>
@@ -217,14 +241,6 @@
     <value>Le fichier des déclencheurs d'action est introuvable (déplacé ou supprimé)</value>
     <comment>MainPage</comment>
   </data>
-  <data name="ClipboardHistoryPivotTeachingTip.Subtitle" xml:space="preserve">
-    <value>Pareil que Super + V</value>
-    <comment>Teaching tips</comment>
-  </data>
-  <data name="ClipboardHistoryPivotTeachingTip.Title" xml:space="preserve">
-    <value>Historique du presse-papier</value>
-    <comment>Teaching tips</comment>
-  </data>
   <data name="ClipboardTriggersPivotTeachingTip.Subtitle" xml:space="preserve">
     <value>Voir et modifier les déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
@@ -233,9 +249,56 @@
     <value>Déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="CommandBarAddTriggerButton.Label" xml:space="preserve">
+    <value>Ajouter déclencheur</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarAddTriggerButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Ouvre une fenêtre pour créer un nouveau déclencheur.</value>
+  </data>
+  <data name="CommandBarAddTriggerButtonTeachingTip.Title" xml:space="preserve">
+    <value>Ajouter un déclencheur</value>
+  </data>
+  <data name="CommandBarImportButton.Label" xml:space="preserve">
+    <value>Ouvrir</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarImportButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Cliquer pour ouvrir une fenêtre de dialogue de l'explorateur de fichier afin de choisir et importer un fichier de configuration utilisateur (fichier des déclencheurs).</value>
+  </data>
+  <data name="CommandBarImportButtonTeachingTip.Title" xml:space="preserve">
+    <value>Ouvrir un fichier utilisateur</value>
+  </data>
+  <data name="CommandBarReloadTriggersButton.Label" xml:space="preserve">
+    <value>Recharger déclencheurs</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarReloadTriggersButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Force l'application a recharger le fichier des déclencheurs.</value>
+  </data>
+  <data name="CommandBarReloadTriggersButtonTeachingTip.Title" xml:space="preserve">
+    <value>Rafraichir les déclencheurs</value>
+  </data>
+  <data name="CommandBarSaveButton.Label" xml:space="preserve">
+    <value>Sauvegarder</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
   <data name="CommandBarSaveButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Sauvergarder les modifications faites aux déclencheurs presse-papier</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="CommandBarSaveButtonTeachingTip.Title" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="CommandBarTestRegexButton.Label" xml:space="preserve">
+    <value>Tester un déclencheur</value>
+    <comment>MainPage/CommandBar</comment>
+  </data>
+  <data name="CommandBarTestRegexButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Ouvre une popup ou il est possible de créer et tester un déclencheur. Très utile pour debug un déclencheur défaillant.</value>
+  </data>
+  <data name="CommandBarTestRegexButtonTeachingTip.Title" xml:space="preserve">
+    <value>Tester un déclencheur</value>
   </data>
   <data name="CreateButton.Content" xml:space="preserve">
     <value>Créer</value>
@@ -261,6 +324,20 @@
     <value>Court</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="EditActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Modifier</value>
+    <comment>ClipboardActionView</comment>
+  </data>
+  <data name="EditActionButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Modifier le texte</value>
+  </data>
+  <data name="EditActionButtonTeachingTip.Title" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="EditButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Modifier</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
   <data name="EditButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Ouvre une fenêtre de dialogue pour modifier ce déclencheur</value>
     <comment>Teaching tips</comment>
@@ -276,6 +353,10 @@
   <data name="EditDialog.SecondaryButtonText" xml:space="preserve">
     <value>Annuler</value>
     <comment>ClipboardActionEditor</comment>
+  </data>
+  <data name="EnableOCRHostControl.Header" xml:space="preserve">
+    <value>Activer la ROC/OCR</value>
+    <comment>SettingsPage</comment>
   </data>
   <data name="ErrorMessage_CannotSaveTriggersFileNotFound" xml:space="preserve">
     <value>Impossible de sauvegarder le fichier des déclencheurs.</value>
@@ -298,8 +379,8 @@
 Regardez dans les paramètres pour un exemple d'une déclaration XML valide.</value>
     <comment>Error message</comment>
   </data>
-  <data name="ErrorMessage_TriggersFileNotFound" xml:space="preserve">
-    <value>Fichier des déclencheurs non trouvé.</value>
+  <data name="ErrorMessage_TriggersInvalidData" xml:space="preserve">
+    <value>Données invalides dans le fichier des déclencheurs (ligne {}).</value>
     <comment>Error message</comment>
   </data>
   <data name="ErrorMessage_XmlOldVersion" xml:space="preserve">
@@ -335,9 +416,8 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Application</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="HeaderBrowserTextBlock.Text" xml:space="preserve">
-    <value>Navigateur</value>
-    <comment>SettingsPage</comment>
+  <data name="HeaderDevTextBlock.Text" xml:space="preserve">
+    <value>Développeur</value>
   </data>
   <data name="HeaderFormattingTextBlock.Text" xml:space="preserve">
     <value>Formattage &amp; correspondance</value>
@@ -363,17 +443,16 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Désactiver l'historique</value>
     <comment>MainPage</comment>
   </data>
-  <data name="IgnoreCaseHostControl.Header" xml:space="preserve">
+  <data name="IgnoreCaseHostControl.Title" xml:space="preserve">
     <value>Ignorer la capitalisation</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="ActionEnabledToggleSwitchTeachingTip.Subtitle" xml:space="preserve">
-    <value>Active ou désactive ce déclencheur. Un déclencheur désactivé ne sera plus utilisé dans aucune actions.</value>
-    <comment>Teaching tips</comment>
+  <data name="IgnoreCaseTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ignorer la casse</value>
+    <comment>ClipboardActionEditor</comment>
   </data>
-  <data name="ImportClipboardHistoryHostControl.Header" xml:space="preserve">
-    <value>Importer le contenu du presse-papier</value>
-    <comment>SettingsPage</comment>
+  <data name="ImportClipboardButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Charge l'historique du presse papier, si le texte déclenche une action sera créée.</value>
   </data>
   <data name="ImportFromClipboardButtonToolTipTextBlock.Text" xml:space="preserve">
     <value>Importer le contenu du presse-papier</value>
@@ -403,11 +482,18 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Créé par psyKomicron</value>
     <comment>SettingsPage</comment>
   </data>
+  <data name="NextTeachingTipTextBlock.Text" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
   <data name="NoClipboardActionsInfoBar.Title" xml:space="preserve">
-    <value>Aucun déclencheur créé, au moins 1 déclencheur est nécessaire pour utiliser les actions presse-papier.</value>
+    <value>Fichier utilisateur manquant</value>
     <comment>MainPage</comment>
   </data>
   <data name="NoClipboardActionsTextBlock.Text" xml:space="preserve">
+    <value>Aucun déclencheur presse-papier</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="UserMessage_NoClipboardTriggers" xml:space="preserve">
     <value>Aucun déclencheur presse-papier</value>
     <comment>MainPage</comment>
   </data>
@@ -491,9 +577,25 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Fichier de sauvegarde créé !</value>
     <comment>MainPage</comment>
   </data>
+  <data name="OverlayPopupContentTextBlock.Text" xml:space="preserve">
+    <value>Le mode de superposition a été activé, la fenêtre de l'application ne s'affichera plus dans la barre des tâches ou dans les vues du sytème.
+Utilisez le raccourci clavier pour afficher la fenêtre.</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="OverlayPopupShowWarningCheckBox.Content" xml:space="preserve">
+    <value>Afficher l'avertissement à chaque fois</value>
+    <comment>MainPage</comment>
+  </data>
+  <data name="OverlayPopupTitleTextBlock.Text" xml:space="preserve">
+    <value>Mode superposition</value>
+    <comment>MainPage</comment>
+  </data>
   <data name="OverwriteExampleTriggersFileButtton.Content" xml:space="preserve">
     <value>Ecraser</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="RegexIgnoreCaseButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ignorer la casse</value>
   </data>
   <data name="RegexIgnoreCaseTextBlock.Text" xml:space="preserve">
     <value>Ignorer la casse</value>
@@ -515,7 +617,7 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Recherche dans la chaine une séquence qui vérifie la regex.</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="RegexModeHostControl.Header" xml:space="preserve">
+  <data name="RegexModeHostControl.Title" xml:space="preserve">
     <value>Mode regex</value>
     <comment>SettingsPage</comment>
   </data>
@@ -526,6 +628,9 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="RegexTextBox.Header" xml:space="preserve">
     <value>Regex</value>
     <comment>ClipboardActionEditor</comment>
+  </data>
+  <data name="RegexUseSearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Regex mode recherche</value>
   </data>
   <data name="ReloadActionsButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Recharger les déclencheurs presse-papier</value>
@@ -547,6 +652,10 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Supprimer</value>
     <comment>Teaching tips</comment>
   </data>
+  <data name="RemoveButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Supprimer</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
   <data name="RemoveButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Supprime et enlève le déclencheur</value>
     <comment>Teaching tips</comment>
@@ -563,8 +672,15 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Ceci est une action presse-papier</value>
     <comment>Teaching tips</comment>
   </data>
-  <data name="SaveMatchingResultsHostControl.Header" xml:space="preserve">
+  <data name="SaveMatchingResultsHostControl.Subtitle" xml:space="preserve">
+    <value>Garde l'historique des actions.</value>
+  </data>
+  <data name="SaveMatchingResultsHostControl.Title" xml:space="preserve">
     <value>Conserver l'historique</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="SaveWindowShortcutButton.Content" xml:space="preserve">
+    <value>Sauvegarder</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="SettingsOtherLinksTextBlock.Text" xml:space="preserve">
@@ -578,6 +694,10 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
   <data name="SettingsPivotTeachingTip.Title" xml:space="preserve">
     <value>Paramètres</value>
     <comment>Teaching tips</comment>
+  </data>
+  <data name="ShowWindowShortcutTextBlock.Text" xml:space="preserve">
+    <value>Raccourci clavier pour afficher la fenêtre</value>
+    <comment>MainPage</comment>
   </data>
   <data name="SilenceNotificationsToggleButtonTeachingTip.Subtitle" xml:space="preserve">
     <value>Activer et désactiver les notifications rapidement</value>
@@ -599,6 +719,10 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <value>Démarrer le tour guidé</value>
     <comment>MainPage Startup tour</comment>
   </data>
+  <data name="StartTourButton.MaxWidth" xml:space="preserve">
+    <value>230</value>
+    <comment>MainPage Startup tour</comment>
+  </data>
   <data name="StartTourInfoBar.Message" xml:space="preserve">
     <value>Démarrez un rapide tour guidé de l'application</value>
     <comment>MainPage Startup tour</comment>
@@ -608,8 +732,8 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <comment>MainPage Startup tour</comment>
   </data>
   <data name="StringFormatError_ArgumentNotFound" xml:space="preserve">
-    <value>Argument non trouvé.
-Si vous utilisez plusieurs fois {} indexez les (ex: {0}....{0}).</value>
+    <value>Argument non trouvé {}.
+Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
     <comment>Error message</comment>
   </data>
   <data name="StringFormatError_Empty" xml:space="preserve">
@@ -668,9 +792,20 @@ Si vous utilisez plusieurs fois {} indexez les (ex: {0}....{0}).</value>
     <value>Example XML déclencheurs presse-papier</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="UserFileHostControl.Header" xml:space="preserve">
-    <value>Fichier des déclencheurs presse-papier</value>
+  <data name="UseRegexMatchResultsTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Utiliser le resultat du match regex</value>
+    <comment>ClipboardActionEditor</comment>
+  </data>
+  <data name="UseRegexMatchResultsToggleBlock.Text" xml:space="preserve">
+    <value>Utiliser la regex pour extraire</value>
+  </data>
+  <data name="UserFilePathTextBlock.Text" xml:space="preserve">
+    <value>Pas de chemin sauvegardé</value>
     <comment>SettingsPage</comment>
+  </data>
+  <data name="UseSearchFontIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Utiliser le mode recherche</value>
+    <comment>ClipboardActionEditor</comment>
   </data>
   <data name="ViewActionsInfoBar.Message" xml:space="preserve">
     <value>Vous pouvez voir vos déclencheurs dans la page des déclencheur presse-papier</value>
@@ -680,6 +815,18 @@ Si vous utilisez plusieurs fois {} indexez les (ex: {0}....{0}).</value>
     <value>Déclencheurs presse-papier chargés</value>
     <comment>MainPage ViewActionsInfoBar</comment>
   </data>
+  <data name="Warning_FailedToLoadClipboardHistory" xml:space="preserve">
+    <value>Impossible de récupérer l'historique du presse-papier.</value>
+    <comment>Warning</comment>
+  </data>
+  <data name="WindowPresenterOverlayResizableHostControl.Header" xml:space="preserve">
+    <value>Redimensionnement autorisé (mode compact)</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="WindowPresenterOverlayShownInSwitcherHostControl.Header" xml:space="preserve">
+    <value>Afficher dans les représentations système (ALT + TAB) (mode compact)</value>
+    <comment>SettingsPage</comment>
+  </data>
   <data name="WindowPresenterStyleAllowMaximizeHostControl.Header" xml:space="preserve">
     <value>Maximiser la fenêtre</value>
     <comment>SettingsPage</comment>
@@ -688,85 +835,162 @@ Si vous utilisez plusieurs fois {} indexez les (ex: {0}....{0}).</value>
     <value>Minimiser la fenêtre</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="WindowStyleHostControl.Header" xml:space="preserve">
-    <value>Style de la fenêtre</value>
+  <data name="WindowShortcutHostControl.Header" xml:space="preserve">
+    <value>Raccourci clavier pour afficher la fenêtre</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="Warning_FailedToLoadClipboardHistory" xml:space="preserve">
-    <value>Impossible de récupérer l'historique du presse-papier.</value>
-    <comment>Warning</comment>
+  <data name="BoostRegexErrorCode4" xml:space="preserve">
+    <value>Nom de classe de caractères, nom d'assemblage ou plage de caractères invalides.</value>
   </data>
-  <data name="CommandBarAddTriggerButton.Label" xml:space="preserve">
-    <value>Ajouter déclencheur</value>
-    <comment>MainPage/CommandBar</comment>
+  <data name="BoostRegexErrorCode7" xml:space="preserve">
+    <value>Non-appariement de [ ou [^ dans la déclaration de la classe de caractères.</value>
   </data>
-  <data name="CommandBarImportButton.Label" xml:space="preserve">
-    <value>Importer</value>
-    <comment>MainPage/CommandBar</comment>
+  <data name="InvalidTriggerErrorTitle" xml:space="preserve">
+    <value>Déclencheur(s) invalide(s)</value>
   </data>
-  <data name="CommandBarReloadTriggersButton.Label" xml:space="preserve">
-    <value>Recharger déclencheurs</value>
-    <comment>MainPage/CommandBar</comment>
+  <data name="InvalidTriggerErrorMessage" xml:space="preserve">
+    <value>Un déclencheur ou plus contient un format invalide, plus d'informations sont disponibles sur la page des déclencheurs.</value>
   </data>
-  <data name="CommandBarSaveButton.Label" xml:space="preserve">
-    <value>Sauvegarder</value>
-    <comment>MainPage/CommandBar</comment>
+  <data name="ReloadActionsUserFileNotFoundTitle" xml:space="preserve">
+    <value>Erreur lors du chargement des déclencheurs.</value>
   </data>
-  <data name="CommandBarTestRegexButton.Label" xml:space="preserve">
-    <value>Tester regex</value>
-    <comment>MainPage/CommandBar</comment>
+  <data name="IgnoreCaseHostControl.Subtitle" xml:space="preserve">
+    <value>Option de casse par défaut des déclencheurs.</value>
   </data>
-  <data name="EditActionButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Modifier</value>
-    <comment>ClipboardActionView</comment>
+  <data name="RegexModeHostControl.Subtitle" xml:space="preserve">
+    <value>Mode regex par défaut pour les déclencheurs.</value>
   </data>
-  <data name="IgnoreCaseTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Ignorer la casse</value>
-    <comment>ClipboardActionEditor</comment>
+  <data name="ClipboardActionViewClickOpen.Content" xml:space="preserve">
+    <value>Lancer navigateur</value>
   </data>
-  <data name="UseRegexMatchResultsTextBlock.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Utiliser le resultat du match regex</value>
-    <comment>ClipboardActionEditor</comment>
+  <data name="ClipboardActionViewClickCopy.Content" xml:space="preserve">
+    <value>Copier lien</value>
   </data>
-  <data name="UseSearchFontIcon.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Utiliser le mode recherche</value>
-    <comment>ClipboardActionEditor</comment>
+  <data name="ClipboardActionViewClickHostControl.Title" xml:space="preserve">
+    <value>Réponse au clic des actions</value>
   </data>
-  <data name="ActionEnabledToggleSwitch.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Activer/désactiver</value>
-    <comment>ClipboardActionEditor</comment>
+  <data name="ClipboardActionViewClickHostControl.Subtitle" xml:space="preserve">
+    <value>Choisissez ce qui se passe lorsque vous cliquez sur une action presse-papier.</value>
   </data>
-  <data name="EditButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Modifier</value>
-    <comment>ClipboardActionEditor</comment>
+  <data name="ErrorMessage_FailedToCopyToClipboard" xml:space="preserve">
+    <value>Impossible de copier le texte dans le presse papier.</value>
   </data>
-  <data name="RemoveButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Supprimer</value>
-    <comment>ClipboardActionEditor</comment>
+  <data name="Message_CopiedToClipboard" xml:space="preserve">
+    <value>Copié</value>
   </data>
-  <data name="EnableFileWatchingHostControl.Header" xml:space="preserve">
+  <data name="SearchButtonTeachingTip.Title" xml:space="preserve">
+    <value>Recherche</value>
+  </data>
+  <data name="SearchButtonTeachingTip.Subtitle" xml:space="preserve">
+    <value>Affiche une zone de texte permettant de rechercher dans la liste d'actions.</value>
+  </data>
+  <data name="OpenQuickSettingsButtonTeachingTip.Title" xml:space="preserve">
+    <value>Options rapides</value>
+  </data>
+  <data name="SearchFilter_TriggersDesc" xml:space="preserve">
+    <value>déclencheur</value>
+  </data>
+  <data name="SearchFilter_TextDesc" xml:space="preserve">
+    <value>texte</value>
+  </data>
+  <data name="SearchFilter_Triggers" xml:space="preserve">
+    <value>d:</value>
+  </data>
+  <data name="SearchFilter_Text" xml:space="preserve">
+    <value>x:</value>
+  </data>
+  <data name="SearchTriggersToggleButtonText.Text" xml:space="preserve">
+    <value>d: déclencheurs</value>
+  </data>
+  <data name="SearchTextToggleButtonText.Text" xml:space="preserve">
+    <value>x: texte</value>
+  </data>
+  <data name="SearchActionsListViewHeader.Text" xml:space="preserve">
+    <value>Résultats:</value>
+  </data>
+  <data name="UserMessage_XNumberOfTriggers" xml:space="preserve">
+    <value>{} déclencheurs</value>
+  </data>
+  <data name="CopiedToClipboardTextBlock.Text" xml:space="preserve">
+    <value>Lien copié dans le presse-papier</value>
+  </data>
+  <data name="EnableFileWatchingHostControl.Title" xml:space="preserve">
     <value>Activer la surveillance du fichier</value>
+  </data>
+  <data name="EnableFileWatchingHostControl.Subtitle" xml:space="preserve">
+    <value>Une modification du fichier utilisateur forcera l'application à recharger les déclencheurs.</value>
+  </data>
+  <data name="UserFileHostControl.Title" xml:space="preserve">
+    <value>Fichier des déclencheurs</value>
+  </data>
+  <data name="UserFileHostControl.Subtitle" xml:space="preserve">
+    <value>Trouver ou retrouver votre fichier utilisateur.</value>
+  </data>
+  <data name="AddDuplicatedActionsHostControl.Title" xml:space="preserve">
+    <value>Ajouter les actions doublons</value>
+  </data>
+  <data name="AddDuplicatedActionsHostControl.Subtitle" xml:space="preserve">
+    <value>Crée et ajoute une action même si le texte est égal au texte de la dernière action ajoutée.</value>
+  </data>
+  <data name="ImportClipboardHistoryHostControl.Title" xml:space="preserve">
+    <value>Importer le contenu du presse-papier</value>
+  </data>
+  <data name="ImportClipboardHistoryHostControl.Subtitle" xml:space="preserve">
+    <value>Au démarrage de l'application, le contenu du presse-papier est scanné et des actions sont créées  lorsqu'un déclencheur est activé.</value>
+  </data>
+  <data name="HeaderBrowserTextBlock.Text" xml:space="preserve">
+    <value>Navigateur</value>
     <comment>SettingsPage</comment>
   </data>
-  <data name="UserFilePathTextBlock.Text" xml:space="preserve">
-    <value>Pas de chemin sauvegardé</value>
-    <comment>SettingsPage</comment>
+  <data name="BrowserHostControl.Title" xml:space="preserve">
+    <value>Navigateur personnalisé</value>
   </data>
-  <data name="StartTourButton.MaxWidth" xml:space="preserve">
-    <value>230</value>
-    <comment>MainPage Startup tour</comment>
+  <data name="BrowserHostControl.Subtitle" xml:space="preserve">
+    <value>Spécifier une chaîne exécutable qui sera transmise au système au lieu d'utiliser le navigateur par défaut.</value>
   </data>
-  <data name="EnableOCRHostControl.Header" xml:space="preserve">
-    <value>Activer la ROC/OCR</value>
-    <comment>SettingsPage</comment>
+  <data name="WindowStyleHostControl.Title" xml:space="preserve">
+    <value>Style de la fenêtre</value>
   </data>
-  <data name="ApplicationUpdatedInfoBar.Message" xml:space="preserve">
-    <value>ClipboardManager a été mise à jour et pour éviter d'éventuels conflits avec la version précédente, les paramètres de l'application ont été supprimés.
-Il vous faudra pointer le fichier utilisateur ainsi que réappliquer vos paramètres.</value>
-    <comment>MainPage InfoBar</comment>
+  <data name="WindowStyleHostControl.Subtitle" xml:space="preserve">
+    <value>Personnaliser les boutons de la fenêtre et les paramètres de l'overlay.</value>
   </data>
-  <data name="ApplicationUpdatedInfoBar.Title" xml:space="preserve">
-    <value>L'application a recu une mise à jour majeure</value>
-    <comment>MainPage InfoBar</comment>
+  <data name="SearchActionsListView.Footer" xml:space="preserve">
+    <value>Click droit sur un résultat de recherche pour copier le lien dans le presse papier.</value>
+  </data>
+  <data name="ErrorMessage_UserFileMoved" xml:space="preserve">
+    <value>Le fichier utilisateur ("{}") est introuvable, les déclencheurs ne peuvent être créés. Vérifiez la présence  du fichier sur votre ordinateur.</value>
+  </data>
+  <data name="NoClipboardActionsInfoBar.Message" xml:space="preserve">
+    <value>Le fichier utilisateur contient les données nécessaires pour les déclencheurs  et l'historique des actions.</value>
+  </data>
+  <data name="UserFileSaveContentDialog.Title" xml:space="preserve">
+    <value>Création du fichier utilisateur</value>
+  </data>
+  <data name="UserFileSaveContentDialogText.Text" xml:space="preserve">
+    <value>Un fichier utilisateur n'a pas été trouvé, si vous créez des déclencheurs ils seront perdus lorsque l'application se fermera.</value>
+  </data>
+  <data name="UserFileSaveContentDialog.CloseButtonText" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="UserFileSaveContentDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Localiser</value>
+  </data>
+  <data name="UserFileSaveContentDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Créer</value>
+  </data>
+  <data name="LogFilePathHostControl.Header" xml:space="preserve">
+    <value>Chemin du fichier de log</value>
+  </data>
+  <data name="LogFilePathNokTextBlock.Text" xml:space="preserve">
+    <value>Le chemin n'existe pas.</value>
+  </data>
+  <data name="LogFilePathOkTextBlock.Text" xml:space="preserve">
+    <value>Ok, le chemin est valide.</value>
+  </data>
+  <data name="ErrorMessage_FailedToLoadUserFile" xml:space="preserve">
+    <value>Le fichier utilisateur n'a pas pu être chargé, il contient surement des données invalides.</value>
+  </data>
+  <data name="UserMessage_XNumberOfTriggersLoaded" xml:space="preserve">
+    <value>{} déclencheurs chargés.</value>
   </data>
 </root>

@@ -1,18 +1,39 @@
 #pragma once
 #include "SettingsPage.g.h"
 
-#include "src/Settings.hpp"
-#include "src/utils/Logger.hpp"
-#include "src/ui/VisualStateManager.hpp"
+#include "lib/Settings.hpp"
+#include "lib/utils/Logger.hpp"
+#include "lib/ui/VisualStateManager.hpp"
 
 namespace winrt::ClipboardManager::implementation
 {
     struct SettingsPage : SettingsPageT<SettingsPage>
     {
     public:
-        SettingsPage() = default;
+        SettingsPage();
         SettingsPage(const winrt::ClipboardManager::MainPage& mainPage);
 
+    private:
+        clip::ui::VisualState<SettingsPage> clearSettingsDefaultState{ L"ClearSettingsDefault", 0, true };
+        clip::ui::VisualState<SettingsPage> clearSettingsShowIconState{ L"ClearSettingsShowIcon", 0, false };
+        clip::ui::VisualState<SettingsPage> testWindowShortcutDefaultState{ L"TestWindowShortcutDefault", 1, true };
+        clip::ui::VisualState<SettingsPage> testWindowShortcutState{ L"TestWindowShortcut", 1, false };
+        clip::ui::VisualState<SettingsPage> testWindowShortcutOkState{ L"TestWindowShortcutOk", 1, false };
+        clip::ui::VisualState<SettingsPage> testWindowShortcutNokState{ L"TestWindowShortcutNok", 1, false };
+        clip::ui::VisualState<SettingsPage> logFilePathOkState{ L"LogFilePathOk", 2, false };
+        clip::ui::VisualState<SettingsPage> logFilePathNokState{ L"LogFilePathNok", 2, false };
+        clip::ui::VisualState<SettingsPage> logFilePathEmptyState{ L"LogFilePathEmpty", 2, true };
+        clip::Settings settings{};
+        bool loaded = false;
+        clip::utils::Logger logger{ L"SettingsPage" };
+        clip::ui::VisualStateManager<SettingsPage> visualStateManager{ *this };
+        winrt::ClipboardManager::MainPage mainPage{ nullptr };
+
+        void updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key);
+        void selectComboBoxItem(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox, const uint32_t& value);
+        uint32_t getSelectedComboBoxItemTag(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox);
+
+    public:
         void AutoStartToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void Page_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void Page_Loading(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
@@ -38,19 +59,13 @@ namespace winrt::ClipboardManager::implementation
         void AllowMinimizeToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void AllowMaximizeToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void EnableFileWatchingToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-
-    private:
-        const clip::ui::VisualState<SettingsPage> ClearSettingsDefaultState{ L"ClearSettingsDefault", 0, true };
-        const clip::ui::VisualState<SettingsPage> ClearSettingsShowIconState{ L"ClearSettingsShowIcon", 0, false };
-        clip::Settings settings{};
-        bool loaded = false;
-        clip::utils::Logger logger{ L"SettingsPage" };
-        clip::ui::VisualStateManager<SettingsPage> visualStateManager{ *this };
-        winrt::ClipboardManager::MainPage mainPage{ nullptr };
-
-        void updateSetting(winrt::Windows::Foundation::IInspectable const& s, const std::wstring& key);
-        void selectComboBoxItem(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox, const uint32_t& value);
-        uint32_t getSelectedComboBoxItemTag(const winrt::Microsoft::UI::Xaml::Controls::ComboBox& comboBox);
+        void SaveWindowShortcutButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void DoubleAnimation_Completed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
+        void OverlayResizableToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void OverlayShownInSwitcherToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void ClipboardActionViewClickComboBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
+        void LogFileTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e);
+        void DoubleAnimation_Completed_1(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
     };
 }
 

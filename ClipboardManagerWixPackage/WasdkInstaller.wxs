@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Fragment>
+        <ComponentGroup Id="WasdkInstaller" Directory="INSTALLFOLDER">
+            <Component Id="WasdkInstallerExe">
+                <File Id="InstallerExe" Source="windowsappruntimeinstall-x64.exe"/>
+            </Component>
+        </ComponentGroup>
+
+        <CustomAction 
+            Id="INSTALL_WASDK"
+            Execute="immediate"
+            Impersonate="no"
+            Return="check"
+            FileRef="InstallerExe"
+            ExeCommand="-q"/>
+
+        <InstallExecuteSequence>
+            <Custom Action="INSTALL_WASDK" After="InstallFinalize" Condition="NOT Installed"/>
+        </InstallExecuteSequence>
+    </Fragment>
+</Wix>

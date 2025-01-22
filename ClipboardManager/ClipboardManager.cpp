@@ -2,9 +2,9 @@
 #include "pch.h"
 #include "ClipboardManager.h"
 
-#include "src/utils/helpers.hpp"
-#include "src/utils/Console.hpp"
-#include "src/Settings.hpp"
+#include "lib/utils/helpers.hpp"
+#include "lib/utils/Console.hpp"
+#include "lib/Settings.hpp"
 
 #include "App.xaml.h"
 #include "MainPage.h"
@@ -16,6 +16,7 @@
 #include <memory>
 #include <iostream>
 #include <chrono>
+#include <map>
 
 namespace winrt
 {
@@ -55,6 +56,7 @@ void handleWindowActivation(clip::utils::WindowInfo* windowInfo, const bool& ina
 #define ENABLE_CONSOLE
 #endif
 
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int nCmdShow)
 {
 #ifdef ENABLE_CONSOLE
@@ -92,9 +94,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR,
     {
         std::wcout << L"Unknown error occured." << std::endl;
     }
-
-    /*std::wstring end = L"";
-    std::wcin >> end;*/
 
     return 0;
 }
@@ -165,8 +164,24 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    clip::utils::WindowInfo* windowInfo = clip::utils::getWindowInfo(hWnd);
+    static clip::utils::Logger logger{ L"WndProc" };
+    static std::map<uint32_t, const wchar_t*> windowMessages
+    {
+        { WM_ASKCBFORMATNAME, L"WM_ASKCBFORMATNAME" },
+        { WM_CHANGECBCHAIN, L"WM_CHANGECBCHAIN" },
+        { WM_CLIPBOARDUPDATE, L"WM_CLIPBOARDUPDATE" },
+        { WM_DESTROYCLIPBOARD, L"WM_DESTROYCLIPBOARD" },
+        { WM_DRAWCLIPBOARD, L"WM_DRAWCLIPBOARD" },
+        { WM_HSCROLLCLIPBOARD, L"WM_HSCROLLCLIPBOARD" },
+        { WM_PAINTCLIPBOARD, L"WM_PAINTCLIPBOARD" },
+        { WM_RENDERALLFORMATS, L"WM_RENDERALLFORMATS" },
+        { WM_RENDERFORMAT, L"WM_RENDERFORMAT" },
+        { WM_SIZECLIPBOARD, L"WM_SIZECLIPBOARD" },
+        { WM_VSCROLLCLIPBOARD, L"WM_VSCROLLCLIPBOARD" }
+    };
+    //std::cout << "WndProc(message: " << message << ", wParam: " << wParam << ", lParam: " << lParam << ")" << std::endl;
 
+    clip::utils::WindowInfo* windowInfo = clip::utils::getWindowInfo(hWnd);
     switch (message)
     {
         case WM_CREATE:
@@ -198,6 +213,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             assert(windowInfo != nullptr);
 
             handleWindowActivation(windowInfo, LOWORD(wParam) == WA_INACTIVE);
+
+            if (windowInfo != nullptr && windowInfo->desktopWinXamlSrc != nullptr)
+            {
+                auto&& content = windowInfo->desktopWinXamlSrc.Content();
+                if (content != nullptr)
+                {
+                    auto&& mainPage = content.try_as<winrt::ClipboardManager::MainPage>();
+                    if (mainPage)
+                    {
+                        mainPage.ReceiveWindowMessage(message, wParam);
+                    }
+                }
+            }
             break;
         }
 
@@ -279,9 +307,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
+        case WM_ASKCBFORMATNAME: 
+        case WM_CHANGECBCHAIN: 
+        case WM_CLIPBOARDUPDATE: 
+        case WM_DESTROYCLIPBOARD: 
+        case WM_DRAWCLIPBOARD: 
+        case WM_HSCROLLCLIPBOARD: 
+        case WM_PAINTCLIPBOARD: 
+        case WM_RENDERALLFORMATS: 
+        case WM_RENDERFORMAT: 
+        case WM_SIZECLIPBOARD: 
+        case WM_VSCROLLCLIPBOARD:
+            logger.info(L"WM clipboard message: " + std::wstring(windowMessages[message]));
+            break;
+
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
     }
+
     return 0;
 }
 #pragma endregion
@@ -296,7 +339,6 @@ winrt::DispatcherQueueController initIslandApp()
 
 bool processMessageForTabNav(const HWND& window, MSG& msg)
 {
-    //TODO: If I need to handle tab to do specific stuff in my app, i should add a way to hook this function to capture the tab key before WASDK handles it.
     if (msg.message == WM_KEYDOWN && msg.wParam == VK_TAB)
     {
         const HWND focusedWindow = ::GetFocus();
@@ -398,6 +440,8 @@ void createWinUIWindow(clip::utils::WindowInfo* windowInfo, const HWND& windowHa
         appWindow.TitleBar().ButtonPressedForegroundColor(
             resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>());
     }
+
+    AddClipboardFormatListener(windowHandle); // outlook-bug
 }
 
 void handleWindowActivation(clip::utils::WindowInfo* windowInfo, const bool& inactive)

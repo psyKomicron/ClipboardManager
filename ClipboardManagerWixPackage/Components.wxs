@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <?include Include.wxi?>
+    <Fragment>
+      <ComponentGroup Id="Components" Directory="INSTALLFOLDER">
+          <Component Guid="{31B414B9-2384-4A9E-8D9B-A0EC28059A8A}">
+              <File Id="ClipboardManagerExe" Source="..\x64\Release\ClipboardManager\ClipboardManager.exe"/>
+
+              <Shortcut Id="ApplicationStartMenuShortcut" Directory="ApplicationProgramsFolder" Advertise="no"
+                        Name="$(var.PackageFriendlyName)" Description="Open $(var.PackageFriendlyName)"
+                        Target="[#ClipboardManagerExe]" WorkingDirectory="INSTALLFOLDER" />
+
+              <RemoveFolder Id="INSTALLFOLDER" On="uninstall" />
+              <RemoveFolder Id="ApplicationProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall" />
+              
+              <RegistryValue Root="HKCU" Key="Software\$(var.Manufacturer)\$(var.Name)" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+          </Component>
+      </ComponentGroup>
+  </Fragment>
+</Wix>

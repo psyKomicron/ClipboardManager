@@ -4,11 +4,7 @@
 #include "RegexTesterControl.g.cpp"
 #endif
 
-#ifdef _DEBUG
-#include <iostream>
-#endif
-
-#include <src/utils/helpers.hpp>
+#include "lib/utils/helpers.hpp"
 
 #include <boost/regex.hpp>
 
@@ -31,55 +27,27 @@ namespace winrt::ClipboardManager::implementation
         co_await TestRegexContentDialog().ShowAsync();
     }
 
-    void RegexTesterControl::TestRegexContentDialog_CloseButtonClick(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-    {
-        TestRegexContentDialog().Hide();
-    }
-
-    void RegexTesterControl::RegexTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e)
-    {
-        refreshMatches();
-    }
-
-    void RegexTesterControl::TestInputTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e)
-    {
-        refreshMatches();
-    }
-
-    void RegexTesterControl::ToggleButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-    {
-        refreshMatches();
-    }
-
-
     void RegexTesterControl::refreshMatches()
     {
         std::wstring regexText = RegexTextBox().Text().data();
         std::wstring input = TestInputTextBox().Text().data();
+        std::wstring format = FormatTextBox().Text().data();
+        if (format.empty())
+        {
+            format = L"{}";
+        }
 
         MatchTextBlockParagraph().Inlines().Clear();
         MatchTextBlock().TextHighlighters().Clear();
         visualStateManager.goToState(noErrorState);
 
-        if (!regexText.empty() && !input.empty())
+        if (!regexText.empty())
         {
-            ui::Run run{};
-            run.Text(input);
-            MatchTextBlockParagraph().Inlines().Append(run);
-
-            ui::TextHighlighter highlighter{};
-            ui::SolidColorBrush backgroundBrush{};
-            backgroundBrush.Color(ui::Colors::LightGreen());
-            backgroundBrush.Opacity(0.5);
-            highlighter.Background(backgroundBrush);
-
             try
             {
                 boost::wregex::flag_type flags = RegexIgnoreCaseToggleButton().IsChecked().GetBoolean() ? boost::regex_constants::icase : boost::regex_constants::normal;
+                bool useRegexMatchResults = UseRegexMatchResultsToggleButton().IsChecked().GetBoolean();
                 boost::wregex regex{ regexText, flags };
-                boost::wsmatch match{};
-
-                bool result = false;
 
                 /*boost::wsregex_token_iterator iterator{ input.begin(), input.end(), regex, 0 };
                 boost::wsregex_token_iterator end{};
@@ -89,50 +57,88 @@ namespace winrt::ClipboardManager::implementation
                     std::wcout << L"Token: " << *iterator << std::endl;
                 }*/
 
-                if (RegexModeToggleButton().IsChecked().GetBoolean())
+                if (!input.empty())
                 {
-                    result = boost::regex_search(input, match, regex);
-                }
-                else
-                {
-                    result = boost::regex_match(input, match, regex);
-                }
+                    boost::wsmatch matches{};
+                    bool result = RegexModeToggleButton().IsChecked().GetBoolean()
+                        ? boost::regex_search(input, matches, regex)
+                        : boost::regex_match(input, matches, regex);
 
-                if (result)
-                {
-                    logger.info(std::to_wstring(match.size()) + L" matches");
-
-                    for (size_t i = 0; i < match.size(); i++)
+                    if (result)
                     {
-                        auto str = match[i].str();
-                        size_t pos = input.find(str);
-                        size_t length = str.size();
+                        ui::Run run{};
+                        MatchTextBlockParagraph().Inlines().Append(run);
 
-                        ui::TextRange range
+                        ui::SolidColorBrush backgroundBrush{};
+                        backgroundBrush.Color(ui::Colors::LightGreen());
+                        backgroundBrush.Opacity(0.3);
+                        ui::TextHighlighter highlighter{};
+                        highlighter.Background(backgroundBrush);
+
+                        std::wstring url = L"";
+                        if (useRegexMatchResults && matches.size() > 1)
                         {
-                            pos,
-                            length
-                        };
+                            auto matchString = matches[1].str();
+                            url = std::vformat(format, std::make_wformat_args(matchString));
 
-                        highlighter.Ranges().Append(range);
+                            regex = boost::wregex(matchString);
+                            assert(boost::regex_search(url, matches, regex) /*Regex search should work as we just inserted the text we are searching.*/);
+                        }
+                        else
+                        {
+                            url = std::vformat(format, std::make_wformat_args(input));
+                        }
 
-                        logger.debug(L"Match number " + std::to_wstring(i) + L" -- " + str);
+                        run.Text(url);
+
+                        for (size_t i = 0; i < matches.size(); i++)
+                        {
+                            auto str = matches[i].str();
+                            size_t pos = url.find(str);
+                            size_t length = str.size();
+
+                            highlighter.Ranges().Append(ui::TextRange(pos, length));
+                        }
+
+                        MatchTextBlock().TextHighlighters().Append(highlighter);
                     }
-
-                    MatchTextBlock().TextHighlighters().Append(highlighter);
                 }
             }
             catch (boost::regex_error regexError)
             {
                 visualStateManager.goToState(errorState);
                 ErrorGrid().Message(clip::utils::to_wstring(regexError.what()));
-
-                /*uint32_t index = 0;
-                if (MatchTextBlockParagraph().Inlines().IndexOf(run, index))
-                {
-                    MatchTextBlockParagraph().Inlines().RemoveAt(index);
-                }*/
+            }
+            catch (...)
+            {
+                logger.error(L"Unknown error while refreshing matches.");
             }
         }
+    }
+
+
+    void RegexTesterControl::TestRegexContentDialog_CloseButtonClick(winrt::Windows::Foundation::IInspectable const& sender, ui::RoutedEventArgs const& e)
+    {
+        TestRegexContentDialog().Hide();
+    }
+
+    void RegexTesterControl::RegexTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, ui::TextChangedEventArgs const& e)
+    {
+        refreshMatches();
+    }
+
+    void RegexTesterControl::TestInputTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, ui::TextChangedEventArgs const& e)
+    {
+        refreshMatches();
+    }
+
+    void RegexTesterControl::ToggleButton_Click(winrt::Windows::Foundation::IInspectable const& sender, ui::RoutedEventArgs const& e)
+    {
+        refreshMatches();
+    }
+
+    void RegexTesterControl::FormatTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, ui::TextChangedEventArgs const& e)
+    {
+        refreshMatches();
     }
 }
