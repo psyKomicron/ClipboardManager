@@ -7,6 +7,10 @@
                   <RegistryValue Type="integer" Name="FirstStartup" Value="1" KeyPath="yes"/>
               </RegistryKey>
           </Component>
+
+          <!--<Component Id="AutoStartRemoveKey" Directory="INSTALLFOLDER" Guid="{4365AB2D-9664-4CEE-BEC0-B4A80B8E8C1F}">
+              <RemoveRegistryKey Root="HKCU" />
+          </Component>-->
       </ComponentGroup>
   </Fragment>
 </Wix>

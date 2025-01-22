@@ -56,7 +56,7 @@
                 PerMachine="yes"
                 Permanent="no"
                 Protocol="burn"
-                Compressed="yes"
+                Compressed="no"
                 Vital="yes"
                 DetectCondition="(VCRUNTIME_X64_VER &gt;= VCRUNTIME_VER) AND VersionNT64 AND (ARCH_NAME = &quot;AMD64&quot;)"
                 InstallArguments="/install /quiet /norestart"
