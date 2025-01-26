@@ -24,7 +24,7 @@ namespace boost::log
 
 namespace clip::utils
 {
-    constexpr bool USE_LOG_FILE = true;
+    constexpr bool USE_LOG_FILE = false;
 
     std::atomic_size_t Logger::maxClassNameLength = 0;
     std::atomic_bool Logger::boostLoggerInitialized = false;
@@ -40,7 +40,14 @@ namespace clip::utils
             static std::once_flag flag{};
             std::call_once(flag, [this]()
             {
-                initBoostLogging();
+                try
+                {
+                    initBoostLogging();
+                }
+                catch (std::exception& except)
+                {
+                    error("Impossible to initialize boost logging: " + std::string(except.what()));
+                }
             });
         }
     }
