@@ -1,5 +1,8 @@
 # Change log
 ## New
+`v1.4.3`
+- Removed log file as it crashes the application.
+
 `v1.4.0`
 - Log file (location can be modified in settings->dev options).
 
@@ -26,8 +29,10 @@
 
 ## Bugs
 - Outlook duplicates.
+- `.log` file requires elevation to create/write, making the application crash if it isn't run elevated.
 
 ## TODO
+- [ ] `ClipboardTriggerEditControl` Format text box, error border is not rounded or padded.
 - [ ] Tooltips (I18Ned).
 - [ ] Add translated error messages for regex errors :
     - [ ] Code 8 - "Found a closing ) with no corresponding opening parenthesis."
