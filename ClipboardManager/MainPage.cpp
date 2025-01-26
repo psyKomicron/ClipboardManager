@@ -1108,11 +1108,11 @@ namespace winrt::ClipboardManager::implementation
     {
         loaded = false;
 
-        clipboardContentChangedToken = win::Clipboard::HistoryChanged({ this, &MainPage::ClipboardContent_Changed });
-        win::Clipboard::ContentChanged([this](auto&&, auto&&)
+        clipboardContentChangedToken = win::Clipboard::ContentChanged({ this, &MainPage::ClipboardContent_Changed });
+        /*win::Clipboard::ContentChanged([this](auto&&, auto&&)
         {
             logger.info(L"Clipboard CONTENT changed.");
-        });
+        });*/
 
         appWindow.Changed([this](auto, xaml::AppWindowChangedEventArgs args)
         {
@@ -1152,9 +1152,9 @@ namespace winrt::ClipboardManager::implementation
         }
 
         auto&& appVersionSetting = localSettings.get<std::wstring>(L"CurrentAppVersion");
+        clip::utils::AppVersion appVersion{};
         if (appVersionSetting.has_value())
         {
-            clip::utils::AppVersion appVersion{ APP_VERSION };
             clip::utils::AppVersion storedAppVersion{ appVersionSetting.value() };
             if (appVersion.major() < storedAppVersion.major())
             {
@@ -1171,7 +1171,7 @@ namespace winrt::ClipboardManager::implementation
                 visualStateManager.goToState(firstStartupState);
             }
         }
-        localSettings.insert(L"CurrentAppVersion", APP_VERSION);
+        localSettings.insert(L"CurrentAppVersion", appVersion.versionString());
 
         if (!localSettings.get<std::wstring>(L"UserFilePath"))
         {
@@ -1218,12 +1218,7 @@ namespace winrt::ClipboardManager::implementation
         if (storageFile)
         {
             std::filesystem::path userFilePath{ storageFile.Path().c_str() };
-
-            if (LoadTriggers(userFilePath))
-            {
-                ReloadActions();
-                visualStateManager.goToState(openSaveFileState);
-            }
+            localSettings.insert(L"UserFilePath", userFilePath);
         }
     }
 
@@ -1433,6 +1428,8 @@ namespace winrt::ClipboardManager::implementation
             trigger.updateMatchMode(useSearch ? clip::MatchMode::Search : clip::MatchMode::Match);
             trigger.useRegexMatchResults(useRegexMatchResults);
             triggers.push_back(trigger);
+
+            //logger.info(L"Created new trigger: ")
 
             clipboardTriggerViews.InsertAt(0, CreateTriggerView(trigger));
         }
