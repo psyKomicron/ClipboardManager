@@ -1,6 +1,6 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
     <?include Include.wxi?>
-    <Package Name="$(var.PackageFriendlyName)" Manufacturer="psyKomicron" Version="1.0.0.0" UpgradeCode="19af4dd0-d520-457f-97dd-333b9a8be1cb">
+    <Package Name="$(var.PackageFriendlyName)" Manufacturer="psyKomicron" Version="$(var.Version)" UpgradeCode="$(var.UpgradeCode)">
         <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
 
         <MediaTemplate EmbedCab="yes" />

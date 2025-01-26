@@ -9,7 +9,6 @@
 
         <CustomAction 
             Id="INSTALL_WASDK"
-            Execute="immediate"
             Impersonate="no"
             Return="check"
             FileRef="InstallerExe"
