@@ -5,7 +5,7 @@
         Name="$(var.PackageFriendlyName)" 
         Manufacturer="$(var.Manufacturer)" 
         Version="$(var.Version)" 
-        UpgradeCode="87cc44b6-bdbb-4e11-b7de-01a3b7f43efe"
+        UpgradeCode="$(var.UpgradeCode)"
         AboutUrl="https://github.com/psyKomicron/ClipboardManager">
         <BootstrapperApplication>
             <bal:WixStandardBootstrapperApplication LicenseUrl="https://www.gnu.org/licenses/gpl-3.0.html" Theme="hyperlinkLicense" />
@@ -30,23 +30,7 @@
         <Variable Name="VCRUNTIME_VER" Type="version" Value="14.42.34433.0" />
         <!--<Variable Name="WASDKRUNTIME_VER" Type="version" Value="6000.318.2304.0" />-->
 
-        <Chain DisableSystemRestore="yes">
-            <!-- TODO: Define the list of chained packages. -->
-            <!--<ExePackage
-                Id="WASDK_1_6"
-                DisplayName="Microsoft Windows App SDK Runtime"
-                Description="Microsoft Windows App SDK Runtime installer."
-                SourceFile="windowsappruntimeinstall-x64.exe"
-                Cache="remove"
-                PerMachine="yes"
-                Permanent="yes"
-                Protocol="burn"
-                Compressed="yes"
-                Vital="yes"
-                DetectCondition="VersionNT64 AND (ARCH_NAME = &quot;AMD64&quot;)"
-                InstallArguments="-q"
-                RepairArguments="-r"/>-->
-
+        <Chain>
             <ExePackage
                 Id="VC_REDIST_X64"
                 DisplayName="Microsoft Visual C++ 2015-2022 Redistributable (x64)"
