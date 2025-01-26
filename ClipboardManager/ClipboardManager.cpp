@@ -63,6 +63,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR,
     clip::utils::Console console{};
 #endif // ENABLE_CONSOLE
 
+    clip::utils::Logger logger{ L"WinMain" };
+
     try
     {
         auto dispatcherQueueController = clip::utils::managed_dispatcher_queue_controller(initIslandApp());
@@ -88,11 +90,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR,
     }
     catch (const winrt::hresult_error& error)
     {
+        logger.error(std::to_wstring(error.code().value));
         return error.code().value;
     }
     catch (...)
     {
-        std::wcout << L"Unknown error occured." << std::endl;
+        logger.error(L"Unknown error occured.");
+        //std::wcout << L"Unknown error occured." << std::endl;
     }
 
     return 0;
@@ -179,7 +183,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         { WM_SIZECLIPBOARD, L"WM_SIZECLIPBOARD" },
         { WM_VSCROLLCLIPBOARD, L"WM_VSCROLLCLIPBOARD" }
     };
-    //std::cout << "WndProc(message: " << message << ", wParam: " << wParam << ", lParam: " << lParam << ")" << std::endl;
 
     clip::utils::WindowInfo* windowInfo = clip::utils::getWindowInfo(hWnd);
     switch (message)
@@ -307,20 +310,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
-        case WM_ASKCBFORMATNAME: 
-        case WM_CHANGECBCHAIN: 
-        case WM_CLIPBOARDUPDATE: 
-        case WM_DESTROYCLIPBOARD: 
-        case WM_DRAWCLIPBOARD: 
-        case WM_HSCROLLCLIPBOARD: 
-        case WM_PAINTCLIPBOARD: 
-        case WM_RENDERALLFORMATS: 
-        case WM_RENDERFORMAT: 
-        case WM_SIZECLIPBOARD: 
+        case WM_ASKCBFORMATNAME:
+        case WM_CHANGECBCHAIN:
+        case WM_CLIPBOARDUPDATE:
+        case WM_DESTROYCLIPBOARD:
+        case WM_DRAWCLIPBOARD:
+        case WM_HSCROLLCLIPBOARD:
+        case WM_PAINTCLIPBOARD:
+        case WM_RENDERALLFORMATS:
+        case WM_RENDERFORMAT:
+        case WM_SIZECLIPBOARD:
         case WM_VSCROLLCLIPBOARD:
             logger.info(L"WM clipboard message: " + std::wstring(windowMessages[message]));
-            break;
-
+            [[fallthrough]];
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
     }
@@ -374,6 +376,8 @@ bool processMessageForTabNav(const HWND& window, MSG& msg)
 
 void createWinUIWindow(clip::utils::WindowInfo* windowInfo, const HWND& windowHandle)
 {
+    clip::utils::Logger logger{ L"createWinUIWindow" };
+
     assert(windowInfo == nullptr);
 
     windowInfo = new clip::utils::WindowInfo();
@@ -381,6 +385,7 @@ void createWinUIWindow(clip::utils::WindowInfo* windowInfo, const HWND& windowHa
 
     windowInfo->desktopWinXamlSrc = winrt::DesktopWindowXamlSource();
     windowInfo->desktopWinXamlSrc.Initialize(winrt::GetWindowIdFromWindow(windowHandle));
+    logger.info(L"Initialized `DesktopWindowXamlSource`.");
     // Enable the DesktopWindowXamlSource to be a tab stop.
     SetWindowLong(winrt::GetWindowFromWindowId(windowInfo->desktopWinXamlSrc.SiteBridge().WindowId()), GWL_STYLE, WS_TABSTOP | WS_CHILD | WS_VISIBLE);
 
@@ -388,6 +393,7 @@ void createWinUIWindow(clip::utils::WindowInfo* windowInfo, const HWND& windowHa
 
     // Put a new instance of our Xaml "MainPage" into our island.  This is our UI content.
     windowInfo->desktopWinXamlSrc.Content(winrt::make<winrt::ClipboardManager::implementation::MainPage>(appWindow));
+    logger.info(L"Window content created. Moving app window.");
 
     clip::Settings settings{};
     int32_t x = settings.get<int32_t>(L"WindowPosX").value_or(10);
@@ -441,7 +447,17 @@ void createWinUIWindow(clip::utils::WindowInfo* windowInfo, const HWND& windowHa
             resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>());
     }
 
-    AddClipboardFormatListener(windowHandle); // outlook-bug
+    auto added = AddClipboardFormatListener(windowHandle); // outlook-bug
+    if (!added)
+    {
+        logger.error(L"Not added to clipboard format listeners.");
+    }
+    else
+    {
+        logger.info(L"Added to clipboard format listeners.");
+    }
+
+    logger.info(L"Created WinUI window.");
 }
 
 void handleWindowActivation(clip::utils::WindowInfo* windowInfo, const bool& inactive)
