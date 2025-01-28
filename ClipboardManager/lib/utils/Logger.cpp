@@ -11,6 +11,8 @@
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/trivial.hpp>
 
+#include <winrt/Windows.Storage.h>
+
 #include <iostream>
 #include <format>
 #include <mutex>
@@ -138,16 +140,18 @@ namespace clip::utils
 
     void Logger::initBoostLogging()
     {
-        std::filesystem::path logFileName{ "cm_log%N.log" };
-        auto logFilePath = clip::Settings().get<std::filesystem::path>(L"LogFilePath");
-        if (logFilePath)
+        std::filesystem::path documentsLibPath{ std::wstring(winrt::Windows::Storage::KnownFolders::DocumentsLibrary().Path()) };
+        auto logFilePath = documentsLibPath / L"cm_log%N.log";
+
+        auto userLogFilePath = clip::Settings().get<std::filesystem::path>(L"LogFilePath");
+        if (userLogFilePath)
         {
-            logFileName = logFilePath.value() / logFileName;
+            logFilePath = userLogFilePath.value() / logFilePath;
         }
 
         auto&& fileLog = boost::log::add_file_log
         (
-            boost::log::file_name = logFileName.string(),
+            boost::log::file_name = logFilePath.string(),
             boost::log::format = "[%TimeStamp%]: %Message%",
             boost::log::auto_flush = true
         );
