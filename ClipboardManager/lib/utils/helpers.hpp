@@ -161,3 +161,17 @@ namespace clip::utils
         std::wstring format(winrt::Windows::ApplicationModel::DataTransfer::DataPackageView& content);
     };
 }
+
+namespace clip::utils
+{
+    class ClipboardSourceFinder
+    {
+    public:
+        ClipboardSourceFinder() = default;
+
+        std::wstring findSource(std::wstring_view&& value);
+
+    private:
+        std::vector<std::pair<boost::wregex, const std::wstring>> sources{};
+    };
+}
