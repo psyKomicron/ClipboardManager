@@ -326,7 +326,7 @@
                     <FontIcon x:Name="ClipboardActionsPivot" Glyph="&#xea8a;" FontSize="16"/>
                 </PivotItem.Header>
 
-                <Grid Padding="5,3,5,0">
+                <Grid Padding="5,0,5,5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>

@@ -993,4 +993,19 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   <data name="UserMessage_XNumberOfTriggersLoaded" xml:space="preserve">
     <value>{} déclencheurs chargés.</value>
   </data>
+  <data name="HeaderActionsTextBlock.Text" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="HeaderClipboardTextBlock.Text" xml:space="preserve">
+    <value>Presse-papier</value>
+  </data>
+  <data name="ClipboardEventingHostControl.Title" xml:space="preserve">
+    <value>Evènements presse-papier</value>
+  </data>
+  <data name="ClipboardEventingHostControl.Subtitle" xml:space="preserve">
+    <value>Utiliser les évènements Windows natifs</value>
+  </data>
+  <data name="UserMessage_TooManyActions" xml:space="preserve">
+    <value>Trop d'actions en historique, le nombre dernières actions restorées est limité.</value>
+  </data>
 </root>

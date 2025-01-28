@@ -862,4 +862,24 @@ You can easily access your user file via settings and see an example of a valid 
     <value>{} triggers loaded.</value>
     <comment>UserMessage</comment>
   </data>
+  <data name="HeaderActionsTextBlock.Text" xml:space="preserve">
+    <value>Actions</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="HeaderClipboardTextBlock.Text" xml:space="preserve">
+    <value>Clipboard</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ClipboardEventingHostControl.Title" xml:space="preserve">
+    <value>Clipboard events</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ClipboardEventingHostControl.Subtitle" xml:space="preserve">
+    <value>Use Windows native events</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="UserMessage_TooManyActions" xml:space="preserve">
+    <value>Too many actions in history, a limited number of actions have been restored.</value>
+    <comment>User messages</comment>
+  </data>
 </root>

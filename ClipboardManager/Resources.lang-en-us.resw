@@ -845,4 +845,19 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
   <data name="UserMessage_XNumberOfTriggersLoaded" xml:space="preserve">
     <value>{} triggers loaded.</value>
   </data>
+  <data name="HeaderActionsTextBlock.Text" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="HeaderClipboardTextBlock.Text" xml:space="preserve">
+    <value>Clipboard</value>
+  </data>
+  <data name="ClipboardEventingHostControl.Title" xml:space="preserve">
+    <value>Clipboard events</value>
+  </data>
+  <data name="ClipboardEventingHostControl.Subtitle" xml:space="preserve">
+    <value>Use Windows native events</value>
+  </data>
+  <data name="UserMessage_TooManyActions" xml:space="preserve">
+    <value>Too many actions in history, a limited number of actions have been restored.</value>
+  </data>
 </root>
