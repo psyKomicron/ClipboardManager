@@ -169,22 +169,18 @@ HWND InitInstance(HINSTANCE hInstance, int nCmdShow)
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static clip::utils::Logger logger{ L"WndProc" };
-    static std::map<uint32_t, const wchar_t*> windowMessages
-    {
-        { WM_ASKCBFORMATNAME, L"WM_ASKCBFORMATNAME" },
-        { WM_CHANGECBCHAIN, L"WM_CHANGECBCHAIN" },
-        { WM_CLIPBOARDUPDATE, L"WM_CLIPBOARDUPDATE" },
-        { WM_DESTROYCLIPBOARD, L"WM_DESTROYCLIPBOARD" },
-        { WM_DRAWCLIPBOARD, L"WM_DRAWCLIPBOARD" },
-        { WM_HSCROLLCLIPBOARD, L"WM_HSCROLLCLIPBOARD" },
-        { WM_PAINTCLIPBOARD, L"WM_PAINTCLIPBOARD" },
-        { WM_RENDERALLFORMATS, L"WM_RENDERALLFORMATS" },
-        { WM_RENDERFORMAT, L"WM_RENDERFORMAT" },
-        { WM_SIZECLIPBOARD, L"WM_SIZECLIPBOARD" },
-        { WM_VSCROLLCLIPBOARD, L"WM_VSCROLLCLIPBOARD" }
-    };
 
     clip::utils::WindowInfo* windowInfo = clip::utils::getWindowInfo(hWnd);
+    std::optional<winrt::ClipboardManager::MainPage> mainPage{};
+    if (windowInfo != nullptr && windowInfo->desktopWinXamlSrc != nullptr)
+    {
+        auto&& content = windowInfo->desktopWinXamlSrc.Content();
+        if (content != nullptr)
+        {
+            mainPage = content.try_as<winrt::ClipboardManager::MainPage>();
+        }
+    }
+
     switch (message)
     {
         case WM_CREATE:
@@ -197,7 +193,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             const int width = LOWORD(lParam);
             const int height = HIWORD(lParam);
-            if (windowInfo->desktopWinXamlSrc)
+            if (windowInfo && windowInfo->desktopWinXamlSrc)
             {
                 windowInfo->desktopWinXamlSrc.SiteBridge().MoveAndResize(
                     {
@@ -217,17 +213,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             handleWindowActivation(windowInfo, LOWORD(wParam) == WA_INACTIVE);
 
-            if (windowInfo != nullptr && windowInfo->desktopWinXamlSrc != nullptr)
+            if (mainPage)
             {
-                auto&& content = windowInfo->desktopWinXamlSrc.Content();
-                if (content != nullptr)
-                {
-                    auto&& mainPage = content.try_as<winrt::ClipboardManager::MainPage>();
-                    if (mainPage)
-                    {
-                        mainPage.ReceiveWindowMessage(message, wParam);
-                    }
-                }
+                mainPage.value().ReceiveWindowMessage(message, wParam);
             }
             break;
         }
@@ -275,10 +263,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         case WM_NCDESTROY:
         {
-            auto&& mainPage = windowInfo->desktopWinXamlSrc.Content().try_as<winrt::ClipboardManager::MainPage>();
             if (mainPage)
             {
-                mainPage.AppClosing();
+                mainPage.value().AppClosing();
             }
 
             RECT rect{};
@@ -289,7 +276,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             settings.insert(L"WindowWidth", static_cast<int32_t>(rect.right - rect.left));
             settings.insert(L"WindowHeight", static_cast<int32_t>(rect.bottom - rect.top));
 
-            if (windowInfo->desktopWinXamlSrc != nullptr && windowInfo->takeFocusRequestedToken.value != 0)
+            if (windowInfo && windowInfo->desktopWinXamlSrc != nullptr && windowInfo->takeFocusRequestedToken.value != 0)
             {
                 windowInfo->desktopWinXamlSrc.TakeFocusRequested(windowInfo->takeFocusRequestedToken);
                 windowInfo->takeFocusRequestedToken = {};
@@ -298,6 +285,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             delete windowInfo;
 
             SetWindowLong(hWnd, GWLP_USERDATA, NULL);
+
+            RemoveClipboardFormatListener(hWnd);
 
             break;
         }
@@ -310,19 +299,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
-        case WM_ASKCBFORMATNAME:
-        case WM_CHANGECBCHAIN:
         case WM_CLIPBOARDUPDATE:
-        case WM_DESTROYCLIPBOARD:
-        case WM_DRAWCLIPBOARD:
-        case WM_HSCROLLCLIPBOARD:
-        case WM_PAINTCLIPBOARD:
-        case WM_RENDERALLFORMATS:
-        case WM_RENDERFORMAT:
-        case WM_SIZECLIPBOARD:
-        case WM_VSCROLLCLIPBOARD:
-            logger.info(L"WM clipboard message: " + std::wstring(windowMessages[message]));
-            [[fallthrough]];
+            if (mainPage)
+            {
+                mainPage.value().ReceiveWindowMessage(message, wParam);
+            }
+            break;
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
     }
@@ -447,14 +429,13 @@ void createWinUIWindow(clip::utils::WindowInfo* windowInfo, const HWND& windowHa
             resources.TryLookup(winrt::box_value(L"ButtonForegroundColor")).as<winrt::Windows::UI::Color>());
     }
 
-    auto added = AddClipboardFormatListener(windowHandle); // outlook-bug
-    if (!added)
+    if (AddClipboardFormatListener(windowHandle)) // outlook-bug
     {
-        logger.error(L"Not added to clipboard format listeners.");
+        logger.info(L"Added to clipboard format listeners.");
     }
     else
     {
-        logger.info(L"Added to clipboard format listeners.");
+        logger.error(L"Not added to clipboard format listeners.");
     }
 
     logger.info(L"Created WinUI window.");
