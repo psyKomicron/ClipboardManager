@@ -219,10 +219,10 @@ namespace clip
                 auto str = matchResults[1].str();
                 return std::vformat(_format, std::make_wformat_args(str));
             }
-
-#ifdef _DEBUG
-            logger.info(L"Failed to format string with regex match results.");
-#endif
+            else
+            {
+                logger.debug(L"Failed to format string with regex match results.");
+            }
         }
 
         return std::vformat(_format, std::make_wformat_args(string));
