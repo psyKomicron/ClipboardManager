@@ -306,18 +306,26 @@
                     </ComboBox>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
+            <!--#endregion-->
 
-            <clip:HostControl x:Uid="AddDuplicatedActionsHostControl">
-                <clip:HostControl.HostContent>
-                    <ToggleSwitch x:Name="AddDuplicatedActionsToggleSwitch" Toggled="AddDuplicatedActionsToggleSwitch_Toggled"/>
-                </clip:HostControl.HostContent>
-            </clip:HostControl>
+            <!--#region Clipboard -->
+            <TextBlock x:Uid="HeaderClipboardTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
 
             <clip:HostControl x:Uid="ImportClipboardHistoryHostControl">
                 <clip:HostControl.HostContent>
                     <ToggleSwitch x:Name="ImportClipboardHistoryToggleSwitch" Toggled="ImportClipboardHistoryToggleSwitch_Toggled"/>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
+            
+            <clip:HostControl x:Uid="ClipboardEventingHostControl">
+                <clip:HostControl.HostContent>
+                    <ToggleSwitch x:Name="ClipboardEventingToggleSwitch" Toggled="ClipboardEventingToggleSwitch_Toggled"/>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
+            <!--#endregion-->
+
+            <!--#region Actions options-->
+            <TextBlock x:Uid="HeaderActionsTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
 
             <clip:HostControl x:Uid="ClipboardActionViewClickHostControl">
                 <clip:HostControl.HostContent>
@@ -327,9 +335,15 @@
                     </ComboBox>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
+
+            <clip:HostControl x:Uid="AddDuplicatedActionsHostControl">
+                <clip:HostControl.HostContent>
+                    <ToggleSwitch x:Name="AddDuplicatedActionsToggleSwitch" Toggled="AddDuplicatedActionsToggleSwitch_Toggled"/>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
             <!--#endregion-->
-
-
+            
+            
             <!--#region Browser -->
             <TextBlock x:Uid="HeaderBrowserTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
             <Expander Style="{StaticResource ExpanderStyle}">

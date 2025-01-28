@@ -95,7 +95,6 @@ namespace winrt::ClipboardManager::implementation
         IgnoreCaseToggleSwitch().IsOn(settings.get<bool>(L"RegexIgnoreCase").value_or(false));
         selectComboBoxItem(RegexModeComboBox(), settings.get<int32_t>(L"TriggerMatchMode").value_or(0));
         AddDuplicatedActionsToggleSwitch().IsOn(settings.get<bool>(L"AddDuplicatedActions").value_or(true));
-        ImportClipboardHistoryToggleSwitch().IsOn(settings.get<bool>(L"ImportClipboardHistory").value_or(false));
         selectComboBoxItem(ClipboardActionViewClickComboBox(), settings.get<int32_t>(L"ClipboardActionClick").value_or(0));
 
         // Notifications:
@@ -118,6 +117,10 @@ namespace winrt::ClipboardManager::implementation
         AllowMinimizeToggleSwitch().IsOn(settings.get<bool>(L"AllowWindowMinimize").value_or(true));
         OverlayResizableToggleSwitch().IsOn(settings.get<bool>(L"OverlayIsResizable").value_or(true));
         OverlayShownInSwitcherToggleSwitch().IsOn(settings.get<bool>(L"OverlayShownInSwitchers").value_or(true));
+
+        // Clipboard eventing:
+        ImportClipboardHistoryToggleSwitch().IsOn(settings.get<bool>(L"ImportClipboardHistory").value_or(false));
+        ClipboardEventingToggleSwitch().IsOn(settings.get<bool>(L"InterpretWMClipboardMessages").value_or(false));
 
         auto userFilePath = settings.get<hstring>(L"UserFilePath");
         if (userFilePath.has_value())
@@ -450,4 +453,12 @@ namespace winrt::ClipboardManager::implementation
         logger.debug(L"Saving user file path (timeout).");
         settings.insert<std::wstring_view>(L"LogFilePath", LogFileTextBox().Text());
     }
+
+    void SettingsPage::ClipboardEventingToggleSwitch_Toggled(win::IInspectable const& sender, xaml::RoutedEventArgs const&)
+    {
+        check_loaded(loaded);
+        updateSetting(sender, L"InterpretWMClipboardMessages");
+    }
 }
+
+
