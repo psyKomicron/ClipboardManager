@@ -1,8 +1,5 @@
 # Change log
 ## New
-`v1.4.3`
-- Removed log file as it crashes the application.
-
 `v1.4.0`
 - Log file (location can be modified in settings->dev options).
 
@@ -13,6 +10,14 @@
 - Search bar in actions page.
 
 ## Changes & Fixes
+`v1.4.4`
+- Moved log file to `~/Documents/`.
+- Messages bar now displays the last message instead of the first.
+- Improved settings category organization.
+
+`v1.4.3`
+- Removed log file as it crashes the application.
+
 `v1.4.0`
 - Changed message on startup when no triggers are loaded :
     - If no user file has been saved, info bar prompting to create/locate the user file.
