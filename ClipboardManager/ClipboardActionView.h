@@ -43,6 +43,7 @@ namespace winrt::ClipboardManager::implementation
     private:
         static clip::utils::ResLoader resLoader;
 
+        bool loaded = false;
         clip::ui::VisualStateManager<ClipboardActionView> visualStateManager{ *this };
         using VisualState = clip::ui::VisualState<ClipboardActionView>;
         VisualState optionsClosedState{ L"OptionsClosed", 0, true };
