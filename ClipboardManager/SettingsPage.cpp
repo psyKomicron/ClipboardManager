@@ -86,7 +86,7 @@ namespace winrt::ClipboardManager::implementation
         clip::utils::StartupTask startupTask{};
         AutoStartToggleSwitch().IsOn(startupTask.isTaskRegistered());
 
-        SaveMatchingResultsToggleSwitch().IsOn(settings.get<bool>(L"SaveMatchingResults").value_or(false));
+        SaveMatchingResultsToggleSwitch().IsOn(settings.get<bool>(L"SaveMatchingResults").value_or(true));
         StartMinimizedToggleSwitch().IsOn(settings.get<bool>(L"StartWindowMinimized").value_or(false));
         HideAppWindowToggleSwitch().IsOn(settings.get<bool>(L"HideAppWindow").value_or(false));
         NotificationsToggleSwitch().IsOn(settings.get<bool>(L"NotificationsEnabled").value_or(true));
@@ -129,6 +129,8 @@ namespace winrt::ClipboardManager::implementation
             UserFilePathTextBlock().FontStyle(Windows::UI::Text::FontStyle::Normal);
         }
 
+        // Developper :
+        LoggingToggleSwitch().IsOn(settings.get<bool>(L"LoggingEnabled").value_or(false));
         auto logFilePath = settings.get<std::filesystem::path>(L"LogFilePath");
         if (logFilePath && std::filesystem::exists(logFilePath.value()))
         {
@@ -459,6 +461,10 @@ namespace winrt::ClipboardManager::implementation
         check_loaded(loaded);
         updateSetting(sender, L"InterpretWMClipboardMessages");
     }
+
+    void SettingsPage::LoggingToggleSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+    {
+        check_loaded(loaded);
+        updateSetting(sender, L"LoggingEnabled");
+    }
 }
-
-
