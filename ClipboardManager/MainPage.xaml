@@ -63,6 +63,7 @@
             </VisualStateGroup>
 
             <VisualStateGroup>
+                <VisualState x:Name="UserFilePathSaved"/>
                 <VisualState x:Name="NoUserFilePathSaved">
                     <VisualState.Setters>
                         <Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>
@@ -372,11 +373,7 @@
                             x:Name="CreateActionsInfoBar"
                             x:Uid="OpenSaveFileInfoBar"
                             x:Load="False"
-                            Severity="Success">
-                            <InfoBar.Content>
-                                <HyperlinkButton x:Uid="CreateActionsButton" IsEnabled="False" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5"/>
-                            </InfoBar.Content>
-                        </InfoBar>
+                            Severity="Success"/>
 
                         <InfoBar 
                             x:Name="ViewActionsInfoBar"

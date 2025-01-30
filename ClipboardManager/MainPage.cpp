@@ -158,13 +158,10 @@ namespace winrt::ClipboardManager::implementation
         auto userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
         if (userFilePath.has_value())
         {
-            if (!triggers.empty())
-            {
-                clip::ClipboardTrigger::saveClipboardTriggers(triggers, userFilePath.value());
-            }
+            clip::ClipboardTrigger::saveClipboardTriggers(triggers, userFilePath.value());
 
             if (clipboardActionViews.Size() > 0
-                && localSettings.get<bool>(L"SaveMatchingResults").value_or(false)
+                && localSettings.get<bool>(L"SaveMatchingResults").value_or(true)
                 && !HistoryToggleButton().IsChecked().GetBoolean())
             {
                 boost::property_tree::wptree tree{};
@@ -318,6 +315,52 @@ namespace winrt::ClipboardManager::implementation
         }
     }
 
+    bool MainPage::LoadUserFile(std::optional<std::filesystem::path>&& userFilePath)
+    {
+        logger.info(L"*Loading user file*");
+
+        bool triggersLoaded = false;
+
+        if (!userFilePath)
+        {
+            userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
+        }
+
+        if (userFilePath.has_value() && clip::utils::pathExists(userFilePath.value()))
+        {
+            if ((triggersLoaded = LoadTriggers(userFilePath.value())))
+            {
+                LoadHistory(userFilePath.value());
+
+                // Enable file watcher:
+                try
+                {
+                    if (localSettings.get<bool>(L"EnableTriggerFileWatching").value_or(false))
+                    {
+                        watcher.startWatching(userFilePath.value());
+                    }
+                }
+                catch (std::wstring message)
+                {
+                    logger.error(L"Error enabling file watcher: " + message);
+                }
+            }
+            else
+            {
+                logger.info(L"Failed to load triggers.");
+            }
+        }
+        else if (userFilePath)
+        {
+            // The app has saved a file path, but it doesn't exist anymore.
+            logger.info(L"User file path doesn't exist: \"" + userFilePath.value().wstring() + L"\"");
+
+            MessagesBar().AddWarning(L"ErrorMessage_UserFileMoved");
+        }
+
+        return triggersLoaded;
+    }
+
     bool MainPage::LoadTriggers(std::filesystem::path& path)
     {
         logger.info(L"*Loading triggers*");
@@ -394,8 +437,6 @@ namespace winrt::ClipboardManager::implementation
                 auto xmlParserErrorMessage = std::vformat(resLoader.getStdResource(L"ErrorMessage_XmlParserError").value_or(L"Triggers file has invalid XML markup data."),
                                                           std::make_wformat_args(line));
                 MessagesBar().AddError(xmlParserErrorMessage, std::wstring());
-
-                triggers.clear();
             }
         }
         catch (boost::property_tree::ptree_bad_path badPath)
@@ -420,52 +461,6 @@ namespace winrt::ClipboardManager::implementation
         }
 
         return false;
-    }
-
-    bool MainPage::LoadUserFile(std::optional<std::filesystem::path>&& userFilePath)
-    {
-        logger.info(L"*Loading user file*");
-
-        bool triggersLoaded = false;
-
-        if (!userFilePath)
-        {
-            userFilePath = localSettings.get<std::filesystem::path>(L"UserFilePath");
-        }
-
-        if (userFilePath.has_value() && clip::utils::pathExists(userFilePath.value()))
-        {
-            if ((triggersLoaded = LoadTriggers(userFilePath.value())))
-            {
-                LoadHistory(userFilePath.value());
-
-                // Enable file watcher:
-                try
-                {
-                    if (localSettings.get<bool>(L"EnableTriggerFileWatching").value_or(false))
-                    {
-                        watcher.startWatching(userFilePath.value());
-                    }
-                }
-                catch (std::wstring message)
-                {
-                    logger.error(L"Error enabling file watcher: " + message);
-                }
-            }
-            else
-            {
-                logger.info(L"Failed to load triggers.");
-            }
-        }
-        else if (userFilePath)
-        {
-            // The app has saved a file path, but it doesn't exist anymore.
-            logger.info(L"User file path doesn't exist: \"" + userFilePath.value().wstring() + L"\"");
-
-            MessagesBar().AddWarning(L"ErrorMessage_UserFileMoved");
-        }
-
-        return triggersLoaded;
     }
 
     async MainPage::LoadHistory(std::filesystem::path userFilePath)
@@ -987,8 +982,10 @@ namespace winrt::ClipboardManager::implementation
         }
         else
         {
+#ifdef _DEBUG
             clip::utils::clipboard_properties_formatter formatter{};
             logger.debug(L"Clipboard HISTORY changed: " + formatter.format(content));
+#endif // DEBUG
 
             co_await AddClipboardItem(content, true);
         }
@@ -1215,7 +1212,7 @@ namespace winrt::ClipboardManager::implementation
         }
 
         // Show a message that the logging backend has not been initialized if it hasn't :
-        if (!logger.isLogBackendInitialized())
+        if (!logger.isLogBackendInitialized() && localSettings.get<bool>(L"LoggingEnabled").value_or(false))
         {
             MessagesBar().AddMessage(L"Logging backend is not initialized.");
         }
@@ -1256,6 +1253,9 @@ namespace winrt::ClipboardManager::implementation
         {
             std::filesystem::path userFilePath{ storageFile.Path().c_str() };
             localSettings.insert(L"UserFilePath", userFilePath);
+
+            visualStateManager.goToState(openSaveFileState);
+            visualStateManager.goToState(userFilePathSavedState);
         }
     }
 

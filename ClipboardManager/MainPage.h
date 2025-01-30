@@ -64,6 +64,7 @@ namespace winrt::ClipboardManager::implementation
         clip::ui::VisualState<MainPage> searchOpenState{ L"SearchOpened", 6, false };
         clip::ui::VisualState<MainPage> showActionsListViewState{ L"ShowActionsListView", 7, true };
         clip::ui::VisualState<MainPage> showSearchListViewState{ L"ShowSearchListView", 7, false };
+        clip::ui::VisualState<MainPage> userFilePathSavedState{ L"UserFilePathSaved", 8, true };
         clip::ui::VisualState<MainPage> noUserFilePathSavedState{ L"NoUserFilePathSaved", 8, false };
 
         bool loaded = false;
