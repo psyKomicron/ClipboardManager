@@ -96,19 +96,13 @@ namespace clip
             boost::property_tree::read_xml(userFilePath.string(), tree, boost::property_tree::xml_parser::trim_whitespace);
 
             // Erase the tree so I dont induce conflicts.
-            auto settingsNode = tree.get_child_optional(L"settings");
-            if (settingsNode.has_value())
+            auto&& triggersNode = tree.put_child(L"settings.triggers", boost::property_tree::wptree());
+            for (auto&& trigger : triggersList)
             {
-                auto&& triggersNode = tree.put_child(L"settings.triggers", boost::property_tree::wptree());
-
-                // For each trigger, create an empty trigger node for the trigger object to save it-self.
-                for (auto&& trigger : triggersList)
-                {
-                    triggersNode.push_front({ L"trigger", trigger.serialize() });
-                }
-
-                boost::property_tree::write_xml(userFilePath.string(), tree, std::locale(), boost::property_tree::xml_writer_settings<std::wstring>('\t', 1));
+                triggersNode.push_front({ L"trigger", trigger.serialize() });
             }
+
+            boost::property_tree::write_xml(userFilePath.string(), tree, std::locale(), boost::property_tree::xml_writer_settings<std::wstring>('\t', 1));
         }
         else
         {
