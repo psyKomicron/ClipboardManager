@@ -35,7 +35,7 @@ namespace clip::utils
         std::wstring className{};
         boost::log::sources::logger logger{};
 
-        std::wstring formatClassName(const std::wstring& className) const;
+        std::wstring formatClassName(const std::wstring_view& className) const;
         void initBoostLogging();
     };
 }

@@ -306,18 +306,26 @@
                     </ComboBox>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
+            <!--#endregion-->
 
-            <clip:HostControl x:Uid="AddDuplicatedActionsHostControl">
-                <clip:HostControl.HostContent>
-                    <ToggleSwitch x:Name="AddDuplicatedActionsToggleSwitch" Toggled="AddDuplicatedActionsToggleSwitch_Toggled"/>
-                </clip:HostControl.HostContent>
-            </clip:HostControl>
+            <!--#region Clipboard -->
+            <TextBlock x:Uid="HeaderClipboardTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
 
             <clip:HostControl x:Uid="ImportClipboardHistoryHostControl">
                 <clip:HostControl.HostContent>
                     <ToggleSwitch x:Name="ImportClipboardHistoryToggleSwitch" Toggled="ImportClipboardHistoryToggleSwitch_Toggled"/>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
+            
+            <clip:HostControl x:Uid="ClipboardEventingHostControl">
+                <clip:HostControl.HostContent>
+                    <ToggleSwitch x:Name="ClipboardEventingToggleSwitch" Toggled="ClipboardEventingToggleSwitch_Toggled"/>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
+            <!--#endregion-->
+
+            <!--#region Actions options-->
+            <TextBlock x:Uid="HeaderActionsTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
 
             <clip:HostControl x:Uid="ClipboardActionViewClickHostControl">
                 <clip:HostControl.HostContent>
@@ -327,9 +335,15 @@
                     </ComboBox>
                 </clip:HostControl.HostContent>
             </clip:HostControl>
+
+            <clip:HostControl x:Uid="AddDuplicatedActionsHostControl">
+                <clip:HostControl.HostContent>
+                    <ToggleSwitch x:Name="AddDuplicatedActionsToggleSwitch" Toggled="AddDuplicatedActionsToggleSwitch_Toggled"/>
+                </clip:HostControl.HostContent>
+            </clip:HostControl>
             <!--#endregion-->
-
-
+            
+            
             <!--#region Browser -->
             <TextBlock x:Uid="HeaderBrowserTextBlock" Style="{ThemeResource CaptionTextBlockStyle}" Opacity="0.6" Margin="0,12,0,0"/>
             <Expander Style="{StaticResource ExpanderStyle}">
@@ -591,7 +605,11 @@
                     </Storyboard>
                 </Expander.Resources>
                 <Expander.Header>
-                    <clip:HostControl x:Uid="LogFilePathHostControl" Background="Transparent" BorderThickness="0" Padding="0"/>
+                    <clip:HostControl x:Uid="LogFilePathHostControl" Background="Transparent" BorderThickness="0" Padding="0">
+                        <clip:HostControl.HostContent>
+                            <ToggleSwitch x:Name="LoggingToggleSwitch" Style="{StaticResource FlippedToggleSwitchStyle}" Toggled="LoggingToggleSwitch_Toggled"/>
+                        </clip:HostControl.HostContent>
+                    </clip:HostControl>
                 </Expander.Header>
 
                 <Grid Padding="15,10,15,15" ColumnSpacing="15">
@@ -599,11 +617,12 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox x:Name="LogFileTextBox" TextWrapping="Wrap" TextChanged="LogFileTextBox_TextChanged" VerticalAlignment="Center"/>
+                    <TextBox x:Name="LogFileTextBox" x:Uid="LogFileTextBox" TextWrapping="Wrap" TextChanged="LogFileTextBox_TextChanged" VerticalAlignment="Center"
+                             IsEnabled="{x:Bind LoggingToggleSwitch.IsOn, Mode=OneWay}"/>
 
                     <Viewbox Height="15" Grid.Column="1" VerticalAlignment="Center">
                         <!--<FontIcon Glyph="&#xe823;"/>-->
-                        <ProgressRing x:Name="SaveProgressRing" Value="1" Maximum="1" IsIndeterminate="False"/>
+                        <ProgressRing x:Name="SaveProgressRing" Value="1" Maximum="1" IsIndeterminate="False" IsEnabled="{x:Bind LoggingToggleSwitch.IsOn, Mode=OneWay}"/>
                     </Viewbox>
                 </Grid>
             </Expander>

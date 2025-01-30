@@ -22,6 +22,10 @@ namespace winrt::ClipboardManager::implementation
         {
             LoadFirst();
         }
+        else
+        {
+            Select(infoBars.size() - 1, true);
+        }
     }
 
     void MessagesBar::Add(const winrt::hstring& titleKey, const winrt::hstring& altTitle, const winrt::hstring& messageKey, const winrt::hstring& messageAlt)
@@ -87,9 +91,12 @@ namespace winrt::ClipboardManager::implementation
 
     void MessagesBar::UserControl_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
     {
-        // Load first control
-        loaded = true;
-        LoadFirst();
+        if (!loaded)
+        {
+            // Load first control
+            loaded = true;
+            LoadFirst();
+        }
     }
 
     void MessagesBar::LeftButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
@@ -105,13 +112,7 @@ namespace winrt::ClipboardManager::implementation
     void MessagesBar::PipsPager_SelectedIndexChanged(winrt::Microsoft::UI::Xaml::Controls::PipsPager const& sender, winrt::Microsoft::UI::Xaml::Controls::PipsPagerSelectedIndexChangedEventArgs const& args)
     {
         auto selectedIndex = static_cast<size_t>(sender.SelectedPageIndex());
-
-        if (selectedIndex < infoBars.size() && selectedIndex >= 0)
-        {
-            index = selectedIndex;
-            ContentPresenter().Content(infoBars[index]);
-            //PipsPager().SelectedPageIndex(index);
-        }
+        Select(selectedIndex, false);
     }
 
 
@@ -119,9 +120,8 @@ namespace winrt::ClipboardManager::implementation
     {
         if (loaded && !infoBars.empty())
         {
-            ContentPresenter().Content(infoBars[0]);
+            Select(0, true);
             PipsPager().NumberOfPages(static_cast<int32_t>(infoBars.size()));
-            visualStateManager.goToState(openState);
         }
     }
 
@@ -129,8 +129,7 @@ namespace winrt::ClipboardManager::implementation
     {
         if ((index + 1) < infoBars.size())
         {
-            ContentPresenter().Content(infoBars[++index]);
-            PipsPager().SelectedPageIndex(static_cast<int32_t>(index));
+            Select(++index, true);
         }
     }
 
@@ -138,8 +137,7 @@ namespace winrt::ClipboardManager::implementation
     {
         if (index > 0)
         {
-            ContentPresenter().Content(infoBars[--index]);
-            PipsPager().SelectedPageIndex(static_cast<int32_t>(index));
+            Select(--index, true);
         }
     }
 
@@ -178,20 +176,39 @@ namespace winrt::ClipboardManager::implementation
                 }
             }
 
-            PipsPager().NumberOfPages(static_cast<int32_t>(infoBars.size()));
-            InfoBadge().Value(static_cast<int32_t>(infoBars.size()));
-
-            if (i < infoBars.size())
-            {
-                ContentPresenter().Content(infoBars[index]);
-            }
-
             if (infoBars.empty())
             {
                 visualStateManager.goToState(closedState);
             }
+            else if (i < infoBars.size())
+            {
+                Select(i, true);
+            }
+            else
+            {
+                Select(i - 1, true);
+            }
+
+            PipsPager().NumberOfPages(static_cast<int32_t>(infoBars.size()));
+            InfoBadge().Value(static_cast<int32_t>(infoBars.size()));
         });
 
         return infoBar;
+    }
+
+    void MessagesBar::Select(const size_t& selectedIndex, const bool& movePager)
+    {
+        if (selectedIndex < infoBars.size() && selectedIndex >= 0)
+        {
+            index = selectedIndex;
+            
+            ContentPresenter().Content(infoBars[index]);
+            if (movePager)
+            {
+                PipsPager().SelectedPageIndex(static_cast<int32_t>(index));
+            }
+
+            visualStateManager.goToState(openState);
+        }
     }
 }

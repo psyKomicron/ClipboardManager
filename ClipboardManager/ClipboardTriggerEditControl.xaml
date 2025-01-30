@@ -46,6 +46,7 @@
                         <Setter Target="FormatTextBoxBorder.Margin" Value="-5,-7"/>
                         <Setter Target="FormatTextBoxErrorIcon.Visibility" Value="Visible"/>
                         <Setter Target="FormatTextBoxError.Visibility" Value="Visible"/>
+                        <Setter Target="FormatTextBoxWarningBorder.Margin" Value="-5,10,-5,-7"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -64,6 +65,7 @@
                         <Setter Target="FormatTextBoxBorder.Margin" Value="-5,-7"/>
                         <Setter Target="FormatTextBoxErrorIcon.Visibility" Value="Visible"/>
                         <Setter Target="FormatTextBoxError.Visibility" Value="Visible"/>
+                        <Setter Target="FormatTextBoxWarningBorder.Margin" Value="-5,10,-5,-7"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -73,7 +75,7 @@
                 <VisualState x:Name="FormatProtocolWarning">
                     <VisualState.Setters>
                         <Setter Target="FormatTextBoxWarningBorder.Visibility" Value="Visible"/>
-                        <Setter Target="FormatTextBoxWarningBorder.Margin" Value="0,3,0,0"/>
+                        <Setter Target="FormatTextBoxWarningBorder.Margin" Value="-5,10,-5,-7"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

@@ -53,9 +53,9 @@ namespace clip
         clearKey(hKey.get());
     }
 
-    inline void Settings::remove(const key_t& key)
+    inline bool Settings::remove(const key_t& key)
     {
-        RegDeleteValueW(hKey.get(), key.c_str());
+        return RegDeleteValueW(hKey.get(), key.c_str()) == ERROR_SUCCESS;
     }
 
     inline bool Settings::contains(const key_t& key)

@@ -482,7 +482,7 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Open &amp; edit</value>
   </data>
   <data name="OpenSaveFileInfoBar.Message" xml:space="preserve">
-    <value>One default trigger has been added as a template, do you want to edit it ?</value>
+    <value>The current user file is currently empty.</value>
   </data>
   <data name="OpenSaveFileInfoBar.Title" xml:space="preserve">
     <value>Save file successfully created !</value>
@@ -830,9 +830,6 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
   <data name="UserFileSaveContentDialog.PrimaryButtonText" xml:space="preserve">
     <value>Create file</value>
   </data>
-  <data name="LogFilePathHostControl.Header" xml:space="preserve">
-    <value>Log file path</value>
-  </data>
   <data name="LogFilePathNokTextBlock.Text" xml:space="preserve">
     <value>Path does not exist.</value>
   </data>
@@ -844,5 +841,20 @@ If you are using multiple placeholders '{}' index them (ex: \\{0\\}...\\{0\\}).<
   </data>
   <data name="UserMessage_XNumberOfTriggersLoaded" xml:space="preserve">
     <value>{} triggers loaded.</value>
+  </data>
+  <data name="HeaderActionsTextBlock.Text" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="HeaderClipboardTextBlock.Text" xml:space="preserve">
+    <value>Clipboard</value>
+  </data>
+  <data name="ClipboardEventingHostControl.Title" xml:space="preserve">
+    <value>Clipboard events</value>
+  </data>
+  <data name="ClipboardEventingHostControl.Subtitle" xml:space="preserve">
+    <value>Use Windows native events</value>
+  </data>
+  <data name="UserMessage_TooManyActions" xml:space="preserve">
+    <value>Too many actions in history, a limited number of actions have been restored.</value>
   </data>
 </root>

@@ -258,3 +258,11 @@ namespace clip::utils
         return wss.str();
     }
 }
+
+namespace clip::utils
+{
+    std::wstring ClipboardSourceFinder::findSource(std::wstring_view && value)
+    {
+        return std::wstring();
+    }
+}

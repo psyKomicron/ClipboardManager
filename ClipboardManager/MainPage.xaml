@@ -63,6 +63,7 @@
             </VisualStateGroup>
 
             <VisualStateGroup>
+                <VisualState x:Name="UserFilePathSaved"/>
                 <VisualState x:Name="NoUserFilePathSaved">
                     <VisualState.Setters>
                         <Setter Target="NoClipboardActionsInfoBar.Visibility" Value="Visible"/>
@@ -326,7 +327,7 @@
                     <FontIcon x:Name="ClipboardActionsPivot" Glyph="&#xea8a;" FontSize="16"/>
                 </PivotItem.Header>
 
-                <Grid Padding="5,3,5,0">
+                <Grid Padding="5,0,5,5">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -372,11 +373,7 @@
                             x:Name="CreateActionsInfoBar"
                             x:Uid="OpenSaveFileInfoBar"
                             x:Load="False"
-                            Severity="Success">
-                            <InfoBar.Content>
-                                <HyperlinkButton x:Uid="CreateActionsButton" IsEnabled="False" HorizontalAlignment="Stretch" MaxWidth="150" Margin="0,0,0,5"/>
-                            </InfoBar.Content>
-                        </InfoBar>
+                            Severity="Success"/>
 
                         <InfoBar 
                             x:Name="ViewActionsInfoBar"

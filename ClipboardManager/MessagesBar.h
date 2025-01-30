@@ -50,6 +50,7 @@ namespace winrt::ClipboardManager::implementation
             const winrt::hstring& message, 
             const winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity& severity,
             const Windows::Foundation::IInspectable& content = nullptr);
+        void Select(const size_t& index, const bool& movePager);
     };
 }
 

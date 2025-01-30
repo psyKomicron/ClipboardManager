@@ -4,5 +4,6 @@
     <?define PackageFriendlyName = "Clipboard Manager V2"?>
     <?define Manufacturer = "psyKomicron"?>
     <?define Name = "ClipboardManagerV2"?>
-    <?define Version = "1.3.5.0"?>
+    <?define Version = "1.4.8.0"?>
+    <?define UpgradeCode = "19af4dd0-d520-457f-97dd-333b9a8be1cb"?>
 </Include>

@@ -9,11 +9,10 @@
 
         <CustomAction 
             Id="INSTALL_WASDK"
-            Execute="immediate"
             Impersonate="no"
             Return="check"
             FileRef="InstallerExe"
-            ExeCommand="-q"/>
+            ExeCommand=""/>
 
         <InstallExecuteSequence>
             <Custom Action="INSTALL_WASDK" After="InstallFinalize" Condition="NOT Installed"/>

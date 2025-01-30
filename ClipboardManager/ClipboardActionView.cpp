@@ -230,16 +230,21 @@ namespace winrt::ClipboardManager::implementation
 
     void ClipboardActionView::UserControl_Loading(ui::FrameworkElement const&, win::IInspectable const&)
     {
-        std::sort(triggers.begin(), triggers.end(), [this](auto&& a, auto&& b) -> bool
+        if (!loaded)
         {
-            return a.label().size() < b.label().size();
-        });
+            std::sort(triggers.begin(), triggers.end(), [this](auto&& a, auto&& b) -> bool
+            {
+                return a.label().size() < b.label().size();
+            });
 
-        // Create buttons for triggers:
-        for (auto&& action : triggers)
-        {
-            AddTriggerButton(action);
+            // Create buttons for triggers:
+            for (auto&& action : triggers)
+            {
+                AddTriggerButton(action);
+            }
         }
+
+        loaded = true;
     }
 
     void ClipboardActionView::OpenOptionsButton_Click(win::IInspectable const&, ui::RoutedEventArgs const&)

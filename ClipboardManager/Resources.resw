@@ -844,8 +844,8 @@ You can easily access your user file via settings and see an example of a valid 
     <value>Create file</value>
     <comment>MainPage</comment>
   </data>
-  <data name="LogFilePathHostControl.Header" xml:space="preserve">
-    <value>Log file path</value>
+  <data name="LogFilePathHostControl.Title" xml:space="preserve">
+    <value>Logging</value>
     <comment>SettingsPage</comment>
   </data>
   <data name="LogFilePathNokTextBlock.Text" xml:space="preserve">
@@ -861,5 +861,36 @@ You can easily access your user file via settings and see an example of a valid 
   <data name="UserMessage_XNumberOfTriggersLoaded" xml:space="preserve">
     <value>{} triggers loaded.</value>
     <comment>UserMessage</comment>
+  </data>
+  <data name="HeaderActionsTextBlock.Text" xml:space="preserve">
+    <value>Actions</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="HeaderClipboardTextBlock.Text" xml:space="preserve">
+    <value>Clipboard</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ClipboardEventingHostControl.Title" xml:space="preserve">
+    <value>Clipboard events</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="ClipboardEventingHostControl.Subtitle" xml:space="preserve">
+    <value>Use Windows native events</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="UserMessage_TooManyActions" xml:space="preserve">
+    <value>Too many actions in history, a limited number of actions have been restored.</value>
+    <comment>User messages</comment>
+  </data>
+  <data name="LogFileTextBox.Header" xml:space="preserve">
+    <value>Write a path, it will be saved a few seconds after you stop writing.</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="LogFileTextBox.PlaceholderText" xml:space="preserve">
+    <value>Logging file path</value>
+    <comment>SettingsPage</comment>
+  </data>
+  <data name="LogFilePathHostControl.Subtitle" xml:space="preserve">
+    <value>Restart required</value>
   </data>
 </root>

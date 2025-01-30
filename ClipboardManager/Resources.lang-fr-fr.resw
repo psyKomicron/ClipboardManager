@@ -570,7 +570,7 @@ Vous pouvez facilement accéder à votre fichier utilisateur via les paramètres
     <comment>MainPage</comment>
   </data>
   <data name="OpenSaveFileInfoBar.Message" xml:space="preserve">
-    <value>Une action a été ajoutée en tant qu'example, voulez-vous la modifier ?</value>
+    <value>Le fichier utilisateur est actuellement vide.</value>
     <comment>MainPage</comment>
   </data>
   <data name="OpenSaveFileInfoBar.Title" xml:space="preserve">
@@ -978,9 +978,6 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   <data name="UserFileSaveContentDialog.PrimaryButtonText" xml:space="preserve">
     <value>Créer</value>
   </data>
-  <data name="LogFilePathHostControl.Header" xml:space="preserve">
-    <value>Chemin du fichier de log</value>
-  </data>
   <data name="LogFilePathNokTextBlock.Text" xml:space="preserve">
     <value>Le chemin n'existe pas.</value>
   </data>
@@ -992,5 +989,20 @@ Si vous utilisez plusieurs fois {} indexez les (ex: \\{0\\}....\\{0\\}).</value>
   </data>
   <data name="UserMessage_XNumberOfTriggersLoaded" xml:space="preserve">
     <value>{} déclencheurs chargés.</value>
+  </data>
+  <data name="HeaderActionsTextBlock.Text" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="HeaderClipboardTextBlock.Text" xml:space="preserve">
+    <value>Presse-papier</value>
+  </data>
+  <data name="ClipboardEventingHostControl.Title" xml:space="preserve">
+    <value>Evènements presse-papier</value>
+  </data>
+  <data name="ClipboardEventingHostControl.Subtitle" xml:space="preserve">
+    <value>Utiliser les évènements Windows natifs</value>
+  </data>
+  <data name="UserMessage_TooManyActions" xml:space="preserve">
+    <value>Trop d'actions en historique, le nombre dernières actions restorées est limité.</value>
   </data>
 </root>
