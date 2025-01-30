@@ -89,75 +89,73 @@ namespace clip::utils
         }
 
         auto&& formattedName = formatClassName(className);
-        
-        if constexpr (USE_LOG_FILE)
-        {
-            BOOST_LOG(logger) << formattedName << clip::utils::to_string(message);
-        }
-
         switch (severity)
         {
             case LogSeverity::Debug:
             {
-                std::wcout << formattedName << L"  DEBUG:  " << message << std::endl;
+                std::wcout << std::format(L"{}  DEBUG:  {}\n", formattedName, message);
                 break;
             }
 
             case LogSeverity::Info:
             {
-                std::wcout << formattedName << L"  INFO:   " << message << std::endl;
+                std::wcout << std::format(L"{}  INFO:   {}\n", formattedName, message);
                 break;
             }
 
             case LogSeverity::Error:
             {
-                std::wcout << formattedName << L"  ERROR:  " << message << std::endl;
+                std::wcout << std::format(L"{}  ERROR:  {}\n", formattedName, message);
                 break;
             }
 
             case LogSeverity::None:
             default:
             {
-                std::wcout << formattedName << L"  LOG:    " << message << std::endl;
+                std::wcout << std::format(L"{}  LOG:    {}\n", formattedName, message);
                 break;
             }
         }
 
+        if constexpr (USE_LOG_FILE)
+        {
+            BOOST_LOG(logger) << formattedName << L' ' << clip::utils::to_string(message);
+        }
     }
 
 
-    std::wstring Logger::formatClassName(const std::wstring& className) const
+    std::wstring Logger::formatClassName(const std::wstring_view& className) const
     {
-        const std::wstring padding = std::wstring(maxClassNameLength - className.size(), L' ');
-
-        auto&& formattedName = std::vformat(L"[{}]{}", std::make_wformat_args(
-            className,
-            padding
-        ));
-
-        return formattedName;
+        return std::format(
+            L"[{}]{}",
+            className, std::wstring(maxClassNameLength - className.size(), L' ')
+        );
     }
 
     void Logger::initBoostLogging()
     {
-        std::filesystem::path documentsLibPath{ std::wstring(winrt::Windows::Storage::KnownFolders::DocumentsLibrary().Path()) };
-        auto logFilePath = documentsLibPath / L"cm_log%N.log";
-
-        auto userLogFilePath = clip::Settings().get<std::filesystem::path>(L"LogFilePath");
-        if (userLogFilePath)
+        clip::Settings settings{};
+        if (settings.get<bool>(L"LoggingEnabled").value_or(false))
         {
-            logFilePath = userLogFilePath.value() / logFilePath;
+            std::filesystem::path documentsLibPath{ std::wstring(winrt::Windows::Storage::KnownFolders::DocumentsLibrary().Path()) };
+            auto logFilePath = documentsLibPath / L"cm_log%N.log";
+
+            auto userLogFilePath = settings.get<std::filesystem::path>(L"LogFilePath");
+            if (userLogFilePath)
+            {
+                logFilePath = userLogFilePath.value() / logFilePath;
+            }
+
+            auto&& fileLog = boost::log::add_file_log
+            (
+                boost::log::file_name = logFilePath.string(),
+                boost::log::format = "[%TimeStamp%]: %Message%",
+                boost::log::auto_flush = true
+            );
+
+            boost::log::add_common_attributes();
+
+            boostLoggerInitialized = (fileLog != nullptr);
         }
-
-        auto&& fileLog = boost::log::add_file_log
-        (
-            boost::log::file_name = logFilePath.string(),
-            boost::log::format = "[%TimeStamp%]: %Message%",
-            boost::log::auto_flush = true
-        );
-
-        boost::log::add_common_attributes();
-
-        boostLoggerInitialized = (fileLog != nullptr);
     }
 }
