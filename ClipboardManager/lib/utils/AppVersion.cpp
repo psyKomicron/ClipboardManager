@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "AppVersion.hpp"
 
-constexpr auto APP_VERSION = L"1.4.4";
-constexpr auto APP_VERSION_NAME = L"Eucalyptus";
+constexpr auto APP_VERSION = L"1.4.8";
+constexpr auto APP_VERSION_NAME = L"Chêne";
 
 namespace clip::utils
 {
