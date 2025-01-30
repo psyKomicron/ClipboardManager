@@ -92,7 +92,7 @@ namespace clip
 
         std::vector<std::pair<std::wstring, clip::reg_types>> getAll();
         void clear();
-        void remove(const key_t& key);
+        bool remove(const key_t& key);
         bool contains(const key_t& key);
 
         template<concepts::StringInsertable T>
@@ -137,7 +137,6 @@ namespace clip
 #ifdef ENABLE_LOGGING
         utils::Logger logger{ L"Settings" };
 #endif // ENABLE_LOGGING
-
 
         void clearKey(HKEY hkey);
         wil::shared_hkey createSubKey(const key_t& key);
