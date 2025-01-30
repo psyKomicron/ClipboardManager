@@ -13,8 +13,10 @@ This application has been developped using Microsoft's own librairies and SDKs. 
 It also uses [boost](https://www.boost.org/).
 
 ## Installation
+Use the provided installer `.msi` file in releases to install the application.
+
 The application has two dependencies:
-- Microsoft Visual C++ Redistributable (latest) available here: *Required for the application to start*
+- Microsoft Visual C++ Redistributable (latest) available here: *static link, not download required*
   - [x64](https://aka.ms/vs/17/release/vc_redist.x64.exe)
   - [x86](https://aka.ms/vs/17/release/vc_redist.x86.exe)
   - [arm64](https://aka.ms/vs/17/release/vc_redist.arm64.exe)
@@ -22,30 +24,3 @@ The application has two dependencies:
   - [Direct link](https://aka.ms/windowsappsdk/1.6/latest/windowsappruntimeinstall-x64.exe)
   - [Page link](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170) then click on the big blue button.
  
-Install MSVC Redistributables then start the application to be prompted to install the latest version of the Windows App Runtime, or install both then start the application.
-
-The application directory should look that this once unziped:
-```
-\ClipboardManager\
-  - App.xbf
-  - ClipboardActionEditor
-  - ClipboardActionView
-  - ClipboardHistoryItemView
-  - ClipboardManager.exe <--- This starts the application
-  - ClipboardManager.exp
-  - ClipboardManager.ico
-  - ClipboardManager.lib
-  - resources.pri
-  - ClipboardManager.winmd
-  - ClipboardTriggerEditControl.xbf
-  - HostControl.xbf
-  - MainPage.xbf
-  - MessagesBar.xbf
-  - Microsoft.Web.WebView2.Core.dll
-  - Microsoft.Web.WebView2.Core.winmd
-  - Microsoft.WindowsAppRuntime.Bootstrap.dll
-  - RegexTesterControl.xbf
-  - SettingsPage.xbf
-```
-Start `ClipboardManager.exe` as any other application.
-Create a shortcut to `ClipboardManager.exe` if you want to add it to another directory.
